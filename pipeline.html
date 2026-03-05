@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kadal — AI Content Pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=Instrument+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:    #FFFFFF;
+  --canvas:   #F6F8FC;
+  --canvas2:  #EDF1F8;
+  --border:   #E2E8F0;
+  --border2:  #C4D2E8;
+  --ink:      #1C1A17;
+  --ink2:     #4A4640;
+  --ink3:     #8A8480;
+  --ink4:     #B5B0A8;
+  --blue:     #1a6fc4;
+  --blue-bg:  #EBF3FD;
+  --blue-bd:  #A8CBEE;
+  --blue-dk:  #2558a8;
+  --blue-dk-bg:#E8EEF8;
+  --blue-dk-bd:#A8C0E0;
+  --green:    #1e8a4a;
+  --green-bg: #E8F7EE;
+  --green-bd: #A0D8B8;
+  --rose:     #B84040;
+  --warn:     #C8841A;
+  --warn-bg:  #FDF3E3;
+  --warn-bd:  #F0D5A0;
+  --rose-bg:  #FBF0F0;
+  --rose-bd:  #E8B8B8;
+  --amber:    #1a6fc4;
+  --amber-bg: #EBF3FD;
+  --amber-bd: #A8CBEE;
+  --teal:     #1a6fc4;
+  --teal-bg:  #EBF3FD;
+  --teal-bd:  #A8CBEE;
+  --sage:     #1e8a4a;
+  --sage-bg:  #E8F7EE;
+  --sage-bd:  #A0D8B8;
+  --slate:    #2558a8;
+  --slate-bg: #E8EEF8;
+  --slate-bd: #A8C0E0;
+  --sidebar:  220px;
+  --radius:   8px;
+  --radius-s: 5px;
+  --shadow:   0 1px 3px rgba(28,26,23,.07), 0 4px 12px rgba(28,26,23,.04);
+  --shadow-m: 0 4px 16px rgba(28,26,23,.1), 0 1px 3px rgba(28,26,23,.06);
+  --font-d:   'Playfair Display', Georgia, serif;
+  --font-b:   'Instrument Sans', system-ui, sans-serif;
+  --font-m:   'Instrument Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-b);background:var(--canvas);color:var(--ink);height:100vh;overflow:hidden;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* ── ONBOARDING ── */
+#onboarding{position:fixed;inset:0;background:var(--white);z-index:1000;display:flex;align-items:center;justify-content:center}
+.ob-wrap{width:680px;max-width:96vw}
+.ob-eyebrow{font-family:var(--font-m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.ob-logo{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.ob-mark{width:38px;height:38px;background:var(--ink);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--white);font-family:var(--font-d);font-size:18px;font-weight:600}
+.ob-name{font-family:var(--font-d);font-size:24px;color:var(--ink)}
+.ob-slide{display:none;animation:fadeUp .35s ease}
+.ob-slide.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.ob-h{font-family:var(--font-d);font-size:36px;font-weight:600;color:var(--ink);line-height:1.15;margin-bottom:14px}
+.ob-p{font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:28px;max-width:520px}
+.ob-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
+.ob-feat{border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.ob-feat-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.ob-feat h4{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.ob-feat p{font-size:12px;color:var(--ink3);line-height:1.5}
+.ob-footer{display:flex;align-items:center;justify-content:space-between}
+.ob-dots{display:flex;gap:5px}
+.ob-dot{width:5px;height:5px;border-radius:50%;background:var(--border2);cursor:pointer;transition:all .2s}
+.ob-dot.active{background:var(--blue);width:18px;border-radius:3px}
+.ob-acts{display:flex;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-s);border:1px solid transparent;cursor:pointer;font-family:var(--font-b);font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.btn-primary:hover{background:#2d2a26}
+.btn-amber{background:var(--amber);color:var(--white);border-color:var(--amber)}
+.btn-amber:hover{background:#155fa0}
+.btn-ghost{background:transparent;color:var(--ink2);border-color:var(--border2)}
+.btn-ghost:hover{border-color:var(--ink3);color:var(--ink)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:3px 9px;font-size:11px}
+
+/* ── SHELL ── */
+#app{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+#sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-header{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-mark{width:28px;height:28px;background:var(--ink);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--white);font-family:var(--font-d);font-size:13px;font-weight:600;flex-shrink:0}
+.sb-brand{font-family:var(--font-d);font-size:15px;color:var(--ink)}
+.sb-sub{font-family:var(--font-m);font-size:9px;letter-spacing:.1em;color:var(--blue);text-transform:uppercase;margin-top:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px}
+.sb-sec{font-family:var(--font-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);padding:10px 8px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:var(--radius-s);cursor:pointer;color:var(--ink3);font-size:13px;font-weight:400;transition:all .13s;margin-bottom:1px;position:relative}
+.sb-item:hover{background:var(--canvas);color:var(--ink)}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);font-weight:500}
+.sb-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:2px;background:var(--blue);border-radius:0 2px 2px 0}
+.sb-icon{font-size:14px;width:18px;text-align:center;opacity:.85}
+.sb-badge{margin-left:auto;background:var(--rose);color:var(--white);font-size:9px;font-weight:600;padding:1px 5px;border-radius:10px;font-family:var(--font-m)}
+.sb-badge-a{background:var(--blue);color:var(--white)}
+.sb-bottom{padding:10px 8px 12px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--radius-s);cursor:pointer}
+.sb-avatar{width:26px;height:26px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--white);font-family:var(--font-m);flex-shrink:0}
+.sb-user-name{font-size:12px;font-weight:600;color:var(--ink)}
+.sb-user-role{font-size:10.5px;color:var(--ink4)}
+
+/* ── TOPBAR ── */
+#topbar{height:50px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.tb-title{font-family:var(--font-d);font-size:15px;font-weight:500;color:var(--ink);flex:1}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:6px 12px;flex:1;max-width:320px;transition:border-color .15s}
+.tb-search:focus-within{border-color:var(--blue)}
+.tb-search input{background:none;border:none;outline:none;color:var(--ink);font-family:var(--font-b);font-size:13px;width:100%}
+.tb-search input::placeholder{color:var(--ink4)}
+.tb-icon{width:32px;height:32px;border-radius:var(--radius-s);border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .13s;color:var(--ink3);position:relative}
+.tb-icon:hover{border-color:var(--blue);color:var(--blue)}
+.tb-icon .dot{position:absolute;top:6px;right:6px;width:5px;height:5px;background:var(--warn);border-radius:50%;border:1.5px solid var(--white)}
+
+/* ── PAGES ── */
+#main{display:flex;flex:1;overflow:hidden;flex-direction:column}
+.page{flex:1;overflow-y:auto;padding:24px 28px;display:none}
+.page.active{display:block}
+
+/* ── LAYOUT HELPERS ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
+.ph-left h1{font-family:var(--font-d);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.ph-left p{font-size:12.5px;color:var(--ink3)}
+.ph-right{display:flex;gap:7px;flex-shrink:0;align-items:center}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mb-4{margin-bottom:16px}
+.mb-3{margin-bottom:12px}
+.mb-2{margin-bottom:8px}
+.sec-label{font-family:var(--font-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.ch{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ch-title{font-family:var(--font-d);font-size:14px;font-weight:500;color:var(--ink)}
+.cb{padding:14px 16px}
+.ch-sub{font-size:11px;color:var(--ink4)}
+
+/* ── METRICS ── */
+.metric{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:box-shadow .15s;box-shadow:var(--shadow)}
+.metric:hover{box-shadow:var(--shadow-m)}
+.metric-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.metric-icon{width:34px;height:34px;border-radius:var(--radius-s);display:flex;align-items:center;justify-content:center;font-size:15px}
+.metric-trend{font-family:var(--font-m);font-size:10px;font-weight:500;padding:2px 6px;border-radius:10px}
+.metric-val{font-family:var(--font-d);font-size:28px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.metric-label{font-size:12px;color:var(--ink3)}
+.m-amber .metric-icon{background:var(--blue-bg);color:var(--blue)}
+.m-warn .metric-icon{background:var(--warn-bg);color:var(--warn)}
+.m-teal .metric-icon{background:var(--blue-bg);color:var(--blue)}
+.m-rose .metric-icon{background:var(--rose-bg);color:var(--rose)}
+.m-sage .metric-icon{background:var(--green-bg);color:var(--green)}
+
+/* ── PROGRESS ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog-row:last-child{margin-bottom:0}
+.prog-label{font-size:12px;color:var(--ink2);width:145px;flex-shrink:0}
+.prog-track{flex:1;height:5px;background:var(--canvas2);border-radius:3px;overflow:hidden;cursor:pointer}
+.prog-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.prog-pct{font-family:var(--font-m);font-size:11px;font-weight:500;width:34px;text-align:right}
+
+/* ── DONUT ── */
+.donut-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:14px;font-weight:600;color:var(--ink)}
+.legend-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.legend-label{color:var(--ink2);flex:1}
+.legend-val{font-family:var(--font-m);font-size:11px;color:var(--ink);font-weight:500}
+
+/* ── ACTIVITY ── */
+.act-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}
+.act-row:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.act-text{font-size:12.5px;color:var(--ink2);line-height:1.5}
+.act-time{font-family:var(--font-m);font-size:10px;color:var(--ink4);margin-top:2px}
+
+/* ── TAGS & PILLS ── */
+.tag{font-size:10.5px;padding:2px 7px;border-radius:10px;font-weight:500;display:inline-block}
+.t-amber{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.t-teal{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.t-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.t-rose{background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-bd)}
+.t-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)}
+.t-sage{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.t-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.t-slate{background:var(--blue-dk-bg);color:var(--blue-dk);border:1px solid var(--blue-dk-bd)}
+.t-ink{background:var(--canvas2);color:var(--ink3);border:1px solid var(--border)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 14px;cursor:pointer;font-size:12.5px;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .13s;font-weight:400}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-family:var(--font-m);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink4);padding:8px 12px;border-bottom:1px solid var(--border);font-weight:500}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--ink2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .1s;cursor:pointer}
+.tbl tbody tr:hover td{background:var(--canvas)}
+
+/* ── REPO ── */
+.folder-sidebar{width:190px;flex-shrink:0}
+.folder-list{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.fi{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:pointer;font-size:12.5px;color:var(--ink3);border-bottom:1px solid var(--border);transition:all .12s}
+.fi:last-child{border-bottom:none}
+.fi:hover{background:var(--canvas);color:var(--ink)}
+.fi.active{background:var(--blue-bg);color:var(--blue);font-weight:500}
+.fi-count{margin-left:auto;font-family:var(--font-m);font-size:10px;color:var(--ink4)}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px}
+.fc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.fc:hover{border-color:var(--border2);box-shadow:var(--shadow-m);transform:translateY(-1px)}
+.fc.sel{border-color:var(--blue);background:var(--blue-bg)}
+.fc-icon{font-size:26px;margin-bottom:8px}
+.fc-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px;line-height:1.3}
+.fc-meta{font-size:10.5px;color:var(--ink4);font-family:var(--font-m)}
+.fc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px}
+
+/* ── CHIP FILTERS ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:4px 11px;border-radius:10px;border:1px solid var(--border);color:var(--ink3);background:var(--white);cursor:pointer;transition:all .13s;font-weight:400}
+.chip:hover{border-color:var(--border2);color:var(--ink)}
+.chip.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);font-weight:500}
+
+/* ── INGEST ── */
+.int-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.int-card:hover{border-color:var(--border2);box-shadow:var(--shadow-m)}
+.int-card.connected{border-color:var(--green-bd);background:var(--green-bg)}
+.int-icon{font-size:28px;flex-shrink:0}
+.int-info h4{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.int-info p{font-size:11.5px;color:var(--ink4)}
+.int-badge{margin-left:auto;font-size:10.5px;padding:3px 9px;border-radius:10px;font-weight:600;flex-shrink:0;font-family:var(--font-m)}
+.ib-conn{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.ib-avail{background:var(--canvas2);color:var(--ink4);border:1px solid var(--border)}
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:36px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px}
+.drop-zone:hover{border-color:var(--blue);background:var(--blue-bg)}
+.drop-zone h3{font-family:var(--font-d);font-size:17px;color:var(--ink2);margin-bottom:6px}
+.drop-zone p{font-size:12.5px;color:var(--ink4)}
+.fmt-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;justify-content:center}
+.fmt-chip{font-family:var(--font-m);font-size:10px;padding:2px 8px;border-radius:var(--radius-s);background:var(--white);border:1px solid var(--border);color:var(--ink4)}
+.q-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.q-item:last-child{border-bottom:none}
+.q-icon{font-size:18px;flex-shrink:0}
+.q-info{flex:1}
+.q-name{font-size:13px;font-weight:500;color:var(--ink)}
+.q-sub{font-family:var(--font-m);font-size:10.5px;color:var(--ink4);margin-top:2px}
+.q-prog{width:110px}
+.q-bar{height:3px;background:var(--canvas2);border-radius:2px;overflow:hidden;margin-bottom:3px}
+.q-fill{height:100%;border-radius:2px;background:var(--blue);transition:width .5s}
+.q-pct{font-family:var(--font-m);font-size:10px;color:var(--ink4)}
+
+/* ── AUDIT ── */
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.sc:hover{box-shadow:var(--shadow-m);transform:translateY(-1px)}
+.sc-ring{width:60px;height:60px;margin:0 auto 10px;position:relative}
+.sc-ring svg{transform:rotate(-90deg)}
+.sc-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--ink)}
+.sc-label{font-size:11.5px;color:var(--ink3);font-weight:500}
+.issue-list{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.issue{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.issue:hover{background:var(--canvas)}
+.issue:last-child{border-bottom:none}
+.isev{width:3px;border-radius:2px;align-self:stretch;min-height:18px;flex-shrink:0}
+.s-high{background:var(--rose)}
+.s-med{background:var(--warn)}
+.s-low{background:var(--sage)}
+.ibody{flex:1}
+.i-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.i-desc{font-size:11.5px;color:var(--ink3);line-height:1.5}
+.i-meta{display:flex;gap:6px;margin-top:5px}
+.i-act{display:flex;gap:6px;flex-shrink:0;align-items:center}
+
+/* ── SEARCH ── */
+.search-hero{display:flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:11px 16px;margin-bottom:14px;box-shadow:var(--shadow);transition:border-color .15s}
+.search-hero:focus-within{border-color:var(--blue)}
+.search-hero input{flex:1;background:none;border:none;outline:none;color:var(--ink);font-family:var(--font-b);font-size:15px}
+.search-hero input::placeholder{color:var(--ink4)}
+.transform-layout{display:grid;grid-template-columns:1fr 300px;gap:16px}
+.ctx-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;height:fit-content;position:sticky;top:0;box-shadow:var(--shadow)}
+.ctx-panel h4{font-family:var(--font-d);font-size:14px;margin-bottom:4px;color:var(--ink)}
+.deriv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.deriv-btn{background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:10px 8px;text-align:center;cursor:pointer;transition:all .13s}
+.deriv-btn:hover{border-color:var(--blue-bd);background:var(--blue-bg)}
+.deriv-icon{font-size:18px;display:block;margin-bottom:4px}
+.deriv-label{font-size:11px;color:var(--ink3);font-weight:500}
+.res-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.res-card:hover{border-color:var(--border2);box-shadow:var(--shadow-m)}
+.res-head{padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.res-icon{font-size:20px;flex-shrink:0}
+.res-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.res-src{font-size:11px;color:var(--ink4);font-family:var(--font-m)}
+.res-exc{padding:0 14px 12px;font-size:12px;color:var(--ink3);line-height:1.65;border-top:1px solid var(--border);padding-top:10px}
+.res-acts{padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:6px}
+
+/* ── WORKFLOW ── */
+.wf-layout{display:grid;grid-template-columns:220px 1fr 220px;gap:14px}
+.agent-lib{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.al-search{padding:9px 12px;border-bottom:1px solid var(--border)}
+.al-search input{width:100%;background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:6px 10px;color:var(--ink);font-family:var(--font-b);font-size:12px;outline:none}
+.al-sec{padding:6px 12px 4px;font-family:var(--font-m);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);border-bottom:1px solid var(--border);background:var(--canvas)}
+.al-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:12px;color:var(--ink2);transition:background .12s}
+.al-item:hover{background:var(--canvas);color:var(--ink)}
+.al-item:last-child{border-bottom:none}
+.al-icon{font-size:14px;width:18px;text-align:center}
+.canvas-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.ca-agent{background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:9px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:default;transition:border-color .13s}
+.ca-agent:hover{border-color:var(--border2)}
+.ca-icon{font-size:16px}
+.ca-name{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:1px}
+.ca-desc{font-size:11px;color:var(--ink4)}
+.ca-rm{color:var(--ink4);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:3px;margin-left:auto;transition:all .12s}
+.ca-rm:hover{color:var(--rose);background:var(--rose-bg)}
+.wf-connector{display:flex;justify-content:center;height:14px;color:var(--ink4);font-size:13px}
+.preset-btn{background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:10px 12px;cursor:pointer;font-size:12px;color:var(--ink2);transition:all .13s;text-align:left;margin-bottom:6px;display:block;width:100%}
+.preset-btn:hover{border-color:var(--blue-bd);color:var(--blue);background:var(--blue-bg)}
+.preset-name{font-weight:600;color:var(--ink);margin-bottom:2px}
+.preset-desc{font-size:10.5px;color:var(--ink4)}
+.delta-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.delta-row:last-child{border-bottom:none}
+.delta-k{color:var(--ink3)}
+.delta-v{font-family:var(--font-m);font-weight:500;color:var(--green)}
+
+/* ── REVIEW ── */
+.hil-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.hil-st{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)}
+.hil-num{font-family:var(--font-d);font-size:26px;font-weight:600;margin-bottom:3px}
+.hil-lbl{font-size:11px;color:var(--ink4)}
+.rv-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.rv-head{padding:12px 16px;border-bottom:1px solid transparent;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s}
+.rv-head:hover{background:var(--canvas)}
+.rv-icon{font-size:18px;flex-shrink:0}
+.rv-title{font-size:13px;font-weight:600;color:var(--ink)}
+.rv-sub{font-size:11px;color:var(--ink4);margin-top:1px;font-family:var(--font-m)}
+.rv-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;font-family:var(--font-m)}
+.rv-expand{margin-left:auto;color:var(--ink4);font-size:13px}
+.rv-body{padding:14px 16px;display:none;border-top:1px solid var(--border)}
+.rv-body.open{display:block}
+.ai-out{background:var(--blue-bg);border:1px solid var(--blue-bd);border-left:3px solid var(--blue);border-radius:var(--radius-s);padding:12px;margin-bottom:12px}
+.ai-out-lbl{font-family:var(--font-m);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+.ai-out-txt{font-size:12.5px;color:var(--ink2);line-height:1.65}
+.conf-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.conf-label{font-size:11px;color:var(--ink4);width:80px;font-family:var(--font-m)}
+.conf-track{flex:1;height:4px;background:var(--canvas2);border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;border-radius:2px}
+.rv-acts{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.btn-approve{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
+.btn-approve:hover{background:var(--green);color:var(--white)}
+.btn-reject{background:var(--rose-bg);border:1px solid var(--rose-bd);color:var(--rose)}
+.btn-reject:hover{background:var(--rose);color:var(--white)}
+.btn-edit-a{background:var(--blue-bg);border:1px solid var(--blue-bd);color:var(--blue)}
+.btn-edit-a:hover{background:var(--blue);color:var(--white)}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(28,26,23,.35);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-ov.open{display:flex}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:12px;width:500px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(28,26,23,.18),0 4px 12px rgba(28,26,23,.08)}
+.mh{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh-title{font-family:var(--font-d);font-size:17px;font-weight:500;color:var(--ink)}
+.mc-btn{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:20px;padding:0 4px;line-height:1;transition:color .12s}
+.mc-btn:hover{color:var(--rose)}
+.mb{padding:20px}
+.mf{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.fg{margin-bottom:14px}
+.fl{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px;display:block}
+.fi-inp{width:100%;background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:8px 12px;color:var(--ink);font-family:var(--font-b);font-size:13px;outline:none;transition:border-color .13s}
+.fi-inp:focus{border-color:var(--blue)}
+
+/* ── TOAST ── */
+.toast-ct{position:fixed;bottom:20px;right:20px;z-index:900;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:11px 15px;display:flex;align-items:center;gap:9px;min-width:260px;box-shadow:var(--shadow-m);animation:tin .28s ease;font-size:12.5px;color:var(--ink)}
+@keyframes tin{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+.toast.s{border-left:3px solid var(--sage)}
+.toast.i{border-left:3px solid var(--slate)}
+.toast.w{border-left:3px solid var(--warn)}
+.toast-icon{font-size:14px}
+
+/* ── OUTPUTS ── */
+.out-stat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.out-stat h3{font-family:var(--font-d);font-size:24px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.out-stat .label{font-size:11.5px;color:var(--ink3)}
+
+/* ── COMPETITIVE ── */
+/* reuse general */
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;text-align:center;color:var(--ink4)}
+.empty-icon{font-size:44px;margin-bottom:12px;opacity:.45}
+.empty h3{font-family:var(--font-d);font-size:17px;color:var(--ink3);margin-bottom:6px}
+.empty p{font-size:13px}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ ONBOARDING ════════════════ -->
+<div id="onboarding">
+  <div class="ob-wrap">
+    <div class="ob-eyebrow">AI Content Pipeline · Kadal</div>
+    <div class="ob-logo">
+      <div class="ob-mark">K</div>
+      <div class="ob-name">Kadal</div>
+    </div>
+
+    <div class="ob-slide active" id="sl0">
+      <h1 class="ob-h">Transform your content<br>library with intelligence</h1>
+      <p class="ob-p">Kadal is a unified platform for publishers, universities, and institutions — ingest any content, audit it automatically, enrich it with AI agents, and ship derivative outputs at scale.</p>
+      <div class="ob-features">
+        <div class="ob-feat"><div class="ob-feat-icon">📥</div><div><h4>Universal Ingestion</h4><p>PDF, EPUB, XML, MP4, SCORM — from Google Drive, Box, CMS, or direct upload</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">📊</div><div><h4>Intelligence Dashboard</h4><p>Accessibility, metadata, assessment and standards compliance at a glance</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">⚡</div><div><h4>Composable AI Agents</h4><p>Build custom workflows from a library of 14+ specialist agents</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">✅</div><div><h4>Human-in-the-Loop</h4><p>Review, edit, or approve every AI output before it reaches learners</p></div></div>
+      </div>
+    </div>
+
+    <div class="ob-slide" id="sl1">
+      <h1 class="ob-h">Five steps from raw<br>content to enriched asset</h1>
+      <p class="ob-p">Kadal is organized around a simple progressive workflow — each step builds on the last, creating a cumulative intelligence layer over your library.</p>
+      <div class="ob-features">
+        <div class="ob-feat"><div class="ob-feat-icon">1</div><div><h4>Ingest</h4><p>Connect integrations or drag-drop files. Kadal classifies type and extracts metadata instantly.</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">2</div><div><h4>Inventory & Audit</h4><p>Content health dashboard surfaces gaps in compliance, coverage, and tagging.</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">3</div><div><h4>Run AI Workflows</h4><p>Compose agents, choose scope, and run enrichment across any selection of titles.</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">4</div><div><h4>Human Review</h4><p>AI outputs queue for editorial sign-off. Approve, tweak, or reject with one click.</p></div></div>
+      </div>
+    </div>
+
+    <div class="ob-slide" id="sl2">
+      <h1 class="ob-h">Your demo workspace<br>is ready</h1>
+      <p class="ob-p">Pre-loaded with <strong>47 sample titles</strong> across Higher Education, K-12, and Workforce — including PDFs, EPUBs, MP4s, and SCORM packages.</p>
+      <div class="ob-features">
+        <div class="ob-feat" style="border-color:var(--blue-bd);background:var(--blue-bg)"><div class="ob-feat-icon">📊</div><div><h4>Start at Dashboard</h4><p>Your content health overview and before/after enrichment delta</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">📁</div><div><h4>Browse Repository</h4><p>Explore all 47 ingested titles in folder view</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">🔎</div><div><h4>Search & Transform</h4><p>Find concepts across titles and generate derivative content</p></div></div>
+        <div class="ob-feat"><div class="ob-feat-icon">✅</div><div><h4>Review AI Queue</h4><p>8 items waiting for your editorial approval</p></div></div>
+      </div>
+    </div>
+
+    <div class="ob-footer">
+      <div class="ob-dots">
+        <div class="ob-dot active" id="dot0" onclick="goSlide(0)"></div>
+        <div class="ob-dot" id="dot1" onclick="goSlide(1)"></div>
+        <div class="ob-dot" id="dot2" onclick="goSlide(2)"></div>
+      </div>
+      <div class="ob-acts">
+        <button class="btn btn-ghost" id="ob-back" onclick="prevSlide()" style="display:none">← Back</button>
+        <button class="btn btn-primary" id="ob-next" onclick="nextSlide()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ APP ════════════════ -->
+<div id="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-header">
+      <div class="sb-mark">K</div>
+      <div>
+        <div class="sb-brand">Kadal</div>
+        <div class="sb-sub">Content Pipeline</div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Overview</div>
+      <div class="sb-item active" onclick="nav('dashboard')"><span class="sb-icon">◆</span> Dashboard</div>
+      <div class="sb-sec" style="margin-top:8px">Content</div>
+      <div class="sb-item" onclick="nav('repository')"><span class="sb-icon">□</span> Repository</div>
+      <div class="sb-item" onclick="nav('ingest')"><span class="sb-icon">↓</span> Ingest Content</div>
+      <div class="sb-sec" style="margin-top:8px">Intelligence</div>
+      <div class="sb-item" onclick="nav('audit')"><span class="sb-icon">◉</span> Audit &amp; Gaps <span class="sb-badge" style="background:var(--warn)">3</span></div>
+      <div class="sb-item" onclick="nav('search')"><span class="sb-icon">⌕</span> Search &amp; Transform</div>
+      <div class="sb-item" onclick="nav('workflow')"><span class="sb-icon">⟶</span> Workflows</div>
+      <div class="sb-sec" style="margin-top:8px">Review</div>
+      <div class="sb-item" onclick="nav('review')"><span class="sb-icon">✓</span> Human Review <span class="sb-badge">8</span></div>
+      <div class="sb-item" onclick="nav('outputs')"><span class="sb-icon">↑</span> Outputs &amp; Exports</div>
+      <div class="sb-sec" style="margin-top:8px">Intelligence</div>
+      <div class="sb-item" onclick="nav('competitive')"><span class="sb-icon">⊕</span> Market Intel</div>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-item" onclick="toast('Settings — coming soon','i')"><span class="sb-icon">⚙</span> Settings</div>
+      <div class="sb-user">
+        <div class="sb-avatar">JP</div>
+        <div><div class="sb-user-name">John Prabhu</div><div class="sb-user-role">Editorial Lead</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div class="tb-title" id="tb-title">Dashboard</div>
+      <div class="tb-search">
+        <span style="color:var(--ink4);font-size:13px">⌕</span>
+        <input type="text" placeholder="Search across all content…" id="gsearch" onkeydown="if(event.key==='Enter'){nav('search');document.getElementById('srch-inp').value=this.value;doSearch();}">
+      </div>
+      <div style="display:flex;gap:6px">
+        <div class="tb-icon" onclick="nav('review')" title="8 review items"><span>🔔</span><div class="dot"></div></div>
+        <div class="tb-icon" onclick="nav('ingest')">+</div>
+        <div class="tb-icon" onclick="openM('wf-modal')">▶</div>
+      </div>
+    </div>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="ph">
+        <div class="ph-left">
+          <h1>Good morning, John</h1>
+          <p>47 titles in repository · Last run 2 hrs ago · <span style="color:var(--warn)">3 audit alerts</span> · <span style="color:var(--warn)">8 pending review</span></p>
+        </div>
+        <div class="ph-right">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Generating report…','i')">Export Report</button>
+          <button class="btn btn-amber btn-sm" onclick="openM('wf-modal')">▶ Run Workflow</button>
+        </div>
+      </div>
+
+      <div class="grid-4 mb-4">
+        <div class="metric m-teal" onclick="nav('repository')">
+          <div class="metric-top"><div class="metric-icon">□</div><div class="metric-trend" style="background:var(--green-bg);color:var(--green)">+342</div></div>
+          <div class="metric-val">4,812</div>
+          <div class="metric-label">Total Assets</div>
+        </div>
+        <div class="metric m-warn" onclick="nav('audit')">
+          <div class="metric-top"><div class="metric-icon">◉</div><div class="metric-trend" style="background:var(--warn-bg);color:var(--warn)">−31%</div></div>
+          <div class="metric-val">69%</div>
+          <div class="metric-label">Accessibility Score</div>
+        </div>
+        <div class="metric m-rose" onclick="nav('review')">
+          <div class="metric-top"><div class="metric-icon">✓</div><div class="metric-trend" style="background:var(--warn-bg);color:var(--warn)">pending</div></div>
+          <div class="metric-val">8</div>
+          <div class="metric-label">Awaiting Review</div>
+        </div>
+        <div class="metric m-sage" onclick="nav('outputs')">
+          <div class="metric-top"><div class="metric-icon">↑</div><div class="metric-trend" style="background:var(--green-bg);color:var(--green)">+89</div></div>
+          <div class="metric-val">1,247</div>
+          <div class="metric-label">Derivatives Created</div>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-4">
+        <div class="card">
+          <div class="ch"><div class="ch-title">Content Health</div><button class="btn btn-ghost btn-sm" onclick="nav('audit')">View Audit →</button></div>
+          <div class="cb">
+            <div class="prog-row"><div class="prog-label">Accessibility (WCAG)</div><div class="prog-track" onclick="nav('audit')"><div class="prog-fill" style="width:69%;background:var(--warn)"></div></div><div class="prog-pct" style="color:var(--amber)">69%</div></div>
+            <div class="prog-row"><div class="prog-label">Metadata Completeness</div><div class="prog-track" onclick="nav('audit')"><div class="prog-fill" style="width:54%;background:var(--rose)"></div></div><div class="prog-pct" style="color:var(--rose)">54%</div></div>
+            <div class="prog-row"><div class="prog-label">Assessment Coverage</div><div class="prog-track" onclick="nav('audit')"><div class="prog-fill" style="width:41%;background:var(--rose)"></div></div><div class="prog-pct" style="color:var(--rose)">41%</div></div>
+            <div class="prog-row"><div class="prog-label">Standards Alignment</div><div class="prog-track" onclick="nav('audit')"><div class="prog-fill" style="width:78%;background:var(--green)"></div></div><div class="prog-pct" style="color:var(--sage)">78%</div></div>
+            <div class="prog-row"><div class="prog-label">Media Enrichment</div><div class="prog-track" onclick="nav('audit')"><div class="prog-fill" style="width:33%;background:var(--blue-dk)"></div></div><div class="prog-pct" style="color:var(--slate)">33%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-title">Asset Breakdown</div><div class="ch-sub">47 titles · 4,812 assets</div></div>
+          <div class="cb" style="display:flex;align-items:center;gap:20px">
+            <div class="donut-wrap">
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--canvas2)" stroke-width="8"/>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--blue)" stroke-width="8" stroke-dasharray="59 176" stroke-linecap="round"/>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--blue-dk)" stroke-width="8" stroke-dasharray="37 176" stroke-dashoffset="-59" stroke-linecap="round"/>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--blue-dk)" stroke-width="8" stroke-dasharray="25 176" stroke-dashoffset="-96" stroke-linecap="round"/>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--green)" stroke-width="8" stroke-dasharray="20 176" stroke-dashoffset="-121" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-center">47</div>
+            </div>
+            <div style="flex:1">
+              <div class="legend-row"><div class="legend-dot" style="background:var(--blue)"></div><div class="legend-label">Text / Documents</div><div class="legend-val">2,410</div></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--blue-dk)"></div><div class="legend-label">Media (A/V)</div><div class="legend-val">847</div></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--blue-dk)"></div><div class="legend-label">Assessments</div><div class="legend-val">623</div></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div><div class="legend-label">Interactive</div><div class="legend-val">492</div></div>
+              <div class="legend-row"><div class="legend-dot" style="background:var(--ink4)"></div><div class="legend-label">Images</div><div class="legend-val">440</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Before / After -->
+      <div class="card mb-4">
+        <div class="ch"><div class="ch-title">Before vs. After — Last Enrichment Run</div><button class="btn btn-ghost btn-sm" onclick="nav('outputs')">Full Report →</button></div>
+        <div class="cb" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0">
+          <div style="text-align:center;padding:12px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Assessments</div>
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--green)">+342</div>
+            <div style="font-size:11px;color:var(--ink4);margin-top:4px">623 → 965</div>
+          </div>
+          <div style="text-align:center;padding:12px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Metadata Tags</div>
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--green)">+891</div>
+            <div style="font-size:11px;color:var(--ink4);margin-top:4px">1,204 → 2,095</div>
+          </div>
+          <div style="text-align:center;padding:12px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">A11y Fixed</div>
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--blue)">+22%</div>
+            <div style="font-size:11px;color:var(--ink4);margin-top:4px">47% → 69%</div>
+          </div>
+          <div style="text-align:center;padding:12px;border-right:1px solid var(--border)">
+            <div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Glossary Terms</div>
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--green)">+1,420</div>
+            <div style="font-size:11px;color:var(--ink4);margin-top:4px">0 → 1,420</div>
+          </div>
+          <div style="text-align:center;padding:12px">
+            <div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">TTS Audio</div>
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:600;color:var(--green)">+38</div>
+            <div style="font-size:11px;color:var(--ink4);margin-top:4px">12 → 50 files</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity -->
+      <div class="card">
+        <div class="ch"><div class="ch-title">Recent Activity</div></div>
+        <div class="cb" style="padding:0 16px">
+          <div class="act-row"><div class="act-dot" style="background:var(--green)"></div><div><div class="act-text"><strong>Assessment Generator</strong> created 89 new MCQs for Biology 101</div><div class="act-time">2 hours ago</div></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--blue)"></div><div><div class="act-text"><strong>Google Drive sync</strong> pulled 14 new assets from STEM Collection</div><div class="act-time">4 hours ago</div></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--warn)"></div><div><div class="act-text"><strong>Accessibility audit</strong> flagged 30 non-compliant assets in K-12 Library</div><div class="act-time">6 hours ago</div></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--blue-dk)"></div><div><div class="act-text"><strong>Mastery Path</strong> "Python for Beginners" approved and exported to Canvas LMS</div><div class="act-time">Yesterday</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ REPOSITORY ═══ -->
+    <div class="page" id="page-repository">
+      <div class="ph">
+        <div class="ph-left"><h1>Content Repository</h1><p>47 titles · 4,812 assets across all verticals</p></div>
+        <div class="ph-right">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Exporting inventory report…','i')">Export Inventory</button>
+          <button class="btn btn-primary btn-sm" onclick="nav('ingest')">+ Add Content</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div class="search-hero" style="margin-bottom:0;flex:1;max-width:380px;padding:7px 12px">
+          <span style="color:var(--ink4);font-size:13px">⌕</span>
+          <input type="text" placeholder="Filter assets…" oninput="toast('Filtering: '+this.value,'i')">
+        </div>
+        <div class="chips">
+          <div class="chip active" onclick="chipSel(this)">All</div>
+          <div class="chip" onclick="chipSel(this)">PDF</div>
+          <div class="chip" onclick="chipSel(this)">Video</div>
+          <div class="chip" onclick="chipSel(this)">EPUB</div>
+          <div class="chip" onclick="chipSel(this)">Audio</div>
+          <div class="chip" onclick="chipSel(this)">SCORM</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px">
+        <div class="folder-sidebar">
+          <div class="sec-label">Folders</div>
+          <div class="folder-list">
+            <div class="fi active" onclick="fSel(this)">📂 All Content <span class="fi-count">47</span></div>
+            <div class="fi" onclick="fSel(this)">🎓 Higher Education <span class="fi-count">18</span></div>
+            <div class="fi" onclick="fSel(this)">🏫 K-12 <span class="fi-count">14</span></div>
+            <div class="fi" onclick="fSel(this)">🏢 Workforce <span class="fi-count">9</span></div>
+            <div class="fi" onclick="fSel(this)">🎥 Media Library <span class="fi-count">6</span></div>
+            <div class="fi" onclick="nav('ingest')">+ New Folder</div>
+          </div>
+          <div class="sec-label" style="margin-top:14px">Quick Filters</div>
+          <div class="folder-list">
+            <div class="fi" onclick="toast('Showing non-compliant assets','w')">⚠ Non-compliant <span class="fi-count" style="color:var(--rose)">30</span></div>
+            <div class="fi" onclick="toast('Showing untagged assets','i')">◯ Untagged <span class="fi-count" style="color:var(--warn)">22</span></div>
+            <div class="fi" onclick="toast('Assets with no assessments','i')">□ No Assessments <span class="fi-count">14</span></div>
+          </div>
+        </div>
+        <div class="file-grid" style="flex:1">
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📄</div><div class="fc-name">Biology 101 – Course Textbook</div><div class="fc-meta">PDF · 342 pages · 4.2 MB</div><div class="fc-tags"><span class="tag t-slate">Higher Ed</span><span class="tag t-warn">Needs A11y</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📗</div><div class="fc-name">Intro to Python Programming</div><div class="fc-meta">EPUB · 18 chapters · 2.8 MB</div><div class="fc-tags"><span class="tag t-green">✓ Compliant</span><span class="tag t-blue">Tagged</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">🎥</div><div class="fc-name">Cell Division – Lecture Series</div><div class="fc-meta">MP4 · 6 videos · 2.1 hrs</div><div class="fc-tags"><span class="tag t-warn">No TTS</span><span class="tag t-ink">K-12</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📄</div><div class="fc-name">State Math Standards – Grade 5</div><div class="fc-meta">PDF · 89 pages · 1.1 MB</div><div class="fc-tags"><span class="tag t-ink">K-12</span><span class="tag t-green">Aligned</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">🎮</div><div class="fc-name">Safety Training – Power Utilities</div><div class="fc-meta">SCORM · 12 modules</div><div class="fc-tags"><span class="tag t-slate">Workforce</span><span class="tag t-rose">Low Coverage</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">🎧</div><div class="fc-name">Chemistry Fundamentals Podcast</div><div class="fc-meta">MP3 · 24 episodes · 18.4 hrs</div><div class="fc-tags"><span class="tag t-blue">TTS Ready</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📗</div><div class="fc-name">Project Management PMP Guide</div><div class="fc-meta">EPUB · 450 pages · 5.6 MB</div><div class="fc-tags"><span class="tag t-slate">Workforce</span><span class="tag t-warn">Needs Tags</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📄</div><div class="fc-name">US History 1865–Present</div><div class="fc-meta">PDF · 278 pages · 3.4 MB</div><div class="fc-tags"><span class="tag t-ink">K-12</span><span class="tag t-green">✓ Compliant</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">🎥</div><div class="fc-name">Data Science Bootcamp Videos</div><div class="fc-meta">MP4 · 32 videos · 8.4 hrs</div><div class="fc-tags"><span class="tag t-slate">Higher Ed</span><span class="tag t-rose">No Captions</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📄</div><div class="fc-name">Environmental Science K-8</div><div class="fc-meta">PDF · 156 pages · 2.1 MB</div><div class="fc-tags"><span class="tag t-ink">K-12</span><span class="tag t-warn">Partial Tags</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">🎮</div><div class="fc-name">Nursing Fundamentals – Interactive</div><div class="fc-meta">SCORM · 8 units · 45 activities</div><div class="fc-tags"><span class="tag t-slate">Higher Ed</span><span class="tag t-green">✓ Compliant</span></div></div>
+          <div class="fc" onclick="openAsset(this)"><div class="fc-icon">📗</div><div class="fc-name">Spanish Language Arts – Grade 3</div><div class="fc-meta">EPUB · 220 pages · 1.9 MB</div><div class="fc-tags"><span class="tag t-ink">K-12</span><span class="tag t-warn">Needs A11y</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ INGEST ═══ -->
+    <div class="page" id="page-ingest">
+      <div class="ph">
+        <div class="ph-left"><h1>Ingest Content</h1><p>Connect integrations or upload files directly</p></div>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Schedule settings opened','i')">⏰ Schedule Sync</button>
+      </div>
+      <div class="sec-label mb-2">Integrations</div>
+      <div class="grid-2 mb-4">
+        <div class="int-card connected" onclick="openM('gd-modal')"><div class="int-icon">📁</div><div class="int-info"><h4>Google Drive</h4><p>Last sync: 4 hrs ago · 14 new assets</p></div><div class="int-badge ib-conn">✓ Connected</div></div>
+        <div class="int-card" onclick="openM('conn-modal')"><div class="int-icon">📦</div><div class="int-info"><h4>Box</h4><p>Sync folders from Box cloud storage</p></div><div class="int-badge ib-avail">Connect</div></div>
+        <div class="int-card" onclick="openM('conn-modal')"><div class="int-icon">☁️</div><div class="int-info"><h4>SharePoint / OneDrive</h4><p>Microsoft 365 integration</p></div><div class="int-badge ib-avail">Connect</div></div>
+        <div class="int-card" onclick="openM('conn-modal')"><div class="int-icon">🖥️</div><div class="int-info"><h4>Canvas / Brightspace LMS</h4><p>Pull content directly from your LMS</p></div><div class="int-badge ib-avail">Connect</div></div>
+        <div class="int-card" onclick="openM('conn-modal')"><div class="int-icon">🗄️</div><div class="int-info"><h4>Amazon S3</h4><p>Connect to your content buckets</p></div><div class="int-badge ib-avail">Connect</div></div>
+        <div class="int-card" onclick="openM('conn-modal')"><div class="int-icon">🌐</div><div class="int-info"><h4>Web Scraper</h4><p>Schedule crawls for competitive intelligence</p></div><div class="int-badge ib-avail">Configure</div></div>
+      </div>
+      <div class="sec-label mb-2">Direct Upload</div>
+      <div class="drop-zone" onclick="simUpload()">
+        <div style="font-size:36px;margin-bottom:10px">⊕</div>
+        <h3>Drop files here or click to browse</h3>
+        <p>Supports all major educational content formats</p>
+        <div class="fmt-chips">
+          <span class="fmt-chip">PDF</span><span class="fmt-chip">EPUB</span><span class="fmt-chip">XML</span><span class="fmt-chip">DOCX</span><span class="fmt-chip">MP3</span><span class="fmt-chip">MP4</span><span class="fmt-chip">SCORM</span><span class="fmt-chip">QTI</span><span class="fmt-chip">HTML</span><span class="fmt-chip">Common Cartridge</span>
+        </div>
+      </div>
+      <div class="sec-label mb-2">Ingestion Queue</div>
+      <div class="card">
+        <div class="q-item"><div class="q-icon">📄</div><div class="q-info"><div class="q-name">Advanced Chemistry – Textbook.pdf</div><div class="q-sub">PDF · 4.2 MB · Google Drive</div></div><div class="q-prog"><div class="q-bar"><div class="q-fill" style="width:100%;background:var(--green)"></div></div><div class="q-pct">Complete</div></div><span class="tag t-green">Done</span></div>
+        <div class="q-item"><div class="q-icon">🎥</div><div class="q-info"><div class="q-name">Physics Lab Videos – Series 2.zip</div><div class="q-sub">ZIP · 12 MP4 files · 1.8 GB</div></div><div class="q-prog"><div class="q-bar"><div class="q-fill" style="width:67%"></div></div><div class="q-pct">67%</div></div><span class="tag t-teal">Ingesting</span></div>
+        <div class="q-item"><div class="q-icon">📗</div><div class="q-info"><div class="q-name">Workforce Training – Module 4.epub</div><div class="q-sub">EPUB · 890 KB · Manual Upload</div></div><div class="q-prog"><div class="q-bar"><div class="q-fill" style="width:30%;background:var(--blue)"></div></div><div class="q-pct">30%</div></div><span class="tag t-amber">Classifying</span></div>
+      </div>
+    </div>
+
+    <!-- ═══ AUDIT ═══ -->
+    <div class="page" id="page-audit">
+      <div class="ph">
+        <div class="ph-left"><h1>Audit &amp; Gap Analysis</h1><p>Content health intelligence across your full library</p></div>
+        <div class="ph-right">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Exporting audit report…','i')">Export Report</button>
+          <button class="btn btn-primary btn-sm" onclick="openM('audit-modal')">▶ Run Audit</button>
+        </div>
+      </div>
+      <div class="score-grid">
+        <div class="sc" onclick="toast('Accessibility detail view','i')">
+          <div class="sc-ring"><svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="23" fill="none" stroke="var(--canvas2)" stroke-width="7"/><circle cx="30" cy="30" r="23" fill="none" stroke="var(--warn)" stroke-width="7" stroke-dasharray="100 145" stroke-linecap="round"/></svg><div class="sc-center">69%</div></div>
+          <div class="sc-label">Accessibility</div>
+        </div>
+        <div class="sc" onclick="toast('Metadata detail view','i')">
+          <div class="sc-ring"><svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="23" fill="none" stroke="var(--canvas2)" stroke-width="7"/><circle cx="30" cy="30" r="23" fill="none" stroke="var(--rose)" stroke-width="7" stroke-dasharray="78 145" stroke-linecap="round"/></svg><div class="sc-center">54%</div></div>
+          <div class="sc-label">Metadata</div>
+        </div>
+        <div class="sc" onclick="toast('Assessment detail view','i')">
+          <div class="sc-ring"><svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="23" fill="none" stroke="var(--canvas2)" stroke-width="7"/><circle cx="30" cy="30" r="23" fill="none" stroke="var(--rose)" stroke-width="7" stroke-dasharray="59 145" stroke-linecap="round"/></svg><div class="sc-center">41%</div></div>
+          <div class="sc-label">Assessments</div>
+        </div>
+        <div class="sc" onclick="toast('Standards detail view','i')">
+          <div class="sc-ring"><svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="23" fill="none" stroke="var(--canvas2)" stroke-width="7"/><circle cx="30" cy="30" r="23" fill="none" stroke="var(--green)" stroke-width="7" stroke-dasharray="113 145" stroke-linecap="round"/></svg><div class="sc-center">78%</div></div>
+          <div class="sc-label">Standards</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="tabSel(this)">All Issues (47)</div>
+        <div class="tab" onclick="tabSel(this)">High Priority (12)</div>
+        <div class="tab" onclick="tabSel(this)">Accessibility (30)</div>
+        <div class="tab" onclick="tabSel(this)">Metadata (22)</div>
+        <div class="tab" onclick="tabSel(this)">Assessments (14)</div>
+      </div>
+      <div class="issue-list">
+        <div class="issue" onclick="openM('rem-modal')"><div class="isev s-high"></div><div class="ibody"><div class="i-title">30 assets missing alt text — Biology 101 Textbook</div><div class="i-desc">Images in chapters 4–12 have no alt text. WCAG 2.1 Level A violation (1.1.1)</div><div class="i-meta"><span class="tag t-rose">High · Accessibility</span><span class="tag t-ink">PDF</span></div></div><div class="i-act"><button class="btn btn-amber btn-xs" onclick="event.stopPropagation();simRem()">Auto-Fix</button></div></div>
+        <div class="issue" onclick="openM('rem-modal')"><div class="isev s-high"></div><div class="ibody"><div class="i-title">Data Science Bootcamp — 32 videos have no captions</div><div class="i-desc">Section 508 compliance required for institutional use. Caption generation available.</div><div class="i-meta"><span class="tag t-rose">High · Accessibility</span><span class="tag t-ink">Video</span></div></div><div class="i-act"><button class="btn btn-amber btn-xs" onclick="event.stopPropagation();simRem()">Auto-Fix</button></div></div>
+        <div class="issue" onclick="openM('rem-modal')"><div class="isev s-high"></div><div class="ibody"><div class="i-title">Safety Training — 8 chapters have fewer than 3 assessment items</div><div class="i-desc">Assessment coverage below threshold. Learning objective coverage cannot be verified.</div><div class="i-meta"><span class="tag t-warn">High · Assessment</span><span class="tag t-ink">SCORM</span></div></div><div class="i-act"><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();nav('workflow')">Run Agent</button></div></div>
+        <div class="issue"><div class="isev s-med"></div><div class="ibody"><div class="i-title">22 assets missing subject taxonomy tags</div><div class="i-desc">Assets across Higher Ed and Workforce folders lack topic-level classification, reducing discoverability.</div><div class="i-meta"><span class="tag t-warn">Medium · Metadata</span></div></div><div class="i-act"><button class="btn btn-ghost btn-xs" onclick="nav('workflow')">Run Tagger</button></div></div>
+        <div class="issue"><div class="isev s-med"></div><div class="ibody"><div class="i-title">PMP Guide — reading level 3 grades above target</div><div class="i-desc">Flesch-Kincaid grade 14.2, Workforce target 10–11. Consider a simplified language pass.</div><div class="i-meta"><span class="tag t-warn">Medium · Quality</span></div></div><div class="i-act"><button class="btn btn-ghost btn-xs" onclick="toast('Agent queued','s')">Queue Fix</button></div></div>
+        <div class="issue"><div class="isev s-low"></div><div class="ibody"><div class="i-title">14 titles have no glossary terms extracted</div><div class="i-desc">Glossary Extractor has not run on these titles. Estimated 400+ terms available.</div><div class="i-meta"><span class="tag t-green">Low · Enrichment</span></div></div><div class="i-act"><button class="btn btn-ghost btn-xs" onclick="nav('workflow')">Run Agent</button></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ SEARCH ═══ -->
+    <div class="page" id="page-search">
+      <div class="ph">
+        <div class="ph-left"><h1>Search &amp; Transform</h1><p>Find content across all 47 titles · Generate derivatives from results</p></div>
+      </div>
+      <div class="search-hero">
+        <span style="color:var(--ink4);font-size:16px">⌕</span>
+        <input type="text" id="srch-inp" placeholder="Search a concept, topic, or keyword — e.g. 'photosynthesis', 'Python loops', 'power utility safety'" oninput="liveS(this.value)" onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="btn btn-primary btn-sm" onclick="doSearch()">Search</button>
+      </div>
+      <div class="chips mb-4">
+        <div class="chip" onclick="qs('Cell division and mitosis')">Cell division</div>
+        <div class="chip" onclick="qs('Python programming loops')">Python loops</div>
+        <div class="chip" onclick="qs('Safety procedures utility workers')">Utility safety</div>
+        <div class="chip" onclick="qs('Project management methodologies')">PMP methods</div>
+        <div class="chip" onclick="qs('K-12 assessment strategies')">K-12 assessments</div>
+      </div>
+      <div class="transform-layout">
+        <div id="search-area">
+          <div class="empty"><div class="empty-icon">⌕</div><h3>Search your content library</h3><p>Type a topic above to find relevant assets across all 47 titles</p></div>
+        </div>
+        <div class="ctx-panel">
+          <h4>Transform Results</h4>
+          <p style="font-size:11.5px;color:var(--ink4);margin-bottom:14px">Select results then choose a derivative type to generate</p>
+          <div class="sec-label">Derivative Type</div>
+          <div class="deriv-grid mb-3">
+            <div class="deriv-btn" onclick="openDeriv('Assessment Pack')"><span class="deriv-icon">📝</span><div class="deriv-label">Assessments</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Flashcard Deck')"><span class="deriv-icon">🃏</span><div class="deriv-label">Flash Cards</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Mastery Path')"><span class="deriv-icon">🗺</span><div class="deriv-label">Mastery Path</div></div>
+            <div class="deriv-btn" onclick="openDeriv('TTS Audio')"><span class="deriv-icon">🎧</span><div class="deriv-label">TTS Audio</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Glossary')"><span class="deriv-icon">📖</span><div class="deriv-label">Glossary</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Summary Doc')"><span class="deriv-icon">📋</span><div class="deriv-label">Summary</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Video Module')"><span class="deriv-icon">🎬</span><div class="deriv-label">Video</div></div>
+            <div class="deriv-btn" onclick="openDeriv('Gamified Module')"><span class="deriv-icon">🎮</span><div class="deriv-label">Gamify</div></div>
+          </div>
+          <div class="sec-label">Context</div>
+          <select class="fi-inp mb-2" style="margin-bottom:7px"><option>Higher Education</option><option>K-12</option><option>Workforce Training</option><option>Field Technician</option></select>
+          <select class="fi-inp"><option>Introductory Level</option><option>Intermediate</option><option>Advanced</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ WORKFLOW ═══ -->
+    <div class="page" id="page-workflow">
+      <div class="ph">
+        <div class="ph-left"><h1>Workflow Builder</h1><p>Compose AI agent pipelines · Run against any content selection</p></div>
+        <div class="ph-right">
+          <button class="btn btn-ghost btn-sm" onclick="saveWF()">Save</button>
+          <button class="btn btn-primary btn-sm" onclick="runWF()">▶ Run Now</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <input class="fi-inp" style="max-width:260px" placeholder="Workflow name…" value="K-12 Enrichment Pack">
+        <select class="fi-inp" style="max-width:240px"><option>Run on: All K-12 Content (14 titles)</option><option>Run on: Selected titles</option><option>Run on: Full Library (47 titles)</option></select>
+      </div>
+      <div class="wf-layout">
+        <div class="agent-lib">
+          <div style="padding:10px 12px;border-bottom:1px solid var(--border)"><div style="font-family:var(--font-d);font-size:13px;color:var(--ink)">Agent Library</div></div>
+          <div class="al-search"><input type="text" placeholder="Search agents…"></div>
+          <div style="max-height:400px;overflow-y:auto">
+            <div class="al-sec">Content &amp; Learning</div>
+            <div class="al-item" onclick="addA('assessment','📝','Assessment Generator','Creates MCQs, short-answer, scenario questions')"><div class="al-icon">📝</div>Assessment Generator</div>
+            <div class="al-item" onclick="addA('metadata','🏷','Metadata Tagger','Auto-tags assets with topic taxonomy')"><div class="al-icon">🏷</div>Metadata Tagger</div>
+            <div class="al-item" onclick="addA('a11y','♿','Accessibility Remediator','Fixes alt text, reading order, headings')"><div class="al-icon">♿</div>Accessibility Remediator</div>
+            <div class="al-item" onclick="addA('glossary','📖','Glossary Extractor','Pulls key terms and definitions across titles')"><div class="al-icon">📖</div>Glossary Extractor</div>
+            <div class="al-item" onclick="addA('objectives','🎯','Objective Mapper','Maps content to learning objectives')"><div class="al-icon">🎯</div>Objective Mapper</div>
+            <div class="al-item" onclick="addA('standards','📐','Standards Aligner','Aligns to Common Core / state standards')"><div class="al-icon">📐</div>Standards Aligner</div>
+            <div class="al-item" onclick="addA('summary','📋','Content Summarizer','Generates chapter summaries and abstracts')"><div class="al-icon">📋</div>Content Summarizer</div>
+            <div class="al-item" onclick="addA('flashcards','🃏','Flashcard Generator','Creates study flashcards per chapter')"><div class="al-icon">🃏</div>Flashcard Generator</div>
+            <div class="al-sec">Operations</div>
+            <div class="al-item" onclick="addA('tts','🔊','TTS Audio Generator','Text-to-speech with word-level sync')"><div class="al-icon">🔊</div>TTS Audio Generator</div>
+            <div class="al-item" onclick="addA('mastery','🗺','Mastery Path Builder','Stitches assets into micro-courses')"><div class="al-icon">🗺</div>Mastery Path Builder</div>
+            <div class="al-item" onclick="addA('royalty','💰','Royalty Tracker','Flags high-cost assets, suggests alternatives')"><div class="al-icon">💰</div>Royalty Tracker</div>
+            <div class="al-item" onclick="addA('translation','🌍','Translation / Localization','Prepares content for multilingual delivery')"><div class="al-icon">🌍</div>Translation / L10n</div>
+            <div class="al-item" onclick="addA('tutoring','🤖','Tutoring Bot Generator','Derives Q&A bot from course content')"><div class="al-icon">🤖</div>Tutoring Bot Generator</div>
+            <div class="al-item" onclick="addA('solutions','📚','Solutions Manual','Generates instructor materials from content')"><div class="al-icon">📚</div>Solutions Manual</div>
+          </div>
+        </div>
+        <div>
+          <div class="canvas-card mb-3">
+            <div class="ch"><div class="ch-title">Workflow Canvas — <span id="ac">3</span> agents</div><button class="btn btn-ghost btn-sm" onclick="clearC()">Clear</button></div>
+            <div style="padding:12px" id="cv">
+              <div class="ca-agent" id="caa-assessment"><div class="ca-icon">📝</div><div style="flex:1"><div class="ca-name">Assessment Generator</div><div class="ca-desc">Creates MCQs, short-answer, scenario questions</div></div><div class="ca-rm" onclick="rmA('caa-assessment')">✕</div></div>
+              <div class="wf-connector">↓</div>
+              <div class="ca-agent" id="caa-metadata"><div class="ca-icon">🏷</div><div style="flex:1"><div class="ca-name">Metadata Tagger</div><div class="ca-desc">Auto-tags assets with topic taxonomy</div></div><div class="ca-rm" onclick="rmA('caa-metadata')">✕</div></div>
+              <div class="wf-connector">↓</div>
+              <div class="ca-agent" id="caa-standards"><div class="ca-icon">📐</div><div style="flex:1"><div class="ca-name">Standards Aligner</div><div class="ca-desc">Aligns to Common Core / state standards</div></div><div class="ca-rm" onclick="rmA('caa-standards')">✕</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ch-title">Presets</div></div>
+            <div style="padding:10px">
+              <button class="preset-btn" onclick="loadP('k12')"><div class="preset-name">K-12 Enrichment Pack</div><div class="preset-desc">Assessment + Metadata + Standards · 3 agents</div></button>
+              <button class="preset-btn" onclick="loadP('pub')"><div class="preset-name">Publisher Full Suite</div><div class="preset-desc">A11y + Glossary + TTS + Metadata · 4 agents</div></button>
+              <button class="preset-btn" onclick="loadP('a11y')"><div class="preset-name">Accessibility Remediation</div><div class="preset-desc">A11y Remediator · 1 agent</div></button>
+              <button class="preset-btn" onclick="loadP('mastery')" style="margin-bottom:0"><div class="preset-name">Mastery Path Creator</div><div class="preset-desc">Summarizer + Mastery Path + Flashcards · 3 agents</div></button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card mb-3">
+            <div class="ch"><div class="ch-title">Expected Outputs</div></div>
+            <div style="padding:12px">
+              <div class="delta-row"><div class="delta-k">New Assessments</div><div class="delta-v">+280–350</div></div>
+              <div class="delta-row"><div class="delta-k">Metadata Tags</div><div class="delta-v">+600–900</div></div>
+              <div class="delta-row"><div class="delta-k">Titles Aligned</div><div class="delta-v">+14</div></div>
+              <div class="delta-row"><div class="delta-k">Est. Runtime</div><div class="delta-v" style="color:var(--blue)">~8 min</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ch-title">Last Run</div><div class="ch-sub">Biology 101 · 2 hrs ago</div></div>
+            <div style="padding:12px">
+              <div class="delta-row"><div class="delta-k">Assessments</div><div class="delta-v">+89</div></div>
+              <div class="delta-row"><div class="delta-k">Tags Added</div><div class="delta-v">+234</div></div>
+              <div class="delta-row"><div class="delta-k">Review Items</div><div class="delta-v" style="color:var(--warn)">8 pending</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ REVIEW ═══ -->
+    <div class="page" id="page-review">
+      <div class="ph">
+        <div class="ph-left"><h1>Human Review Queue</h1><p>AI-generated outputs awaiting editorial approval</p></div>
+        <div class="ph-right">
+          <button class="btn btn-ghost btn-sm" onclick="approveAll()">✓ Approve All</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('Filters applied','i')">Filter</button>
+        </div>
+      </div>
+      <div class="hil-stats">
+        <div class="hil-st"><div class="hil-num" style="color:var(--warn)">8</div><div class="hil-lbl">Pending Review</div></div>
+        <div class="hil-st"><div class="hil-num" style="color:var(--green)">142</div><div class="hil-lbl">Approved This Week</div></div>
+        <div class="hil-st"><div class="hil-num" style="color:var(--rose)">12</div><div class="hil-lbl">Rejected</div></div>
+        <div class="hil-st"><div class="hil-num" style="color:var(--blue)">93%</div><div class="hil-lbl">AI Approval Rate</div></div>
+      </div>
+      <div id="rv-list">
+        <div class="rv-item" id="rv1">
+          <div class="rv-head" onclick="toggleRv('rv1')"><div class="rv-icon">📝</div><div style="flex:1"><div class="rv-title">New Assessment Items — Biology 101, Chapter 5</div><div class="rv-sub">Assessment Generator · 5 MCQs · Confidence: 94%</div></div><span class="rv-badge" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">PENDING</span><div class="rv-expand">▼</div></div>
+          <div class="rv-body" id="rb-rv1">
+            <div class="conf-bar"><div class="conf-label">Confidence</div><div class="conf-track"><div class="conf-fill" style="width:94%;background:var(--green)"></div></div><span style="font-family:var(--font-m);font-size:11px;color:var(--sage)">94%</span></div>
+            <div class="ai-out"><div class="ai-out-lbl">AI Output — Sample MCQ</div><div class="ai-out-txt"><strong>Q: Which phase of mitosis involves chromosomes aligning at the cell's equatorial plate?</strong><br><br>A) Prophase &nbsp; B) <strong>Metaphase ✓</strong> &nbsp; C) Anaphase &nbsp; D) Telophase<br><br><em style="color:var(--ink4);font-size:11.5px">+ 4 more questions generated for this chapter</em></div></div>
+            <div class="rv-acts">
+              <button class="btn btn-approve btn-sm" onclick="apprItem('rv1','Assessment — Biology Ch.5')">✓ Approve All 5</button>
+              <button class="btn btn-edit-a btn-sm" onclick="toast('Opening editor…','i')">✏ Edit</button>
+              <button class="btn btn-reject btn-sm" onclick="rejItem('rv1')">✕ Reject</button>
+              <span style="font-family:var(--font-m);font-size:11px;color:var(--ink4);margin-left:auto">Reduce to <input type="number" value="5" min="1" max="20" style="width:38px;background:var(--canvas);border:1px solid var(--border);border-radius:3px;color:var(--ink);padding:1px 4px;font-family:var(--font-m);font-size:11px"> items</span>
+            </div>
+          </div>
+        </div>
+        <div class="rv-item" id="rv2">
+          <div class="rv-head" onclick="toggleRv('rv2')"><div class="rv-icon">♿</div><div style="flex:1"><div class="rv-title">Accessibility Remediation — 30 Alt Text Fixes</div><div class="rv-sub">A11y Remediator · Biology 101 · Confidence: 87%</div></div><span class="rv-badge" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">PENDING</span><div class="rv-expand">▼</div></div>
+          <div class="rv-body" id="rb-rv2">
+            <div class="conf-bar"><div class="conf-label">Confidence</div><div class="conf-track"><div class="conf-fill" style="width:87%;background:var(--warn)"></div></div><span style="font-family:var(--font-m);font-size:11px;color:var(--amber)">87%</span></div>
+            <div class="ai-out"><div class="ai-out-lbl">AI Output — Sample Alt Text</div><div class="ai-out-txt"><strong>Image:</strong> cell_division_fig4.png<br><strong>Generated:</strong> "Diagram showing a eukaryotic cell in metaphase with chromosomes aligned along the metaphase plate, flanked by spindle fibers attached to kinetochores."<br><br><em style="color:var(--ink4);font-size:11.5px">⚠ 3 images flagged for human review — complex diagrams</em></div></div>
+            <div class="rv-acts">
+              <button class="btn btn-approve btn-sm" onclick="apprItem('rv2','Alt text — Biology 101')">✓ Approve 27</button>
+              <button class="btn btn-edit-a btn-sm" onclick="toast('Opening alt text editor for 3 flagged items…','i')">✏ Review 3 Flagged</button>
+              <button class="btn btn-reject btn-sm" onclick="rejItem('rv2')">✕ Reject</button>
+            </div>
+          </div>
+        </div>
+        <div class="rv-item" id="rv3">
+          <div class="rv-head" onclick="toggleRv('rv3')"><div class="rv-icon">🔊</div><div style="flex:1"><div class="rv-title">TTS Audio — Pronunciation Review Needed</div><div class="rv-sub">TTS Generator · Chemistry Fundamentals · 3 words flagged</div></div><span class="rv-badge" style="background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-bd)">ACTION NEEDED</span><div class="rv-expand">▼</div></div>
+          <div class="rv-body" id="rb-rv3">
+            <div class="ai-out"><div class="ai-out-lbl">Pronunciation Issues</div><div class="ai-out-txt">
+              <div style="margin-bottom:8px"><strong>"Stoichiometry"</strong> → AI reads: "Stoy-key-om-etry" <span style="color:var(--rose)">✗</span></div>
+              <div style="margin-bottom:8px"><strong>"Prabhu"</strong> → AI reads: "Pra-boo" <span style="color:var(--rose)">✗</span> — needs spacing to slow down</div>
+              <div><strong>"Enthalpy"</strong> → AI reads: "En-thal-pee" <span style="color:var(--green)">✓</span></div>
+            </div></div>
+            <div class="rv-acts">
+              <button class="btn btn-approve btn-sm" onclick="apprItem('rv3','TTS Pronunciation fixes')">✓ Apply &amp; Save to Dictionary</button>
+              <button class="btn btn-edit-a btn-sm" onclick="toast('Opening pronunciation editor…','i')">✏ Adjust</button>
+            </div>
+          </div>
+        </div>
+        <div class="rv-item" id="rv4">
+          <div class="rv-head" onclick="toggleRv('rv4')"><div class="rv-icon">🗺</div><div style="flex:1"><div class="rv-title">Mastery Path — "Python for Data Science" (5 modules)</div><div class="rv-sub">Mastery Path Builder · Cross-title extraction · Confidence: 91%</div></div><span class="rv-badge" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">PENDING</span><div class="rv-expand">▼</div></div>
+          <div class="rv-body" id="rb-rv4">
+            <div class="conf-bar"><div class="conf-label">Confidence</div><div class="conf-track"><div class="conf-fill" style="width:91%;background:var(--green)"></div></div><span style="font-family:var(--font-m);font-size:11px;color:var(--sage)">91%</span></div>
+            <div class="ai-out"><div class="ai-out-lbl">Generated Mastery Path</div><div class="ai-out-txt">
+              <div style="margin-bottom:4px"><strong>Module 1:</strong> Python Basics — from "Intro to Python" Ch.1–3</div>
+              <div style="margin-bottom:4px"><strong>Module 2:</strong> Data Structures — from "Intro to Python" Ch.4–7</div>
+              <div style="margin-bottom:4px"><strong>Module 3:</strong> Pandas &amp; Data Manipulation — from "Data Science Bootcamp"</div>
+              <div style="margin-bottom:4px"><strong>Module 4:</strong> Visualization — cross-extracted from 2 titles</div>
+              <div><strong>Module 5:</strong> Capstone Assessment — 20 questions across all modules</div>
+            </div></div>
+            <div class="rv-acts">
+              <button class="btn btn-approve btn-sm" onclick="apprItem('rv4','Mastery Path — Python Data Science')">✓ Approve &amp; Export</button>
+              <button class="btn btn-edit-a btn-sm" onclick="toast('Opening path editor…','i')">✏ Reorder Modules</button>
+              <button class="btn btn-reject btn-sm" onclick="rejItem('rv4')">✕ Reject</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ OUTPUTS ═══ -->
+    <div class="page" id="page-outputs">
+      <div class="ph">
+        <div class="ph-left"><h1>Outputs &amp; Exports</h1><p>All approved derivative content ready for use</p></div>
+        <button class="btn btn-primary btn-sm" onclick="toast('Bulk export initiated…','i')">Export All</button>
+      </div>
+      <div class="grid-3 mb-4">
+        <div class="out-stat"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Assessments</div><h3>965</h3><div class="label">612 MCQ · 220 short answer · 133 scenario</div></div>
+        <div class="out-stat"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Mastery Paths</div><h3>8</h3><div class="label">5 published · 2 in review · 1 draft</div></div>
+        <div class="out-stat"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Glossary Terms</div><h3>1,420</h3><div class="label">680 Higher Ed · 490 K-12 · 250 Workforce</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-title">Recent Exports</div></div>
+        <table class="tbl">
+          <thead><tr><th>Output</th><th>Type</th><th>Items</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr onclick="toast('Opening export details…','i')"><td style="color:var(--ink)">Biology 101 — Assessment Pack</td><td><span class="tag t-slate">Assessment</span></td><td>89</td><td><span class="tag t-green">Published</span></td><td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();toast('Exporting to Canvas LMS…','i')">→ Canvas</button></td></tr>
+            <tr onclick="toast('Opening export details…','i')"><td style="color:var(--ink)">Python for Data Science — Mastery Path</td><td><span class="tag t-amber">Mastery Path</span></td><td>5 modules</td><td><span class="tag t-green">Published</span></td><td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();toast('Downloading…','i')">↓ Download</button></td></tr>
+            <tr onclick="nav('review')"><td style="color:var(--ink)">Chemistry Fundamentals — TTS Audio</td><td><span class="tag t-blue">Audio</span></td><td>24 episodes</td><td><span class="tag t-warn">In Review</span></td><td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();nav('review')">Review →</button></td></tr>
+            <tr onclick="toast('Opening export details…','i')"><td style="color:var(--ink)">K-12 Glossary — All Subjects</td><td><span class="tag t-green">Glossary</span></td><td>490 terms</td><td><span class="tag t-green">Published</span></td><td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();toast('Exporting to Brightspace…','i')">→ LMS</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ COMPETITIVE ═══ -->
+    <div class="page" id="page-competitive">
+      <div class="ph">
+        <div class="ph-left"><h1>Market Intelligence</h1><p>Competitive analysis · Web scraping · Institutional benchmarking</p></div>
+        <button class="btn btn-primary btn-sm" onclick="openM('scrape-modal')">+ New Scrape Job</button>
+      </div>
+      <div class="grid-2 mb-4">
+        <div class="card">
+          <div class="ch"><div class="ch-title">Institutional Course Coverage</div><div class="ch-sub">4,200 US institutions scraped</div></div>
+          <div class="cb">
+            <div class="prog-row"><div class="prog-label">Python Courses</div><div class="prog-track"><div class="prog-fill" style="width:72%;background:var(--blue)"></div></div><div class="prog-pct" style="color:var(--teal)">72%</div></div>
+            <div class="prog-row"><div class="prog-label">Data Science</div><div class="prog-track"><div class="prog-fill" style="width:58%;background:var(--blue-dk)"></div></div><div class="prog-pct" style="color:var(--slate)">58%</div></div>
+            <div class="prog-row"><div class="prog-label">Intro Biology</div><div class="prog-track"><div class="prog-fill" style="width:89%;background:var(--green)"></div></div><div class="prog-pct" style="color:var(--sage)">89%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-title">Competitor Displacement Analysis</div></div>
+          <div class="cb">
+            <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div><div class="legend-label">Your content in active use</div><div class="legend-val">1,240 inst.</div></div>
+            <div class="legend-row"><div class="legend-dot" style="background:var(--rose)"></div><div class="legend-label">Pearson replacing your content</div><div class="legend-val">348 inst.</div></div>
+            <div class="legend-row"><div class="legend-dot" style="background:var(--rose)"></div><div class="legend-label">McGraw-Hill replacing your content</div><div class="legend-val">201 inst.</div></div>
+            <div class="legend-row"><div class="legend-dot" style="background:var(--blue-dk)"></div><div class="legend-label">No content — opportunity</div><div class="legend-val">2,411 inst.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-title">Active Scrape Jobs</div></div>
+        <table class="tbl">
+          <thead><tr><th>Job</th><th>Target</th><th>Frequency</th><th>Last Run</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--ink)">US Higher Ed — Course Catalog</td><td>4,000+ institutions</td><td>Weekly</td><td>Mar 3, 2026</td><td><span class="tag t-sage">Active</span></td></tr>
+            <tr><td style="color:var(--ink)">Cengage Competitor Analysis</td><td>45 courses</td><td>Monthly</td><td>Mar 1, 2026</td><td><span class="tag t-sage">Active</span></td></tr>
+            <tr><td style="color:var(--ink)">K-12 State Adoption Tracking</td><td>50 state DOE sites</td><td>Monthly</td><td>Feb 15, 2026</td><td><span class="tag t-warn">Scheduled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODALS ════════ -->
+
+<!-- Connect -->
+<div class="modal-ov" id="conn-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">Connect Integration</div><button class="mc-btn" onclick="closeM('conn-modal')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Integration</label><select class="fi-inp"><option>Box</option><option>SharePoint</option><option>Canvas LMS</option><option>Amazon S3</option><option>Custom CMS (API)</option></select></div>
+    <div class="fg"><label class="fl">API Key / OAuth</label><input class="fi-inp" type="password" placeholder="Paste your API key…"></div>
+    <div class="fg"><label class="fl">Folder / Bucket Path</label><input class="fi-inp" placeholder="/content/educational-assets/…"></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Sync Frequency</label><select class="fi-inp"><option>Manual only</option><option>Daily</option><option>Weekly</option><option>Real-time</option></select></div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('conn-modal')">Cancel</button><button class="btn btn-primary" onclick="simConn()">Connect &amp; Test</button></div>
+</div></div>
+
+<!-- Google Drive -->
+<div class="modal-ov" id="gd-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">Google Drive — Select Folders</div><button class="mc-btn" onclick="closeM('gd-modal')">×</button></div>
+  <div class="mb">
+    <div style="background:var(--green-bg);border:1px solid var(--green-bd);border-radius:var(--radius-s);padding:9px 12px;margin-bottom:14px;font-size:12.5px;color:var(--ink2)">✓ Connected as <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a5cfcacdcb8bd5d7c4c7cdd0e5c6cac8d5c4cbdc8bc6cac8">[email&#160;protected]</a></strong></div>
+    <div class="sec-label mb-2">Select Folders to Sync</div>
+    <div class="folder-list">
+      <div class="fi" onclick="this.classList.toggle('active')">📁 STEM Collection (42 files)</div>
+      <div class="fi" onclick="this.classList.toggle('active')">📁 K-12 Library (67 files)</div>
+      <div class="fi active" onclick="this.classList.toggle('active')">📁 Higher Ed Titles (89 files) ✓</div>
+      <div class="fi" onclick="this.classList.toggle('active')">📁 Workforce Training (31 files)</div>
+      <div class="fi" onclick="this.classList.toggle('active')">📁 Media Archive (156 files)</div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('gd-modal')">Cancel</button><button class="btn btn-primary" onclick="simGD()">Sync Selected</button></div>
+</div></div>
+
+<!-- Audit -->
+<div class="modal-ov" id="audit-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">Run Full Audit</div><button class="mc-btn" onclick="closeM('audit-modal')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Scope</label><select class="fi-inp"><option>Full Library (47 titles)</option><option>K-12 Only (14 titles)</option><option>Higher Ed Only (18 titles)</option><option>Selected titles</option></select></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Checks</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer"><input type="checkbox" checked> Accessibility (WCAG 2.1 AA)</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer"><input type="checkbox" checked> Metadata Completeness</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer"><input type="checkbox" checked> Assessment Coverage</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer"><input type="checkbox"> Standards Alignment</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer"><input type="checkbox"> Reading Level Analysis</label>
+      </div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('audit-modal')">Cancel</button><button class="btn btn-primary" onclick="simAudit()">Run Audit</button></div>
+</div></div>
+
+<!-- Remediate -->
+<div class="modal-ov" id="rem-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">Auto-Remediate Issue</div><button class="mc-btn" onclick="closeM('rem-modal')">×</button></div>
+  <div class="mb">
+    <div style="background:var(--rose-bg);border:1px solid var(--rose-bd);border-radius:var(--radius-s);padding:10px 12px;margin-bottom:14px;font-size:12.5px;color:var(--ink)">⚠ <strong>30 assets</strong> missing alt text — Biology 101 Textbook</div>
+    <p style="font-size:13px;color:var(--ink2);margin-bottom:14px;line-height:1.65">The Accessibility Remediator will analyze each image and generate descriptive alt text. Output queues for human review before publishing.</p>
+    <div class="fg"><label class="fl">Mode</label><select class="fi-inp"><option>Auto + Queue for Review (Recommended)</option><option>Auto-approve (high confidence only)</option><option>Generate suggestions only</option></select></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Apply to</label><select class="fi-inp"><option>All 30 flagged assets</option><option>High confidence only (est. 24 assets)</option><option>This chapter only</option></select></div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('rem-modal')">Cancel</button><button class="btn btn-primary" onclick="simRemFull()">Start Remediation</button></div>
+</div></div>
+
+<!-- Asset Detail -->
+<div class="modal-ov" id="asset-modal"><div class="modal">
+  <div class="mh"><div class="mh-title" id="am-title">Asset Details</div><button class="mc-btn" onclick="closeM('asset-modal')">×</button></div>
+  <div class="mb" id="am-body"></div>
+  <div class="mf">
+    <button class="btn btn-ghost" onclick="closeM('asset-modal')">Close</button>
+    <button class="btn btn-ghost btn-sm" onclick="nav('audit');closeM('asset-modal')">Audit</button>
+    <button class="btn btn-primary btn-sm" onclick="nav('workflow');closeM('asset-modal')">Run Workflow</button>
+  </div>
+</div></div>
+
+<!-- Derivative -->
+<div class="modal-ov" id="deriv-modal"><div class="modal">
+  <div class="mh"><div class="mh-title" id="dm-title">Create Derivative</div><button class="mc-btn" onclick="closeM('deriv-modal')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Source</label><input class="fi-inp" value="All results for current search" readonly></div>
+    <div class="fg"><label class="fl">Quantity</label><input class="fi-inp" type="range" min="5" max="50" value="20" oninput="document.getElementById('qty').textContent=this.value"> <span id="qty" style="font-family:var(--font-m);font-size:13px;color:var(--blue)">20</span> items</div>
+    <div class="fg"><label class="fl">Audience</label><select class="fi-inp"><option>Higher Education</option><option>K-12 Grade 8-10</option><option>Workforce / Adult</option><option>Field Technicians</option></select></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Output</label><select class="fi-inp"><option>Queue for Review</option><option>Auto-approve (high confidence)</option><option>Draft only</option></select></div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('deriv-modal')">Cancel</button><button class="btn btn-primary" onclick="simDeriv()">Generate</button></div>
+</div></div>
+
+<!-- Run Workflow -->
+<div class="modal-ov" id="wf-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">Quick Run Workflow</div><button class="mc-btn" onclick="closeM('wf-modal')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Workflow</label><select class="fi-inp"><option>K-12 Enrichment Pack (3 agents)</option><option>Publisher Full Suite (4 agents)</option><option>Accessibility Remediation (2 agents)</option><option>Mastery Path Creator (3 agents)</option></select></div>
+    <div class="fg"><label class="fl">Run On</label><select class="fi-inp"><option>Full Library (47 titles)</option><option>K-12 (14 titles)</option><option>Higher Ed (18 titles)</option><option>Workforce (9 titles)</option></select></div>
+    <div style="background:var(--canvas2);border:1px solid var(--border);border-radius:var(--radius-s);padding:10px 12px;font-size:12px;color:var(--ink3)">Estimated: <strong style="color:var(--ink)">280–350 new assessments</strong>, <strong style="color:var(--ink)">600+ tags</strong> · ~8 min</div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('wf-modal')">Cancel</button><button class="btn btn-primary" onclick="runWF()">▶ Run Now</button></div>
+</div></div>
+
+<!-- Scrape -->
+<div class="modal-ov" id="scrape-modal"><div class="modal">
+  <div class="mh"><div class="mh-title">New Scrape Job</div><button class="mc-btn" onclick="closeM('scrape-modal')">×</button></div>
+  <div class="mb">
+    <div class="fg"><label class="fl">Job Name</label><input class="fi-inp" placeholder="e.g. Competitor Course Tracking Q1"></div>
+    <div class="fg"><label class="fl">Target Type</label><select class="fi-inp"><option>Institution Course Catalogs</option><option>Competitor Product Pages</option><option>Government RFP Portals</option><option>Fee / Pricing Pages</option><option>Custom URL List</option></select></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Frequency</label><select class="fi-inp"><option>Weekly</option><option>Monthly</option><option>Daily</option><option>One-time</option></select></div>
+  </div>
+  <div class="mf"><button class="btn btn-ghost" onclick="closeM('scrape-modal')">Cancel</button><button class="btn btn-primary" onclick="simScrape()">Create Job</button></div>
+</div></div>
+
+<div class="toast-ct" id="toasts"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── ONBOARDING ──
+let slide=0;
+function goSlide(n){
+  document.querySelectorAll('.ob-slide').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('.ob-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+  slide=n;
+  document.getElementById('ob-back').style.display=n===0?'none':'inline-flex';
+  document.getElementById('ob-next').textContent=n===2?'Enter Kadal →':'Next →';
+}
+function nextSlide(){if(slide<2)goSlide(slide+1);else launch();}
+function prevSlide(){if(slide>0)goSlide(slide-1);}
+function launch(){
+  const ob=document.getElementById('onboarding');
+  ob.style.transition='opacity .4s';ob.style.opacity='0';
+  setTimeout(()=>{ob.style.display='none';document.getElementById('app').style.display='flex';},400);
+}
+
+// ── NAV ──
+function nav(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);
+  if(pg)pg.classList.add('active');
+  const titles={dashboard:'Dashboard',repository:'Content Repository',ingest:'Ingest Content',audit:'Audit & Gap Analysis',search:'Search & Transform',workflow:'Workflow Builder',review:'Human Review Queue',outputs:'Outputs & Exports',competitive:'Market Intelligence'};
+  document.getElementById('tb-title').textContent=titles[p]||'Kadal';
+  document.querySelectorAll('.sb-item').forEach(item=>{
+    if(item.getAttribute('onclick')?.includes("'"+p+"'"))item.classList.add('active');
+  });
+}
+
+// ── MODALS ──
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+window.addEventListener('click',e=>{if(e.target.classList.contains('modal-ov'))e.target.classList.remove('open');});
+
+// ── TOAST ──
+function toast(msg,type='i'){
+  const icons={s:'✓',i:'·',w:'!'};
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="toast-icon" style="font-family:var(--font-m)">${icons[type]||'·'}</span>${msg}`;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{t.style.transition='all .3s';t.style.opacity='0';t.style.transform='translateX(32px)';setTimeout(()=>t.remove(),300);},3000);
+}
+
+// ── REPO ──
+function fSel(el){document.querySelectorAll('.fi').forEach(f=>f.classList.remove('active'));el.classList.add('active');toast('Viewing: '+el.textContent.trim().split(' ').slice(1).join(' '),'i');}
+function chipSel(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+function openAsset(card){
+  const name=card.querySelector('.fc-name').textContent;
+  const meta=card.querySelector('.fc-meta').textContent;
+  document.getElementById('am-title').textContent=name;
+  document.getElementById('am-body').innerHTML=`
+    <p style="font-size:12.5px;color:var(--ink3);margin-bottom:14px;font-family:var(--font-m)">${meta}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px;text-align:center"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Accessibility</div><div style="font-family:var(--font-d);font-size:22px;color:var(--amber)">64%</div></div>
+      <div style="background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px;text-align:center"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Assessments</div><div style="font-family:var(--font-d);font-size:22px;color:var(--sage)">34</div></div>
+      <div style="background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px;text-align:center"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Metadata Tags</div><div style="font-family:var(--font-d);font-size:22px;color:var(--teal)">78</div></div>
+      <div style="background:var(--canvas);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px;text-align:center"><div style="font-family:var(--font-m);font-size:9.5px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Royalty Cost</div><div style="font-family:var(--font-d);font-size:22px;color:var(--ink)">$0</div></div>
+    </div>
+    <div style="font-size:12.5px;color:var(--ink3);line-height:1.8">Issues found:<br>· 12 images missing alt text<br>· 3 chapters have fewer than 5 assessment items<br>· No glossary extracted</div>`;
+  openM('asset-modal');
+}
+
+// ── INGEST ──
+function simUpload(){toast('File browser opened','i');setTimeout(()=>toast('3 files added to ingestion queue','s'),1200);}
+function simConn(){closeM('conn-modal');toast('Testing connection…','i');setTimeout(()=>toast('Integration connected successfully','s'),1500);}
+function simGD(){closeM('gd-modal');toast('Syncing Google Drive folders…','i');setTimeout(()=>toast('89 assets pulled — classifying now','s'),1800);}
+
+// ── AUDIT ──
+function tabSel(el){el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+function simRem(){openM('rem-modal');}
+function simRemFull(){closeM('rem-modal');toast('Starting auto-remediation…','i');setTimeout(()=>toast('27 assets remediated · 3 queued for review','s'),2000);}
+function simAudit(){closeM('audit-modal');toast('Running audit across 47 titles…','i');setTimeout(()=>toast('Audit complete — 47 issues found','w'),3000);}
+
+// ── SEARCH ──
+function qs(q){document.getElementById('srch-inp').value=q;doSearch();}
+function liveS(){}
+function doSearch(){
+  const q=document.getElementById('srch-inp').value||'general';
+  document.getElementById('search-area').innerHTML=
+    `<div style="font-size:12px;color:var(--ink4);margin-bottom:12px;font-family:var(--font-m)">Found <strong style="color:var(--ink)">38 assets</strong> across <strong style="color:var(--ink)">12 titles</strong> matching "<em>${q}</em>"</div>`+
+    mkRes('📄','Biology 101 — Chapter 7: Cellular Respiration','PDF · Higher Education','…the process of cellular respiration involves ATP synthesis, occurring in the mitochondria. The Krebs cycle and electron transport chain are key stages of this process…')+
+    mkRes('📗','Intro to Python — Loops and Iteration','EPUB · Higher Education','…for loops and while loops enable repeated execution of code blocks. Python loops are foundational to all data processing workflows and algorithms…')+
+    mkRes('🎥','Cell Division Lecture – Episode 4','MP4 · K-12 · Transcript','…mitosis proceeds through prophase, metaphase, anaphase, and telophase. This lecture covers cell cycle checkpoints and regulatory mechanisms…')+
+    mkRes('🎮','Safety Training – Module 3: Hazard Procedures','SCORM · Workforce','…utility workers must follow lockout-tagout (LOTO) procedures before any equipment maintenance. Step-by-step protocol with verification checkpoints…');
+}
+function mkRes(icon,title,src,excerpt){
+  return `<div class="res-card" onclick="toast('Opening asset…','i')">
+    <div class="res-head"><div class="res-icon">${icon}</div><div><div class="res-title">${title}</div><div class="res-src">${src}</div></div></div>
+    <div class="res-exc">${excerpt}</div>
+    <div class="res-acts">
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openDeriv('Mastery Path')">Add to Path</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openDeriv('Assessment Pack')">Generate Assessment</button>
+      <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();nav('repository')">View Asset</button>
+    </div>
+  </div>`;
+}
+function openDeriv(t){document.getElementById('dm-title').textContent='Create: '+t;openM('deriv-modal');}
+function simDeriv(){closeM('deriv-modal');toast('Generating derivative content…','i');setTimeout(()=>{toast('Content generated — added to Review queue','s');nav('review');},2200);}
+
+// ── WORKFLOW ──
+let cAgents=['assessment','metadata','standards'];
+function addA(id,icon,name,desc){
+  if(cAgents.includes(id)){toast('Agent already in workflow','w');return;}
+  cAgents.push(id);
+  const cv=document.getElementById('cv');
+  const conn=document.createElement('div');conn.className='wf-connector';conn.textContent='↓';cv.appendChild(conn);
+  const el=document.createElement('div');el.className='ca-agent';el.id='caa-'+id;
+  el.innerHTML=`<div class="ca-icon">${icon}</div><div style="flex:1"><div class="ca-name">${name}</div><div class="ca-desc">${desc}</div></div><div class="ca-rm" onclick="rmA('caa-${id}')">✕</div>`;
+  cv.appendChild(el);
+  document.getElementById('ac').textContent=cAgents.length;
+  toast(name+' added','s');
+}
+function rmA(id){
+  const el=document.getElementById(id);if(!el)return;
+  const prev=el.previousElementSibling;if(prev&&prev.classList.contains('wf-connector'))prev.remove();
+  cAgents=cAgents.filter(a=>'caa-'+a!==id);el.remove();
+  document.getElementById('ac').textContent=cAgents.length;
+}
+function clearC(){document.getElementById('cv').innerHTML='';cAgents=[];document.getElementById('ac').textContent=0;toast('Canvas cleared','i');}
+function saveWF(){toast('Workflow saved','s');}
+function runWF(){closeM('wf-modal');toast('Workflow started…','i');setTimeout(()=>toast('Agents running: Assessment → Metadata…','i'),2000);setTimeout(()=>{toast('Workflow complete — 14 review items generated','s');},5000);}
+function loadP(id){
+  clearC();
+  const presets={k12:[['assessment','📝','Assessment Generator','Creates MCQs, questions'],['metadata','🏷','Metadata Tagger','Auto-tags assets'],['standards','📐','Standards Aligner','Aligns to standards']],
+    pub:[['a11y','♿','Accessibility Remediator','Fixes WCAG issues'],['glossary','📖','Glossary Extractor','Pulls key terms'],['tts','🔊','TTS Audio Generator','Creates audio'],['metadata','🏷','Metadata Tagger','Auto-tags assets']],
+    a11y:[['a11y','♿','Accessibility Remediator','Fixes WCAG issues']],
+    mastery:[['summary','📋','Content Summarizer','Generates summaries'],['mastery','🗺','Mastery Path Builder','Builds micro-courses'],['flashcards','🃏','Flashcard Generator','Creates flashcards']]};
+  (presets[id]||[]).forEach(a=>addA(a[0],a[1],a[2],a[3]));
+  toast('Preset loaded','s');
+}
+
+// ── REVIEW ──
+function toggleRv(id){
+  const b=document.getElementById('rb-'+id);b.classList.toggle('open');
+  const e=document.querySelector('#'+id+' .rv-expand');
+  e.textContent=b.classList.contains('open')?'▲':'▼';
+  if(b.classList.contains('open'))document.querySelector('#'+id+' .rv-head').style.borderBottomColor='var(--border)';
+}
+function apprItem(id,label){
+  const el=document.getElementById(id);
+  if(el){el.style.transition='all .3s';el.style.opacity='0';el.style.transform='translateX(-16px)';setTimeout(()=>el.remove(),300);}
+  toast('Approved: '+label,'s');
+}
+function rejItem(id){
+  const el=document.getElementById(id);
+  if(el){el.style.transition='all .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);}
+  toast('Item rejected','w');
+}
+function approveAll(){
+  document.querySelectorAll('.rv-item').forEach(el=>{el.style.transition='all .3s';el.style.opacity='0';setTimeout(()=>el.remove(),300);});
+  toast('All 8 items approved and published','s');
+}
+
+// ── COMPETITIVE ──
+function simScrape(){closeM('scrape-modal');toast('Scrape job created','s');}
+
+// ── PROGRESS ANIMATION ──
+setTimeout(()=>{
+  document.querySelectorAll('.prog-fill').forEach(el=>{const w=el.style.width;el.style.width='0';setTimeout(()=>el.style.width=w,100);});
+},600);
+</script>
+</body>
+</html>
