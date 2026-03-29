@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Knowledge Graph — Publisher Intelligence</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #FAFAF8;
+    --bg-warm: #F5F3EF;
+    --bg-card: #FFFFFF;
+    --bg-hover: #F0EDE8;
+    --bg-selected: #EBF3FF;
+    --border: #E4E0DA;
+    --border-strong: #D0CAC0;
+    --text: #1A1816;
+    --text-secondary: #6B6560;
+    --text-dim: #9E9890;
+    --text-muted: #B8B2AA;
+    --accent: #2563EB;
+    --accent-light: #DBEAFE;
+    --accent-hover: #1D4ED8;
+    --teal: #0D9488;
+    --teal-light: #CCFBF1;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --rose: #E11D48;
+    --rose-light: #FFE4E6;
+    --green: #16A34A;
+    --green-light: #DCFCE7;
+    --purple: #7C3AED;
+    --purple-light: #EDE9FE;
+    --orange: #EA580C;
+    --orange-light: #FFF7ED;
+    --disc-business: #2563EB;
+    --disc-stem: #0D9488;
+    --disc-health: #E11D48;
+    --disc-arts: #7C3AED;
+    --disc-social: #D97706;
+    --disc-education: #16A34A;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --font-display: 'Source Serif 4', Georgia, serif;
+    --font-body: 'Outfit', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 56px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--teal));
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    color: white; font-family: var(--font-mono); font-weight: 700; font-size: 13px;
+  }
+  .header-title {
+    font-family: var(--font-display); font-size: 17px; font-weight: 600;
+    color: var(--text); letter-spacing: -0.3px;
+  }
+  .header-title span { color: var(--text-dim); font-weight: 400; }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    margin-left: 20px; font-size: 12px; color: var(--text-dim);
+  }
+  .breadcrumb a {
+    color: var(--accent); text-decoration: none; cursor: pointer; font-weight: 500;
+  }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb svg { width: 12px; height: 12px; color: var(--text-muted); }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .view-tabs {
+    display: flex; background: var(--bg-warm); border-radius: var(--radius);
+    padding: 3px; gap: 2px;
+  }
+  .tab-btn {
+    padding: 6px 14px; border-radius: 6px; border: none;
+    background: transparent; color: var(--text-secondary);
+    font-family: var(--font-body); font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    background: var(--bg-card); color: var(--accent);
+    box-shadow: var(--shadow-sm); font-weight: 600;
+  }
+  .search-box {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: var(--radius);
+    border: 1px solid var(--border); background: var(--bg);
+    width: 180px; transition: border-color 0.2s;
+  }
+  .search-box:focus-within { border-color: var(--accent); }
+  .search-box input {
+    border: none; background: none; outline: none;
+    font-family: var(--font-body); font-size: 12px; color: var(--text); width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .stats-bar {
+    display: flex; gap: 12px; padding: 16px 28px;
+    background: var(--bg-card); border-bottom: 1px solid var(--border);
+  }
+  .stat-pill {
+    flex: 1; padding: 14px 18px;
+    background: var(--bg); border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .stat-pill:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .stat-pill.active { border-color: var(--accent); background: var(--bg-selected); }
+  .stat-pill .s-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-dim); font-weight: 600; margin-bottom: 4px;
+  }
+  .stat-pill .s-value {
+    font-family: var(--font-mono); font-size: 24px; font-weight: 700; line-height: 1.1;
+  }
+  .stat-pill .s-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .s-value.blue { color: var(--accent); }
+  .s-value.green { color: var(--green); }
+  .s-value.rose { color: var(--rose); }
+  .s-value.amber { color: var(--amber); }
+
+  .main {
+    display: grid;
+    grid-template-columns: 270px 1fr 330px;
+    height: calc(100vh - 140px);
+  }
+
+  /* LEFT */
+  .panel-left {
+    border-right: 1px solid var(--border);
+    overflow-y: auto; background: var(--bg-card);
+  }
+  .panel-head {
+    padding: 14px 16px; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--text-dim); font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--bg-card); z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .collapse-btn {
+    font-size: 10px; color: var(--accent); cursor: pointer;
+    font-weight: 600; font-family: var(--font-body);
+    background: none; border: none;
+  }
+  .disc-row {
+    padding: 11px 16px; cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 10px;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+  }
+  .disc-row:hover { background: var(--bg-hover); }
+  .disc-row.active { background: var(--bg-selected); border-left-color: var(--accent); }
+  .disc-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .disc-name { font-size: 13px; font-weight: 500; flex: 1; }
+  .disc-count {
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+    background: var(--bg-warm); padding: 2px 7px; border-radius: 10px;
+  }
+  .disc-cov-bar {
+    width: 44px; height: 5px; border-radius: 3px;
+    background: var(--bg-warm); overflow: hidden; flex-shrink: 0;
+  }
+  .disc-cov-bar .fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  .disc-expand {
+    transition: transform 0.2s; color: var(--text-muted);
+    flex-shrink: 0; font-size: 14px; width: 16px; text-align: center;
+    cursor: pointer;
+  }
+  .disc-expand.open { transform: rotate(90deg); }
+  .sub-programs { overflow: hidden; transition: max-height 0.3s ease; }
+  .sub-programs.collapsed { max-height: 0 !important; }
+  .prog-row {
+    padding: 8px 16px 8px 42px; font-size: 12px; color: var(--text-secondary);
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: all 0.15s;
+  }
+  .prog-row:hover { background: var(--bg-hover); color: var(--text); }
+  .prog-row.active { background: var(--bg-selected); color: var(--accent); font-weight: 500; }
+  .prog-count {
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-left: auto;
+  }
+  .reuse-chip {
+    font-size: 9px; padding: 1px 6px; border-radius: 8px;
+    background: var(--accent-light); color: var(--accent); font-weight: 600;
+  }
+
+  /* CENTER */
+  .graph-area {
+    position: relative; overflow: hidden; background: var(--bg);
+    background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.02) 0%, transparent 50%);
+  }
+  .grid-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, var(--border) 0.7px, transparent 0.7px);
+    background-size: 28px 28px; opacity: 0.5;
+  }
+  .graph-area svg { width: 100%; height: 100%; }
+  .canvas-hint {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: var(--text-muted);
+    background: var(--bg-card); padding: 5px 14px;
+    border-radius: 20px; border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm); pointer-events: none;
+    transition: opacity 0.5s;
+  }
+  .gnode { cursor: pointer; }
+  .gnode:hover .node-halo { opacity: 0.15 !important; }
+  .gnode.selected .node-halo { opacity: 0.2 !important; }
+  .gnode.selected .node-circle { stroke-width: 2.5 !important; }
+  .gnode.dimmed .node-circle { opacity: 0.2 !important; }
+  .gnode.dimmed text { opacity: 0.2 !important; }
+  .gedge { stroke: var(--border); stroke-width: 1; }
+  .gedge-reuse { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; opacity: 0.3; }
+  .gedge-lo { stroke: var(--teal); stroke-width: 2; opacity: 0.2; }
+  .gedge.highlight { stroke: var(--accent) !important; stroke-width: 2.5 !important; opacity: 0.8 !important; stroke-dasharray: none !important; }
+  .gedge.dimmed { opacity: 0.06 !important; }
+
+  .graph-legend {
+    position: absolute; bottom: 14px; left: 14px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 12px 16px;
+    box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 6px;
+  }
+  .legend-title { font-size: 9px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); font-weight: 700; }
+  .legend-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-secondary); }
+  .legend-line { width: 20px; height: 2px; border-radius: 1px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .zoom-controls {
+    position: absolute; bottom: 14px; right: 14px;
+    display: flex; flex-direction: column; gap: 2px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden;
+  }
+  .zoom-btn {
+    width: 34px; height: 34px; border: none; background: var(--bg-card);
+    color: var(--text-secondary); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-family: var(--font-mono);
+  }
+  .zoom-btn:hover { background: var(--bg-hover); color: var(--text); }
+  .zoom-btn + .zoom-btn { border-top: 1px solid var(--border); }
+
+  /* RIGHT */
+  .panel-right {
+    border-left: 1px solid var(--border);
+    overflow-y: auto; background: var(--bg-card);
+  }
+  .detail-card {
+    padding: 18px; border-bottom: 1px solid var(--border);
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform: translateX(0); } }
+  .dc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .dc-color-bar { width: 4px; height: 36px; border-radius: 2px; }
+  .dc-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .dc-subtitle { font-size: 11px; color: var(--text-dim); letter-spacing: 0.3px; }
+  .dc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .dc-stat {
+    background: var(--bg); padding: 10px 12px; border-radius: var(--radius);
+    border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+  }
+  .dc-stat:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .dc-stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); font-weight: 600; }
+  .dc-stat-val { font-family: var(--font-mono); font-size: 20px; font-weight: 700; }
+
+  .mod-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .mod-chip {
+    font-size: 10px; padding: 4px 10px; border-radius: 6px;
+    font-weight: 600; cursor: pointer; transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .mod-chip:hover { transform: scale(1.05); box-shadow: var(--shadow-sm); }
+  .mc-print { background: var(--purple-light); color: var(--purple); }
+  .mc-digital { background: var(--teal-light); color: var(--teal); }
+  .mc-video { background: var(--amber-light); color: var(--amber); }
+  .mc-assess { background: var(--green-light); color: var(--green); }
+  .mc-sim { background: var(--rose-light); color: var(--rose); }
+  .mc-oer { background: var(--accent-light); color: var(--accent); }
+
+  .section {
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .section-head {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-dim); font-weight: 700; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700;
+  }
+  .badge-red { background: var(--rose-light); color: var(--rose); }
+  .badge-blue { background: var(--accent-light); color: var(--accent); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+
+  .gap-card {
+    padding: 10px 12px; background: var(--bg);
+    border-radius: var(--radius); margin-bottom: 6px;
+    border-left: 3px solid var(--rose);
+    cursor: pointer; transition: all 0.2s;
+    border-right: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .gap-card:hover { background: var(--rose-light); border-left-width: 5px; transform: translateX(2px); box-shadow: var(--shadow-sm); }
+  .gap-card .gc-topic { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .gap-card .gc-meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 8px; align-items: center; }
+  .sev-tag {
+    font-size: 9px; padding: 1px 7px; border-radius: 8px; font-weight: 700; text-transform: uppercase;
+  }
+  .sev-high { background: var(--rose-light); color: var(--rose); }
+  .sev-medium { background: var(--amber-light); color: var(--amber); }
+
+  .reuse-card {
+    padding: 10px 12px; background: var(--bg);
+    border-radius: var(--radius); margin-bottom: 6px;
+    border-left: 3px solid var(--accent);
+    cursor: pointer; transition: all 0.2s;
+    border-right: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .reuse-card:hover { background: var(--accent-light); border-left-width: 5px; transform: translateX(2px); box-shadow: var(--shadow-sm); }
+  .reuse-card .rc-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .reuse-card .rc-from { font-size: 10px; color: var(--text-dim); margin-bottom: 5px; }
+  .rc-targets { display: flex; flex-wrap: wrap; gap: 4px; }
+  .rc-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    background: var(--accent-light); color: var(--accent); font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .rc-tag:hover { background: var(--accent); color: white; }
+
+  .lo-card {
+    padding: 8px 12px; background: var(--bg);
+    border-radius: var(--radius); margin-bottom: 5px;
+    display: flex; align-items: flex-start; gap: 8px;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid var(--border);
+  }
+  .lo-card:hover { border-color: var(--teal); background: var(--teal-light); box-shadow: var(--shadow-sm); }
+  .lo-code {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    color: var(--teal); background: var(--teal-light);
+    padding: 3px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+  }
+  .lo-text { font-size: 12px; color: var(--text-secondary); line-height: 1.4; flex: 1; }
+  .lo-ring {
+    width: 32px; height: 32px; flex-shrink: 0; position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lo-ring svg { position: absolute; top: 0; left: 0; }
+  .lo-pct { font-family: var(--font-mono); font-size: 8px; font-weight: 700; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(26,24,22,0.25);
+    backdrop-filter: blur(4px); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--bg-card); border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg); width: 560px; max-height: 80vh;
+    overflow-y: auto; transform: scale(0.95) translateY(10px);
+    transition: transform 0.25s; border: 1px solid var(--border);
+  }
+  .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .modal-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+  .modal-header .m-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-secondary); font-size: 14px; transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--rose-light); color: var(--rose); border-color: var(--rose); }
+  .modal-body { padding: 20px 24px; }
+  .m-section { margin-bottom: 18px; }
+  .m-section-title {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); font-weight: 700; margin-bottom: 8px;
+  }
+  .m-content-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: var(--radius);
+    border: 1px solid var(--border); margin-bottom: 4px;
+    font-size: 12px; transition: all 0.15s; cursor: pointer;
+  }
+  .m-content-row:hover { background: var(--bg-hover); }
+  .m-type-badge {
+    font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 600; flex-shrink: 0;
+  }
+  .m-cov-bar {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: var(--bg-warm); overflow: hidden; max-width: 80px;
+  }
+  .m-cov-bar .fill { height: 100%; border-radius: 3px; }
+  .m-cov-pct { font-family: var(--font-mono); font-size: 11px; font-weight: 600; width: 36px; text-align: right; }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed; z-index: 300;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 12px;
+    box-shadow: var(--shadow-lg); pointer-events: none;
+    opacity: 0; transition: opacity 0.15s; max-width: 220px;
+  }
+  .tooltip.show { opacity: 1; }
+  .tt-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .tt-sub { font-size: 11px; color: var(--text-secondary); }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">K</div>
+    <div class="header-title">Content Knowledge Graph <span>· Publisher Intelligence</span></div>
+    <div class="breadcrumb" id="breadcrumb">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <a onclick="resetView()">All Disciplines</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search titles, LOs..." id="searchInput" oninput="handleSearch(this.value)">
+    </div>
+    <div class="view-tabs">
+      <button class="tab-btn active" onclick="switchView(this)">Graph</button>
+      <button class="tab-btn" onclick="switchView(this)">Coverage</button>
+      <button class="tab-btn" onclick="switchView(this)">Reuse Map</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill" onclick="hlStat(this)">
+    <div class="s-label">Total Titles</div><div class="s-value">847</div><div class="s-sub">Across 6 disciplines</div>
+  </div>
+  <div class="stat-pill" onclick="hlStat(this)">
+    <div class="s-label">Content Objects</div><div class="s-value blue">12,438</div><div class="s-sub">LO-aligned assets</div>
+  </div>
+  <div class="stat-pill" onclick="hlStat(this)">
+    <div class="s-label">Avg Coverage</div><div class="s-value green">73%</div><div class="s-sub">↑ 4% from Q3</div>
+  </div>
+  <div class="stat-pill" onclick="hlStat(this)">
+    <div class="s-label">Content Gaps</div><div class="s-value rose">34</div><div class="s-sub">12 critical priority</div>
+  </div>
+  <div class="stat-pill" onclick="hlStat(this)">
+    <div class="s-label">Reuse Potential</div><div class="s-value amber">2,180</div><div class="s-sub">Cross-discipline objects</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="panel-left">
+    <div class="panel-head">Disciplines & Programs <button class="collapse-btn" id="colBtn" onclick="toggleAll()">Collapse All</button></div>
+    <div id="tree"></div>
+  </div>
+  <div class="graph-area" id="graphArea">
+    <div class="grid-dots"></div>
+    <div class="canvas-hint" id="hint">Click any node to explore · Drag to pan</div>
+    <svg id="svg" viewBox="0 0 900 650"></svg>
+    <div class="graph-legend">
+      <div class="legend-title">Legend</div>
+      <div class="legend-row"><div class="legend-line" style="background:var(--border-strong)"></div> Hierarchy</div>
+      <div class="legend-row"><div class="legend-line" style="background:var(--accent);border-top:2px dashed var(--accent);height:0"></div> Reuse Link</div>
+      <div class="legend-row"><div class="legend-line" style="background:var(--teal);height:3px"></div> LO Alignment</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--rose)"></div> Coverage Gap</div>
+    </div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoom(1.15)">+</button>
+      <button class="zoom-btn" onclick="zoom(0.87)">−</button>
+      <button class="zoom-btn" onclick="resetZoom()" style="font-size:11px">⟲</button>
+    </div>
+  </div>
+  <div class="panel-right">
+    <div class="detail-card" id="detail"></div>
+    <div class="section" id="gapSec"></div>
+    <div class="section" id="reuseSec"></div>
+    <div class="section" id="loSec"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="mOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h2 id="mTitle"></h2><div class="m-sub" id="mSub"></div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+<div class="tooltip" id="tip"><div class="tt-title" id="tipT"></div><div class="tt-sub" id="tipS"></div></div>
+
+<script>
+const D = {
+  discs: [
+    { id:'bus', name:'Business & Management', hex:'#2563EB', titles:186, coverage:81,
+      mod:{print:91,digital:149,video:67,assess:205,sim:22,oer:14},
+      progs:[
+        {name:'Accounting & Finance',titles:52,reuse:14,coverage:85},
+        {name:'Marketing',titles:38,reuse:22,coverage:78},
+        {name:'Management & Leadership',titles:48,reuse:18,coverage:83},
+        {name:'Entrepreneurship',titles:48,reuse:8,coverage:76},
+      ]},
+    { id:'stem', name:'STEM', hex:'#0D9488', titles:214, coverage:68,
+      mod:{print:105,digital:192,video:86,assess:248,sim:44,oer:32},
+      progs:[
+        {name:'Computer Science',titles:62,reuse:31,coverage:72},
+        {name:'Mathematics',titles:44,reuse:12,coverage:80},
+        {name:'Engineering',titles:56,reuse:24,coverage:58},
+        {name:'Data Science & AI',titles:52,reuse:38,coverage:62},
+      ]},
+    { id:'health', name:'Health Sciences', hex:'#E11D48', titles:158, coverage:74,
+      mod:{print:77,digital:126,video:72,assess:189,sim:38,oer:10},
+      progs:[
+        {name:'Nursing',titles:48,reuse:16,coverage:82},
+        {name:'Public Health',titles:36,reuse:20,coverage:70},
+        {name:'Allied Health',titles:42,reuse:12,coverage:68},
+        {name:'Healthcare Admin',titles:32,reuse:14,coverage:75},
+      ]},
+    { id:'arts', name:'Arts & Humanities', hex:'#7C3AED', titles:112, coverage:62,
+      mod:{print:78,digital:84,video:34,assess:98,sim:6,oer:22},
+      progs:[
+        {name:'English & Literature',titles:34,reuse:8,coverage:70},
+        {name:'History',titles:28,reuse:15,coverage:65},
+        {name:'Philosophy & Ethics',titles:24,reuse:22,coverage:52},
+        {name:'Communications',titles:26,reuse:11,coverage:60},
+      ]},
+    { id:'social', name:'Social Sciences', hex:'#D97706', titles:98, coverage:71,
+      mod:{print:54,digital:82,video:40,assess:112,sim:10,oer:18},
+      progs:[
+        {name:'Psychology',titles:32,reuse:18,coverage:78},
+        {name:'Sociology',titles:22,reuse:12,coverage:68},
+        {name:'Political Science',titles:24,reuse:9,coverage:64},
+        {name:'Economics',titles:20,reuse:16,coverage:74},
+      ]},
+    { id:'edu', name:'Education', hex:'#16A34A', titles:79, coverage:77,
+      mod:{print:38,digital:68,video:42,assess:92,sim:16,oer:28},
+      progs:[
+        {name:'Curriculum & Instruction',titles:22,reuse:14,coverage:82},
+        {name:'Educational Technology',titles:20,reuse:28,coverage:75},
+        {name:'Special Education',titles:18,reuse:6,coverage:70},
+        {name:'Higher Ed Admin',titles:19,reuse:10,coverage:80},
+      ]},
+  ],
+  gaps: [
+    {topic:'AI Ethics in Healthcare',disc:'health',sev:'high',los:4,desc:'No content covering ethical frameworks for AI-assisted diagnostics and treatment decisions.'},
+    {topic:'Quantum Computing Foundations',disc:'stem',sev:'high',los:3,desc:'Missing introductory materials on quantum gates, qubits, and quantum algorithms.'},
+    {topic:'DEI in Organizational Mgmt',disc:'bus',sev:'high',los:5,desc:'Limited coverage of diversity strategy, inclusive leadership, and equity analytics.'},
+    {topic:'Climate Science Policy',disc:'social',sev:'medium',los:2,desc:'Gap in interdisciplinary content on climate policy analysis and advocacy.'},
+    {topic:'Digital Humanities Methods',disc:'arts',sev:'high',los:3,desc:'No content on computational text analysis, digital archives, or DH tools.'},
+    {topic:'Telehealth & Remote Care',disc:'health',sev:'high',los:4,desc:'Missing practical modules on telehealth delivery, compliance, and technology.'},
+    {topic:'Blockchain in Finance',disc:'bus',sev:'medium',los:2,desc:'Foundational content on distributed ledger applications in financial services.'},
+    {topic:'Neuroeducation',disc:'edu',sev:'medium',los:3,desc:'Brain-based learning science content for K-12 and higher ed instruction.'},
+    {topic:'AR/VR in Training',disc:'edu',sev:'high',los:4,desc:'No immersive learning design content for XR-based training environments.'},
+    {topic:'Cybersecurity Fundamentals',disc:'stem',sev:'high',los:6,desc:'Critical gap in introductory cybersecurity across all STEM programs.'},
+    {topic:'Behavioral Economics',disc:'social',sev:'medium',los:2,desc:'Limited nudge theory and choice architecture content for econ programs.'},
+    {topic:'GenAI Content Creation',disc:'arts',sev:'high',los:5,desc:'No coverage of generative AI tools for creative writing, art, and media.'},
+  ],
+  reuse: [
+    {obj:'Statistics & Probability Module',from:'stem',targets:['bus','social','health','edu'],objects:48,savings:'$120K'},
+    {obj:'Research Methods Framework',from:'social',targets:['health','edu','bus'],objects:32,savings:'$85K'},
+    {obj:'Ethics & Critical Thinking',from:'arts',targets:['bus','health','stem','edu'],objects:56,savings:'$145K'},
+    {obj:'Data Visualization Toolkit',from:'stem',targets:['bus','social','health'],objects:24,savings:'$62K'},
+    {obj:'Academic Writing Guide',from:'arts',targets:['stem','social','edu','health','bus'],objects:40,savings:'$95K'},
+    {obj:'Leadership Theory Survey',from:'bus',targets:['edu','health'],objects:18,savings:'$48K'},
+  ],
+  los: [
+    {code:'LO-BUS-101',text:'Apply financial analysis frameworks to business case studies',cov:92},
+    {code:'LO-SCI-204',text:'Design controlled experiments using the scientific method',cov:78},
+    {code:'LO-HLT-310',text:'Evaluate evidence-based practices in clinical care settings',cov:65},
+    {code:'LO-ART-102',text:'Analyze rhetorical strategies across diverse media and texts',cov:45},
+    {code:'LO-SOC-201',text:'Apply sociological frameworks to contemporary social issues',cov:72},
+    {code:'LO-EDU-405',text:'Design technology-enhanced learning experiences with UDL',cov:58},
+    {code:'LO-SCI-301',text:'Implement algorithmic solutions for multi-step problems',cov:34},
+    {code:'LO-BUS-305',text:'Develop data-driven strategic marketing plans',cov:88},
+    {code:'LO-HLT-201',text:'Assess population health data for community intervention design',cov:70},
+    {code:'LO-EDU-202',text:'Integrate adaptive learning technologies into curriculum design',cov:52},
+  ],
+};
+
+const DN = {}; D.discs.forEach(d => DN[d.id] = d.name);
+const covC = v => v >= 75 ? 'var(--green)' : v >= 60 ? 'var(--amber)' : 'var(--rose)';
+const covBg = v => v >= 75 ? 'var(--green-light)' : v >= 60 ? 'var(--amber-light)' : 'var(--rose-light)';
+
+let S = { disc:null, prog:null, exp: new Set(D.discs.map(d=>d.id)), zm:1, px:0, py:0, hl:null };
+
+// TREE
+function renderTree(){
+  document.getElementById('tree').innerHTML = D.discs.map(d => {
+    const cv = covC(d.coverage), isE = S.exp.has(d.id), isA = S.disc===d.id && S.prog===null;
+    return `<div>
+      <div class="disc-row ${isA?'active':''}" onclick="selDisc('${d.id}')">
+        <span class="disc-expand ${isE?'open':''}" onclick="event.stopPropagation();togDisc('${d.id}')">›</span>
+        <div class="disc-dot" style="background:${d.hex}"></div>
+        <div class="disc-name">${d.name}</div>
+        <div class="disc-count">${d.titles}</div>
+        <div class="disc-cov-bar"><div class="fill" style="width:${d.coverage}%;background:${cv}"></div></div>
+      </div>
+      <div class="sub-programs ${isE?'':'collapsed'}" style="max-height:${isE?d.progs.length*40:0}px">
+        ${d.progs.map((p,i) => `
+          <div class="prog-row ${S.disc===d.id&&S.prog===i?'active':''}" onclick="selProg('${d.id}',${i})">
+            ${p.name}
+            ${p.reuse>15?`<span class="reuse-chip">↻ ${p.reuse}</span>`:''}
+            <span class="prog-count">${p.titles}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togDisc(id){ S.exp.has(id)?S.exp.delete(id):S.exp.add(id); renderTree(); }
+function toggleAll(){ const b=document.getElementById('colBtn'); if(S.exp.size>0){S.exp.clear();b.textContent='Expand All';}else{D.discs.forEach(d=>S.exp.add(d.id));b.textContent='Collapse All';} renderTree(); }
+
+function selDisc(id){ S.disc=id; S.prog=null; if(!S.exp.has(id))S.exp.add(id); S.hl=id; renderTree(); renderDetail(); drawGraph(); updateBC(); }
+function selProg(did,pi){ S.disc=did; S.prog=pi; renderTree(); renderDetail(); updateBC(); }
+
+// DETAIL
+function renderDetail(){
+  if(!S.disc) return renderOverview();
+  const d=D.discs.find(x=>x.id===S.disc);
+  if(S.prog!==null) renderProgD(d,d.progs[S.prog]); else renderDiscD(d);
+  renderGaps(); renderReuse(); renderLOs();
+}
+
+function renderOverview(){
+  document.getElementById('detail').innerHTML=`
+    <div class="dc-header"><div class="dc-color-bar" style="background:linear-gradient(180deg,var(--accent),var(--teal))"></div>
+    <div><div class="dc-title">All Disciplines</div><div class="dc-subtitle">Complete catalog · 847 titles</div></div></div>
+    <div class="mod-row">
+      <span class="mod-chip mc-print" onclick="openModModal('print')">◉ Print: 443</span>
+      <span class="mod-chip mc-digital" onclick="openModModal('digital')">◉ Digital: 701</span>
+      <span class="mod-chip mc-video" onclick="openModModal('video')">▶ Video: 341</span>
+      <span class="mod-chip mc-assess" onclick="openModModal('assess')">✎ Assess: 944</span>
+      <span class="mod-chip mc-sim" onclick="openModModal('sim')">◈ Sim: 136</span>
+      <span class="mod-chip mc-oer" onclick="openModModal('oer')">⊕ OER: 124</span>
+    </div>
+    <div class="dc-grid">
+      <div class="dc-stat"><div class="dc-stat-label">Avg Coverage</div><div class="dc-stat-val" style="color:var(--green)">73%</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Reuse Pool</div><div class="dc-stat-val" style="color:var(--accent)">2,180</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Total Gaps</div><div class="dc-stat-val" style="color:var(--rose)">34</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">LOs Mapped</div><div class="dc-stat-val" style="color:var(--teal)">78%</div></div>
+    </div>`;
+  renderGaps(); renderReuse(); renderLOs();
+}
+
+function renderDiscD(d){
+  const tr=d.progs.reduce((s,p)=>s+p.reuse,0), gc=D.gaps.filter(g=>g.disc===d.id).length;
+  document.getElementById('detail').innerHTML=`
+    <div class="dc-header"><div class="dc-color-bar" style="background:${d.hex}"></div>
+    <div><div class="dc-title">${d.name}</div><div class="dc-subtitle">Discipline · ${d.titles} titles · ${d.progs.length} programs</div></div></div>
+    <div class="mod-row">
+      <span class="mod-chip mc-print" onclick="openModModal('print','${d.id}')">◉ Print: ${d.mod.print}</span>
+      <span class="mod-chip mc-digital" onclick="openModModal('digital','${d.id}')">◉ Digital: ${d.mod.digital}</span>
+      <span class="mod-chip mc-video" onclick="openModModal('video','${d.id}')">▶ Video: ${d.mod.video}</span>
+      <span class="mod-chip mc-assess" onclick="openModModal('assess','${d.id}')">✎ Assess: ${d.mod.assess}</span>
+      <span class="mod-chip mc-sim" onclick="openModModal('sim','${d.id}')">◈ Sim: ${d.mod.sim}</span>
+      <span class="mod-chip mc-oer" onclick="openModModal('oer','${d.id}')">⊕ OER: ${d.mod.oer}</span>
+    </div>
+    <div class="dc-grid">
+      <div class="dc-stat" onclick="openCovModal('${d.id}')"><div class="dc-stat-label">Coverage</div><div class="dc-stat-val" style="color:${covC(d.coverage)}">${d.coverage}%</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Reusable</div><div class="dc-stat-val" style="color:var(--accent)">${tr}</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Gaps</div><div class="dc-stat-val" style="color:var(--rose)">${gc}</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">LOs Mapped</div><div class="dc-stat-val" style="color:var(--teal)">${60+Math.round(d.coverage*0.4)}%</div></div>
+    </div>`;
+}
+
+function renderProgD(d,p){
+  document.getElementById('detail').innerHTML=`
+    <div class="dc-header"><div class="dc-color-bar" style="background:${d.hex}"></div>
+    <div><div class="dc-title">${p.name}</div><div class="dc-subtitle">Program · ${p.titles} titles · ${d.name}</div></div></div>
+    <div class="dc-grid">
+      <div class="dc-stat"><div class="dc-stat-label">Coverage</div><div class="dc-stat-val" style="color:${covC(p.coverage)}">${p.coverage}%</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Reusable</div><div class="dc-stat-val" style="color:var(--accent)">${p.reuse}</div></div>
+      <div class="dc-stat"><div class="dc-stat-label">Titles</div><div class="dc-stat-val">${p.titles}</div></div>
+      <div class="dc-stat" onclick="openCovModal('${d.id}')"><div class="dc-stat-label">Disc. Coverage</div><div class="dc-stat-val" style="color:${covC(d.coverage)}">${d.coverage}%</div></div>
+    </div>`;
+}
+
+function renderGaps(){
+  let f=D.gaps; if(S.disc) f=f.filter(g=>g.disc===S.disc);
+  const cc=f.filter(g=>g.sev==='high').length;
+  document.getElementById('gapSec').innerHTML=`
+    <div class="section-head"><span>⚠ Coverage Gaps</span>${cc>0?`<span class="badge badge-red">${cc} critical</span>`:'<span class="badge badge-green">None</span>'}</div>
+    ${f.length===0?'<div style="font-size:12px;color:var(--text-dim);padding:8px 0">No gaps in this selection</div>':
+    f.map(g=>`<div class="gap-card" onclick="openGapModal('${g.topic}')">
+      <div class="gc-topic">${g.topic}</div>
+      <div class="gc-meta"><span class="sev-tag sev-${g.sev}">${g.sev}</span>${DN[g.disc]||g.disc} · ${g.los} LOs uncovered</div>
+    </div>`).join('')}`;
+}
+
+function renderReuse(){
+  let f=D.reuse; if(S.disc) f=f.filter(r=>r.from===S.disc||r.targets.includes(S.disc));
+  document.getElementById('reuseSec').innerHTML=`
+    <div class="section-head"><span>↻ Reuse Opportunities</span><span class="badge badge-blue">${f.length} found</span></div>
+    ${f.map(r=>`<div class="reuse-card" onclick="openReuseModal('${r.obj}')">
+      <div class="rc-name">${r.obj}</div>
+      <div class="rc-from">From: ${DN[r.from]} · ${r.objects} objects · Est. savings ${r.savings}</div>
+      <div class="rc-targets">${r.targets.map(t=>`<span class="rc-tag" onclick="event.stopPropagation();selDisc('${t}')">${DN[t]}</span>`).join('')}</div>
+    </div>`).join('')}`;
+}
+
+function renderLOs(){
+  let f=D.los;
+  if(S.disc){ const px={bus:'BUS',stem:'SCI',health:'HLT',arts:'ART',social:'SOC',edu:'EDU'}[S.disc]; f=f.filter(l=>l.code.includes(px)); }
+  document.getElementById('loSec').innerHTML=`
+    <div class="section-head"><span>📋 Learning Objectives</span><span class="badge badge-green">${f.length} mapped</span></div>
+    ${f.map(l=>{
+      const c=covC(l.cov), bg=covBg(l.cov), circ=2*Math.PI*12, dash=circ*l.cov/100;
+      return `<div class="lo-card" onclick="openLOModal('${l.code}')">
+        <span class="lo-code">${l.code}</span><span class="lo-text">${l.text}</span>
+        <div class="lo-ring"><svg width="32" height="32" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="12" fill="none" stroke="${bg}" stroke-width="3"/>
+          <circle cx="16" cy="16" r="12" fill="none" stroke="${c}" stroke-width="3" stroke-dasharray="${dash} ${circ-dash}" stroke-linecap="round" transform="rotate(-90 16 16)"/>
+        </svg><span class="lo-pct" style="color:${c}">${l.cov}</span></div>
+      </div>`;
+    }).join('')}`;
+}
+
+// GRAPH
+let nodes=[], edges=[], discPos={};
+
+function buildGraph(){
+  nodes=[]; edges=[]; discPos={};
+  const cx=450, cy=310;
+  nodes.push({x:cx,y:cy,r:26,label:'Content',label2:'Catalog',hex:'#fff',stroke:'#D0CAC0',type:'hub',id:'hub'});
+  D.discs.forEach((d,i)=>{
+    const a=(Math.PI*2*i/D.discs.length)-Math.PI/2, dist=175;
+    const x=cx+Math.cos(a)*dist, y=cy+Math.sin(a)*dist, r=11+d.titles/22;
+    discPos[d.id]={x,y,a};
+    nodes.push({x,y,r,label:d.name.split('&')[0].trim(),hex:d.hex,type:'disc',id:d.id,cov:d.coverage,titles:d.titles});
+    edges.push({x1:cx,y1:cy,x2:x,y2:y,type:'h',src:'hub',tgt:d.id});
+    d.progs.forEach((p,j)=>{
+      const sa=a+(j-1.5)*0.24, sd=dist+75+(j%2)*22;
+      const sx=cx+Math.cos(sa)*sd, sy=cy+Math.sin(sa)*sd, sr=4+p.titles/14;
+      nodes.push({x:sx,y:sy,r:sr,label:p.name.split(' ')[0],hex:d.hex,type:'prog',id:`${d.id}-${j}`,did:d.id,pi:j,cov:p.coverage});
+      edges.push({x1:x,y1:y,x2:sx,y2:sy,type:'h',src:d.id,tgt:`${d.id}-${j}`});
+    });
+  });
+  [['bus','stem'],['stem','health'],['health','social'],['arts','edu'],['bus','arts'],['stem','edu'],['social','bus']].forEach(([a,b])=>{
+    if(discPos[a]&&discPos[b]) edges.push({x1:discPos[a].x,y1:discPos[a].y,x2:discPos[b].x,y2:discPos[b].y,type:'r',src:a,tgt:b});
+  });
+  [['bus','social'],['stem','arts'],['health','edu']].forEach(([a,b])=>{
+    if(discPos[a]&&discPos[b]) edges.push({x1:discPos[a].x,y1:discPos[a].y,x2:discPos[b].x,y2:discPos[b].y,type:'lo',src:a,tgt:b});
+  });
+}
+
+function drawGraph(){
+  const svg=document.getElementById('svg');
+  const hl=S.hl;
+  let h=`<defs><filter id="sh"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(0,0,0,0.08)"/></filter></defs>`;
+  h+=`<g id="gG" transform="translate(${S.px},${S.py}) scale(${S.zm})">`;
+
+  edges.forEach((e,i)=>{
+    let cls='gedge', extra='';
+    if(e.type==='r') cls='gedge-reuse';
+    else if(e.type==='lo') cls='gedge-lo';
+    const connected = !hl || e.src===hl || e.tgt===hl || e.src==='hub' || e.tgt==='hub';
+    const hi = hl && (e.src===hl || e.tgt===hl);
+    if(hl && !connected) cls+=' dimmed';
+    if(hi) cls+=' highlight';
+    if(e.type==='r'){
+      const mx=(e.x1+e.x2)/2+Math.sin(i)*30, my=(e.y1+e.y2)/2+Math.cos(i)*30;
+      h+=`<path d="M${e.x1},${e.y1} Q${mx},${my} ${e.x2},${e.y2}" fill="none" class="${cls}"/>`;
+    } else {
+      h+=`<line x1="${e.x1}" y1="${e.y1}" x2="${e.x2}" y2="${e.y2}" class="${cls}"/>`;
+    }
+  });
+
+  // Gaps
+  [{x:630,y:140,l:'AI Ethics'},{x:275,y:470,l:'Quantum'},{x:720,y:390,l:'Cybersec'},{x:150,y:210,l:'GenAI'}].forEach(g=>{
+    h+=`<g class="gap-marker" style="cursor:pointer" onclick="openGapModal('${g.l}')">
+      <circle cx="${g.x}" cy="${g.y}" r="14" fill="var(--rose-light)" opacity="0.15"/>
+      <circle cx="${g.x}" cy="${g.y}" r="5" fill="var(--rose)" opacity="0.7"/>
+      <circle cx="${g.x}" cy="${g.y}" r="5" fill="none" stroke="var(--rose)" stroke-width="1" opacity="0.4">
+        <animate attributeName="r" values="5;16" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="${g.x}" y="${g.y - 11}" text-anchor="middle" fill="var(--rose)" font-size="7" font-weight="700" font-family="JetBrains Mono">GAP</text>
+    </g>`;
+  });
+
+  nodes.forEach(n=>{
+    const isSel = (n.type==='disc'&&n.id===S.disc)||(n.type==='prog'&&n.did===S.disc&&n.pi===S.prog);
+    const isDimmed = hl && n.type!=='hub' && n.id!==hl && n.did!==hl && !(n.type==='prog' && n.did===hl);
+    h+=`<g class="gnode ${isSel?'selected':''} ${isDimmed?'dimmed':''}" onclick="gClick('${n.type}','${n.id}',${n.pi!==undefined?n.pi:'null'},'${n.did||''}')"
+        onmouseenter="showTip(event,'${(n.label+(n.label2?' '+n.label2:'')).replace(/'/g,"\\'")}','${n.titles?n.titles+' titles':''}${n.cov?' · '+n.cov+'% cov':''}')" onmouseleave="hideTip()">`;
+    if(n.type==='hub'){
+      h+=`<circle cx="${n.x}" cy="${n.y}" r="${n.r+10}" fill="var(--accent)" opacity="0.03" class="node-halo"/>
+          <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="white" stroke="${n.stroke}" stroke-width="1.5" class="node-circle" filter="url(#sh)"/>
+          <text x="${n.x}" y="${n.y-5}" text-anchor="middle" font-family="Outfit" font-size="10" font-weight="600" fill="#1A1816">${n.label}</text>
+          <text x="${n.x}" y="${n.y+8}" text-anchor="middle" font-family="Outfit" font-size="10" fill="#6B6560">${n.label2}</text>`;
+    } else {
+      const op = n.type==='prog'?0.55:0.85;
+      h+=`<circle cx="${n.x}" cy="${n.y}" r="${n.r+12}" fill="${n.hex}" opacity="0.05" class="node-halo"/>
+          <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.hex}" opacity="${op}" class="node-circle" stroke="${isSel?n.hex:'transparent'}" stroke-width="2" filter="url(#sh)"/>`;
+      if(n.cov!==undefined && n.type==='disc'){
+        const ci=2*Math.PI*(n.r+5), da=ci*n.cov/100;
+        h+=`<circle cx="${n.x}" cy="${n.y}" r="${n.r+5}" fill="none" stroke="${n.hex}" stroke-width="2.5" stroke-dasharray="${da} ${ci-da}" stroke-linecap="round" opacity="0.4" transform="rotate(-90 ${n.x} ${n.y})"/>`;
+      }
+      const fs=n.type==='prog'?8:11, fw=n.type==='prog'?400:600;
+      h+=`<text x="${n.x}" y="${n.y+n.r+14}" text-anchor="middle" font-family="Outfit" font-size="${fs}" font-weight="${fw}" fill="${isDimmed?'#D0CAC0':'#1A1816'}">${n.label}</text>`;
+    }
+    h+=`</g>`;
+  });
+
+  h+='</g>';
+  svg.innerHTML=h;
+}
+
+function gClick(type,id,pi,did){
+  document.getElementById('hint').style.opacity='0';
+  if(type==='hub') resetView();
+  else if(type==='disc') selDisc(id);
+  else if(type==='prog') selProg(did,pi);
+}
+
+function zoom(f){ S.zm=Math.max(0.5,Math.min(2.5,S.zm*f)); drawGraph(); }
+function resetZoom(){ S.zm=1; S.px=0; S.py=0; drawGraph(); }
+
+// Pan
+(function(){
+  let dragging=false,lx,ly;
+  const a=document.getElementById('graphArea');
+  a.addEventListener('mousedown',e=>{if(e.target.closest('.gnode,.gap-marker,.zoom-controls,.graph-legend'))return;dragging=true;lx=e.clientX;ly=e.clientY;a.style.cursor='grabbing';});
+  window.addEventListener('mousemove',e=>{if(!dragging)return;S.px+=(e.clientX-lx)/S.zm;S.py+=(e.clientY-ly)/S.zm;lx=e.clientX;ly=e.clientY;drawGraph();});
+  window.addEventListener('mouseup',()=>{dragging=false;document.getElementById('graphArea').style.cursor='';});
+})();
+
+// MODALS
+function openModal(t,s,b){document.getElementById('mTitle').textContent=t;document.getElementById('mSub').textContent=s;document.getElementById('mBody').innerHTML=b;document.getElementById('mOverlay').classList.add('show');}
+function closeModal(){document.getElementById('mOverlay').classList.remove('show');}
+
+function openGapModal(topic){
+  const g=D.gaps.find(x=>x.topic===topic||topic.includes(x.topic.split(' ')[0]));
+  if(!g){openModal(topic,'Coverage Gap','<p style="color:var(--text-secondary);font-size:13px">Click a specific gap card for full details.</p>');return;}
+  openModal(g.topic,`${g.sev.toUpperCase()} priority · ${DN[g.disc]}`,`
+    <div class="m-section"><div class="m-section-title">Description</div><p style="font-size:13px;color:var(--text-secondary);line-height:1.6">${g.desc}</p></div>
+    <div class="m-section"><div class="m-section-title">Impact</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);font-weight:600">Uncovered LOs</div><div style="font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--rose)">${g.los}</div></div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);font-weight:600">Severity</div><div style="font-family:var(--font-mono);font-size:22px;font-weight:700;color:${g.sev==='high'?'var(--rose)':'var(--amber)'}">${g.sev.toUpperCase()}</div></div>
+      </div></div>
+    <div class="m-section"><div class="m-section-title">Recommended Actions</div>
+      <div class="m-content-row"><span class="m-type-badge mc-digital">Commission</span><span style="flex:1;font-size:12px">Develop new content module</span></div>
+      <div class="m-content-row"><span class="m-type-badge mc-assess">Map LOs</span><span style="flex:1;font-size:12px">Align ${g.los} learning objectives</span></div>
+      <div class="m-content-row"><span class="m-type-badge" style="background:var(--accent-light);color:var(--accent)">Reuse Check</span><span style="flex:1;font-size:12px">Scan catalog for reusable content</span></div>
+    </div>`);
+}
+
+function openReuseModal(obj){
+  const r=D.reuse.find(x=>x.obj===obj); if(!r) return;
+  openModal(r.obj,`From ${DN[r.from]} · ${r.objects} objects`,`
+    <div class="m-section"><div class="m-section-title">Summary</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);font-weight:600">Objects</div><div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--accent)">${r.objects}</div></div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);font-weight:600">Savings</div><div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--green)">${r.savings}</div></div>
+        <div style="background:var(--bg);padding:12px;border-radius:8px;border:1px solid var(--border)"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);font-weight:600">Targets</div><div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--amber)">${r.targets.length}</div></div>
+      </div></div>
+    <div class="m-section"><div class="m-section-title">Target Disciplines</div>
+      ${r.targets.map(t=>`<div class="m-content-row" onclick="closeModal();selDisc('${t}')">
+        <div style="width:8px;height:8px;border-radius:50%;background:${D.discs.find(d=>d.id===t)?.hex||'var(--accent)'}"></div>
+        <span style="flex:1;font-size:13px;font-weight:500">${DN[t]}</span>
+        <span style="font-size:11px;color:var(--accent);font-weight:500">View →</span>
+      </div>`).join('')}
+    </div>
+    <div class="m-section"><div class="m-section-title">Sample Content Objects</div>
+      ${[...Array(Math.min(4,r.objects))].map((_,i)=>`<div class="m-content-row">
+        <span class="m-type-badge ${['mc-digital','mc-assess','mc-video','mc-print'][i%4]}">${['Module','Quiz','Video','Chapter'][i%4]}</span>
+        <span style="flex:1;font-size:12px">${r.obj} — Part ${i+1}</span>
+        <div class="m-cov-bar"><div class="fill" style="width:${70+i*7}%;background:var(--green)"></div></div>
+        <span class="m-cov-pct" style="color:var(--green)">${70+i*7}%</span>
+      </div>`).join('')}
+    </div>`);
+}
+
+function openLOModal(code){
+  const l=D.los.find(x=>x.code===code); if(!l) return;
+  const c=covC(l.cov);
+  openModal(l.code,l.text,`
+    <div class="m-section"><div class="m-section-title">Coverage</div>
+      <div style="background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:500">Content Coverage</span>
+          <span style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:${c}">${l.cov}%</span>
+        </div>
+        <div style="height:8px;border-radius:4px;background:var(--bg-warm);overflow:hidden">
+          <div style="height:100%;width:${l.cov}%;background:${c};border-radius:4px"></div>
+        </div>
+      </div></div>
+    <div class="m-section"><div class="m-section-title">Aligned Content</div>
+      ${[['Module','digital',85],['Assessment','assess',72],['Video Lecture','video',60],['Case Study','print',45]].map(([n,t,cv])=>`<div class="m-content-row">
+        <span class="m-type-badge mc-${t}">${n}</span><span style="flex:1;font-size:12px">${l.text.split(' ').slice(0,4).join(' ')} — ${n}</span>
+        <div class="m-cov-bar"><div class="fill" style="width:${cv}%;background:${covC(cv)}"></div></div>
+        <span class="m-cov-pct" style="color:${covC(cv)}">${cv}%</span>
+      </div>`).join('')}
+    </div>`);
+}
+
+function openModModal(mod,did){
+  const names={print:'Print Materials',digital:'Digital Content',video:'Video Assets',assess:'Assessments',sim:'Simulations',oer:'OER Resources'};
+  const total=D.discs.reduce((s,d)=>s+d.mod[mod],0);
+  openModal(names[mod],`${total} total`,`<div class="m-section"><div class="m-section-title">By Discipline</div>
+    ${D.discs.map(d=>{const v=d.mod[mod],p=Math.round(v/total*100);
+      return `<div class="m-content-row" onclick="closeModal();selDisc('${d.id}')">
+        <div style="width:8px;height:8px;border-radius:50%;background:${d.hex}"></div>
+        <span style="flex:1;font-size:13px">${d.name}</span>
+        <div class="m-cov-bar" style="max-width:120px"><div class="fill" style="width:${p}%;background:${d.hex}"></div></div>
+        <span style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text-secondary);width:50px;text-align:right">${v}</span>
+      </div>`;}).join('')}</div>`);
+}
+
+function openCovModal(did){
+  const d=D.discs.find(x=>x.id===did); if(!d)return;
+  openModal(`${d.name} Coverage`,'Program-level breakdown',`<div class="m-section"><div class="m-section-title">By Program</div>
+    ${d.progs.map(p=>`<div class="m-content-row">
+      <span style="flex:1;font-size:13px;font-weight:500">${p.name}</span>
+      <div class="m-cov-bar" style="max-width:120px"><div class="fill" style="width:${p.coverage}%;background:${covC(p.coverage)}"></div></div>
+      <span class="m-cov-pct" style="color:${covC(p.coverage)}">${p.coverage}%</span>
+    </div>`).join('')}</div>`);
+}
+
+// TOOLTIP
+function showTip(e,t,s){const el=document.getElementById('tip');document.getElementById('tipT').textContent=t;document.getElementById('tipS').textContent=s;el.style.left=(e.clientX+12)+'px';el.style.top=(e.clientY-10)+'px';el.classList.add('show');}
+function hideTip(){document.getElementById('tip').classList.remove('show');}
+
+// NAV
+function updateBC(){
+  let h=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><a onclick="resetView()">All Disciplines</a>`;
+  if(S.disc){const d=D.discs.find(x=>x.id===S.disc);
+    h+=` <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg> <a onclick="selDisc('${d.id}')">${d.name}</a>`;
+    if(S.prog!==null) h+=` <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg> <span style="color:var(--text)">${d.progs[S.prog].name}</span>`;
+  }
+  document.getElementById('breadcrumb').innerHTML=h;
+}
+
+function resetView(){ S.disc=null; S.prog=null; S.hl=null; renderTree(); renderOverview(); drawGraph(); updateBC(); document.getElementById('hint').style.opacity='1'; }
+function switchView(btn){ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+function hlStat(el){ document.querySelectorAll('.stat-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); }
+function handleSearch(v){ if(!v.trim()){renderTree();return;} const q=v.toLowerCase(); D.discs.forEach(d=>{if(d.name.toLowerCase().includes(q)&&!S.exp.has(d.id))S.exp.add(d.id);}); renderTree(); }
+
+// INIT
+buildGraph(); renderTree(); renderOverview(); drawGraph(); updateBC();
+</script>
+</body>
+</html>
