@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kadal · AI Content Pipeline — V3</title>
+<title>Kadal · AI Content Pipeline — V3.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=Instrument+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1097,7 +1097,7 @@ body{font-family:var(--font-b);background:#fff;color:var(--ink);height:100vh;ove
 .bv-response-body{padding:16px;font-size:13px;color:var(--ink2);line-height:1.7}
 
 
-.proj-row{align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.proj-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 .proj-row:hover{background:var(--canvas)}
 .proj-row:last-child{border-bottom:none}
 .proj-color{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -2178,11 +2178,11 @@ body{font-family:var(--font-b);background:#fff;color:var(--ink);height:100vh;ove
               </div>
               <!-- KG Stats Bar -->
               <div style="display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--white);flex-shrink:0" id="kg-stats-bar">
-                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Total Titles</div><div class="kg-stat-val">847</div><div class="kg-stat-sub">6 disciplines</div></div>
-                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Content Objects</div><div class="kg-stat-val" style="color:var(--blue)">12,438</div><div class="kg-stat-sub">LO-aligned</div></div>
-                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Avg Coverage</div><div class="kg-stat-val" style="color:var(--green)">73%</div><div class="kg-stat-sub">↑ 4% from Q3</div></div>
-                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Content Gaps</div><div class="kg-stat-val" style="color:var(--rose)">34</div><div class="kg-stat-sub">12 critical</div></div>
-                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Reuse Potential</div><div class="kg-stat-val" style="color:var(--warn)">2,180</div><div class="kg-stat-sub">Cross-discipline</div></div>
+                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Total Titles</div><div class="kg-stat-val">47</div><div class="kg-stat-sub">6 disciplines</div></div>
+                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Content Assets</div><div class="kg-stat-val" style="color:var(--blue)">4,812</div><div class="kg-stat-sub">LO-aligned</div></div>
+                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Published</div><div class="kg-stat-val" style="color:var(--green)">3,210</div><div class="kg-stat-sub">67% of library</div></div>
+                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Gaps / Issues</div><div class="kg-stat-val" style="color:var(--rose)">30</div><div class="kg-stat-sub">Needs attention</div></div>
+                <div class="kg-stat" onclick="kgHlStat(this)"><div class="kg-stat-label">Reuse Potential</div><div class="kg-stat-val" style="color:var(--warn)">1,602</div><div class="kg-stat-sub">Cross-discipline</div></div>
               </div>
               <!-- KG Views -->
               <div id="kg-graph-view" style="flex:1;position:relative;overflow:hidden;background:var(--white)">
@@ -4026,12 +4026,12 @@ function setRepoMode(mode){
 // ═══════════════════════════════════════════════════════════════
 const KD={
   discs:[
-    {id:'bus',name:'Business & Management',hex:'#1a6fc4',titles:186,coverage:81,mod:{print:91,digital:149,video:67,assess:205,sim:22,oer:14},progs:[{name:'Accounting & Finance',titles:52,reuse:14,coverage:85},{name:'Marketing',titles:38,reuse:22,coverage:78},{name:'Management & Leadership',titles:48,reuse:18,coverage:83},{name:'Entrepreneurship',titles:48,reuse:8,coverage:76}]},
-    {id:'stem',name:'STEM',hex:'#0d9488',titles:214,coverage:68,mod:{print:105,digital:192,video:86,assess:248,sim:44,oer:32},progs:[{name:'Computer Science',titles:62,reuse:31,coverage:72},{name:'Mathematics',titles:44,reuse:12,coverage:80},{name:'Engineering',titles:56,reuse:24,coverage:58},{name:'Data Science & AI',titles:52,reuse:38,coverage:62}]},
-    {id:'health',name:'Health Sciences',hex:'#B84040',titles:158,coverage:74,mod:{print:77,digital:126,video:72,assess:189,sim:38,oer:10},progs:[{name:'Nursing',titles:48,reuse:16,coverage:82},{name:'Public Health',titles:36,reuse:20,coverage:70},{name:'Allied Health',titles:42,reuse:12,coverage:68},{name:'Healthcare Admin',titles:32,reuse:14,coverage:75}]},
-    {id:'arts',name:'Arts & Humanities',hex:'#7c3aed',titles:112,coverage:62,mod:{print:78,digital:84,video:34,assess:98,sim:6,oer:22},progs:[{name:'English & Literature',titles:34,reuse:8,coverage:70},{name:'History',titles:28,reuse:15,coverage:65},{name:'Philosophy & Ethics',titles:24,reuse:22,coverage:52},{name:'Communications',titles:26,reuse:11,coverage:60}]},
-    {id:'social',name:'Social Sciences',hex:'#C8841A',titles:98,coverage:71,mod:{print:54,digital:82,video:40,assess:112,sim:10,oer:18},progs:[{name:'Psychology',titles:32,reuse:18,coverage:78},{name:'Sociology',titles:22,reuse:12,coverage:68},{name:'Political Science',titles:24,reuse:9,coverage:64},{name:'Economics',titles:20,reuse:16,coverage:74}]},
-    {id:'edu',name:'Education',hex:'#1e8a4a',titles:79,coverage:77,mod:{print:38,digital:68,video:42,assess:92,sim:16,oer:28},progs:[{name:'Curriculum & Instruction',titles:22,reuse:14,coverage:82},{name:'Educational Technology',titles:20,reuse:28,coverage:75},{name:'Special Education',titles:18,reuse:6,coverage:70},{name:'Higher Ed Admin',titles:19,reuse:10,coverage:80}]},
+    {id:'bus',name:'Business & Management',hex:'#1a6fc4',titles:12,coverage:81,mod:{print:91,digital:149,video:67,assess:205,sim:22,oer:14},progs:[{name:'Accounting & Finance',titles:3,reuse:14,coverage:85},{name:'Marketing',titles:3,reuse:22,coverage:78},{name:'Management & Leadership',titles:3,reuse:18,coverage:83},{name:'Entrepreneurship',titles:3,reuse:8,coverage:76}]},
+    {id:'stem',name:'STEM',hex:'#0d9488',titles:11,coverage:68,mod:{print:105,digital:192,video:86,assess:248,sim:44,oer:32},progs:[{name:'Computer Science',titles:3,reuse:31,coverage:72},{name:'Mathematics',titles:3,reuse:12,coverage:80},{name:'Engineering',titles:3,reuse:24,coverage:58},{name:'Data Science & AI',titles:2,reuse:38,coverage:62}]},
+    {id:'health',name:'Health Sciences',hex:'#B84040',titles:8,coverage:74,mod:{print:77,digital:126,video:72,assess:189,sim:38,oer:10},progs:[{name:'Nursing',titles:2,reuse:16,coverage:82},{name:'Public Health',titles:2,reuse:20,coverage:70},{name:'Allied Health',titles:2,reuse:12,coverage:68},{name:'Healthcare Admin',titles:2,reuse:14,coverage:75}]},
+    {id:'arts',name:'Arts & Humanities',hex:'#7c3aed',titles:6,coverage:62,mod:{print:78,digital:84,video:34,assess:98,sim:6,oer:22},progs:[{name:'English & Literature',titles:2,reuse:8,coverage:70},{name:'History',titles:1,reuse:15,coverage:65},{name:'Philosophy & Ethics',titles:1,reuse:22,coverage:52},{name:'Communications',titles:2,reuse:11,coverage:60}]},
+    {id:'social',name:'Social Sciences',hex:'#C8841A',titles:5,coverage:71,mod:{print:54,digital:82,video:40,assess:112,sim:10,oer:18},progs:[{name:'Psychology',titles:2,reuse:18,coverage:78},{name:'Sociology',titles:1,reuse:12,coverage:68},{name:'Political Science',titles:1,reuse:9,coverage:64},{name:'Economics',titles:1,reuse:16,coverage:74}]},
+    {id:'edu',name:'Education',hex:'#1e8a4a',titles:5,coverage:77,mod:{print:38,digital:68,video:42,assess:92,sim:16,oer:28},progs:[{name:'Curriculum & Instruction',titles:2,reuse:14,coverage:82},{name:'Educational Technology',titles:1,reuse:28,coverage:75},{name:'Special Education',titles:1,reuse:6,coverage:70},{name:'Higher Ed Admin',titles:1,reuse:10,coverage:80}]},
   ],
   gaps:[
     {topic:'AI Ethics in Healthcare',disc:'health',sev:'high',los:4,desc:'No content covering ethical frameworks for AI-assisted diagnostics.'},
@@ -4039,13 +4039,31 @@ const KD={
     {topic:'DEI in Org Mgmt',disc:'bus',sev:'high',los:5,desc:'Limited coverage of diversity strategy and inclusive leadership.'},
     {topic:'Climate Science Policy',disc:'social',sev:'medium',los:2,desc:'Gap in interdisciplinary climate policy content.'},
     {topic:'Digital Humanities',disc:'arts',sev:'high',los:3,desc:'No content on computational text analysis or DH tools.'},
-    {topic:'Telehealth & Remote Care',disc:'health',sev:'high',los:4,desc:'Missing telehealth delivery modules.'},
+    {topic:'Telehealth & Remote Care',disc:'health',sev:'medium',los:4,desc:'Missing telehealth delivery modules.'},
     {topic:'Blockchain in Finance',disc:'bus',sev:'medium',los:2,desc:'Foundational DLT content for financial services.'},
     {topic:'Neuroeducation',disc:'edu',sev:'medium',los:3,desc:'Brain-based learning science content.'},
     {topic:'AR/VR in Training',disc:'edu',sev:'high',los:4,desc:'No immersive learning design content.'},
     {topic:'Cybersecurity',disc:'stem',sev:'high',los:6,desc:'Critical gap in introductory cybersecurity.'},
     {topic:'Behavioral Economics',disc:'social',sev:'medium',los:2,desc:'Limited nudge theory content.'},
     {topic:'GenAI Content',disc:'arts',sev:'high',los:5,desc:'No coverage of generative AI for creative work.'},
+    {topic:'Sustainability Reporting',disc:'bus',sev:'medium',los:2,desc:'ESG and sustainability reporting standards missing.'},
+    {topic:'Bioinformatics Intro',disc:'stem',sev:'medium',los:3,desc:'No foundational bioinformatics content.'},
+    {topic:'Global Health Systems',disc:'health',sev:'medium',los:2,desc:'Comparative health systems content needed.'},
+    {topic:'Indigenous Studies',disc:'arts',sev:'medium',los:2,desc:'Underrepresented indigenous perspectives in curriculum.'},
+    {topic:'Data Privacy Law',disc:'social',sev:'medium',los:2,desc:'GDPR and data governance content missing.'},
+    {topic:'Micro-credentialing',disc:'edu',sev:'medium',los:2,desc:'Competency-based micro-credential design content.'},
+    {topic:'Supply Chain Analytics',disc:'bus',sev:'medium',los:2,desc:'Modern supply chain optimization content.'},
+    {topic:'Edge Computing',disc:'stem',sev:'high',los:3,desc:'IoT and edge computing architecture content.'},
+    {topic:'Precision Medicine',disc:'health',sev:'medium',los:2,desc:'Genomics-based treatment approaches.'},
+    {topic:'Digital Storytelling',disc:'arts',sev:'medium',los:2,desc:'Multimedia narrative design techniques.'},
+    {topic:'Social Entrepreneurship',disc:'social',sev:'medium',los:2,desc:'Impact-driven business models content.'},
+    {topic:'Learning Analytics',disc:'edu',sev:'medium',los:3,desc:'Data-driven instruction improvement.'},
+    {topic:'FinTech Foundations',disc:'bus',sev:'medium',los:2,desc:'Digital payments and neobanking content.'},
+    {topic:'Green Engineering',disc:'stem',sev:'medium',los:2,desc:'Sustainable engineering practices.'},
+    {topic:'Mental Health First Aid',disc:'health',sev:'medium',los:2,desc:'Peer support and crisis intervention.'},
+    {topic:'Podcast Production',disc:'arts',sev:'medium',los:1,desc:'Audio content creation techniques.'},
+    {topic:'Urban Planning',disc:'social',sev:'medium',los:2,desc:'Smart cities and urban development.'},
+    {topic:'Game-Based Learning',disc:'edu',sev:'medium',los:2,desc:'Gamification in education design.'},
   ],
   reuse:[
     {obj:'Statistics & Probability',from:'stem',targets:['bus','social','health','edu'],objects:48,savings:'$120K'},
@@ -4111,8 +4129,8 @@ function kgRenderDetail(){
   kgRenderGaps();kgRenderReuseP();kgRenderLOs();
 }
 function kgRenderOverview(){
-  document.getElementById('kg-detail').innerHTML=`<div class="kg-dc"><div class="kg-dc-header"><div class="kg-dc-bar" style="background:linear-gradient(180deg,var(--blue),#0d9488)"></div><div><div class="kg-dc-title">All Disciplines</div><div class="kg-dc-subtitle">Complete catalog · 847 titles</div></div></div>
-  <div class="kg-dc-grid"><div class="kg-dc-stat"><div class="kg-dc-stat-label">Coverage</div><div class="kg-dc-stat-val" style="color:var(--green)">73%</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">Reuse</div><div class="kg-dc-stat-val" style="color:var(--blue)">2,180</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">Gaps</div><div class="kg-dc-stat-val" style="color:var(--rose)">34</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">LOs</div><div class="kg-dc-stat-val" style="color:#0d9488">78%</div></div></div></div>`;
+  document.getElementById('kg-detail').innerHTML=`<div class="kg-dc"><div class="kg-dc-header"><div class="kg-dc-bar" style="background:linear-gradient(180deg,var(--blue),#0d9488)"></div><div><div class="kg-dc-title">All Disciplines</div><div class="kg-dc-subtitle">Complete catalog · 47 titles · 4,812 assets</div></div></div>
+  <div class="kg-dc-grid"><div class="kg-dc-stat"><div class="kg-dc-stat-label">Published</div><div class="kg-dc-stat-val" style="color:var(--green)">3,210</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">Reuse</div><div class="kg-dc-stat-val" style="color:var(--blue)">1,602</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">Gaps</div><div class="kg-dc-stat-val" style="color:var(--rose)">30</div></div><div class="kg-dc-stat"><div class="kg-dc-stat-label">LOs Mapped</div><div class="kg-dc-stat-val" style="color:#0d9488">67%</div></div></div></div>`;
   kgRenderGaps();kgRenderReuseP();kgRenderLOs();
 }
 function kgRenderGaps(){
