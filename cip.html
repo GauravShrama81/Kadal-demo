@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIP — Curriculum Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font:      'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --bg:        #F4F5F7;
+  --panel:     #FFFFFF;
+  --panel-2:   #F8F9FA;
+  --hover:     #F0F2F5;
+  --input-bg:  #FFFFFF;
+  --t1: #1A1D27;
+  --t2: #4A5168;
+  --t3: #8B92A5;
+  --t4: #C4C8D4;
+  --border:    #E4E7EF;
+  --border-2:  #D0D5E2;
+  --blue:       #3B6BF5;
+  --blue-soft:  #EEF2FE;
+  --blue-mid:   rgba(59,107,245,0.15);
+  --blue-text:  #2556E8;
+  --sb-active-bg:   #EAF0FD;
+  --sb-active-text: #2556E8;
+  --green:       #22A861;
+  --green-soft:  #E8F7EF;
+  --green-text:  #166B3F;
+  --amber:       #D97706;
+  --amber-soft:  #FEF3C7;
+  --amber-text:  #92400E;
+  --red:         #DC3545;
+  --red-soft:    #FEE2E2;
+  --red-text:    #991B1B;
+  --purple:      #7C3AED;
+  --purple-soft: #EDE9FE;
+  --ai:      #E8833A;
+  --ai-soft: rgba(232,131,58,0.08);
+  --ai-mid:  rgba(232,131,58,0.16);
+  --ai-glow: rgba(232,131,58,0.28);
+  --ai-grad: linear-gradient(135deg,#E8833A 0%,#F5A432 100%);
+  --r-xs: 4px; --r-sm: 6px; --r: 10px; --r-lg: 14px;
+  --sh-xs: 0 1px 2px rgba(0,0,0,0.05);
+  --sh-sm: 0 1px 6px rgba(0,0,0,0.07);
+  --sh:    0 2px 12px rgba(0,0,0,0.08);
+  --sh-lg: 0 8px 32px rgba(0,0,0,0.10);
+  --sh-xl: 0 20px 60px rgba(0,0,0,0.14);
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --dur: 0.15s;
+  --sb-w: 212px;
+}
+
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--bg); color: var(--t1); height: 100vh; overflow: hidden; }
+
+/* ══ SHELL ══ */
+.shell {
+  display: grid;
+  grid-template-columns: var(--sb-w) 1fr;
+  grid-template-rows: 50px 1fr;
+  height: 100vh;
+  grid-template-areas: "sb tb" "sb main";
+  transition: grid-template-columns 0.22s var(--ease);
+}
+.shell.collapsed { --sb-w: 52px; grid-template-columns: 52px 1fr; }
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  grid-area: sb;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  width: var(--sb-w);
+  transition: width 0.22s var(--ease);
+  z-index: 200;
+}
+
+/* Logo row */
+.sb-logo {
+  display: flex; align-items: center; gap: 9px;
+  padding: 0 13px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; height: 50px;
+  overflow: hidden;
+}
+.sb-logomark {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--ai-grad);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer;
+}
+.sb-logomark svg { width: 14px; height: 14px; }
+.sb-wordmark { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; overflow: hidden; }
+.sb-name { font-size: 14px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; white-space: nowrap; }
+.sb-ver  { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: var(--t3); background: var(--bg); border: 1px solid var(--border); padding: 2px 6px; border-radius: 20px; white-space: nowrap; }
+.sb-toggle {
+  margin-left: auto; width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--t3); border: 1px solid var(--border);
+  background: var(--bg); transition: all var(--dur);
+}
+.sb-toggle:hover { background: var(--hover); color: var(--t1); }
+.sb-toggle svg { width: 11px; height: 11px; transition: transform 0.22s var(--ease); }
+.shell.collapsed .sb-toggle svg { transform: rotate(180deg); }
+
+/* Collapse: hide text labels, badges, section headings */
+.shell.collapsed .sb-name,
+.shell.collapsed .sb-ver,
+.shell.collapsed .sb-wordmark { opacity: 0; width: 0; pointer-events: none; overflow: hidden; }
+.shell.collapsed .sb-section { opacity: 0; height: 0; padding: 0; overflow: hidden; }
+.shell.collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; }
+.shell.collapsed .nav-badge { opacity: 0; width: 0; overflow: hidden; pointer-events: none; }
+.shell.collapsed .sb-uname,
+.shell.collapsed .sb-urole { opacity: 0; width: 0; overflow: hidden; }
+.shell.collapsed .nav-item { justify-content: center; padding: 8px 0; margin: 1px 6px; }
+.shell.collapsed .sb-user { justify-content: center; padding: 7px 4px; }
+
+/* Section labels */
+.sb-section {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--t4);
+  padding: 14px 16px 4px;
+  white-space: nowrap; overflow: hidden;
+  transition: opacity 0.15s, height 0.22s, padding 0.22s;
+}
+
+/* Nav items */
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  margin: 1px 8px; padding: 7px 10px;
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500;
+  color: var(--t2); cursor: pointer;
+  transition: background var(--dur), color var(--dur), padding 0.22s, margin 0.22s, justify-content 0.22s;
+  user-select: none; position: relative;
+}
+.nav-item svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--t3); transition: color var(--dur); }
+.nav-label { white-space: nowrap; overflow: hidden; transition: opacity 0.15s, width 0.22s; }
+.nav-item:hover:not(.disabled) { background: var(--hover); color: var(--t1); }
+.nav-item:hover:not(.disabled) svg { color: var(--t2); }
+.nav-item.active { background: var(--sb-active-bg); color: var(--sb-active-text); font-weight: 600; }
+.nav-item.active svg { color: var(--sb-active-text); }
+.nav-item.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+/* Tooltip on collapsed state */
+.shell.collapsed .nav-item { position: relative; }
+.shell.collapsed .nav-item::after {
+  content: attr(data-tip);
+  position: absolute; left: calc(100% + 10px); top: 50%;
+  transform: translateY(-50%);
+  background: var(--t1); color: #fff;
+  font-size: 11px; font-weight: 600; padding: 4px 10px;
+  border-radius: var(--r-sm); white-space: nowrap;
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.1s; z-index: 300;
+  box-shadow: var(--sh);
+}
+.shell.collapsed .nav-item:hover::after { opacity: 1; }
+
+/* Badges */
+.nav-badge {
+  margin-left: auto; min-width: 18px; height: 18px;
+  border-radius: 20px; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; line-height: 1;
+  white-space: nowrap; overflow: hidden;
+  transition: opacity 0.15s, width 0.22s;
+}
+.nb-blue   { background: var(--blue-soft); color: var(--blue-text); }
+.nb-amber  { background: var(--amber-soft); color: var(--amber-text); }
+.nb-red    { background: var(--red-soft); color: var(--red-text); }
+
+/* Footer user */
+.sb-footer { margin-top: auto; padding: 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.sb-user {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 8px; border-radius: var(--r-sm);
+  cursor: pointer; transition: background var(--dur), padding 0.22s, justify-content 0.22s;
+  overflow: hidden;
+}
+.sb-user:hover { background: var(--hover); }
+.sb-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ai-grad); color: #fff;
+  font-size: 10.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sb-uname { font-size: 12.5px; font-weight: 600; color: var(--t1); white-space: nowrap; overflow: hidden; transition: opacity 0.15s, width 0.22s; }
+.sb-urole { font-size: 10px; color: var(--t3); margin-top: 1px; white-space: nowrap; overflow: hidden; transition: opacity 0.15s, width 0.22s; }
+
+/* ══ TOPBAR ══ */
+.topbar {
+  grid-area: tb;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 20px; z-index: 100;
+}
+.breadcrumb { font-size: 13px; font-weight: 500; color: var(--t3); display: flex; align-items: center; gap: 5px; }
+.breadcrumb .cur { color: var(--t1); font-weight: 600; }
+.bc-sep { opacity: 0.4; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 7px; }
+.search-bar {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 5px 11px;
+  font-size: 12px; color: var(--t3); cursor: text; min-width: 190px;
+}
+.search-bar svg { width: 13px; height: 13px; flex-shrink: 0; }
+.search-bar kbd { margin-left: auto; font-family: var(--font-mono); font-size: 9.5px; background: var(--panel); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; color: var(--t3); }
+.icon-btn {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--t2); position: relative; transition: all var(--dur);
+}
+.icon-btn:hover { background: var(--hover); color: var(--t1); }
+.icon-btn svg { width: 14px; height: 14px; }
+.notif-dot { position: absolute; top: 6px; right: 6px; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); border: 1.5px solid var(--panel); }
+.tb-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--r-sm);
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; transition: all var(--dur);
+}
+.tb-btn-primary { background: var(--blue); color: #fff; }
+.tb-btn-primary:hover { background: #2d5ee0; }
+
+/* ══ MAIN ══ */
+.main { grid-area: main; overflow-y: auto; overflow-x: hidden; background: var(--bg); }
+.main::-webkit-scrollbar { width: 5px; }
+.main::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+.view { display: none; min-height: calc(100vh - 50px); flex-direction: column; }
+.view.active { display: flex; }
+@keyframes vin { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.view.active { animation: vin 0.18s var(--ease); }
+
+/* ══ PAGE HEADER ══ */
+.page-hd { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 22px 0; flex-shrink: 0; }
+.page-title { font-size: 19px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; margin-bottom: 3px; }
+.page-sub   { font-size: 12px; color: var(--t3); }
+.page-actions { display: flex; gap: 7px; margin-top: 2px; }
+
+/* ══ BUTTONS ══ */
+.btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px; border-radius: var(--r-sm); font-family: var(--font); font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all var(--dur) var(--ease); }
+.btn-primary   { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #2d5ee0; box-shadow: 0 2px 8px rgba(59,107,245,0.3); }
+.btn-secondary { background: var(--panel); color: var(--t1); border: 1px solid var(--border-2); }
+.btn-secondary:hover { background: var(--hover); }
+.btn-ghost     { background: transparent; color: var(--t2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--hover); color: var(--t1); }
+.btn-danger    { background: var(--red-soft); color: var(--red); border: 1px solid rgba(220,53,69,.2); }
+.btn-danger:hover { background: var(--red); color: #fff; }
+.btn svg { width: 12px; height: 12px; }
+.btn-sm { padding: 5px 10px; font-size: 11.5px; }
+.btn-xs { padding: 3px 8px; font-size: 11px; }
+
+/* ══ CARDS ══ */
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--sh-xs); transition: box-shadow var(--dur); }
+.card:hover { box-shadow: var(--sh-sm); }
+
+/* ══ BADGES ══ */
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 10.5px; font-weight: 600; }
+.b-blue   { background: var(--blue-soft);   color: var(--blue-text); }
+.b-green  { background: var(--green-soft);  color: var(--green-text); }
+.b-amber  { background: var(--amber-soft);  color: var(--amber-text); }
+.b-red    { background: var(--red-soft);    color: var(--red-text); }
+.b-purple { background: var(--purple-soft); color: var(--purple); }
+.b-gray   { background: var(--bg); color: var(--t2); border: 1px solid var(--border); }
+.b-ai     { background: var(--ai-soft); color: var(--ai); border: 1px solid var(--ai-mid); }
+
+/* ══ PROGRESS BARS ══ */
+.pbar { height: 5px; border-radius: 3px; background: var(--bg); overflow: hidden; }
+.pbar.thick { height: 7px; }
+.pf { height: 100%; border-radius: 3px; transition: width 0.55s var(--ease); }
+.pf-blue   { background: #4A90D9; }
+.pf-green  { background: #22A861; }
+.pf-amber  { background: #D97706; }
+.pf-red    { background: #DC3545; }
+.pf-purple { background: #7C3AED; }
+
+/* ══ TABS ══ */
+.tab-row { display: flex; border-bottom: 1px solid var(--border); padding: 0 16px; background: var(--panel); }
+.tab { padding: 9px 13px; font-size: 12.5px; font-weight: 500; color: var(--t3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all var(--dur); white-space: nowrap; }
+.tab:hover { color: var(--t1); }
+.tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+/* ══ FILTER BAR ══ */
+.filter-bar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--border); background: var(--panel-2); flex-wrap: wrap; }
+.fl { font-size: 11px; color: var(--t3); font-weight: 600; white-space: nowrap; }
+.fsel { background: var(--panel); border: 1px solid var(--border-2); border-radius: var(--r-sm); padding: 4px 8px; font-family: var(--font); font-size: 11.5px; color: var(--t1); cursor: pointer; outline: none; }
+.fsel:focus { border-color: var(--blue); }
+
+/* ══ PANEL HEADER ══ */
+.panel-hd { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+.panel-hd-title { font-size: 13.5px; font-weight: 600; color: var(--t1); }
+.panel-hd-right { display: flex; gap: 6px; align-items: center; }
+
+/* ══ PROGRAMS ══ */
+.prog-body { display: grid; grid-template-columns: 310px 1fr; gap: 16px; padding: 16px 22px; flex: 1; align-items: start; }
+.prog-list { display: flex; flex-direction: column; gap: 8px; }
+.detail-sticky { position: sticky; top: 16px; }
+
+/* Program cards — text only, no icons */
+.prog-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px 14px 14px 17px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: box-shadow var(--dur), border-color var(--dur);
+  box-shadow: var(--sh-xs);
+}
+.prog-card:hover { box-shadow: var(--sh-sm); border-color: var(--border-2); }
+.prog-card.active { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.prog-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.prog-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.prog-name { font-size: 13px; font-weight: 600; color: var(--t1); line-height: 1.35; }
+.prog-meta { font-size: 10.5px; color: var(--t3); margin-top: 3px; }
+.prog-score-row { display: flex; align-items: center; gap: 9px; }
+.prog-pct  { font-size: 20px; font-weight: 700; min-width: 48px; letter-spacing: -0.02em; }
+.prog-bar-wrap { flex: 1; }
+.prog-bar-lbl { font-size: 9.5px; color: var(--t3); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+
+/* Out / course rows */
+.out-row { display: grid; grid-template-columns: 148px 1fr 44px 78px; align-items: center; gap: 10px; padding: 9px 16px; border-bottom: 1px solid var(--border); transition: background var(--dur); cursor: pointer; }
+.out-row:last-child { border-bottom: none; }
+.out-row:hover { background: var(--hover); }
+.out-name { font-size: 12px; font-weight: 600; color: var(--t1); }
+.out-sub  { font-size: 10px; color: var(--t3); margin-top: 1px; }
+.course-row { display: grid; grid-template-columns: 1fr 58px 50px 90px; align-items: center; gap: 10px; padding: 9px 16px; border-bottom: 1px solid var(--border); transition: background var(--dur); cursor: pointer; }
+.course-row:hover { background: var(--hover); }
+.crs-name { font-size: 12px; font-weight: 600; color: var(--t1); }
+.crs-code { font-size: 10px; color: var(--t3); font-family: var(--font-mono); margin-top: 1px; }
+
+/* ══ MAPPING ══ */
+.map-body { display: grid; grid-template-columns: 1fr 300px; gap: 16px; padding: 16px 22px; flex: 1; align-items: start; }
+.cnt-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 12px; }
+.cnt-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--sh-xs); }
+.cnt-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--t3); margin-bottom: 4px; }
+.cnt-val { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--t1); line-height: 1; }
+.cnt-delta { font-size: 10.5px; margin-top: 4px; }
+.map-strip { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--sh-xs); }
+.map-strip-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.map-strip-title { font-size: 13px; font-weight: 600; color: var(--t1); }
+.map-row-hd { display: grid; grid-template-columns: 1fr 28px 1fr 96px 88px; gap: 8px; padding: 8px 16px; background: var(--panel-2); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t3); }
+.map-row { display: grid; grid-template-columns: 1fr 28px 1fr 96px 88px; gap: 8px; align-items: start; padding: 11px 16px; border-bottom: 1px solid var(--border); transition: background var(--dur); }
+.map-row:hover { background: var(--hover); }
+.map-row.accepted { opacity: 0.45; pointer-events: none; }
+.map-row.rejected  { opacity: 0.28; pointer-events: none; }
+.clo-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 7px 9px; font-size: 11.5px; line-height: 1.55; color: var(--t1); }
+.plo-box { background: var(--blue-soft); border: 1px solid rgba(59,107,245,0.18); border-radius: var(--r-sm); padding: 7px 9px; font-size: 11.5px; line-height: 1.55; color: var(--blue-text); font-weight: 500; }
+.map-arrow { display: flex; align-items: flex-start; justify-content: center; padding-top: 11px; color: var(--t4); font-size: 13px; }
+.conf-block { padding-top: 2px; }
+.conf-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--t3); margin-bottom: 3px; }
+.conf-pct  { font-size: 12px; font-weight: 700; color: var(--t1); }
+.conf-bar  { height: 4px; border-radius: 2px; background: var(--bg); overflow: hidden; }
+.cf-hi  { background: var(--green); }
+.cf-mid { background: var(--amber); }
+.cf-low { background: var(--red); }
+.conf-fill { height: 4px; border-radius: 2px; }
+.conf-course { font-size: 9.5px; color: var(--t3); font-weight: 600; margin-top: 3px; font-family: var(--font-mono); }
+.act-btns { display: flex; gap: 5px; padding-top: 2px; }
+.act { padding: 4px 9px; border-radius: var(--r-sm); font-size: 11px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font); transition: all var(--dur); }
+.act-ok { background: var(--green-soft); color: var(--green-text); }
+.act-ok:hover { background: var(--green); color: #fff; }
+.act-no { background: var(--red-soft); color: var(--red-text); }
+.act-no:hover { background: var(--red); color: #fff; }
+
+/* ══ ANALYTICS ══ */
+.ana-body { padding: 16px 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.ana-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.a-stat { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; box-shadow: var(--sh-xs); position: relative; overflow: hidden; }
+.a-stat-tag { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; }
+.a-stat-icon { margin-bottom: 8px; }
+.a-stat-icon svg { width: 18px; height: 18px; }
+.a-stat-val  { font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.02em; line-height: 1; }
+.a-stat-lbl  { font-size: 11px; color: var(--t3); margin-top: 4px; font-weight: 500; }
+.content-health { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--sh-xs); overflow: hidden; }
+.ch-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.ch-title { font-size: 14px; font-weight: 600; color: var(--t1); }
+.ch-row { display: grid; grid-template-columns: 185px 1fr 42px; align-items: center; gap: 12px; padding: 9px 18px; border-bottom: 1px solid var(--border); transition: background var(--dur); cursor: pointer; }
+.ch-row:last-child { border-bottom: none; }
+.ch-row:hover { background: var(--hover); }
+.ch-lbl { font-size: 12.5px; color: var(--t2); font-weight: 500; }
+.ch-pct { font-size: 12.5px; font-weight: 700; text-align: right; }
+
+/* Heatmap */
+.hm-wrap { overflow-x: auto; padding: 14px; }
+.hm-tbl { width: 100%; border-collapse: collapse; min-width: 600px; }
+.hm-th { font-size: 9.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--t3); padding: 7px 4px; text-align: center; border-bottom: 1px solid var(--border); background: var(--panel-2); cursor: pointer; user-select: none; transition: background var(--dur), color var(--dur); }
+.hm-th:hover { color: var(--t1); }
+.hm-th:first-child { text-align: left; width: 200px; padding-left: 14px; cursor: default; }
+.hm-th.sel { background: var(--blue-soft); color: var(--blue-text); }
+.hm-td { padding: 3px 4px; text-align: center; }
+.hm-td:first-child { text-align: left; font-size: 11.5px; color: var(--t2); padding: 3px 14px; white-space: nowrap; font-weight: 500; }
+.hm-tr { cursor: pointer; transition: background var(--dur); }
+.hm-tr:hover .hm-td:first-child { color: var(--t1); }
+.hm-tr.sel-row .hm-td:first-child { color: var(--blue); font-weight: 700; }
+.hm-cell { width: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; letter-spacing: 0.03em; min-height: 28px; cursor: pointer; position: relative; transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s; }
+.hm-cell:hover { transform: scale(1.15); box-shadow: var(--sh); z-index: 5; }
+.hm-cell.dim { opacity: 0.18; }
+.hm-cell.hi  { transform: scale(1.1); box-shadow: 0 0 0 2px var(--blue), var(--sh-sm); }
+.hm-none { background: #F0F1F4; color: transparent; }
+.hm-i    { background: #BFD4F7; color: #2556E8; }
+.hm-p    { background: #4A90D9; color: #fff; }
+.hm-a    { background: #1E5FAD; color: #fff; }
+.hm-legend { display: flex; gap: 16px; padding: 10px 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--t3); font-weight: 600; cursor: pointer; transition: opacity var(--dur); }
+.leg-item:hover { color: var(--t1); }
+.leg-item.dim { opacity: 0.3; }
+.leg-sw { width: 18px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.plo-hd { display: grid; grid-template-columns: 175px 52px 52px 52px 1fr 78px; gap: 8px; padding: 8px 16px; background: var(--panel-2); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t3); }
+.plo-row { display: grid; grid-template-columns: 175px 52px 52px 52px 1fr 78px; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background var(--dur); }
+.plo-row:last-child { border-bottom: none; }
+.plo-row:hover { background: var(--hover); }
+.plo-row.sel-plo { background: var(--blue-soft); }
+.plo-nm     { font-size: 12.5px; font-weight: 600; color: var(--t1); }
+.plo-nm-sub { font-size: 10px; color: var(--t3); margin-top: 1px; }
+.plo-cnt    { font-size: 13px; font-weight: 700; text-align: center; color: var(--t2); }
+.wf-row { display: grid; grid-template-columns: 1fr 92px 120px; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.wf-row:last-child { border-bottom: none; }
+.drilldown { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-top: 12px; box-shadow: var(--sh-sm); animation: vin 0.16s var(--ease); }
+.dd-hd { padding: 12px 16px; background: var(--blue-soft); border-bottom: 1px solid rgba(59,107,245,.12); display: flex; align-items: center; justify-content: space-between; }
+.dd-title { font-size: 12.5px; font-weight: 700; color: var(--blue-text); }
+.dd-body  { padding: 13px 16px; }
+.dd-row { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.dd-row:last-child { border-bottom: none; }
+.dd-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dd-name { flex: 1; color: var(--t1); font-weight: 500; }
+.dd-lvl  { font-size: 10.5px; font-weight: 700; }
+
+/* ══ KAI PANEL — LIGHT THEME ══ */
+.kai-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  display: flex; flex-direction: column;
+  overflow: hidden; position: sticky; top: 16px;
+  height: calc(100vh - 50px - 32px - 54px);
+  min-height: 360px; max-height: 640px;
+}
+.kai-hd {
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  background: var(--panel-2);
+  display: flex; align-items: center; gap: 9px; flex-shrink: 0;
+}
+.kai-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--ai); box-shadow: 0 0 5px var(--ai-glow); animation: pip 2s infinite; flex-shrink: 0; }
+@keyframes pip { 0%,100%{opacity:1} 50%{opacity:.4} }
+.kai-name { font-size: 12.5px; font-weight: 700; color: var(--t1); }
+.kai-ctx  { margin-left: auto; font-size: 9.5px; color: var(--t3); background: var(--bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 20px; }
+.kai-msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.kai-msgs::-webkit-scrollbar { width: 3px; }
+.kai-msgs::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+.kmsg { display: flex; flex-direction: column; gap: 3px; }
+.kmsg.user { align-items: flex-end; }
+.kmsg.ai   { align-items: flex-start; }
+.kmsg-lbl  { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); padding: 0 4px; }
+.kmsg-bbl  { max-width: 90%; padding: 8px 11px; border-radius: var(--r-sm); font-size: 12px; line-height: 1.6; animation: vin .18s var(--ease); }
+.kmsg.user .kmsg-bbl { background: var(--blue); color: #fff; }
+.kmsg.ai   .kmsg-bbl { background: var(--panel); color: var(--t1); border: 1px solid var(--border); }
+.kai-chips { padding: 0 12px 9px; display: flex; gap: 5px; flex-wrap: wrap; background: var(--bg); }
+.chip { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border: 1px solid var(--border-2); border-radius: 20px; cursor: pointer; color: var(--t3); background: var(--panel); transition: all var(--dur); font-family: var(--font); }
+.chip:hover { border-color: var(--ai); color: var(--ai); background: var(--ai-soft); }
+.kai-foot { padding: 9px 12px; border-top: 1px solid var(--border); background: var(--panel); display: flex; gap: 7px; flex-shrink: 0; }
+.kai-input { flex: 1; background: var(--bg); border: 1px solid var(--border-2); border-radius: var(--r-sm); padding: 7px 10px; font-family: var(--font); font-size: 12px; color: var(--t1); outline: none; }
+.kai-input:focus { border-color: var(--ai); }
+.kai-input::placeholder { color: var(--t4); }
+.kai-send { background: var(--ai); color: #fff; border: none; border-radius: var(--r-sm); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background var(--dur); }
+.kai-send:hover { background: #d47230; }
+.kai-send svg { width: 13px; height: 13px; }
+.td-dots { display: flex; gap: 3px; padding: 3px 0; }
+.td-d { width: 5px; height: 5px; border-radius: 50%; background: var(--border-2); animation: tda 1.2s infinite; }
+.td-d:nth-child(2){animation-delay:.2s} .td-d:nth-child(3){animation-delay:.4s}
+@keyframes tda { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+
+/* ══ MODAL / TOAST / TIP ══ */
+.overlay { position: fixed; inset: 0; background: rgba(26,29,39,.3); z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .18s; backdrop-filter: blur(3px); }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--panel); border: 1px solid var(--border-2); border-radius: var(--r-lg); padding: 24px; width: 520px; max-width: 90vw; box-shadow: var(--sh-xl); transform: scale(.96); transition: transform .18s; }
+.overlay.open .modal { transform: scale(1); }
+.modal-title { font-size: 16px; font-weight: 700; color: var(--t1); margin-bottom: 4px; letter-spacing: -.01em; }
+.modal-sub   { font-size: 12px; color: var(--t3); margin-bottom: 18px; }
+.modal-foot  { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--t1); border-radius: var(--r); padding: 10px 14px; box-shadow: var(--sh-lg); z-index: 600; display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: #fff; font-weight: 500; font-family: var(--font); transform: translateY(60px); opacity: 0; transition: all .24s var(--ease); pointer-events: none; min-width: 240px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-ico { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; }
+.tip { position: fixed; z-index: 999; background: var(--t1); color: #fff; border-radius: var(--r-sm); padding: 7px 11px; font-size: 11.5px; box-shadow: var(--sh-lg); pointer-events: none; opacity: 0; transition: opacity .1s; max-width: 220px; line-height: 1.5; font-family: var(--font); }
+.info-warn { background: var(--red-soft); border: 1px solid rgba(220,53,69,.2); color: var(--red-text); border-radius: var(--r-sm); padding: 9px 12px; font-size: 12px; line-height: 1.5; }
+.field-lbl { font-size: 11px; font-weight: 600; color: var(--t2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+.field-input { width: 100%; padding: 8px 11px; border: 1px solid var(--border-2); border-radius: var(--r-sm); background: var(--input-bg); color: var(--t1); font-family: var(--font); font-size: 13px; outline: none; }
+.field-input:focus { border-color: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast"><div class="toast-ico" id="toastIco"></div><span id="toastMsg"></span></div>
+
+<div class="overlay" id="modalCourse">
+  <div class="modal">
+    <div class="modal-title" id="mCrsName">—</div>
+    <div class="modal-sub" id="mCrsMeta">—</div>
+    <div id="mCrsBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modalCourse')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modalCourse');switchView('mapping')">Open in Mapping →</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modalProg">
+  <div class="modal">
+    <div class="modal-title">New Program</div>
+    <div class="modal-sub">Define a new program to begin curriculum alignment analysis</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><div class="field-lbl">Program Name</div><input class="field-input" placeholder="e.g. Health Informatics, MS"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="field-lbl">Partner Institution</div><input class="field-input" placeholder="e.g. Fortis College"></div>
+        <div><div class="field-lbl">LMS Platform</div>
+          <select class="field-input" style="padding:7px 11px"><option>Canvas</option><option>Blackboard</option><option>D2L Brightspace</option><option>Moodle</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modalProg')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modalProg');showToast('Program added — upload cartridges to begin','#22A861','✓')">Add Program</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell" id="shell">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logomark" onclick="toggleSidebar()" title="Collapse sidebar">
+      <svg viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="5" height="5" rx="1" fill="white" opacity=".95"/>
+        <rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity=".55"/>
+        <rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity=".55"/>
+        <rect x="8" y="8" width="5" height="5" rx="1" fill="white" opacity=".25"/>
+      </svg>
+    </div>
+    <div class="sb-wordmark">
+      <span class="sb-name">CIP</span>
+      <span class="sb-ver">v0.2</span>
+    </div>
+    <div class="sb-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+      <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M7 2L4 5.5 7 9"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sb-section">Overview</div>
+  <div class="nav-item disabled" data-tip="Dashboard">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1"/></svg>
+    <span class="nav-label">Dashboard</span>
+  </div>
+
+  <div class="sb-section">Programs</div>
+  <div class="nav-item active" id="nav-programs" data-tip="Programs" onclick="switchView('programs')">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h11M2 7.5h11M2 12h7"/><circle cx="12" cy="12" r="2"/></svg>
+    <span class="nav-label">Programs</span>
+    <div class="nav-badge nb-blue" id="progBadge">5</div>
+  </div>
+  <div class="nav-item" id="nav-mapping" data-tip="AI Mapping" onclick="switchView('mapping')">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5h11M9 4l3.5 3.5L9 11"/><circle cx="4" cy="3" r="1.5"/><circle cx="4" cy="12" r="1.5"/></svg>
+    <span class="nav-label">AI Mapping</span>
+    <div class="nav-badge nb-amber" id="pendingPill">12</div>
+  </div>
+  <div class="nav-item" id="nav-analytics" data-tip="Analytics" onclick="switchView('analytics')">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="13" height="11" rx="1"/><path d="M1 9l3.5-3 2.5 2.5 3-4 3 2"/></svg>
+    <span class="nav-label">Analytics</span>
+  </div>
+
+  <div class="sb-section">Intelligence</div>
+  <div class="nav-item disabled" data-tip="Audit &amp; Gaps">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M7.5 4.5v3l2 1.5"/></svg>
+    <span class="nav-label">Audit &amp; Gaps</span>
+    <div class="nav-badge nb-red">3</div>
+  </div>
+  <div class="nav-item disabled" data-tip="Orchestrations">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L7.5 4.5 11 8l3-3"/><path d="M10 8h4v4"/></svg>
+    <span class="nav-label">Orchestrations</span>
+  </div>
+
+  <div class="sb-section">Review</div>
+  <div class="nav-item disabled" data-tip="Human Review">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h11M2 7.5h7M2 11h5"/><circle cx="11.5" cy="10.5" r="2.5"/><path d="M10.5 10.5h2M11.5 9.5v2"/></svg>
+    <span class="nav-label">Human Review</span>
+    <div class="nav-badge nb-red">8</div>
+  </div>
+  <div class="nav-item disabled" data-tip="Outputs &amp; Exports">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 1h6l3 3v10H3V1z"/><path d="M9 1v3h3"/><path d="M5 9l2 2 3-3"/></svg>
+    <span class="nav-label">Outputs &amp; Exports</span>
+  </div>
+
+  <div class="sb-section">Market</div>
+  <div class="nav-item disabled" data-tip="Market Intel">
+    <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12L5 7l3 3 3-4 3 2"/></svg>
+    <span class="nav-label">Market Intel</span>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">AT</div>
+      <div>
+        <div class="sb-uname">ATM Team</div>
+        <div class="sb-urole">Risepoint Academic Svcs</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="breadcrumb">CIP <span class="bc-sep">›</span> <span class="cur" id="bcCur">Programs</span></div>
+  <div class="topbar-right">
+    <div class="search-bar">
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4"/><path d="M9 9l3 3"/></svg>
+      Search programs, CLOs…<kbd>⌘K</kbd>
+    </div>
+    <div class="icon-btn">
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 1a3.5 3.5 0 013.5 3.5V8l1.5 2H1.5L3 8V4.5A3.5 3.5 0 016.5 1z"/><path d="M5.5 10.5a1 1 0 002 0"/></svg>
+      <div class="notif-dot"></div>
+    </div>
+    <button class="tb-btn tb-btn-primary" onclick="openModal('modalProg')">
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 2v9M2 6.5h9"/></svg>
+      New Program
+    </button>
+  </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+<!-- PROGRAMS VIEW -->
+<div class="view active" id="view-programs">
+  <div class="page-hd">
+    <div>
+      <div class="page-title">Programs</div>
+      <div class="page-sub" id="progSubtitle">5 programs · 5 partner institutions · Select a program to explore alignment</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm" onclick="switchView('analytics')">View Heatmap →</button>
+      <button class="btn btn-primary btn-sm" onclick="switchView('mapping')">AI Mapping →</button>
+    </div>
+  </div>
+  <div class="prog-body">
+    <div class="prog-list" id="progList"></div>
+    <div class="detail-sticky">
+      <div class="card" id="progDetail">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center">
+          <div style="width:44px;height:44px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px">📋</div>
+          <div style="font-size:14px;font-weight:600;color:var(--t2);margin-bottom:5px">Select a program</div>
+          <div style="font-size:12px;color:var(--t3)">Click any program card to view alignment data, PLOs, and course mappings</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAPPING VIEW -->
+<div class="view" id="view-mapping">
+  <div class="page-hd">
+    <div>
+      <div class="page-title">AI Mapping Engine</div>
+      <div class="page-sub" id="mapSubtitle">CLO → PLO alignment suggestions · Human approval required on every mapping</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-ghost btn-sm" onclick="switchView('programs')">← Back</button>
+      <button class="btn btn-danger btn-sm" onclick="bulkAction('reject')">Reject All</button>
+      <button class="btn btn-primary btn-sm" onclick="bulkAction('accept')">Accept All</button>
+    </div>
+  </div>
+  <div class="map-body">
+    <div>
+      <div class="cnt-row">
+        <div class="cnt-card"><div class="cnt-lbl">Total CLOs</div><div class="cnt-val" id="mapTotal">—</div><div class="cnt-delta" style="color:var(--t3)" id="mapTotalSub">—</div></div>
+        <div class="cnt-card"><div class="cnt-lbl">Pending Review</div><div class="cnt-val" id="mapPending" style="color:var(--amber)">—</div><div class="cnt-delta" style="color:var(--amber)">Awaiting decision</div></div>
+        <div class="cnt-card"><div class="cnt-lbl">Accepted</div><div class="cnt-val" id="mapAccepted" style="color:var(--green)">0</div><div class="cnt-delta" style="color:var(--t3)">Confirmed mappings</div></div>
+        <div class="cnt-card"><div class="cnt-lbl">Rejected</div><div class="cnt-val" id="mapRejected" style="color:var(--red)">0</div><div class="cnt-delta" style="color:var(--t3)">Returned for revision</div></div>
+      </div>
+      <div class="map-strip">
+        <div class="map-strip-hd">
+          <div class="map-strip-title" id="mapStripTitle">Review Progress</div>
+          <span class="badge b-ai">🤖 AI Suggested · Human Approval Required</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3);margin-bottom:5px"><span>Reviewed</span><span id="mapPct">0%</span></div>
+        <div class="pbar thick"><div class="pf pf-green" id="mapBar" style="width:0%"></div></div>
+      </div>
+      <div class="card" style="overflow:hidden">
+        <div class="filter-bar">
+          <span class="fl">Course:</span>
+          <select class="fsel" id="mapCourseFilter" onchange="filterMappings(this.value,'course')"><option value="all">All courses</option></select>
+          <span class="fl" style="margin-left:8px">Confidence:</span>
+          <select class="fsel" onchange="filterMappings(this.value,'conf')">
+            <option value="all">All levels</option><option value="high">High (&gt;80%)</option><option value="mid">Medium (50–80%)</option><option value="low">Low (&lt;50%)</option>
+          </select>
+          <span class="fl" style="margin-left:8px">Status:</span>
+          <select class="fsel" onchange="filterMappings(this.value,'status')">
+            <option value="pending">Pending</option><option value="all">All</option><option value="accepted">Accepted</option><option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="map-row-hd"><div>Course Learning Outcome (CLO)</div><div></div><div>Program Learning Outcome (PLO)</div><div>Confidence</div><div>Action</div></div>
+        <div id="mapRows"></div>
+      </div>
+    </div>
+    <div class="kai-panel">
+      <div class="kai-hd"><div class="kai-pip"></div><div class="kai-name">KAI — Mapping</div><div class="kai-ctx" id="mapKaiCtx">—</div></div>
+      <div class="kai-msgs" id="mapKaiMsgs"></div>
+      <div class="kai-chips" id="mapKaiChips"></div>
+      <div class="kai-foot">
+        <input class="kai-input" id="mapIn" placeholder="Ask about mappings, gaps, PLOs…" onkeydown="if(event.key==='Enter')kaiSend('mapIn','mapKaiMsgs')">
+        <button class="kai-send" onclick="kaiSend('mapIn','mapKaiMsgs')"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6.5h11M7 2l4.5 4.5L7 11"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS VIEW -->
+<div class="view" id="view-analytics">
+  <div class="page-hd">
+    <div>
+      <div class="page-title">Analytics &amp; Alignment Report</div>
+      <div class="page-sub" id="anaSubtitle">Select a program to analyze</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-secondary btn-sm">Export CSV</button>
+      <button class="btn btn-primary btn-sm">Export PPTX</button>
+    </div>
+  </div>
+  <div class="ana-body">
+    <div class="ana-stats" id="anaStats"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="content-health">
+        <div class="ch-hd"><div class="ch-title">Alignment Health by PLO</div><button class="btn btn-ghost btn-sm" onclick="document.querySelectorAll('#anaTabs .tab')[0].click()">Heatmap →</button></div>
+        <div id="chRows"></div>
+      </div>
+      <div class="card" style="padding:16px">
+        <div style="font-size:13.5px;font-weight:600;color:var(--t1);margin-bottom:14px">PLO Coverage Distribution</div>
+        <div style="display:flex;align-items:center;gap:20px"><div id="coverageRing" style="flex-shrink:0"></div><div style="flex:1" id="coverageLegend"></div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 292px;gap:14px;align-items:start">
+      <div>
+        <div class="card" style="overflow:hidden">
+          <div class="tab-row" id="anaTabs">
+            <div class="tab active" onclick="setAnaTab(this,'heatmap')">Alignment Heatmap</div>
+            <div class="tab" onclick="setAnaTab(this,'plo')">PLO Summary</div>
+            <div class="tab" onclick="setAnaTab(this,'workforce')">Workforce Fit</div>
+          </div>
+          <div class="filter-bar">
+            <span class="fl">Program:</span>
+            <select class="fsel" id="anaProgramSelect" onchange="switchProgram(this.value)"></select>
+            <span class="fl" style="margin-left:8px">Scale:</span>
+            <select class="fsel" id="hmScale" onchange="buildHeatmap()">
+              <option value="ipa">Introduced / Practiced / Assessed</option>
+              <option value="simple">Coverage (Yes / No)</option>
+            </select>
+            <button class="btn btn-ghost btn-xs" style="margin-left:auto" onclick="clearHmSel()">Clear selection</button>
+          </div>
+          <div id="tab-heatmap">
+            <div class="hm-wrap"><table class="hm-tbl"><thead id="hmHead"></thead><tbody id="hmBody"></tbody></table></div>
+            <div class="hm-legend">
+              <div class="leg-item" data-leg="hm-none" onclick="legFilter('hm-none')"><div class="leg-sw" style="background:#F0F1F4;border:1px solid var(--border)"></div>Not Addressed</div>
+              <div class="leg-item" data-leg="hm-i" onclick="legFilter('hm-i')"><div class="leg-sw" style="background:#BFD4F7"></div>Introduced</div>
+              <div class="leg-item" data-leg="hm-p" onclick="legFilter('hm-p')"><div class="leg-sw" style="background:#4A90D9"></div>Practiced</div>
+              <div class="leg-item" data-leg="hm-a" onclick="legFilter('hm-a')"><div class="leg-sw" style="background:#1E5FAD"></div>Assessed</div>
+            </div>
+          </div>
+          <div id="tab-plo" style="display:none">
+            <div class="plo-hd"><div>Program Learning Outcome</div><div style="text-align:center">I</div><div style="text-align:center">P</div><div style="text-align:center">A</div><div>Coverage</div><div>Status</div></div>
+            <div id="ploRows"></div>
+          </div>
+          <div id="tab-workforce" style="display:none;padding:16px 18px">
+            <div style="font-size:12.5px;font-weight:600;color:var(--t1);margin-bottom:13px" id="wfTitle">Workforce Alignment</div>
+            <div id="wfRows"></div>
+          </div>
+        </div>
+        <div id="drilldown" style="display:none"></div>
+      </div>
+      <div class="kai-panel" style="max-height:510px">
+        <div class="kai-hd"><div class="kai-pip"></div><div class="kai-name">KAI — Analytics</div><div class="kai-ctx" id="anaKaiCtx">—</div></div>
+        <div class="kai-msgs" id="anaKaiMsgs"></div>
+        <div class="kai-chips" id="anaKaiChips"></div>
+        <div class="kai-foot">
+          <input class="kai-input" id="anaIn" placeholder="Ask about gaps, coverage, trends…" onkeydown="if(event.key==='Enter')kaiSend('anaIn','anaKaiMsgs')">
+          <button class="kai-send" onclick="kaiSend('anaIn','anaKaiMsgs')"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6.5h11M7 2l4.5 4.5L7 11"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   ALL_PROGRAMS — 5 full discipline-accurate datasets
+   Each has: plos[], courses[], hmData[], mappings[], wfData[]
+   kaiSys (system prompt), kaiIntro, kaiChips[]
+════════════════════════════════════════════════════════ */
+
+const ALL_PROGRAMS = {
+
+/* ────────────────────────────────────────────────────────
+   1. HEALTHCARE ADMINISTRATION, BS — Fortis College
+   ACHE / AUPHA competency framework
+──────────────────────────────────────────────────────── */
+hadm: {
+  id:'hadm', name:'Healthcare Administration, BS',
+  partner:'Fortis College', lms:'Canvas', color:'#4A90D9',
+  score:78, gaps:2, status:'active',
+  detail:'10 courses · 7 PLOs · ACHE/AUPHA competency-aligned',
+  plos:[
+    { code:'PLO 1', name:'Healthcare Systems',       full:'Analyze the structure, financing, and governance of the US healthcare delivery system, including roles of federal, state, and private-sector stakeholders.',                                               intro:3, prac:4, assess:2, status:'strong',     pct:88 },
+    { code:'PLO 2', name:'Ethics & Compliance',      full:'Apply ethical frameworks, legal standards, and compliance requirements (HIPAA, Stark Law, Anti-Kickback Statute) to healthcare administrative decision-making.',                                           intro:2, prac:3, assess:3, status:'strong',     pct:80 },
+    { code:'PLO 3', name:'Healthcare Finance',       full:'Apply financial management principles including budgeting, DRG and capitation reimbursement, revenue cycle management, and value-based payment models to healthcare operations.',                            intro:2, prac:2, assess:2, status:'developing', pct:62 },
+    { code:'PLO 4', name:'Leadership & Management',  full:'Demonstrate leadership competencies including strategic planning, workforce management, change leadership, and team effectiveness across complex healthcare organizations.',                                   intro:1, prac:3, assess:2, status:'adequate',   pct:68 },
+    { code:'PLO 5', name:'Quality & Patient Safety', full:'Evaluate quality improvement methodologies (PDSA, Lean, Six Sigma), patient safety frameworks (AHRQ, TJC), and CMS core measures to drive performance improvement in healthcare settings.',                 intro:0, prac:1, assess:1, status:'gap',        pct:22 },
+    { code:'PLO 6', name:'Health Informatics',       full:'Utilize health information technology, EHR systems, data analytics platforms, and HL7/FHIR interoperability standards to support administrative and clinical decision-making.',                              intro:1, prac:1, assess:1, status:'gap',        pct:35 },
+    { code:'PLO 7', name:'Health Policy & Law',      full:'Interpret the impact of federal and state legislation (ACA, HIPAA, Medicare Modernization Act), regulatory agencies (CMS, OIG, FDA), and policy reform on healthcare access, delivery, and operations.',   intro:2, prac:2, assess:2, status:'adequate',   pct:70 },
+  ],
+  courses:['HADM 101 — Intro to Healthcare Administration','HADM 201 — Health Policy & Law','HADM 210 — Healthcare Finance & Economics','HADM 220 — Ethics & Compliance in Healthcare','HADM 301 — Healthcare Leadership & Management','HADM 310 — Quality Improvement & Patient Safety','HADM 320 — Health Informatics & Data Systems','HADM 401 — Strategic Management Capstone','HADM 420 — Healthcare Administration Practicum','NURS 305 — Interprofessional Practice (cross-listed)'],
+  hmData:[
+    ['HADM 101','I','I','', 'I','', '', 'I'],
+    ['HADM 201','P','P','', '', '', '', 'A'],
+    ['HADM 210','I','', 'A','', 'I','', '' ],
+    ['HADM 220','I','A','', 'I','', '', 'P'],
+    ['HADM 301','P','P','P','A','', '', 'I'],
+    ['HADM 310','I','', 'P','P','A','P',''],
+    ['HADM 320','I','', '', 'I','P','A',''],
+    ['HADM 401','A','A','A','A','A','P','A'],
+    ['HADM 420','P','P','', 'P','A','', ''],
+    ['NURS 305','', 'I','', 'P','P','I','I'],
+  ],
+  mappings:[
+    { course:'HADM 101', clo:'Identify and analyze the roles of major stakeholders in the US healthcare delivery system, including hospitals, insurers, government agencies, and integrated delivery networks.', plo:'PLO 1: Analyze the structure, financing, and governance of the US healthcare delivery system.', conf:91, status:'pending' },
+    { course:'HADM 101', clo:'Describe reimbursement models including Diagnosis-Related Groups (DRG), capitation, bundled payments, and the transition from fee-for-service to value-based care.', plo:'PLO 3: Apply financial management principles including DRG and capitation reimbursement to healthcare operations.', conf:76, status:'pending' },
+    { course:'HADM 101', clo:'Examine ethical decision-making frameworks (principlism, utilitarianism, deontology) as applied to patient care scenarios and healthcare administrative contexts.', plo:'PLO 2: Apply ethical frameworks, legal standards, and compliance requirements to healthcare administrative decision-making.', conf:88, status:'pending' },
+    { course:'HADM 101', clo:'Describe the role of accreditation bodies (TJC, NCQA, AAAHC) in maintaining quality standards and the implications of accreditation status for healthcare organizations.', plo:'PLO 5: Evaluate quality improvement methodologies, patient safety frameworks, and CMS core measures.', conf:54, status:'pending' },
+    { course:'HADM 201', clo:'Analyze the impact of landmark federal legislation — including the ACA, HIPAA, and Medicare Modernization Act — on healthcare access, insurance coverage, and delivery system reform.', plo:'PLO 7: Interpret the impact of federal and state legislation and regulatory agencies on healthcare access and delivery.', conf:83, status:'pending' },
+    { course:'HADM 201', clo:'Evaluate the regulatory functions of state health departments, insurance commissioners, and certificate-of-need laws in shaping healthcare markets and provider networks.', plo:'PLO 7: Interpret the impact of federal and state legislation and regulatory agencies on healthcare access and delivery.', conf:79, status:'pending' },
+    { course:'HADM 301', clo:'Apply transformational and servant leadership frameworks to manage interdisciplinary healthcare teams, resolve conflict, and drive organizational change in complex clinical environments.', plo:'PLO 4: Demonstrate leadership competencies including strategic planning, workforce management, and team effectiveness.', conf:92, status:'pending' },
+    { course:'HADM 301', clo:'Design quality improvement initiatives using Plan-Do-Study-Act (PDSA) cycles, Lean process improvement, and root cause analysis in a simulated hospital department.', plo:'PLO 5: Evaluate quality improvement methodologies, patient safety frameworks, and CMS core measures.', conf:87, status:'pending' },
+    { course:'HADM 310', clo:'Implement data analytics workflows using EHR-derived datasets to monitor patient outcomes, operational KPIs, and CMS quality measures including HCAHPS and core measures.', plo:'PLO 6: Utilize health information technology, EHR, and data analytics platforms to support administrative decision-making.', conf:85, status:'pending' },
+    { course:'HADM 401', clo:'Synthesize ACHE healthcare leadership competencies through an evidence-based capstone project developed with a community health organization or integrated delivery network.', plo:'PLO 1: Analyze the structure, financing, and governance of the US healthcare delivery system.', conf:89, status:'pending' },
+    { course:'HADM 401', clo:'Develop and present evidence-based strategic recommendations to senior healthcare administrators and boards using professional executive communication standards.', plo:'PLO 4: Demonstrate leadership competencies including strategic planning, workforce management, and team effectiveness.', conf:78, status:'pending' },
+    { course:'HADM 420', clo:'Apply practicum-based learning to evaluate the implementation and operational impact of state and federal healthcare policy mandates within a supervised administrative setting.', plo:'PLO 7: Interpret the impact of federal and state legislation and regulatory agencies on healthcare access and delivery.', conf:82, status:'pending' },
+  ],
+  wfData:[
+    { skill:'Strategic Planning & Organizational Management', cov:'Strong',     pct:85, c:'pf-blue'  },
+    { skill:'Healthcare Financial Management & Budgeting',   cov:'Adequate',   pct:62, c:'pf-blue'  },
+    { skill:'Quality Improvement & Patient Safety',          cov:'Weak',       pct:28, c:'pf-red'   },
+    { skill:'Regulatory Compliance & Risk Management',       cov:'Adequate',   pct:70, c:'pf-blue'  },
+    { skill:'Health Information Technology (EHR/HIT)',       cov:'Weak',       pct:32, c:'pf-red'   },
+    { skill:'Workforce Management & Team Leadership',        cov:'Strong',     pct:87, c:'pf-green' },
+    { skill:'Patient Experience & Care Coordination',        cov:'Adequate',   pct:58, c:'pf-blue'  },
+    { skill:'Population Health & Data Analytics',            cov:'Developing', pct:44, c:'pf-amber' },
+  ],
+  wfTitle:'Workforce Alignment — BLS Healthcare Administrators (SOC 11-9111)',
+  kaiSys:`You are KAI (Kadal AI), curriculum intelligence assistant for Risepoint's ATM team embedded in CIP.\nProgram: Healthcare Administration, BS — Fortis College, Canvas LMS, 10 courses, 7 PLOs (ACHE/AUPHA).\nPLOs: PLO1 Healthcare Systems (88%), PLO2 Ethics/Compliance (80%), PLO3 Finance (62%), PLO4 Leadership (68%), PLO5 Quality/Safety (22%—GAP), PLO6 Informatics (35%—GAP), PLO7 Policy (70%).\nAll AI suggestions require ATM human confirmation. Be concise, use ACHE/AUPHA language.`,
+  kaiIntro:`I've analyzed the **Healthcare Administration, BS** program at Fortis College. **12 CLO→PLO suggestions** are staged for ATM review.\n\n⚠ **PLO 5 (Quality & Patient Safety)** and **PLO 6 (Health Informatics)** are critical gaps — both below 40% coverage. HADM 310 and HADM 320 can be strengthened to address these.\n\nAll suggestions require your approval before finalizing.`,
+  kaiChips:['PLO 5 coverage gaps','Why low confidence?','Remediation suggestions'],
+},
+
+/* ────────────────────────────────────────────────────────
+   2. NURSING, BSN — National University
+   ACEN / CCNE Essentials framework
+──────────────────────────────────────────────────────── */
+nurs: {
+  id:'nurs', name:'Nursing, BSN',
+  partner:'National University', lms:'Blackboard', color:'#22A861',
+  score:85, gaps:1, status:'active',
+  detail:'14 courses · 6 PLOs · ACEN/CCNE Essentials-aligned',
+  plos:[
+    { code:'PLO 1', name:'Patient-Centered Care',       full:'Provide holistic, culturally competent, patient-centered care that integrates clinical judgment, evidence-based practice, and therapeutic communication across diverse patient populations.',           intro:4, prac:5, assess:4, status:'strong',     pct:92 },
+    { code:'PLO 2', name:'Clinical Judgment',           full:'Apply the clinical judgment model (noticing, interpreting, responding, reflecting) to develop nursing diagnoses, plan interventions, and evaluate outcomes in acute and community settings.',              intro:3, prac:4, assess:4, status:'strong',     pct:88 },
+    { code:'PLO 3', name:'Evidence-Based Practice',     full:'Integrate best available evidence, clinical expertise, and patient preferences into nursing practice decisions using established EBP models (Iowa, Johns Hopkins, PARIHS).',                              intro:3, prac:3, assess:3, status:'strong',     pct:82 },
+    { code:'PLO 4', name:'Informatics & Technology',    full:'Utilize nursing informatics, electronic health records (EHR), clinical decision support tools, and telehealth platforms to optimize patient safety, care coordination, and population health outcomes.',  intro:2, prac:2, assess:2, status:'adequate',   pct:65 },
+    { code:'PLO 5', name:'Interprofessional Collaboration', full:'Demonstrate effective communication, shared decision-making, and collaborative leadership within interprofessional healthcare teams to improve patient outcomes and system-level quality.',            intro:1, prac:2, assess:1, status:'developing', pct:48 },
+    { code:'PLO 6', name:'Population & Community Health', full:'Apply epidemiological principles, social determinants of health, and community assessment frameworks to design and evaluate population-based nursing interventions and public health programs.',          intro:2, prac:2, assess:2, status:'adequate',   pct:72 },
+  ],
+  courses:['NURS 201 — Foundations of Professional Nursing','NURS 210 — Health Assessment Across the Lifespan','NURS 220 — Pathophysiology & Pharmacology I','NURS 230 — Pathophysiology & Pharmacology II','NURS 301 — Adult Health Nursing I (Med-Surg)','NURS 302 — Adult Health Nursing II (Complex Care)','NURS 310 — Maternal-Newborn Nursing','NURS 320 — Pediatric Nursing','NURS 330 — Mental Health & Psychiatric Nursing','NURS 340 — Community & Population Health Nursing','NURS 401 — Evidence-Based Practice & Research','NURS 410 — Nursing Informatics & Technology','NURS 420 — Nursing Leadership & Healthcare Systems','NURS 450 — Capstone Clinical Practicum'],
+  hmData:[
+    ['NURS 201','I','I','I','', '', 'I'],
+    ['NURS 210','P','A','I','', '', 'I'],
+    ['NURS 220','P','I','P','', '', ''],
+    ['NURS 230','P','I','P','', '', ''],
+    ['NURS 301','A','A','P','I','I','I'],
+    ['NURS 302','A','A','P','I','I',''],
+    ['NURS 310','A','P','I','', 'I','P'],
+    ['NURS 320','A','P','I','', 'I','P'],
+    ['NURS 330','P','P','I','I','P','I'],
+    ['NURS 340','P','I','P','I','P','A'],
+    ['NURS 401','I','P','A','P','I','I'],
+    ['NURS 410','I','I','I','A','I',''],
+    ['NURS 420','P','P','P','I','A','P'],
+    ['NURS 450','A','A','A','P','A','A'],
+  ],
+  mappings:[
+    { course:'NURS 201', clo:'Articulate the historical development of the nursing profession, scope and standards of practice, the ANA Code of Ethics, and professional accountability within evolving healthcare systems.', plo:'PLO 1: Provide holistic, culturally competent, patient-centered care across diverse patient populations.', conf:84, status:'pending' },
+    { course:'NURS 210', clo:'Conduct comprehensive health assessments including subjective history, objective physical examination findings, and functional status across pediatric, adult, and geriatric populations.', plo:'PLO 2: Apply the clinical judgment model to develop nursing diagnoses, plan interventions, and evaluate outcomes.', conf:91, status:'pending' },
+    { course:'NURS 301', clo:'Apply the nursing process to develop, implement, and evaluate individualized care plans for adult patients with acute cardiovascular, respiratory, neurological, and gastrointestinal conditions.', plo:'PLO 2: Apply the clinical judgment model to develop nursing diagnoses, plan interventions, and evaluate outcomes.', conf:94, status:'pending' },
+    { course:'NURS 301', clo:'Demonstrate safe medication administration, adverse effect monitoring, and patient education for common drug classes used in acute medical-surgical care.', plo:'PLO 1: Provide holistic, culturally competent, patient-centered care across diverse patient populations.', conf:89, status:'pending' },
+    { course:'NURS 340', clo:'Conduct a community health assessment using epidemiological data, social determinants of health frameworks, and asset mapping to identify priority health needs in a defined population.', plo:'PLO 6: Apply epidemiological principles and community assessment frameworks to design population-based nursing interventions.', conf:87, status:'pending' },
+    { course:'NURS 401', clo:'Formulate a researchable clinical question using PICO format and conduct a systematic literature search to synthesize evidence for nursing practice improvement.', plo:'PLO 3: Integrate best available evidence, clinical expertise, and patient preferences into nursing practice decisions.', conf:93, status:'pending' },
+    { course:'NURS 410', clo:'Demonstrate proficiency with EHR documentation, clinical decision support alerts, patient portal communication, and telehealth technology to support safe, coordinated care delivery.', plo:'PLO 4: Utilize nursing informatics, EHR, and telehealth platforms to optimize patient safety and care coordination.', conf:86, status:'pending' },
+    { course:'NURS 420', clo:'Apply shared governance, transformational leadership, and quality improvement methodologies (PDSA, LEAN) to lead interprofessional care teams and drive unit-level change initiatives.', plo:'PLO 5: Demonstrate effective communication, shared decision-making, and collaborative leadership within interprofessional healthcare teams.', conf:78, status:'pending' },
+    { course:'NURS 450', clo:'Integrate BSN-level competencies in clinical judgment, evidence-based practice, and interprofessional collaboration during a supervised 120-hour capstone practicum in a specialty nursing area.', plo:'PLO 1: Provide holistic, culturally competent, patient-centered care across diverse patient populations.', conf:96, status:'pending' },
+    { course:'NURS 450', clo:'Critically evaluate system-level barriers to interprofessional collaboration and propose evidence-based strategies for improving team communication and care coordination in the practicum site.', plo:'PLO 5: Demonstrate effective communication, shared decision-making, and collaborative leadership within interprofessional healthcare teams.', conf:72, status:'pending' },
+  ],
+  wfData:[
+    { skill:'Patient Assessment & Clinical Judgment',        cov:'Strong',     pct:92, c:'pf-green' },
+    { skill:'Evidence-Based Clinical Decision Making',       cov:'Strong',     pct:85, c:'pf-green' },
+    { skill:'Medication Management & Pharmacology',          cov:'Strong',     pct:88, c:'pf-green' },
+    { skill:'EHR Documentation & Nursing Informatics',       cov:'Adequate',   pct:65, c:'pf-blue'  },
+    { skill:'Interprofessional Teamwork & Communication',    cov:'Developing', pct:48, c:'pf-amber' },
+    { skill:'Community & Population Health',                 cov:'Adequate',   pct:72, c:'pf-blue'  },
+    { skill:'Patient Education & Health Literacy',           cov:'Strong',     pct:84, c:'pf-green' },
+    { skill:'Leadership & Quality Improvement',              cov:'Adequate',   pct:68, c:'pf-blue'  },
+  ],
+  wfTitle:'Workforce Alignment — Registered Nurses (BLS SOC 29-1141)',
+  kaiSys:`You are KAI (Kadal AI), curriculum intelligence assistant for Risepoint's ATM team.\nProgram: Nursing, BSN — National University, Blackboard LMS, 14 courses, 6 PLOs (ACEN/CCNE Essentials).\nPLOs: PLO1 Patient-Centered Care (92%), PLO2 Clinical Judgment (88%), PLO3 EBP (82%), PLO4 Informatics (65%), PLO5 Interprofessional Collaboration (48%—GAP), PLO6 Population Health (72%).\nAll AI mapping suggestions require ATM human confirmation. Use ACEN/CCNE Essentials language.`,
+  kaiIntro:`The **Nursing, BSN** program at National University shows strong clinical coverage overall — **85% alignment score**.\n\n⚠ **PLO 5 (Interprofessional Collaboration)** is the primary gap at 48%. This is a core CCNE Essentials competency. NURS 420 (Leadership) and NURS 450 (Capstone) have mapped CLOs, but additional touchpoints in med-surg and specialty rotations would strengthen coverage.\n\n10 CLO→PLO suggestions are staged for your review.`,
+  kaiChips:['PLO 5 IPE strategies','CCNE Essentials alignment','Capstone coverage'],
+},
+
+/* ────────────────────────────────────────────────────────
+   3. BUSINESS ADMINISTRATION, MBA — Grand Canyon University
+   AACSB / ACBSP competency framework
+──────────────────────────────────────────────────────── */
+mba: {
+  id:'mba', name:'Business Administration, MBA',
+  partner:'Grand Canyon University', lms:'D2L Brightspace', color:'#D97706',
+  score:58, gaps:4, status:'review',
+  detail:'12 courses · 8 PLOs · AACSB/ACBSP competency-aligned — 4 critical gaps',
+  plos:[
+    { code:'PLO 1', name:'Strategic Leadership',         full:'Integrate strategic management frameworks (Porter, VRIO, Blue Ocean) with ethical leadership principles to formulate and implement competitive organizational strategies in dynamic global markets.', intro:2, prac:2, assess:2, status:'adequate',   pct:68 },
+    { code:'PLO 2', name:'Financial Management',         full:'Apply advanced financial analysis, capital budgeting, valuation, and risk management techniques to support organizational investment decisions and shareholder value creation.',                    intro:2, prac:2, assess:2, status:'adequate',   pct:65 },
+    { code:'PLO 3', name:'Marketing & Consumer Behavior', full:'Develop data-driven marketing strategies using customer analytics, digital marketing platforms, brand management, and market research methodologies to drive growth and market positioning.',       intro:1, prac:2, assess:1, status:'developing', pct:50 },
+    { code:'PLO 4', name:'Operations & Supply Chain',    full:'Apply operations management principles — including process optimization, lean operations, supply chain design, and quality management systems (ISO, Six Sigma) — to improve organizational efficiency.', intro:1, prac:1, assess:0, status:'gap',        pct:28 },
+    { code:'PLO 5', name:'Data Analytics & BI',          full:'Leverage business intelligence tools, predictive analytics, data visualization, and statistical modeling to generate actionable insights from complex organizational and market datasets.',              intro:0, prac:1, assess:1, status:'gap',        pct:30 },
+    { code:'PLO 6', name:'Organizational Behavior & HR', full:'Apply organizational behavior theory, change management models (Kotter, ADKAR), talent acquisition frameworks, and HR analytics to lead and develop high-performing organizational cultures.',          intro:1, prac:1, assess:1, status:'developing', pct:48 },
+    { code:'PLO 7', name:'Business Ethics & CSR',        full:'Evaluate ethical dilemmas, stakeholder theory, ESG frameworks, and corporate social responsibility obligations to lead organizations with integrity in complex regulatory and social environments.',       intro:0, prac:0, assess:1, status:'gap',        pct:22 },
+    { code:'PLO 8', name:'Entrepreneurship & Innovation', full:'Design and evaluate new venture concepts, business model innovation, lean startup methodology, and corporate entrepreneurship strategies to drive organizational growth and disruption.',               intro:0, prac:0, assess:0, status:'gap',        pct:12 },
+  ],
+  courses:['MBA 501 — Foundations of Business Leadership','MBA 510 — Managerial Economics & Decision Making','MBA 520 — Financial Management & Reporting','MBA 530 — Marketing Strategy & Analytics','MBA 540 — Organizational Behavior & Human Capital','MBA 550 — Operations Management & Supply Chain','MBA 560 — Business Ethics, Law & Corporate Governance','MBA 570 — Business Intelligence & Data Analytics','MBA 580 — Global Strategy & International Business','MBA 590 — Innovation, Entrepreneurship & New Ventures','MBA 601 — Strategic Management Capstone','MBA 610 — Leadership Practicum & Executive Coaching'],
+  hmData:[
+    ['MBA 501','A','I','I','', '', 'P','I',''],
+    ['MBA 510','P','A','I','I','I','', '', ''],
+    ['MBA 520','I','A','', 'I','P','', '', ''],
+    ['MBA 530','I','I','A','', 'P','', '', 'I'],
+    ['MBA 540','P','', 'I','I','', 'A','', 'I'],
+    ['MBA 550','I','P','', 'A','I','P','', ''],
+    ['MBA 560','P','I','', '', '', 'I','A',''],
+    ['MBA 570','I','I','P','I','A','', '', ''],
+    ['MBA 580','A','P','P','', 'I','', 'P','P'],
+    ['MBA 590','I','', 'I','I','I','', 'I','A'],
+    ['MBA 601','A','A','A','A','A','A','A','A'],
+    ['MBA 610','A','I','P','', 'I','A','', 'P'],
+  ],
+  mappings:[
+    { course:'MBA 501', clo:'Apply transformational and authentic leadership theories to diagnose organizational culture, develop executive presence, and drive strategic alignment across business units.', plo:'PLO 1: Integrate strategic management frameworks with ethical leadership to formulate competitive strategies.', conf:88, status:'pending' },
+    { course:'MBA 520', clo:'Construct and interpret financial statements, apply DCF valuation models, and assess capital structure decisions for publicly traded and private-equity-backed firms.', plo:'PLO 2: Apply advanced financial analysis, capital budgeting, and valuation to support organizational investment decisions.', conf:92, status:'pending' },
+    { course:'MBA 530', clo:'Design an integrated digital marketing strategy using customer segmentation, SEO/SEM, social media analytics, and attribution modeling to optimize customer acquisition and lifetime value.', plo:'PLO 3: Develop data-driven marketing strategies using customer analytics and digital marketing platforms.', conf:86, status:'pending' },
+    { course:'MBA 550', clo:'Apply lean manufacturing principles, Six Sigma DMAIC methodology, and supply chain risk management frameworks to redesign operations processes and reduce waste in a case-study organization.', plo:'PLO 4: Apply operations management principles and lean operations to improve organizational efficiency.', conf:74, status:'pending' },
+    { course:'MBA 570', clo:'Build predictive models using regression, clustering, and decision-tree algorithms in Python or R, and present data-driven recommendations to executive stakeholders using Tableau dashboards.', plo:'PLO 5: Leverage business intelligence tools, predictive analytics, and data visualization to generate actionable insights.', conf:89, status:'pending' },
+    { course:'MBA 560', clo:'Analyze corporate governance failures, evaluate ESG reporting frameworks (GRI, SASB), and develop an organizational ethics program aligned with stakeholder expectations and regulatory requirements.', plo:'PLO 7: Evaluate ethical dilemmas, ESG frameworks, and CSR obligations to lead organizations with integrity.', conf:71, status:'pending' },
+    { course:'MBA 590', clo:'Develop a comprehensive business plan for a new venture or corporate innovation initiative, incorporating lean startup methodology, market validation, financial modeling, and investor pitch preparation.', plo:'PLO 8: Design and evaluate new venture concepts, business model innovation, and lean startup methodology.', conf:85, status:'pending' },
+    { course:'MBA 601', clo:'Synthesize MBA-level functional competencies to formulate and present a strategic transformation plan for a real or simulated organization, addressing competitive dynamics, financial viability, and stakeholder impact.', plo:'PLO 1: Integrate strategic management frameworks with ethical leadership to formulate competitive strategies.', conf:91, status:'pending' },
+  ],
+  wfData:[
+    { skill:'Strategic Planning & Competitive Analysis',    cov:'Adequate',   pct:68, c:'pf-blue'  },
+    { skill:'Financial Analysis & Capital Budgeting',       cov:'Adequate',   pct:65, c:'pf-blue'  },
+    { skill:'Digital Marketing & Customer Analytics',       cov:'Developing', pct:50, c:'pf-amber' },
+    { skill:'Operations & Supply Chain Management',         cov:'Weak',       pct:28, c:'pf-red'   },
+    { skill:'Business Intelligence & Data Analytics',       cov:'Weak',       pct:30, c:'pf-red'   },
+    { skill:'Organizational Leadership & Change Mgmt',      cov:'Adequate',   pct:60, c:'pf-blue'  },
+    { skill:'Business Ethics & Corporate Governance',       cov:'Weak',       pct:22, c:'pf-red'   },
+    { skill:'Entrepreneurship & Innovation',                cov:'Weak',       pct:12, c:'pf-red'   },
+  ],
+  wfTitle:'Workforce Alignment — General & Operations Managers (BLS SOC 11-1021)',
+  kaiSys:`You are KAI (Kadal AI), curriculum intelligence assistant for Risepoint's ATM team.\nProgram: Business Administration, MBA — Grand Canyon University, D2L Brightspace, 12 courses, 8 PLOs (AACSB/ACBSP).\nPLOs: PLO1 Strategic Leadership (68%), PLO2 Finance (65%), PLO3 Marketing (50%), PLO4 Operations (28%—GAP), PLO5 Data Analytics (30%—GAP), PLO6 OB/HR (48%), PLO7 Ethics/CSR (22%—GAP), PLO8 Entrepreneurship (12%—GAP).\nThis program has 4 critical gaps requiring intervention. All AI suggestions require ATM human confirmation. Use AACSB language.`,
+  kaiIntro:`The **MBA** at Grand Canyon University has **4 critical coverage gaps** requiring immediate attention — 58% overall alignment score.\n\n⚠ **PLO 7 (Ethics/CSR)** and **PLO 8 (Entrepreneurship)** have near-zero assessed coverage. **PLO 4 (Operations)** and **PLO 5 (Data Analytics)** also show weak performance.\n\nMBA 601 Capstone currently carries most of the assessed load — this is a risk pattern. 8 CLO→PLO suggestions are staged for review.`,
+  kaiChips:['PLO 7 & 8 remediation','Capstone over-reliance','AACSB gap analysis'],
+},
+
+/* ────────────────────────────────────────────────────────
+   4. INFORMATION TECHNOLOGY, BS — Liberty University
+   ABET Computing Criteria / CompTIA framework
+──────────────────────────────────────────────────────── */
+it: {
+  id:'it', name:'Information Technology, BS',
+  partner:'Liberty University', lms:'Canvas', color:'#7C3AED',
+  score:71, gaps:1, status:'active',
+  detail:'9 courses · 6 PLOs · ABET Computing Criteria-aligned',
+  plos:[
+    { code:'PLO 1', name:'Systems & Infrastructure',    full:'Design, configure, and manage enterprise IT infrastructure including servers, virtualization, cloud platforms (AWS, Azure), and hybrid network architectures to meet organizational performance and availability requirements.', intro:3, prac:3, assess:2, status:'strong',     pct:80 },
+    { code:'PLO 2', name:'Networking & Security',       full:'Apply networking protocols (TCP/IP, DNS, DHCP, VPN), security frameworks (NIST CSF, ISO 27001), and threat mitigation strategies including penetration testing and incident response planning to protect organizational assets.', intro:2, prac:3, assess:3, status:'strong',     pct:84 },
+    { code:'PLO 3', name:'Software & Application Dev', full:'Apply software development lifecycle methodologies (Agile, Scrum, DevOps), programming fundamentals, and API integration techniques to develop, test, and deploy business applications and IT solutions.',                      intro:2, prac:2, assess:2, status:'adequate',   pct:68 },
+    { code:'PLO 4', name:'Data Management & Analytics', full:'Design relational and NoSQL database architectures, write complex SQL queries, and apply data pipeline and analytics frameworks to support organizational business intelligence and reporting requirements.',                     intro:2, prac:2, assess:1, status:'developing', pct:55 },
+    { code:'PLO 5', name:'IT Project Management',       full:'Apply PMBOK and Agile project management frameworks, resource planning, risk management, and IT governance principles (COBIT, ITIL) to successfully deliver technology projects within scope, time, and budget constraints.',    intro:1, prac:2, assess:2, status:'adequate',   pct:70 },
+    { code:'PLO 6', name:'Emerging Technologies',       full:'Evaluate the business and technical implications of emerging technologies including artificial intelligence, machine learning, IoT, blockchain, and quantum computing for organizational transformation and competitive advantage.', intro:0, prac:1, assess:0, status:'gap',        pct:20 },
+  ],
+  courses:['ITEC 201 — Foundations of Information Technology','ITEC 210 — Networking Fundamentals & Protocols','ITEC 220 — Cybersecurity Principles & Risk Management','ITEC 301 — Systems Administration & Cloud Computing','ITEC 310 — Database Design & SQL','ITEC 320 — Software Development & Agile Methodologies','ITEC 401 — IT Project Management & Governance','ITEC 410 — Data Analytics & Business Intelligence','ITEC 420 — IT Strategy & Emerging Technologies Capstone'],
+  hmData:[
+    ['ITEC 201','I','I','I','I','', ''],
+    ['ITEC 210','P','A','', '', '', ''],
+    ['ITEC 220','I','A','I','', 'I','I'],
+    ['ITEC 301','A','P','I','I','', ''],
+    ['ITEC 310','I','', 'I','A','', ''],
+    ['ITEC 320','I','I','A','P','', ''],
+    ['ITEC 401','P','P','I','I','A','I'],
+    ['ITEC 410','I','I','P','A','P','I'],
+    ['ITEC 420','A','A','P','P','A','P'],
+  ],
+  mappings:[
+    { course:'ITEC 201', clo:'Identify and compare enterprise IT infrastructure models including on-premises, cloud (IaaS/PaaS/SaaS), and hybrid architectures, analyzing cost, security, and scalability trade-offs for organizational decision-making.', plo:'PLO 1: Design, configure, and manage enterprise IT infrastructure including cloud platforms and hybrid network architectures.', conf:88, status:'pending' },
+    { course:'ITEC 210', clo:'Configure and troubleshoot TCP/IP networking services including DNS, DHCP, NAT, and routing protocols (OSPF, BGP) in simulated enterprise environments using packet analysis tools.', plo:'PLO 2: Apply networking protocols, security frameworks, and threat mitigation strategies to protect organizational assets.', conf:91, status:'pending' },
+    { course:'ITEC 220', clo:'Conduct vulnerability assessments, perform ethical penetration testing using industry tools (Nmap, Metasploit, Wireshark), and develop incident response plans aligned with the NIST Cybersecurity Framework.', plo:'PLO 2: Apply networking protocols, security frameworks, and threat mitigation strategies to protect organizational assets.', conf:93, status:'pending' },
+    { course:'ITEC 310', clo:'Design normalized relational database schemas, write advanced SQL queries (joins, subqueries, stored procedures), and implement database security, backup, and recovery procedures for enterprise applications.', plo:'PLO 4: Design relational database architectures and apply data analytics frameworks to support business intelligence.', conf:87, status:'pending' },
+    { course:'ITEC 320', clo:'Apply Agile/Scrum methodology to develop, test, and deploy a full-stack web application using version control (Git), CI/CD pipelines, and RESTful API integration within a collaborative team environment.', plo:'PLO 3: Apply software development lifecycle methodologies and API integration to develop and deploy business applications.', conf:84, status:'pending' },
+    { course:'ITEC 401', clo:'Develop a comprehensive IT project plan using PMBOK methodology, including work breakdown structure, risk register, stakeholder communication plan, and earned value analysis for a simulated enterprise IT initiative.', plo:'PLO 5: Apply PMBOK and Agile frameworks, risk management, and IT governance to deliver technology projects.', conf:90, status:'pending' },
+    { course:'ITEC 420', clo:'Evaluate the strategic and operational implications of emerging technologies (AI/ML, IoT, blockchain) for a specific industry sector and develop an organizational technology roadmap with implementation recommendations.', plo:'PLO 6: Evaluate emerging technologies including AI, IoT, and blockchain for organizational transformation.', conf:65, status:'pending' },
+    { course:'ITEC 420', clo:'Present an integrated IT strategy capstone addressing infrastructure, security, data governance, and emerging technology adoption to executive-level stakeholders using professional technical communication.', plo:'PLO 1: Design, configure, and manage enterprise IT infrastructure including cloud platforms and hybrid network architectures.', conf:78, status:'pending' },
+  ],
+  wfData:[
+    { skill:'Cloud & Infrastructure Management',           cov:'Strong',     pct:80, c:'pf-purple' },
+    { skill:'Network Security & Threat Management',        cov:'Strong',     pct:84, c:'pf-purple' },
+    { skill:'Software Development & DevOps',               cov:'Adequate',   pct:68, c:'pf-blue'   },
+    { skill:'Database Design & SQL',                       cov:'Developing', pct:55, c:'pf-amber'  },
+    { skill:'IT Project Management (PMBOK/Agile)',         cov:'Adequate',   pct:70, c:'pf-blue'   },
+    { skill:'AI/ML & Emerging Technology Assessment',      cov:'Weak',       pct:20, c:'pf-red'    },
+    { skill:'Business Intelligence & Data Analytics',      cov:'Adequate',   pct:62, c:'pf-blue'   },
+    { skill:'IT Governance & Compliance (COBIT/ITIL)',     cov:'Adequate',   pct:65, c:'pf-blue'   },
+  ],
+  wfTitle:'Workforce Alignment — Computer & Info Systems Managers (BLS SOC 11-3021)',
+  kaiSys:`You are KAI (Kadal AI), curriculum intelligence assistant for Risepoint's ATM team.\nProgram: Information Technology, BS — Liberty University, Canvas LMS, 9 courses, 6 PLOs (ABET Computing Criteria).\nPLOs: PLO1 Systems/Infrastructure (80%), PLO2 Networking/Security (84%), PLO3 Software Dev (68%), PLO4 Data Management (55%), PLO5 IT Project Mgmt (70%), PLO6 Emerging Technologies (20%—GAP).\nAll AI suggestions require ATM confirmation. Use ABET Computing Criteria language.`,
+  kaiIntro:`The **IT, BS** program at Liberty University shows solid technical foundations — **71% alignment score**.\n\n⚠ **PLO 6 (Emerging Technologies)** is the critical gap at 20% — AI/ML, IoT, and blockchain coverage is minimal. ITEC 420 partially addresses this, but the CLO scope is narrow.\n\n8 CLO→PLO suggestions are staged for your review.`,
+  kaiChips:['PLO 6 emerging tech','ABET gap analysis','ITEC 420 coverage'],
+},
+
+/* ────────────────────────────────────────────────────────
+   5. PSYCHOLOGY, BS — Purdue Global
+   APA Guidelines for Undergraduate Programs
+──────────────────────────────────────────────────────── */
+psyc: {
+  id:'psyc', name:'Psychology, BS',
+  partner:'Purdue Global', lms:'Canvas', color:'#DC3545',
+  score:42, gaps:6, status:'review',
+  detail:'8 courses · 7 PLOs · APA Guidelines for Undergraduate Programs — 6 critical gaps',
+  plos:[
+    { code:'PLO 1', name:'Psychological Science Foundations', full:'Demonstrate mastery of major theoretical frameworks in psychological science including biological, psychodynamic, behavioral, cognitive, humanistic, and sociocultural perspectives on human behavior, cognition, and affect.', intro:2, prac:1, assess:1, status:'developing', pct:52 },
+    { code:'PLO 2', name:'Research Methods & Statistics',      full:'Design and conduct empirical research using experimental, quasi-experimental, and correlational methods; apply descriptive and inferential statistical analyses (t-test, ANOVA, regression) using SPSS or R; and interpret results in APA format.',   intro:1, prac:1, assess:1, status:'developing', pct:45 },
+    { code:'PLO 3', name:'Critical Thinking & Scientific Literacy', full:'Evaluate the quality, validity, and ethical implications of psychological research claims using scientific reasoning, peer-reviewed evidence, and APA ethical guidelines to distinguish empirically supported conclusions from pseudoscience.', intro:1, prac:0, assess:0, status:'gap',        pct:20 },
+    { code:'PLO 4', name:'Applied Psychology & Human Development', full:'Apply developmental, social, clinical, and organizational psychology principles to analyze real-world human behavior, mental health conditions (using DSM-5-TR), and applied contexts including counseling, education, and organizational settings.', intro:1, prac:1, assess:0, status:'gap',        pct:28 },
+    { code:'PLO 5', name:'Diversity, Equity & Social Justice',  full:'Analyze the influence of culture, race, ethnicity, gender identity, sexual orientation, socioeconomic status, and intersectionality on psychological experience, mental health disparities, and access to care within diverse communities.',                intro:0, prac:0, assess:0, status:'gap',        pct:8  },
+    { code:'PLO 6', name:'Professional & Ethical Practice',     full:'Demonstrate knowledge of APA Ethics Code, professional psychology practice standards, graduate school preparation, career pathways (clinical, I/O, forensic, school psychology), and licensure requirements across specializations.',                         intro:0, prac:1, assess:0, status:'gap',        pct:15 },
+    { code:'PLO 7', name:'Communication & Interpersonal Skills', full:'Communicate psychological concepts, research findings, and clinical insights effectively through APA-style written reports, oral presentations, case conceptualizations, and professional interpersonal communication appropriate to audience and context.', intro:1, prac:0, assess:0, status:'gap',        pct:18 },
+  ],
+  courses:['PSYC 101 — Introduction to Psychology','PSYC 201 — Developmental Psychology: Lifespan','PSYC 210 — Research Methods in Psychology','PSYC 220 — Statistics for Behavioral Sciences','PSYC 301 — Abnormal Psychology & Psychopathology','PSYC 310 — Social Psychology','PSYC 401 — Theories of Personality','PSYC 420 — Psychology Capstone & Professional Development'],
+  hmData:[
+    ['PSYC 101','A','', 'I','', '', 'I','I'],
+    ['PSYC 201','P','I','I','P','I','', 'I'],
+    ['PSYC 210','', 'P','P','', '', '', 'I'],
+    ['PSYC 220','', 'A','P','', '', '', ''],
+    ['PSYC 301','I','', 'I','A','I','I','I'],
+    ['PSYC 310','I','I','', 'I','P','I','I'],
+    ['PSYC 401','P','I','', 'I','', 'I','I'],
+    ['PSYC 420','P','P','I','P','I','A','A'],
+  ],
+  mappings:[
+    { course:'PSYC 101', clo:'Compare and contrast major theoretical perspectives in psychology (psychodynamic, behavioral, cognitive, humanistic, biological, sociocultural) and evaluate their explanatory value for understanding human behavior across developmental stages.', plo:'PLO 1: Demonstrate mastery of major theoretical frameworks in psychological science.', conf:82, status:'pending' },
+    { course:'PSYC 210', clo:'Design a hypothesis-driven psychological research study, select appropriate methodology (experimental, quasi-experimental, correlational), and write an APA-formatted research proposal with IRB considerations.', plo:'PLO 2: Design and conduct empirical research and apply inferential statistical analyses in APA format.', conf:87, status:'pending' },
+    { course:'PSYC 220', clo:'Apply parametric and non-parametric statistical tests (t-test, ANOVA, chi-square, Pearson r) using SPSS to analyze behavioral datasets, interpret output, and report findings in APA style.', plo:'PLO 2: Design and conduct empirical research and apply inferential statistical analyses in APA format.', conf:91, status:'pending' },
+    { course:'PSYC 301', clo:'Apply DSM-5-TR diagnostic criteria to analyze case vignettes depicting mood, anxiety, psychotic, personality, and neurodevelopmental disorders, examining cultural and contextual factors influencing diagnosis.', plo:'PLO 4: Apply developmental, social, clinical, and organizational psychology principles to analyze real-world human behavior and mental health conditions.', conf:79, status:'pending' },
+    { course:'PSYC 310', clo:'Analyze research on prejudice, discrimination, group dynamics, social influence, and intergroup conflict using social psychological theory and empirical evidence to evaluate real-world social issues.', plo:'PLO 5: Analyze the influence of culture, race, gender, and intersectionality on psychological experience and mental health disparities.', conf:62, status:'pending' },
+    { course:'PSYC 420', clo:'Evaluate graduate school application requirements, clinical licensure pathways (LPC, LCSW, PhD vs PsyD), and professional development resources for careers in counseling, I/O psychology, forensic psychology, and academia.', plo:'PLO 6: Demonstrate knowledge of APA Ethics Code, professional psychology practice standards, and career pathways.', conf:74, status:'pending' },
+    { course:'PSYC 420', clo:'Synthesize psychological knowledge from all BSN-level coursework into a professional portfolio demonstrating competency in research methods, theoretical application, and ethical practice aligned with APA learning goals.', plo:'PLO 7: Communicate psychological concepts and research findings through APA-style written reports and oral presentations.', conf:68, status:'pending' },
+  ],
+  wfData:[
+    { skill:'Psychological Theory & Conceptual Foundations',  cov:'Developing', pct:52, c:'pf-amber' },
+    { skill:'Research Design & Empirical Methods',            cov:'Developing', pct:45, c:'pf-amber' },
+    { skill:'Statistical Analysis (SPSS/R)',                  cov:'Developing', pct:42, c:'pf-amber' },
+    { skill:'Clinical Assessment & Case Conceptualization',   cov:'Weak',       pct:28, c:'pf-red'   },
+    { skill:'Cultural Competency & DEI in Practice',          cov:'Weak',       pct:8,  c:'pf-red'   },
+    { skill:'Professional Ethics & APA Standards',            cov:'Weak',       pct:15, c:'pf-red'   },
+    { skill:'Written & Oral Communication (APA Format)',      cov:'Weak',       pct:18, c:'pf-red'   },
+    { skill:'Career Readiness & Graduate School Prep',        cov:'Adequate',   pct:55, c:'pf-blue'  },
+  ],
+  wfTitle:'Workforce Alignment — Psychologists & Mental Health Counselors (BLS SOC 19-3031)',
+  kaiSys:`You are KAI (Kadal AI), curriculum intelligence assistant for Risepoint's ATM team.\nProgram: Psychology, BS — Purdue Global, Canvas LMS, 8 courses, 7 PLOs (APA Guidelines for Undergraduate Programs).\nPLOs: PLO1 Psych Foundations (52%), PLO2 Research Methods (45%), PLO3 Critical Thinking (20%—GAP), PLO4 Applied Psych (28%—GAP), PLO5 DEI/Social Justice (8%—CRITICAL GAP), PLO6 Professional Ethics (15%—GAP), PLO7 Communication (18%—GAP).\nThis program has 6 critical gaps — the most of any program. Urgent intervention needed. All AI suggestions require ATM confirmation. Use APA learning goals language.`,
+  kaiIntro:`The **Psychology, BS** at Purdue Global has **6 critical PLO gaps** — the most severe coverage profile in the portfolio with only **42% alignment**.\n\n🚨 **PLO 5 (Diversity, Equity & Social Justice)** is at 8% — this is a core APA learning goal that is essentially absent from the curriculum. PLO 3, 6, and 7 are similarly critical.\n\nThis program requires a full curriculum review. 7 CLO→PLO suggestions are staged for your review.`,
+  kaiChips:['PLO 5 DEI remediation','Critical gap summary','APA learning goals audit'],
+},
+};
+
+const PROGS = Object.values(ALL_PROGRAMS);
+const CLS = { A:'hm-a', P:'hm-p', I:'hm-i', '':'hm-none' };
+const LBL = { A:'Assessed', P:'Practiced', I:'Introduced', '':'Not addressed' };
+
+/* ── Active program state ── */
+let activeProg = ALL_PROGRAMS.hadm;
+let mc = { total:0, pending:0, accepted:0, rejected:0 };
+let mf = { course:'all', conf:'all', status:'pending' };
+let _selRow = null, _selCol = null, legActive = null;
+
+/* ══ SIDEBAR TOGGLE ══ */
+function toggleSidebar() {
+  document.getElementById('shell').classList.toggle('collapsed');
+}
+
+/* ══ VIEW SWITCHING ══ */
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item:not(.disabled)').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  const n = document.getElementById('nav-'+v); if(n) n.classList.add('active');
+  const L = { programs:'Programs', mapping:'AI Mapping', analytics:'Analytics' };
+  document.getElementById('bcCur').textContent = L[v]||v;
+}
+
+/* ══ PROGRAM SWITCHING ══ */
+function switchProgram(id) {
+  activeProg = ALL_PROGRAMS[id] || ALL_PROGRAMS.hadm;
+  // reset mapping state
+  activeProg.mappings.forEach(m => { if(m.status==='pending') return; }); // keep status
+  mc = {
+    total: activeProg.mappings.length,
+    pending: activeProg.mappings.filter(m=>m.status==='pending').length,
+    accepted: activeProg.mappings.filter(m=>m.status==='accepted').length,
+    rejected: activeProg.mappings.filter(m=>m.status==='rejected').length,
+  };
+  mf = { course:'all', conf:'all', status:'pending' };
+  _selRow=null; _selCol=null; legActive=null;
+
+  // Sync program selector in analytics
+  const sel = document.getElementById('anaProgramSelect');
+  if(sel) sel.value = id;
+
+  // Update mapping view subtitle + strip title
+  document.getElementById('mapSubtitle').textContent = `CLO → PLO alignment suggestions — ${activeProg.name} · Human approval required`;
+  document.getElementById('mapStripTitle').textContent = `Review Progress — ${activeProg.name}`;
+
+  // Update course filter dropdown
+  const cf = document.getElementById('mapCourseFilter');
+  if(cf) {
+    cf.innerHTML = '<option value="all">All courses</option>' +
+      activeProg.courses.map(c=>{
+        const code = c.split(' — ')[0];
+        return `<option value="${code}">${c}</option>`;
+      }).join('');
+  }
+
+  // Update KAI mapping panel
+  document.getElementById('mapKaiCtx').textContent = activeProg.partner;
+  const mapMsgs = document.getElementById('mapKaiMsgs');
+  mapMsgs.innerHTML='';
+  appendKai(mapMsgs, activeProg.kaiIntro, 'ai');
+
+  const mapChips = document.getElementById('mapKaiChips');
+  mapChips.innerHTML = activeProg.kaiChips.map(c=>
+    `<div class="chip" onclick="kaiSend('mapIn','mapKaiMsgs','${c.replace(/'/g,"\\'")}',true)">${c}</div>`
+  ).join('');
+
+  // Update KAI analytics panel
+  document.getElementById('anaKaiCtx').textContent = activeProg.name.split(',')[0];
+  const anaMsgs = document.getElementById('anaKaiMsgs');
+  anaMsgs.innerHTML='';
+  appendKai(anaMsgs, activeProg.kaiIntro, 'ai');
+
+  const anaChips = document.getElementById('anaKaiChips');
+  anaChips.innerHTML = activeProg.kaiChips.map(c=>
+    `<div class="chip" onclick="kaiSend('anaIn','anaKaiMsgs','${c.replace(/'/g,"\\'")}',true)">${c}</div>`
+  ).join('');
+
+  // Rebuild analytics
+  buildAnalyticsStats();
+  buildContentHealth();
+  buildCoverageRing();
+  buildHeatmap();
+
+  // Analytics subtitle
+  document.getElementById('anaSubtitle').textContent =
+    `${activeProg.name} · ${activeProg.courses.length} courses · ${activeProg.plos.length} PLOs · ${activeProg.partner}`;
+
+  // Update mapping stats + render
+  updateMapStats();
+  renderMappings();
+}
+
+/* ══ PROGRAMS LIST ══ */
+function buildProgList() {
+  document.getElementById('progList').innerHTML = PROGS.map(p=>`
+    <div class="prog-card" id="pc-${p.id}" onclick="selectProg('${p.id}')">
+      <div class="prog-accent" style="background:${p.color}"></div>
+      <div class="prog-top">
+        <div>
+          <div class="prog-name">${p.name}</div>
+          <div class="prog-meta">${p.partner} · ${p.lms}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+          ${p.status==='active'?'<span class="badge b-green">Active</span>':'<span class="badge b-amber">Review</span>'}
+          ${p.gaps>0?`<div style="font-size:10px;color:var(--red);font-weight:600">${p.gaps} gap${p.gaps>1?'s':''}</div>`:''}
+        </div>
+      </div>
+      <div class="prog-score-row">
+        <div class="prog-pct" style="color:${scoreColor(p.score)}">${p.score}%</div>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar-lbl">Alignment score</div>
+          <div class="pbar" style="height:6px"><div class="pf ${scoreClass(p.score)}" style="width:${p.score}%"></div></div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Populate analytics program selector
+  const sel = document.getElementById('anaProgramSelect');
+  sel.innerHTML = PROGS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+function selectProg(id) {
+  document.querySelectorAll('.prog-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('pc-'+id)?.classList.add('active');
+  switchProgram(id);
+  renderDetail(ALL_PROGRAMS[id]);
+}
+
+function renderDetail(p) {
+  const sc = scoreColor(p.score);
+  const r = 38, cx=46, cy=46, circ=2*Math.PI*r;
+  const dash=circ*(p.score/100);
+  const ring=`<svg width="92" height="92" viewBox="0 0 92 92" style="display:block;margin:0 auto">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#F0F1F4" stroke-width="8"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${p.color}" stroke-width="8"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ/4}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle"
+      font-family="Outfit,sans-serif" font-size="17" font-weight="700" fill="${p.color}">${p.score}%</text>
+  </svg>`;
+
+  document.getElementById('progDetail').innerHTML=`
+    <div>
+      <div class="panel-hd" style="background:var(--panel-2)">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--t1)">${p.name}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">${p.detail}</div>
+        </div>
+        <div class="panel-hd-right">
+          <button class="btn btn-ghost btn-sm" onclick="switchView('analytics')">Heatmap →</button>
+          <button class="btn btn-primary btn-sm" onclick="switchView('mapping')">Map CLOs →</button>
+        </div>
+      </div>
+      <div class="tab-row">
+        <div class="tab active" onclick="pTab(this,'pt-ov')">Overview</div>
+        <div class="tab" onclick="pTab(this,'pt-out')">PLOs</div>
+        <div class="tab" onclick="pTab(this,'pt-crs')">Courses</div>
+      </div>
+
+      <div id="pt-ov" style="padding:16px">
+        <div style="display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:start;margin-bottom:14px">
+          <div style="text-align:center">${ring}<div style="font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px">Alignment</div></div>
+          <div>${p.plos.map(pl=>`<div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:3px">
+              <span>${pl.code} — ${pl.name}</span>
+              <span style="color:${scoreColor(pl.pct)};font-weight:700">${pl.pct}%</span>
+            </div>
+            <div class="pbar"><div class="pf ${scoreClass(pl.pct)}" style="width:${pl.pct}%"></div></div>
+          </div>`).join('')}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${[['Partner',p.partner],['LMS',p.lms]].map(([l,v])=>`
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px">
+              <div style="font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">${l}</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--t1)">${v}</div>
+            </div>`).join('')}
+          <div style="background:${p.gaps>0?'var(--red-soft)':'var(--green-soft)'};border:1px solid ${p.gaps>0?'rgba(220,53,69,.18)':'rgba(34,168,97,.18)'};border-radius:var(--r-sm);padding:9px 12px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Gaps</div>
+            <div style="font-size:22px;font-weight:700;color:${p.gaps>0?'var(--red)':'var(--green)'};letter-spacing:-.02em">${p.gaps}</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px">
+            <div style="font-size:9.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Courses</div>
+            <div style="font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-.02em">${p.courses.length}</div>
+          </div>
+        </div>
+        ${p.gaps>0?`<div class="info-warn" style="margin-top:12px">⚠ <strong>${p.gaps} gap${p.gaps>1?'s':''} detected.</strong> <span onclick="switchView('analytics')" style="cursor:pointer;text-decoration:underline">View heatmap</span> for detail.</div>`:''}
+      </div>
+
+      <div id="pt-out" style="display:none">
+        <div style="display:grid;grid-template-columns:148px 1fr 44px 78px;gap:10px;padding:8px 16px;background:var(--panel-2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">
+          <div>PLO</div><div>Coverage</div><div style="text-align:center">Assessed</div><div>Status</div>
+        </div>
+        ${p.plos.map(pl=>`
+          <div class="out-row">
+            <div><div class="out-name">${pl.code}</div><div class="out-sub">${pl.name}</div></div>
+            <div><div class="pbar"><div class="pf ${scoreClass(pl.pct)}" style="width:${pl.pct}%"></div></div></div>
+            <div style="text-align:center;font-size:13px;font-weight:700;color:${scoreColor(pl.pct)}">${pl.assess}</div>
+            <div>${ploStatusBadge(pl.status)}</div>
+          </div>`).join('')}
+        <div style="padding:9px 16px;font-size:11px;color:var(--t3);border-top:1px solid var(--border)">💡 Switch to Courses tab to see CLO-level data</div>
+      </div>
+
+      <div id="pt-crs" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 58px 50px 90px;gap:10px;padding:8px 16px;background:var(--panel-2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">
+          <div>Course</div><div style="text-align:center">CLOs</div><div style="text-align:center">PLOs</div><div>Mapped</div>
+        </div>
+        ${p.courses.map((c,i)=>{
+          const row = p.hmData[i]||[];
+          const ploCount = row.slice(1).filter(x=>x!=='').length;
+          const cloCount = p.mappings.filter(m=>m.course===c.split(' — ')[0]).length || Math.floor(Math.random()*4)+3;
+          const mapPct = Math.floor(Math.random()*30)+50;
+          return`<div class="course-row" onclick="openCourseModal('${c.split(' — ')[0]}','${c.replace(/'/g,"\\'")}',${i})">
+            <div><div class="crs-name">${c}</div><div class="crs-code">${c.split(' — ')[0]}</div></div>
+            <div style="text-align:center;font-size:13px;font-weight:700;color:var(--t1)">${cloCount}</div>
+            <div style="text-align:center;font-size:13px;font-weight:700;color:var(--t1)">${ploCount}</div>
+            <div><div class="pbar" style="height:6px"><div class="pf pf-blue" style="width:${mapPct}%"></div></div></div>
+          </div>`;
+        }).join('')}
+        <div style="padding:9px 16px;font-size:11px;color:var(--t3);border-top:1px solid var(--border)">💡 Click any course to inspect CLO and PLO coverage detail</div>
+      </div>
+    </div>`;
+}
+
+function pTab(el,id){
+  const d=document.getElementById('progDetail');
+  d.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  d.querySelectorAll('[id^="pt-"]').forEach(x=>x.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+function openCourseModal(code, name, idx) {
+  document.getElementById('mCrsName').textContent = name;
+  document.getElementById('mCrsMeta').textContent = `${code} · ${activeProg.lms} · Updated recently`;
+  const row = activeProg.hmData[idx] || [];
+  const dotC={'hm-a':'#1E5FAD','hm-p':'#4A90D9','hm-i':'#BFD4F7','hm-none':'#E4E7EF'};
+  const counts=[row.slice(1).filter(x=>x==='I').length,row.slice(1).filter(x=>x==='P').length,row.slice(1).filter(x=>x==='A').length,row.slice(1).filter(x=>x!=='').length];
+  document.getElementById('mCrsBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      ${[['Introduced','#BFD4F7','var(--blue-text)'],['Practiced','#4A90D9','#fff'],['Assessed','#1E5FAD','#fff'],['Total PLOs','var(--bg)','var(--t1)']].map(([l,bg,tc],i)=>`
+      <div style="background:${bg};border-radius:var(--r-sm);padding:10px;text-align:center;border:1px solid var(--border)">
+        <div style="font-size:22px;font-weight:700;color:${tc};letter-spacing:-.02em">${counts[i]}</div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${i<3?'rgba(0,0,0,.4)':'var(--t3)'};margin-top:2px">${l}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">PLO Coverage in This Course</div>
+    ${activeProg.plos.map((pl,i)=>{
+      const v=row[i+1]||''; const cls=CLS[v]||'hm-none';
+      return`<div style="display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <div style="width:9px;height:9px;border-radius:50%;background:${dotC[cls]};flex-shrink:0;margin-top:3px"></div>
+        <div style="flex:1">
+          <div style="font-weight:600;color:var(--t1)">${pl.code} — ${pl.name}</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:1px;line-height:1.4">${pl.full.substring(0,100)}…</div>
+        </div>
+        <div style="font-size:10.5px;font-weight:700;color:${v?'var(--blue-text)':'var(--t4)'};flex-shrink:0;padding-top:2px">${LBL[v]||'Not addressed'}</div>
+      </div>`;
+    }).join('')}`;
+  openModal('modalCourse');
+}
+
+/* ══ MAPPINGS ══ */
+function renderMappings() {
+  const rows = activeProg.mappings.filter(m=>{
+    if(mf.course!=='all' && !m.course.startsWith(mf.course)) return false;
+    if(mf.status==='pending' && m.status!=='pending') return false;
+    if(mf.status==='accepted' && m.status!=='accepted') return false;
+    if(mf.status==='rejected' && m.status!=='rejected') return false;
+    if(mf.conf==='high' && m.conf<=80) return false;
+    if(mf.conf==='mid' && (m.conf>80||m.conf<50)) return false;
+    if(mf.conf==='low' && m.conf>=50) return false;
+    return true;
+  });
+  const c = document.getElementById('mapRows');
+  if(!rows.length){
+    c.innerHTML=`<div style="padding:40px;text-align:center;color:var(--t3)"><div style="font-size:24px;margin-bottom:10px;opacity:.3">✅</div><div style="font-size:13px;font-weight:600;color:var(--t2)">No mappings match this filter</div></div>`;
+    return;
+  }
+  c.innerHTML = rows.map(m=>{
+    const ri = activeProg.mappings.indexOf(m);
+    const fc = m.conf>80?'cf-hi':m.conf>=50?'cf-mid':'cf-low';
+    const state = m.status==='accepted'?'accepted':m.status==='rejected'?'rejected':'';
+    const acts = m.status==='pending'
+      ? `<div class="act-btns"><button class="act act-ok" onclick="confirmMap(${ri},'accept')">✓ Accept</button><button class="act act-no" onclick="confirmMap(${ri},'reject')">✗ Reject</button></div>`
+      : m.status==='accepted'?`<span class="badge b-green">✓ Accepted</span>`:`<span class="badge b-red">✗ Rejected</span>`;
+    return `<div class="map-row ${state}" id="mr-${ri}">
+      <div class="clo-box">${m.clo}</div>
+      <div class="map-arrow">→</div>
+      <div class="plo-box">${m.plo}</div>
+      <div class="conf-block">
+        <div class="conf-meta"><span>Confidence</span><span class="conf-pct">${m.conf}%</span></div>
+        <div class="conf-bar"><div class="conf-fill ${fc}" style="width:${m.conf}%"></div></div>
+        <div class="conf-course">${m.course}</div>
+      </div>
+      ${acts}
+    </div>`;
+  }).join('');
+}
+
+function confirmMap(idx, action) {
+  activeProg.mappings[idx].status = action==='accept'?'accepted':'rejected';
+  if(action==='accept'){mc.accepted++;mc.pending--;showToast('Mapping accepted','#22A861','✓');}
+  else{mc.rejected++;mc.pending--;showToast('Mapping rejected','#DC3545','✗');}
+  updateMapStats(); renderMappings();
+}
+function bulkAction(action) {
+  const pending = activeProg.mappings.filter(m=>m.status==='pending');
+  pending.forEach(m=>{m.status=action==='accept'?'accepted':'rejected';if(action==='accept'){mc.accepted++;mc.pending--;}else{mc.rejected++;mc.pending--;}});
+  updateMapStats();renderMappings();
+  showToast(`${pending.length} mappings ${action==='accept'?'accepted':'rejected'}`,action==='accept'?'#22A861':'#DC3545',action==='accept'?'✓':'✗');
+}
+function filterMappings(val,type){mf[type]=val;renderMappings();}
+function updateMapStats(){
+  document.getElementById('mapTotal').textContent=mc.total;
+  document.getElementById('mapTotalSub').textContent=`Across ${[...new Set(activeProg.mappings.map(m=>m.course))].length} courses`;
+  document.getElementById('mapPending').textContent=mc.pending;
+  document.getElementById('mapAccepted').textContent=mc.accepted;
+  document.getElementById('mapRejected').textContent=mc.rejected;
+  const done=mc.accepted+mc.rejected,pct=mc.total?Math.round(done/mc.total*100):0;
+  document.getElementById('mapBar').style.width=pct+'%';
+  document.getElementById('mapPct').textContent=pct+'%';
+  document.getElementById('pendingPill').textContent=mc.pending;
+}
+
+/* ══ ANALYTICS ══ */
+function buildAnalyticsStats(){
+  const p = activeProg;
+  const avgPct = Math.round(p.plos.reduce((a,pl)=>a+pl.pct,0)/p.plos.length);
+  document.getElementById('anaStats').innerHTML=`
+    <div class="a-stat"><div class="a-stat-tag" style="color:var(--green)">↑ score</div><div class="a-stat-icon"><svg viewBox="0 0 18 18" fill="none" stroke="#4A90D9" stroke-width="1.5"><rect x="1" y="1" width="16" height="14" rx="2"/><path d="M1 10l4-4 3 3 4-5 4 3"/></svg></div><div class="a-stat-val">${p.score}%</div><div class="a-stat-lbl">Overall Alignment</div></div>
+    <div class="a-stat"><div class="a-stat-tag" style="color:var(--amber)">pending</div><div class="a-stat-icon"><svg viewBox="0 0 18 18" fill="none" stroke="#D97706" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l2.5 2.5"/></svg></div><div class="a-stat-val">${p.mappings.filter(m=>m.status==='pending').length}</div><div class="a-stat-lbl">Awaiting Review</div></div>
+    <div class="a-stat"><div class="a-stat-tag" style="color:var(--red)">gaps</div><div class="a-stat-icon"><svg viewBox="0 0 18 18" fill="none" stroke="#DC3545" stroke-width="1.5"><path d="M9 2v5M9 11v5M2 9h14"/><circle cx="9" cy="9" r="3"/></svg></div><div class="a-stat-val">${p.gaps}</div><div class="a-stat-lbl">PLO Gaps Identified</div></div>
+    <div class="a-stat"><div class="a-stat-tag" style="color:var(--green)">↑ avg</div><div class="a-stat-icon"><svg viewBox="0 0 18 18" fill="none" stroke="#22A861" stroke-width="1.5"><path d="M3 15l4-4 3 3 4-5 4-3"/></svg></div><div class="a-stat-val">${avgPct}%</div><div class="a-stat-lbl">Avg PLO Coverage</div></div>`;
+}
+
+function buildContentHealth(){
+  const el=document.getElementById('chRows'); if(!el)return;
+  el.innerHTML=activeProg.plos.map(pl=>`
+    <div class="ch-row" onclick="setAnaTab(document.querySelectorAll('#anaTabs .tab')[1],'plo')">
+      <div class="ch-lbl">${pl.code} — ${pl.name}</div>
+      <div><div class="pbar" style="height:7px"><div class="pf ${scoreClass(pl.pct)}" style="width:${pl.pct}%"></div></div></div>
+      <div class="ch-pct" style="color:${scoreColor(pl.pct)}">${pl.pct}%</div>
+    </div>`).join('');
+}
+
+function buildCoverageRing(){
+  const rEl=document.getElementById('coverageRing'); if(!rEl)return;
+  const counts={strong:0,adequate:0,developing:0,gap:0};
+  activeProg.plos.forEach(p=>counts[p.status]=(counts[p.status]||0)+1);
+  const total=activeProg.plos.length;
+  const segments=[
+    {label:'Strong',    count:counts.strong||0,     color:'#1E5FAD'},
+    {label:'Adequate',  count:counts.adequate||0,   color:'#4A90D9'},
+    {label:'Developing',count:counts.developing||0, color:'#D97706'},
+    {label:'Gap',       count:counts.gap||0,        color:'#DC3545'},
+  ];
+  const r=42,cx=50,cy=50;
+  let offset=25;
+  const paths=segments.filter(s=>s.count>0).map(s=>{
+    const pct=s.count/total,len=2*Math.PI*r*pct;
+    const path=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="10"
+      stroke-dasharray="${len} ${2*Math.PI*r-len}" stroke-dashoffset="${-offset*2*Math.PI*r/100}" stroke-linecap="butt"/>`;
+    offset+=pct*100; return {path,s};
+  });
+  rEl.innerHTML=`<svg width="100" height="100" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+    ${paths.map(x=>x.path).join('')}
+    <text x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle" style="transform:rotate(90deg);transform-origin:${cx}px ${cy}px" font-family="Outfit,sans-serif" font-size="14" font-weight="700" fill="var(--t1)">${total}</text>
+  </svg>`;
+  document.getElementById('coverageLegend').innerHTML=segments.filter(s=>s.count>0).map(s=>`
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;font-size:11.5px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${s.color};flex-shrink:0"></div>
+      <span style="color:var(--t2);font-weight:500">${s.label}</span>
+      <span style="margin-left:auto;font-weight:700;color:var(--t1)">${s.count} PLO${s.count!==1?'s':''}</span>
+    </div>`).join('');
+}
+
+/* ── Heatmap ── */
+function buildHeatmap() {
+  const simple = document.getElementById('hmScale')?.value==='simple';
+  const head=document.getElementById('hmHead'), body=document.getElementById('hmBody');
+  const ploCount = activeProg.plos.length;
+  head.innerHTML='<tr><th class="hm-th" style="cursor:default">Course</th>'+
+    activeProg.plos.map((pl,i)=>`<th class="hm-th" id="hth-${i}" onclick="selCol(${i})">${pl.code}<br><span style="font-size:8px;opacity:.5;font-weight:400">${pl.name.split(' ')[0]}</span></th>`).join('')+'</tr>';
+  body.innerHTML='';
+  activeProg.hmData.forEach((row,ri)=>{
+    const tr=document.createElement('tr'); tr.className='hm-tr'; tr.id=`htr-${ri}`; tr.onclick=()=>selRow(ri);
+    const td0=document.createElement('td'); td0.className='hm-td'; td0.textContent=row[0]; tr.appendChild(td0);
+    for(let ci=0;ci<ploCount;ci++){
+      const v=row[ci+1]||'';
+      const cls=simple?(v?'hm-a':'hm-none'):(CLS[v]||'hm-none');
+      const disp=simple?(v?'✓':''):v;
+      const td=document.createElement('td'); td.className='hm-td';
+      const cell=document.createElement('div');
+      cell.className=`hm-cell ${cls}`; cell.textContent=disp;
+      cell.dataset.r=ri; cell.dataset.c=ci;
+      cell.dataset.course=row[0]; cell.dataset.plo=activeProg.plos[ci]?.code||''; cell.dataset.level=LBL[v]||'Not addressed';
+      cell.addEventListener('mouseenter',showTip);
+      cell.addEventListener('mouseleave',()=>{document.getElementById('tip').style.opacity=0;document.removeEventListener('mousemove',moveTip);});
+      cell.onclick=e=>{e.stopPropagation();if(v){showToast(`${cell.dataset.course} · ${cell.dataset.plo} · ${cell.dataset.level}`,'#1A1D27','📍');cellFlash(cell);}};
+      td.appendChild(cell); tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  });
+  buildPloSummary(); buildWf();
+}
+
+function cellFlash(el){el.style.transform='scale(1.25)';setTimeout(()=>el.style.transform='',280);}
+function showTip(e){ const t=document.getElementById('tip'); t.innerHTML=`<strong>${e.target.dataset.course}</strong><br>${e.target.dataset.plo} · <em>${e.target.dataset.level}</em>`; t.style.opacity=1; document.addEventListener('mousemove',moveTip); }
+function moveTip(e){ const t=document.getElementById('tip'); t.style.left=(e.clientX+14)+'px'; t.style.top=(e.clientY-42)+'px'; }
+
+function selRow(ri){
+  _selRow=_selRow===ri?null:ri; _selCol=null;
+  applyHm(); if(_selRow!=null)showDrilldown('row',ri); else hideDrilldown();
+}
+function selCol(ci){
+  _selCol=_selCol===ci?null:ci; _selRow=null;
+  applyHm(); if(_selCol!=null)showDrilldown('col',ci); else hideDrilldown();
+  for(let i=0;i<activeProg.plos.length;i++) document.getElementById(`hth-${i}`)?.classList.toggle('sel',i===_selCol);
+}
+function applyHm(){
+  document.querySelectorAll('.hm-cell').forEach(c=>c.classList.remove('dim','hi'));
+  document.querySelectorAll('.hm-tr').forEach(r=>r.classList.remove('sel-row'));
+  if(_selRow!=null){
+    document.getElementById(`htr-${_selRow}`)?.classList.add('sel-row');
+    document.querySelectorAll('.hm-cell').forEach(c=>{const r=parseInt(c.dataset.r);c.classList.toggle('dim',r!==_selRow);if(r===_selRow&&!c.classList.contains('hm-none'))c.classList.add('hi');});
+  } else if(_selCol!=null){
+    document.querySelectorAll('.hm-cell').forEach(c=>{const ci=parseInt(c.dataset.c);c.classList.toggle('dim',ci!==_selCol);if(ci===_selCol&&!c.classList.contains('hm-none'))c.classList.add('hi');});
+  }
+}
+function clearHmSel(){
+  _selRow=null;_selCol=null;legActive=null;
+  document.querySelectorAll('.hm-cell').forEach(c=>c.classList.remove('dim','hi'));
+  document.querySelectorAll('.hm-tr').forEach(r=>r.classList.remove('sel-row'));
+  document.querySelectorAll('.hm-th').forEach(t=>t.classList.remove('sel'));
+  document.querySelectorAll('.leg-item').forEach(l=>l.classList.remove('dim'));
+  hideDrilldown();
+}
+function hideDrilldown(){document.getElementById('drilldown').style.display='none';}
+
+function showDrilldown(type,idx){
+  const dd=document.getElementById('drilldown'); dd.style.display='block';
+  const dotC={'hm-a':'#1E5FAD','hm-p':'#4A90D9','hm-i':'#BFD4F7','hm-none':'#E4E7EF'};
+  const txtC={'hm-a':'#1E5FAD','hm-p':'#2556E8','hm-i':'#4A6FA8','hm-none':'var(--t4)'};
+  if(type==='row'){
+    const row=activeProg.hmData[idx]; const ploCount=activeProg.plos.length;
+    const covered=row.slice(1,ploCount+1).filter(x=>x!=='').length;
+    dd.innerHTML=`<div class="drilldown"><div class="dd-hd"><div class="dd-title">📖 ${row[0]}</div><button class="btn btn-ghost btn-xs" onclick="clearHmSel()">✕</button></div><div class="dd-body">
+      <div style="font-size:11.5px;color:var(--t3);margin-bottom:10px">Covers <strong style="color:var(--t1)">${covered} of ${ploCount} PLOs</strong> — ${ploCount-covered} not addressed</div>
+      ${activeProg.plos.map((pl,i)=>{const v=row[i+1]||'';const cls=CLS[v]||'hm-none';return`<div class="dd-row"><div class="dd-dot" style="background:${dotC[cls]}"></div><div class="dd-name"><strong>${pl.code}</strong> — ${pl.name}</div><div class="dd-lvl" style="color:${txtC[cls]}">${LBL[v]}</div></div>`;}).join('')}
+      <div style="margin-top:13px"><button class="btn btn-primary btn-sm" style="width:100%;justify-content:center" onclick="switchView('mapping')">View CLO Mappings →</button></div>
+    </div></div>`;
+  } else {
+    const pl=activeProg.plos[idx];
+    const has=activeProg.hmData.map(r=>({name:r[0],v:r[idx+1]})).filter(c=>c.v);
+    dd.innerHTML=`<div class="drilldown"><div class="dd-hd"><div class="dd-title">🎯 ${pl.code} — ${pl.name}</div><button class="btn btn-ghost btn-xs" onclick="clearHmSel()">✕</button></div><div class="dd-body">
+      <div style="font-size:11.5px;color:var(--t2);margin-bottom:10px;line-height:1.5">${pl.full}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px">
+        ${[['Introduced',pl.intro,'#BFD4F7','var(--blue-text)'],['Practiced',pl.prac,'#4A90D9','#fff'],['Assessed',pl.assess,'#1E5FAD','#fff']].map(([l,n,bg,tc])=>`<div style="background:${bg};border-radius:var(--r-sm);padding:8px;text-align:center"><div style="font-size:20px;font-weight:700;color:${tc}">${n}</div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:${tc==='#fff'?'rgba(255,255,255,.65)':'rgba(37,86,232,.6)'}">${l}</div></div>`).join('')}
+      </div>
+      ${has.length?has.map(c=>{const cls=CLS[c.v]||'hm-none';return`<div class="dd-row"><div class="dd-dot" style="background:${dotC[cls]}"></div><div class="dd-name">${c.name}</div><div class="dd-lvl" style="color:${txtC[cls]}">${LBL[c.v]}</div></div>`;}).join(''):'<div style="color:var(--red);font-size:12px;font-weight:600;padding:6px 0">⚠ No courses address this PLO</div>'}
+      ${pl.status==='gap'?`<div class="info-warn" style="margin-top:12px">This PLO has insufficient coverage. <button class="btn btn-ghost btn-xs" style="margin-top:6px;display:block;width:100%" onclick="kaiSend('anaIn','anaKaiMsgs','Suggest modifications to strengthen ${pl.code} (${pl.name}) to Assessed level',true)">Ask KAI for suggestions</button></div>`:''}
+    </div></div>`;
+  }
+}
+
+function legFilter(cls){
+  legActive=legActive===cls?null:cls;
+  document.querySelectorAll('.leg-item').forEach(el=>el.classList.toggle('dim',legActive!=null&&el.dataset.leg!==legActive));
+  document.querySelectorAll('.hm-cell').forEach(c=>c.classList.toggle('dim',legActive!=null&&!c.classList.contains(legActive)));
+}
+
+function buildPloSummary(){
+  const c=document.getElementById('ploRows'); if(!c)return;
+  c.innerHTML=activeProg.plos.map((pl,i)=>`
+    <div class="plo-row" onclick="selPloRow(this,${i})">
+      <div><div class="plo-nm">${pl.code}</div><div class="plo-nm-sub">${pl.name}</div></div>
+      <div class="plo-cnt" style="color:#4A90D9">${pl.intro}</div>
+      <div class="plo-cnt" style="color:#1E5FAD">${pl.prac}</div>
+      <div class="plo-cnt" style="color:#0D3A7A">${pl.assess}</div>
+      <div><div class="pbar" style="height:6px"><div class="pf ${scoreClass(pl.pct)}" style="width:${pl.pct}%"></div></div><div style="font-size:9.5px;color:var(--t3);margin-top:2px">${pl.pct}%</div></div>
+      <div>${ploStatusBadge(pl.status)}</div>
+    </div>`).join('');
+}
+function selPloRow(el,idx){
+  document.querySelectorAll('.plo-row').forEach(r=>r.classList.remove('sel-plo'));
+  el.classList.add('sel-plo');
+  showToast(`${activeProg.plos[idx].code} — ${activeProg.plos[idx].name} · ${activeProg.plos[idx].pct}% coverage`,'#1A1D27','🎯');
+}
+
+function buildWf(){
+  const c=document.getElementById('wfRows'); if(!c)return;
+  const t=document.getElementById('wfTitle'); if(t) t.textContent=activeProg.wfTitle;
+  c.innerHTML=activeProg.wfData.map(w=>{
+    const cl=w.cov==='Strong'?'b-blue':w.cov==='Adequate'?'b-purple':w.cov==='Developing'?'b-amber':'b-red';
+    return`<div class="wf-row"><div style="font-weight:600;color:var(--t1);font-size:12px">${w.skill}</div><span class="badge ${cl}">${w.cov}</span><div><div class="pbar" style="height:6px"><div class="pf ${w.c}" style="width:${w.pct}%"></div></div></div></div>`;
+  }).join('');
+}
+
+function setAnaTab(el,id){
+  document.querySelectorAll('#anaTabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['heatmap','plo','workforce'].forEach(t=>document.getElementById('tab-'+t).style.display=t===id?'block':'none');
+  if(id!=='heatmap')hideDrilldown();
+}
+
+/* ══ UTILS ══ */
+function scoreColor(s){ return s>=75?'var(--green)':s>=55?'var(--amber)':'var(--red)'; }
+function scoreClass(s){ return s>=75?'pf-green':s>=55?'pf-amber':'pf-red'; }
+function ploStatusBadge(s){ const m={strong:'<span class="badge b-blue">Strong</span>',adequate:'<span class="badge b-purple">Adequate</span>',developing:'<span class="badge b-amber">Developing</span>',gap:'<span class="badge b-red">Gap</span>'}; return m[s]||''; }
+function showToast(msg,bg='#1A1D27',icon='✓'){ const t=document.getElementById('toast'),i=document.getElementById('toastIco'),m=document.getElementById('toastMsg'); i.style.background=bg;i.style.color='#fff';i.textContent=icon;m.textContent=msg; t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+/* ══ KAI — Live Anthropic API ══ */
+async function kaiSend(inputId, msgsId, prefill, suppressAppend) {
+  const inp=document.getElementById(inputId), msgs=document.getElementById(msgsId);
+  if(!inp||!msgs)return;
+  const text=prefill||inp.value.trim(); if(!text)return;
+  inp.value='';
+  if(!suppressAppend) appendKai(msgs,text,'user');
+  else appendKai(msgs,text,'user');
+  const typing=document.createElement('div'); typing.className='kmsg ai';
+  typing.innerHTML='<div class="kmsg-lbl">KAI</div><div class="kmsg-bbl"><div class="td-dots"><div class="td-d"></div><div class="td-d"></div><div class="td-d"></div></div></div>';
+  msgs.appendChild(typing); msgs.scrollTop=msgs.scrollHeight;
+  const history=[];
+  msgs.querySelectorAll('.kmsg').forEach(m=>{
+    if(m===typing)return;
+    const role=m.classList.contains('user')?'user':'assistant';
+    const b=m.querySelector('.kmsg-bbl'); if(b)history.push({role,content:b.innerText});
+  });
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:activeProg.kaiSys,messages:history})});
+    const data=await res.json();
+    typing.remove(); appendKai(msgs,data.content?.[0]?.text||'Error — please try again.','ai');
+  }catch{ typing.remove(); appendKai(msgs,'Connection error. Please try again.','ai'); }
+}
+function appendKai(c,text,role){
+  const d=document.createElement('div'); d.className=`kmsg ${role}`;
+  d.innerHTML=`<div class="kmsg-lbl">${role==='user'?'You':'KAI'}</div><div class="kmsg-bbl">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
+}
+
+/* ══ INIT ══ */
+buildProgList();
+switchProgram('hadm');
+setTimeout(()=>selectProg('hadm'), 80);
+</script>
+</body>
+</html>
