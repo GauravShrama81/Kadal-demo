@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Native Presales Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:#ffffff;--bg:#f8f9fa;--border:#e2e3e5;--border-dk:#bdc1c6;
+  --hdr:#f1f3f4;--hover:#f8f9fa;--text:#202124;--muted:#5f6368;--light:#9aa0a6;
+  --blue:#1a73e8;--blue-lt:#e8f0fe;--green:#137333;--green-bg:#e6f4ea;--green-c:#34a853;
+  --red:#c5221f;--red-bg:#fce8e6;--orange:#e37400;--orange-bg:#fef7e0;
+  --purple:#7b2d8b;--purple-bg:#f3e8fd;--teal:#007b83;--teal-bg:#e4f7fb;
+  --rh:32px;--font:'Google Sans',sans-serif;--mono:'Roboto Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--bg);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:12px;height:52px;flex-shrink:0;box-shadow:0 1px 3px rgba(60,64,67,.12)}
+.tb-icon{width:30px;height:30px;background:linear-gradient(135deg,#34a853,#1a73e8);border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex-shrink:0}
+.tb-title{font-size:17px;font-weight:400;flex:1}.tb-title b{color:var(--blue)}
+.badge{background:var(--red-bg);color:var(--red);font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+.btn{padding:5px 14px;border-radius:4px;font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);transition:background .1s}
+.btn:hover{background:var(--hdr)}.btn-p{background:var(--blue);color:white;border-color:var(--blue)}.btn-p:hover{background:#1557b0}
+
+.tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;padding:0 8px;height:34px;flex-shrink:0;gap:2px;overflow-x:auto}
+.tab{padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;border-radius:4px 4px 0 0;border:1px solid transparent;border-bottom:none;color:var(--muted);white-space:nowrap;transition:all .1s;user-select:none}
+.tab:hover:not(.active){background:var(--hover);color:var(--text)}
+.tab.active{background:var(--white);border-color:var(--border);color:var(--blue);font-weight:600;margin-bottom:-1px}
+.tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+
+.fbar{background:var(--white);border-bottom:1px solid var(--border);padding:3px 16px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);flex-shrink:0;font-family:var(--mono)}
+.fbar .ref{background:var(--hdr);border:1px solid var(--border);padding:1px 8px;border-radius:2px;color:var(--text);min-width:72px;text-align:center;font-size:11px}
+.fbar .fx{color:var(--blue);font-weight:500;font-size:13px}
+.fbar .ft{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.panel{display:none;flex-direction:column;flex:1;overflow:hidden}.panel.active{display:flex}
+
+/* GRID */
+.gs{border-collapse:collapse;min-width:100%;font-size:12.5px}
+.gs .rn{background:var(--hdr);border:1px solid var(--border);color:var(--light);text-align:center;font-size:11px;width:36px;min-width:36px;padding:0 2px;font-family:var(--mono);user-select:none;height:var(--rh)}
+.gs thead .rn,.gs thead th{position:sticky;top:0;z-index:4}
+.gs thead th{background:var(--hdr);border:1px solid var(--border);padding:4px 8px;text-align:left;font-weight:500;font-size:11.5px;color:var(--muted);white-space:nowrap;height:var(--rh)}
+.gs td{border:1px solid var(--border);padding:0 8px;height:var(--rh);vertical-align:middle;white-space:nowrap;background:var(--white)}
+.gs tbody tr:hover td{background:var(--hover)}.gs tbody tr:hover .rn{background:#e8eaed;color:var(--text)}
+.gs .sr td{background:#e8eaed;font-weight:600;font-size:12px;color:var(--text);letter-spacing:.02em}
+.gs .sr-eu td{background:#e3f2fd;color:#0d47a1}.gs .sr-lu td{background:#fce4ec;color:#880e4f}
+.gs .sr-du td{background:#fff8e1;color:#e65100}.gs .sr-aiu td{background:#f3e5f5;color:#4a148c}.gs .sr-pu td{background:#e8f5e9;color:#1b5e20}
+.gs td input[type=text],.gs td input[type=number]{width:100%;height:calc(var(--rh) - 2px);border:none;background:transparent;font-family:var(--font);font-size:12.5px;color:var(--text);padding:0;outline:none}
+.gs td input[type=number]{text-align:right;font-family:var(--mono)}
+.gs td:has(input):focus-within{outline:2px solid var(--blue);outline-offset:-2px;background:#fff;z-index:2;position:relative}
+.gs td select{width:100%;height:calc(var(--rh) - 2px);border:none;background:transparent;font-family:var(--font);font-size:12.5px;color:var(--text);outline:none;cursor:pointer}
+.gs td.cv{font-family:var(--mono);font-size:12px;text-align:right;color:var(--text);background:#fafafa}
+.gs td.cv.g{color:var(--green);background:var(--green-bg)}.gs td.cv.b{color:var(--blue)}
+.gs td.cv.r{color:var(--red);background:var(--red-bg)}.gs td.cv.o{color:var(--orange);background:var(--orange-bg)}
+.gs td.cv.p{color:var(--purple);background:var(--purple-bg)}
+.gs td.cv.dk{color:#fff;background:var(--green);font-weight:600}
+.gs td.fc{font-family:var(--mono);font-size:10.5px;color:var(--light);background:#fafafa}
+.gs .tr td{background:#e8eaed!important;font-weight:600;border-top:2px solid var(--border-dk)}
+.gs .tr td.cv{background:#e2f3e5!important;color:var(--green)}
+.gs .tr td.cv.o{background:#fef7e0!important;color:var(--orange)}
+.gs .tr td.cv.b{background:#e8f0fe!important;color:var(--blue)}
+.chip{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:500;vertical-align:middle}
+.ch-b{background:var(--blue-lt);color:var(--blue)}.ch-g{background:var(--green-bg);color:var(--green)}
+.ch-o{background:var(--orange-bg);color:var(--orange)}.ch-r{background:var(--red-bg);color:var(--red)}
+.ch-p{background:var(--purple-bg);color:var(--purple)}.ch-t{background:var(--teal-bg);color:var(--teal)}
+
+/* SECTION DIVIDER inside grid */
+.gs .sec-div td{background:#f8f9fa;height:6px;padding:0;border-left:none;border-right:none}
+
+/* LAYOUTS */
+.sa{flex:1;overflow:auto;background:var(--white)}
+.sbl{display:flex;flex:1;overflow:hidden}
+.sb{width:400px;min-width:400px;background:var(--white);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.ss{width:272px;min-width:272px;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.sh{padding:8px 16px;background:var(--hdr);font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.sr2{display:flex;align-items:center;height:var(--rh);padding:0 16px;border-bottom:1px solid var(--border);gap:8px}
+.sl{color:var(--muted);font-size:12px;min-width:145px;flex-shrink:0}
+.si{flex:1;border:none;background:transparent;font-family:var(--font);font-size:12.5px;color:var(--text);outline:none;text-align:right}
+.si:focus{background:var(--blue-lt);border-radius:2px;padding:0 4px}
+.si[type=number]{font-family:var(--mono)}
+.ssel{flex:1;border:none;background:transparent;font-family:var(--font);font-size:12.5px;color:var(--text);outline:none;text-align:right;cursor:pointer}
+.sv2{color:var(--muted);font-size:11px;font-family:var(--mono);margin-left:4px;flex-shrink:0}
+
+/* KPI */
+.kpi{padding:11px 16px;border-bottom:1px solid var(--border)}
+.kpi-l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.kpi-v{font-size:20px;font-weight:600;font-family:var(--mono);line-height:1.2}
+.kpi-f{font-size:10px;color:var(--light);margin-top:2px;font-family:var(--mono)}
+.kbar{height:3px;border-radius:2px;margin-top:5px;background:var(--border);overflow:hidden}
+.kbf{height:100%;border-radius:2px;transition:width .3s}
+
+/* ADD / DEL */
+.add-btn{display:flex;align-items:center;gap:6px;padding:0 16px;height:var(--rh);background:transparent;border:none;color:var(--blue);font-family:var(--font);font-size:12px;cursor:pointer;font-weight:500;transition:background .1s;width:100%;border-top:1px solid var(--border)}
+.add-btn:hover{background:var(--blue-lt)}
+.del-btn{background:none;border:none;color:var(--light);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:3px;transition:all .1s;padding:0;margin:auto}
+.del-btn:hover{background:var(--red-bg);color:var(--red)}
+
+/* SPLIT */
+.spl{display:flex;flex:1;overflow:hidden}
+.spl-l,.spl-r{flex:1;overflow:auto;display:flex;flex-direction:column}
+.spl-l{border-right:2px solid var(--border-dk)}
+.ph{background:var(--hdr);border-bottom:1px solid var(--border);padding:5px 16px;font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.ph .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* METRICS GRID */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);flex-shrink:0}
+.mc{background:var(--white);padding:11px 16px}
+.mc-l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.mc-v{font-size:18px;font-weight:600;font-family:var(--mono);line-height:1.1}
+.mc-f{font-size:10px;color:var(--light);font-family:var(--mono);margin-top:2px}
+.mc.full{grid-column:span 2}
+.mc.green-bg{background:var(--green-bg)}
+.mc.orange-bg{background:var(--orange-bg)}
+
+/* PRICING SPLIT */
+.pricing-cols{display:flex;flex:1;overflow:hidden;gap:1px;background:var(--border)}
+.pricing-col{flex:1;overflow:auto;display:flex;flex-direction:column;background:var(--white)}
+
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#c5c8ca;border-radius:4px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#9aa0a6}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-icon">⬡</div>
+  <div class="tb-title">AI-Native <b>Presales</b> Calculator</div>
+  <span class="badge">🔒 Internal Only</span>
+  <button class="btn" onclick="window.print()" style="margin-left:auto">Export</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('opportunity',this)"><span class="dot" style="background:#1a73e8"></span>Opportunity</div>
+  <div class="tab" onclick="switchTab('sizing',this)"><span class="dot" style="background:#34a853"></span>Value Units</div>
+  <div class="tab" onclick="switchTab('multipliers',this)"><span class="dot" style="background:#fbbc04"></span>AI Multipliers</div>
+  <div class="tab" onclick="switchTab('summary',this)"><span class="dot" style="background:#ea4335"></span>Effort Summary</div>
+  <div class="tab" onclick="switchTab('delivery',this)"><span class="dot" style="background:#9334e6"></span>Delivery Pod</div>
+  <div class="tab" onclick="switchTab('pricing',this)"><span class="dot" style="background:#e37400"></span>Pricing</div>
+</div>
+
+<!-- ══════════════════ OPPORTUNITY ══════════════════ -->
+<div id="panel-opportunity" class="panel active">
+  <div class="fbar"><span class="ref">B2</span><span class="fx">ƒx</span><span class="ft">Opportunity definition — drives risk buffer and AI leverage across all sheets</span></div>
+  <div class="sbl">
+
+    <!-- LEFT FORM -->
+    <div class="sb">
+      <div class="sh">📋 Engagement Details</div>
+      <div class="sr2"><span class="sl">Client Name</span><input class="si" type="text" id="clientName" value="Success Academy" oninput="recalc()"></div>
+      <div class="sr2"><span class="sl">Opportunity Type</span>
+        <select class="ssel" id="oppType" onchange="recalc()">
+          <option>Build</option><option selected>Transform</option><option>Pilot</option>
+        </select></div>
+      <div class="sr2"><span class="sl">Industry</span>
+        <select class="ssel" id="industry" onchange="recalc()">
+          <option selected>K-12</option><option>Higher Ed</option><option>SLED</option><option>Enterprise</option><option>Healthcare</option><option>Financial Services</option>
+        </select></div>
+      <div class="sr2"><span class="sl">Timeline (months)</span><input class="si" type="number" id="timeline" value="6" min="1" max="36" oninput="recalc()"></div>
+      <div class="sr2"><span class="sl">Risk Level</span>
+        <select class="ssel" id="riskLevel" onchange="recalc()">
+          <option value="1.0">Low (1.0×)</option><option value="1.15" selected>Medium (1.15×)</option><option value="1.3">High (1.3×)</option>
+        </select></div>
+      <div class="sr2"><span class="sl">AI Leverage %</span><input class="si" type="number" id="aiLeverage" value="60" min="0" max="100" oninput="recalc()"><span class="sv2">%</span></div>
+      <div class="sr2"><span class="sl">Working hrs / month</span><input class="si" type="number" id="hrsPerMonth" value="140" min="80" max="200" oninput="recalc()"></div>
+
+      <div class="sh" style="margin-top:1px">💰 Rate &amp; Pricing Parameters</div>
+      <div class="sr2"><span class="sl">Business Impact ($)</span><input class="si" type="number" id="bizImpact" value="2000000" oninput="recalc()"></div>
+      <div class="sr2"><span class="sl">Value Capture %</span><input class="si" type="number" id="captureP" value="15" min="5" max="40" oninput="recalc()"><span class="sv2">%</span></div>
+      <div class="sr2"><span class="sl">Value Multiple</span><input class="si" type="number" id="valueMult" value="2.0" step="0.1" min="1" max="5" oninput="recalc()"><span class="sv2">×</span></div>
+      <div class="sr2"><span class="sl">Client Discount %</span><input class="si" type="number" id="discountP" value="10" min="0" max="40" oninput="recalc()"><span class="sv2">%</span></div>
+      <div class="sr2"><span class="sl">Target Gross Margin %</span><input class="si" type="number" id="targetMargin" value="40" min="10" max="80" oninput="recalc()"><span class="sv2">%</span></div>
+    </div>
+
+    <!-- CENTRE summary grid -->
+    <div class="sa" style="flex:1">
+      <table class="gs" style="width:100%">
+        <thead><tr><th class="rn"></th><th style="width:220px">Field</th><th style="width:200px">Value</th><th style="width:280px">Formula</th><th style="min-width:180px">Notes</th></tr></thead>
+        <tbody>
+          <tr class="sr"><td class="rn">1</td><td colspan="4">ENGAGEMENT OVERVIEW</td></tr>
+          <tr><td class="rn">2</td><td style="color:var(--muted)">Client Name</td><td class="cv b" id="g_client">—</td><td class="fc">=Opportunity!B2</td><td></td></tr>
+          <tr><td class="rn">3</td><td style="color:var(--muted)">Type / Industry</td><td class="cv" id="g_typeind">—</td><td class="fc">=B3 &amp; " / " &amp; B4</td><td></td></tr>
+          <tr><td class="rn">4</td><td style="color:var(--muted)">Timeline</td><td class="cv" id="g_timeline">—</td><td class="fc">=Opportunity!B5</td><td></td></tr>
+          <tr><td class="rn">5</td><td style="color:var(--muted)">Risk Multiplier</td><td class="cv o" id="g_risk">—</td><td class="fc">=IF(risk="Low",1.0,IF(risk="Med",1.15,1.3))</td><td></td></tr>
+          <tr><td class="rn">6</td><td style="color:var(--muted)">AI Leverage %</td><td class="cv g" id="g_ai">—</td><td class="fc">=Opportunity!B7</td><td></td></tr>
+          <tr class="sr"><td class="rn">7</td><td colspan="4">COST & EFFORT</td></tr>
+          <tr><td class="rn">8</td><td style="color:var(--muted)">Total Adj. Hours (raw)</td><td class="cv" id="g_rawHrs">—</td><td class="fc">=SUM(ValueUnits!F:F)</td><td>Before risk buffer</td></tr>
+          <tr><td class="rn">9</td><td style="color:var(--muted)">Buffered Hours</td><td class="cv b" id="g_buffHrs">—</td><td class="fc">=G8 × RiskMult</td><td></td></tr>
+          <tr><td class="rn">10</td><td style="color:var(--muted)">Cost to Company</td><td class="cv o" id="g_ctc">—</td><td class="fc">=Σ(RoleHrs × RoleSalaryRate)</td><td>Internal salary cost</td></tr>
+          <tr><td class="rn">11</td><td style="color:var(--muted)">Cost to Client (Revenue)</td><td class="cv b" id="g_revenue">—</td><td class="fc">=Σ(RoleHrs × RoleClientRate)</td><td>Billable to client</td></tr>
+          <tr class="sr"><td class="rn">12</td><td colspan="4">PRICING</td></tr>
+          <tr><td class="rn">13</td><td style="color:var(--muted)">Value Price (pre-discount)</td><td class="cv p" id="g_valuePrice">—</td><td class="fc">=CostToCompany × valueMult</td><td></td></tr>
+          <tr><td class="rn">14</td><td style="color:var(--muted)">Final Quote</td><td class="cv g" id="g_finalQuote">—</td><td class="fc">=ValuePrice × (1−discount%)</td><td style="color:var(--green)">Present to client</td></tr>
+          <tr><td class="rn">15</td><td style="color:var(--muted)">Gross Profit</td><td class="cv g" id="g_profit">—</td><td class="fc">=FinalQuote − CostToCompany</td><td></td></tr>
+          <tr><td class="rn">16</td><td style="color:var(--muted)">Gross Margin %</td><td class="cv g" id="g_margin">—</td><td class="fc">=GrossProfit ÷ FinalQuote</td><td></td></tr>
+          <tr><td class="rn">17</td><td style="color:var(--muted)">Price Anchor Low</td><td class="cv" id="g_anchLow">—</td><td class="fc">=bizImpact × 10%</td><td></td></tr>
+          <tr><td class="rn">18</td><td style="color:var(--muted)">Price Anchor High</td><td class="cv" id="g_anchHigh">—</td><td class="fc">=bizImpact × 20%</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT KPIs -->
+    <div class="ss">
+      <div class="sh">Live Summary</div>
+      <div class="kpi"><div class="kpi-l">Buffered Hours</div><div class="kpi-v" id="ks_hours" style="color:var(--blue)">—</div><div class="kpi-f">Σ(U×Cx×Hrs×Mult)×Risk</div><div class="kbar"><div class="kbf" id="ks_hb" style="background:var(--blue);width:0%"></div></div></div>
+      <div class="kpi" style="background:var(--orange-bg)"><div class="kpi-l">Cost to Company</div><div class="kpi-v" id="ks_ctc" style="color:var(--orange)">—</div><div class="kpi-f">Σ(RoleHrs × SalaryRate)</div></div>
+      <div class="kpi" style="background:var(--blue-lt)"><div class="kpi-l">Cost to Client (Revenue)</div><div class="kpi-v" id="ks_rev" style="color:var(--blue)">—</div><div class="kpi-f">Σ(RoleHrs × ClientRate)</div></div>
+      <div class="kpi" style="background:var(--green-bg)"><div class="kpi-l">Final Quote</div><div class="kpi-v" id="ks_quote" style="color:var(--green)">—</div><div class="kpi-f">Value Price × (1−Discount%)</div></div>
+      <div class="kpi"><div class="kpi-l">Gross Margin</div><div class="kpi-v" id="ks_margin" style="color:var(--green)">—</div><div class="kbar"><div class="kbf" id="ks_mb" style="background:var(--green-c);width:0%"></div></div></div>
+      <div class="kpi"><div class="kpi-l">Est. Duration</div><div class="kpi-v" id="ks_duration" style="color:var(--purple)">—</div><div class="kpi-f">Hrs ÷ (FTEs × Hrs/Mo)</div></div>
+      <div class="kpi"><div class="kpi-l">Monthly Burn (Co. Cost)</div><div class="kpi-v" id="ks_burn" style="color:var(--red)">—</div><div class="kpi-f">CostToCompany ÷ Duration</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VALUE UNITS ══════════════════ -->
+<div id="panel-sizing" class="panel">
+  <div class="fbar"><span class="ref">F2</span><span class="fx">ƒx</span><span class="ft">=Units × Complexity × BaseHours × AiMultiplier</span></div>
+  <div class="sa"><table class="gs" style="width:100%">
+    <thead><tr>
+      <th class="rn"></th>
+      <th style="min-width:175px">A — Module Name</th>
+      <th style="width:70px">B — Units</th>
+      <th style="width:105px">C — Complexity</th>
+      <th style="width:80px">D — Base Hrs</th>
+      <th style="width:80px">E — AI Mult</th>
+      <th style="width:100px">F — Adj Hrs</th>
+      <th style="min-width:220px">G — Working</th>
+      <th style="width:36px"></th>
+    </tr></thead>
+    <tbody id="sizingBody"></tbody>
+  </table></div>
+</div>
+
+<!-- ══════════════════ AI MULTIPLIERS ══════════════════ -->
+<div id="panel-multipliers" class="panel">
+  <div class="fbar"><span class="ref">C2</span><span class="fx">ƒx</span><span class="ft">Efficiency Gain = 1 − AI Multiplier · Margin Gap = Efficiency Gain − Client Discount %</span></div>
+  <div class="sa">
+    <table class="gs" style="width:100%">
+      <thead><tr>
+        <th class="rn"></th>
+        <th style="min-width:140px">A — Function</th>
+        <th style="width:80px">B — Old</th>
+        <th style="width:140px">C — AI Multiplier</th>
+        <th style="width:110px">D — Eff. Gain</th>
+        <th style="width:110px">E — Client Sees</th>
+        <th style="width:110px">F — Margin Gap</th>
+        <th style="min-width:200px">G — Notes</th>
+      </tr></thead>
+      <tbody id="multBody"></tbody>
+      <tfoot><tr class="tr">
+        <td class="rn"></td><td>Avg / Blended</td><td class="cv">1.00×</td>
+        <td style="padding:4px 8px;background:var(--hdr)"></td>
+        <td class="cv g" id="m_avgEff">—</td>
+        <td class="cv" id="m_cSees">—</td>
+        <td class="cv g" id="m_avgGap">—</td>
+        <td class="fc">Blended across all functions</td>
+      </tr></tfoot>
+    </table>
+    <table class="gs" style="width:100%;margin-top:1px">
+      <thead>
+        <tr><th class="rn"></th><th colspan="4" style="background:#fff8e1;color:#e65100">COMPLEXITY REFERENCE</th></tr>
+        <tr><th class="rn"></th><th style="width:110px">Level</th><th style="width:300px">Meaning</th><th style="width:130px">Typical Base Hrs</th><th style="min-width:180px">AI Contribution</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="rn">1</td><td><span class="chip ch-g">1 — Trivial</span></td><td>AI can mostly generate</td><td class="cv">20 – 40</td><td style="color:var(--green)">~80–90% AI</td></tr>
+        <tr><td class="rn">2</td><td><span class="chip ch-b">2 — Low</span></td><td>AI-assisted, light customization</td><td class="cv">40 – 60</td><td style="color:var(--blue)">~60–70% AI</td></tr>
+        <tr><td class="rn">3</td><td><span class="chip ch-t">3 — Medium</span></td><td>Moderate engineering + orchestration</td><td class="cv">60 – 80</td><td style="color:var(--teal)">~40–50% AI</td></tr>
+        <tr><td class="rn">4</td><td><span class="chip ch-o">4 — High</span></td><td>Complex workflows / integrations</td><td class="cv">80 – 120</td><td style="color:var(--orange)">~20–30% AI</td></tr>
+        <tr><td class="rn">5</td><td><span class="chip ch-r">5 — Novel</span></td><td>R&D / novel / high risk</td><td class="cv">120 – 160</td><td style="color:var(--red)">~10% AI</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════ EFFORT SUMMARY ══════════════════ -->
+<div id="panel-summary" class="panel">
+  <div class="fbar"><span class="ref">B12</span><span class="fx">ƒx</span><span class="ft">=SUM(EU,LU,DU,AIU,PU) × RiskMultiplier</span></div>
+  <div class="sa">
+    <table class="gs" style="width:100%">
+      <thead><tr>
+        <th class="rn"></th><th style="width:200px">A — Category</th><th style="width:130px">B — Total Hrs</th>
+        <th style="width:100px">C — % of Total</th><th style="width:220px">D — Bar</th><th style="min-width:280px">E — Formula</th>
+      </tr></thead>
+      <tbody id="summaryBody"></tbody>
+      <tfoot>
+        <tr class="tr"><td class="rn"></td><td>GRAND TOTAL (raw)</td><td class="cv g" id="sum_grand">—</td><td class="cv">100%</td><td></td><td class="fc">=SUM(B2:B6)</td></tr>
+        <tr class="tr"><td class="rn"></td><td>Risk Buffer</td><td class="cv o" id="sum_riskM">—</td><td></td><td></td><td class="fc">=IF(risk="Low",1.0,IF(risk="Med",1.15,1.3))</td></tr>
+        <tr class="tr"><td class="rn"></td><td>BUFFERED TOTAL</td><td class="cv g" id="sum_buff">—</td><td></td><td></td><td class="fc">=Grand × RiskBuffer</td></tr>
+      </tfoot>
+    </table>
+    <table class="gs" style="width:100%;margin-top:1px">
+      <thead><tr>
+        <th class="rn"></th><th style="width:80px">Cat</th><th style="min-width:160px">Module</th>
+        <th style="width:60px">Units</th><th style="width:80px">Cx</th><th style="width:80px">Base Hrs</th>
+        <th style="width:80px">AI Mult</th><th style="min-width:240px">Formula</th><th style="width:100px">Adj Hrs</th>
+      </tr></thead>
+      <tbody id="workingBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════ DELIVERY POD ══════════════════ -->
+<div id="panel-delivery" class="panel">
+  <div class="fbar"><span class="ref">G3</span><span class="fx">ƒx</span><span class="ft">=BufHrs×(Alloc%/100) | SalaryCost=RoleHrs×SalaryRate | ClientRevenue=RoleHrs×ClientRate | Margin=(ClientRev−SalaryCost)÷ClientRev</span></div>
+  <div class="spl">
+
+    <!-- LEFT: Role Allocation -->
+    <div class="spl-l">
+      <div class="ph"><div class="dot" style="background:var(--purple)"></div>ROLE ALLOCATION — Input</div>
+      <div style="overflow:auto;flex:1">
+        <table class="gs" style="width:100%;min-width:760px">
+          <thead><tr>
+            <th class="rn"></th>
+            <th style="min-width:140px">A — Role</th>
+            <th style="width:80px">B — Alloc %</th>
+            <th style="width:130px">C — Hourly Rate ($)<br><span style="font-size:10px;font-weight:400;color:var(--light)">billed to client</span></th>
+            <th style="width:130px">D — Salary Cost ($)<br><span style="font-size:10px;font-weight:400;color:var(--light)">internal per hr</span></th>
+            <th style="width:110px">E — Role Hours</th>
+            <th style="width:90px">F — FTEs</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="podBody"></tbody>
+          <tfoot><tr class="tr">
+            <td class="rn"></td><td>TOTALS</td>
+            <td class="cv" id="pod_pct">—</td>
+            <td class="cv b" id="pod_avgRate">—</td>
+            <td class="cv o" id="pod_avgSal">—</td>
+            <td class="cv b" id="pod_hrsTotal">—</td>
+            <td class="cv p" id="pod_fteTotal">—</td>
+            <td></td>
+          </tr></tfoot>
+        </table>
+        <button class="add-btn" onclick="addPodRow()">＋ Add Role</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Delivery Outputs -->
+    <div class="spl-r">
+      <div class="ph"><div class="dot" style="background:var(--green-c)"></div>DELIVERY OUTPUT — Auto-calculated</div>
+      <div class="mg">
+        <div class="mc"><div class="mc-l">Buffered Hours</div><div class="mc-v" id="d_hours" style="color:var(--blue)">—</div><div class="mc-f">Grand Total × Risk</div></div>
+        <div class="mc"><div class="mc-l">Team Size (FTEs)</div><div class="mc-v" id="d_team" style="color:var(--purple)">—</div><div class="mc-f">Hrs ÷ (Months × Hrs/Mo)</div></div>
+        <div class="mc orange-bg"><div class="mc-l">Cost to Company</div><div class="mc-v" id="d_ctc" style="color:var(--orange)">—</div><div class="mc-f">Σ(RoleHrs × SalaryRate)</div></div>
+        <div class="mc" style="background:var(--blue-lt)"><div class="mc-l">Cost to Client (Revenue)</div><div class="mc-v" id="d_rev" style="color:var(--blue)">—</div><div class="mc-f">Σ(RoleHrs × ClientRate)</div></div>
+        <div class="mc green-bg"><div class="mc-l">Gross Profit</div><div class="mc-v" id="d_profit" style="color:var(--green)">—</div><div class="mc-f">ClientRevenue − CostToCompany</div></div>
+        <div class="mc"><div class="mc-l">Role Margin %</div><div class="mc-v" id="d_roleMargin" style="color:var(--green)">—</div><div class="mc-f">(Revenue − Cost) ÷ Revenue</div></div>
+        <div class="mc"><div class="mc-l">Duration</div><div class="mc-v" id="d_duration" style="color:var(--teal)">—</div><div class="mc-f">Hrs ÷ (FTEs × Hrs/Mo)</div></div>
+        <div class="mc"><div class="mc-l">Monthly Burn (Co. Cost)</div><div class="mc-v" id="d_burn" style="color:var(--red)">—</div><div class="mc-f">CostToCompany ÷ Duration</div></div>
+      </div>
+      <!-- Per-role breakdown -->
+      <div style="overflow:auto;flex:1;margin-top:1px">
+        <table class="gs" style="width:100%">
+          <thead><tr>
+            <th class="rn"></th>
+            <th style="min-width:130px">Role</th>
+            <th style="width:70px">Alloc %</th>
+            <th style="width:100px">Hours</th>
+            <th style="width:120px">Client Rate/hr</th>
+            <th style="width:120px">Salary Rate/hr</th>
+            <th style="width:120px">Client Revenue</th>
+            <th style="width:120px">Co. Cost</th>
+            <th style="width:80px">Role Margin</th>
+            <th style="width:70px">FTEs</th>
+          </tr></thead>
+          <tbody id="podDetailBody"></tbody>
+          <tfoot><tr class="tr">
+            <td class="rn"></td><td>TOTAL</td>
+            <td class="cv" id="pd_pct">—</td>
+            <td class="cv b" id="pd_hrs">—</td>
+            <td class="cv">—</td><td class="cv">—</td>
+            <td class="cv b" id="pd_rev">—</td>
+            <td class="cv o" id="pd_ctc">—</td>
+            <td class="cv g" id="pd_margin">—</td>
+            <td class="cv p" id="pd_fte">—</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PRICING ══════════════════ -->
+<div id="panel-pricing" class="panel">
+  <div class="fbar"><span class="ref">C8</span><span class="fx">ƒx</span><span class="ft">CostToClient=Σ(RoleHrs×ClientRate) | ValuePrice=CostToCompany×valueMult | FinalQuote=ValuePrice×(1−discount) | Margin=(Quote−CostToCompany)÷Quote</span></div>
+  <div class="pricing-cols">
+
+    <!-- COL 1: Cost to Company -->
+    <div class="pricing-col">
+      <div class="ph"><div class="dot" style="background:var(--orange)"></div>COST TO COMPANY (Internal)</div>
+      <div style="overflow:auto;flex:1">
+        <table class="gs" style="width:100%">
+          <thead><tr><th class="rn"></th><th style="min-width:200px">Item</th><th style="width:160px">Value</th><th style="min-width:220px">Formula</th></tr></thead>
+          <tbody>
+            <tr class="sr"><td class="rn">1</td><td colspan="3">EFFORT BASE</td></tr>
+            <tr><td class="rn">2</td><td style="color:var(--muted)">Total Buffered Hours</td><td class="cv b" id="pc_bufHrs">—</td><td class="fc">=GrandTotal × RiskMult</td></tr>
+            <tr><td class="rn">3</td><td style="color:var(--muted)">Risk Multiplier</td><td class="cv o" id="pc_risk">—</td><td class="fc">=riskLevel</td></tr>
+            <tr class="sr"><td class="rn">4</td><td colspan="3">ROLE-BASED SALARY COST</td></tr>
+            <tbody id="pc_roleRows"></tbody>
+            <tr class="tr"><td class="rn"></td><td><strong>Total Cost to Company</strong></td><td class="cv o" id="pc_totalCTC" style="font-size:15px;font-weight:700">—</td><td class="fc">=Σ(RoleHrs × SalaryRate)</td></tr>
+            <tr class="sr"><td class="rn">5</td><td colspan="3">OVERHEAD & MARGIN</td></tr>
+            <tr><td class="rn">6</td><td style="color:var(--muted)">Overhead Buffer (10%)</td><td class="cv o" id="pc_overhead">—</td><td class="fc">=TotalCTC × 10%</td></tr>
+            <tr class="tr"><td class="rn"></td><td><strong>Fully Loaded Cost</strong></td><td class="cv r" id="pc_loaded" style="font-weight:700">—</td><td class="fc">=TotalCTC × 1.10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COL 2: Cost to Client / Pricing -->
+    <div class="pricing-col">
+      <div class="ph"><div class="dot" style="background:var(--blue)"></div>COST TO CLIENT — Pricing Build-Up</div>
+      <div style="overflow:auto;flex:1">
+        <table class="gs" style="width:100%">
+          <thead><tr><th class="rn"></th><th style="min-width:210px">Item</th><th style="width:160px">Value</th><th style="min-width:220px">Formula</th></tr></thead>
+          <tbody>
+            <tr class="sr"><td class="rn">1</td><td colspan="3">STEP 1 — VALUE ANCHOR</td></tr>
+            <tr><td class="rn">2</td><td style="color:var(--muted)">Business Impact</td><td class="cv b" id="pp_impact">—</td><td class="fc">=Opportunity!bizImpact</td></tr>
+            <tr><td class="rn">3</td><td style="color:var(--muted)">Value Capture %</td><td class="cv" id="pp_captureP">—</td><td class="fc">=Opportunity!captureP</td></tr>
+            <tr><td class="rn">4</td><td style="color:var(--muted)">Price Anchor Low (10%)</td><td class="cv" id="pp_anchLow">—</td><td class="fc" id="pp_anchLowF">—</td></tr>
+            <tr><td class="rn">5</td><td style="color:var(--muted)">Price Anchor High (20%)</td><td class="cv b" id="pp_anchHigh">—</td><td class="fc" id="pp_anchHighF">—</td></tr>
+            <tr class="sr"><td class="rn">6</td><td colspan="3">STEP 2 — RATE-BASED REVENUE</td></tr>
+            <tbody id="pp_roleRows"></tbody>
+            <tr class="tr"><td class="rn"></td><td><strong>Total Client Revenue</strong></td><td class="cv b" id="pp_totalRev" style="font-weight:700">—</td><td class="fc">=Σ(RoleHrs × ClientRate)</td></tr>
+            <tr class="sr"><td class="rn">7</td><td colspan="3">STEP 3 — FINAL PRICING</td></tr>
+            <tr><td class="rn">8</td><td style="color:var(--muted)">Cost to Company</td><td class="cv o" id="pp_ctc">—</td><td class="fc">=Σ(RoleHrs × SalaryRate)</td></tr>
+            <tr><td class="rn">9</td><td style="color:var(--muted)">Value Multiple</td><td class="cv" id="pp_mult">—</td><td class="fc">=Opportunity!valueMult</td></tr>
+            <tr><td class="rn">10</td><td style="color:var(--muted)">Value Price (pre-discount)</td><td class="cv p" id="pp_valuePrice">—</td><td class="fc" id="pp_vpF">—</td></tr>
+            <tr><td class="rn">11</td><td style="color:var(--muted)">Discount Lever %</td><td class="cv" id="pp_dis">—</td><td class="fc">=Opportunity!discountP</td></tr>
+            <tr><td class="rn">12</td><td><strong>Final Quote (Client-facing)</strong></td><td class="cv dk" id="pp_finalQuote" style="font-size:15px">—</td><td class="fc" id="pp_quoteF">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COL 3: Margin Analysis -->
+    <div class="pricing-col">
+      <div class="ph"><div class="dot" style="background:var(--green-c)"></div>MARGIN ANALYSIS (Internal)</div>
+      <div style="overflow:auto;flex:1">
+        <table class="gs" style="width:100%">
+          <thead><tr><th class="rn"></th><th style="min-width:210px">Item</th><th style="width:140px">Value</th><th style="min-width:200px">Formula</th></tr></thead>
+          <tbody>
+            <tr class="sr"><td class="rn">1</td><td colspan="3">COST vs REVENUE</td></tr>
+            <tr><td class="rn">2</td><td style="color:var(--muted)">Cost to Company</td><td class="cv o" id="pm_ctc">—</td><td class="fc">=Σ(RoleHrs × SalaryRate)</td></tr>
+            <tr><td class="rn">3</td><td style="color:var(--muted)">Fully Loaded Cost (+10%)</td><td class="cv r" id="pm_loaded">—</td><td class="fc">=CostToCompany × 1.10</td></tr>
+            <tr><td class="rn">4</td><td style="color:var(--muted)">Total Client Revenue</td><td class="cv b" id="pm_rev">—</td><td class="fc">=Σ(RoleHrs × ClientRate)</td></tr>
+            <tr><td class="rn">5</td><td style="color:var(--muted)">Final Quote</td><td class="cv g" id="pm_quote">—</td><td class="fc">=ValuePrice × (1−discount)</td></tr>
+            <tr class="sr"><td class="rn">6</td><td colspan="3">GROSS MARGIN</td></tr>
+            <tr><td class="rn">7</td><td style="color:var(--muted)">Gross Profit (vs Rate Revenue)</td><td class="cv g" id="pm_profitRev">—</td><td class="fc">=ClientRevenue − CostToCompany</td></tr>
+            <tr><td class="rn">8</td><td style="color:var(--muted)">Rate-based Margin %</td><td class="cv g" id="pm_marginRev">—</td><td class="fc">=(ClientRev − CostCo) ÷ ClientRev</td></tr>
+            <tr><td class="rn">9</td><td style="color:var(--muted)">Gross Profit (vs Final Quote)</td><td class="cv g" id="pm_profitQ">—</td><td class="fc">=FinalQuote − CostToCompany</td></tr>
+            <tr><td class="rn">10</td><td><strong>Quote Gross Margin %</strong></td><td class="cv g" id="pm_marginQ" style="font-size:14px;font-weight:700">—</td><td class="fc">=(FinalQuote − CostCo) ÷ FinalQuote</td></tr>
+            <tr><td class="rn">11</td><td style="color:var(--muted)">Target Margin %</td><td class="cv" id="pm_target">—</td><td class="fc">=Opportunity!targetMargin</td></tr>
+            <tr><td class="rn">12</td><td><strong>Margin vs Target</strong></td><td class="cv g" id="pm_vs_target" style="font-weight:700">—</td><td class="fc">=QuoteMargin − TargetMargin</td></tr>
+            <tr class="sr"><td class="rn">13</td><td colspan="3">AI EFFICIENCY EDGE</td></tr>
+            <tr><td class="rn">14</td><td style="color:var(--muted)">Avg AI Efficiency Gain</td><td class="cv b" id="pm_aiEff">—</td><td class="fc">=1 − avg(all AI multipliers)</td></tr>
+            <tr><td class="rn">15</td><td style="color:var(--muted)">Visible Client Discount</td><td class="cv" id="pm_visDis">—</td><td class="fc">=discountP</td></tr>
+            <tr><td class="rn">16</td><td><strong>Margin Expansion Gap</strong></td><td class="cv g" id="pm_gap" style="font-weight:700">—</td><td class="fc">=AI Eff − Client Discount</td></tr>
+          </tbody>
+        </table>
+
+        <!-- KPI summary strip -->
+        <div class="mg" style="margin-top:1px">
+          <div class="mc orange-bg"><div class="mc-l">Cost to Company</div><div class="mc-v" id="kp_ctc" style="color:var(--orange)">—</div></div>
+          <div class="mc" style="background:var(--blue-lt)"><div class="mc-l">Client Revenue</div><div class="mc-v" id="kp_rev" style="color:var(--blue)">—</div></div>
+          <div class="mc green-bg full"><div class="mc-l">Final Quote (Client-facing)</div><div class="mc-v" id="kp_quote" style="color:var(--green);font-size:26px">—</div><div class="mc-f" id="kp_quoteF">—</div></div>
+          <div class="mc"><div class="mc-l">Rate Margin %</div><div class="mc-v" id="kp_rateMar" style="color:var(--green)">—</div></div>
+          <div class="mc"><div class="mc-l">Quote Margin %</div><div class="mc-v" id="kp_quoteMar" style="color:var(--green)">—</div><div class="kbar"><div class="kbf" id="kp_mb" style="background:var(--green-c);width:0%"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const catMult  = {eu:.5,lu:.6,du:.6,aiu:.7,pu:.7};
+const catLabel = {eu:'Experience (EU)',lu:'Logic (LU)',du:'Data (DU)',aiu:'AI Units (AIU)',pu:'Platform (PU)'};
+const catCls   = {eu:'sr-eu',lu:'sr-lu',du:'sr-du',aiu:'sr-aiu',pu:'sr-pu'};
+const catColors= {eu:'var(--blue)',lu:'#c62828',du:'var(--orange)',aiu:'var(--purple)',pu:'var(--green)'};
+const chipCls  = {eu:'ch-b',lu:'ch-r',du:'ch-o',aiu:'ch-p',pu:'ch-g'};
+const multNotes= {
+  'Requirements':'Structured analysis — AI handles well',
+  'UX/UI':'Screens & layouts — highest AI reducibility',
+  'Dev':'Code gen, scaffolding, boilerplate',
+  'QA':'Test gen, automation, coverage',
+  'PM':'Coordination & docs — needs human judgment'
+};
+
+const units = {
+  eu: [{name:'Student Dashboard',count:5,complexity:3,baseHrs:40},{name:'Teacher Workflow',count:4,complexity:4,baseHrs:50}],
+  lu: [{name:'Workflow Engine',count:3,complexity:4,baseHrs:60},{name:'Rules Engine',count:2,complexity:5,baseHrs:80}],
+  du: [{name:'Data Pipelines',count:3,complexity:4,baseHrs:50},{name:'Reporting Layer',count:2,complexity:3,baseHrs:40}],
+  aiu:[{name:'AI Copilot',count:2,complexity:5,baseHrs:100},{name:'Prompt System',count:3,complexity:3,baseHrs:40}],
+  pu: [{name:'Security',count:2,complexity:4,baseHrs:60},{name:'Deployment',count:2,complexity:3,baseHrs:40}]
+};
+
+const multipliers = {Requirements:.6,'UX/UI':.5,Dev:.6,QA:.6,PM:.7};
+
+// podRoles: clientRate = billed to client per hr | salaryRate = internal cost per hr
+let podRoles = [
+  {role:'Architect',      pct:10, clientRate:250, salaryRate:120},
+  {role:'AI Engineer',    pct:25, clientRate:225, salaryRate:110},
+  {role:'Full Stack Dev', pct:30, clientRate:195, salaryRate:95},
+  {role:'Designer',       pct:15, clientRate:165, salaryRate:80},
+  {role:'QA',             pct:10, clientRate:150, salaryRate:72},
+  {role:'PM',             pct:10, clientRate:180, salaryRate:90}
+];
+
+// ══════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  el.classList.add('active');
+  recalc();
+}
+
+// ══════════════════════════════════════════════════════
+// SIZING TABLE
+// ══════════════════════════════════════════════════════
+function buildSizingTable() {
+  const tbody = document.getElementById('sizingBody');
+  tbody.innerHTML = '';
+  let rn = 1;
+  ['eu','lu','du','aiu','pu'].forEach(cat => {
+    const htr = document.createElement('tr');
+    htr.className = catCls[cat];
+    htr.innerHTML = `<td class="rn">${rn++}</td><td colspan="8" style="font-weight:600">${catLabel[cat]} · AI Multiplier: ${catMult[cat].toFixed(2)}×</td>`;
+    tbody.appendChild(htr);
+
+    units[cat].forEach((row, i) => {
+      const adj = calcAdj(cat, row);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="rn">${rn++}</td>
+        <td><input type="text" value="${row.name}" placeholder="Module name…" oninput="updateUnit('${cat}',${i},'name',this.value)"></td>
+        <td><input type="number" value="${row.count}" placeholder="0" min="1" oninput="updateUnit('${cat}',${i},'count',this.value)" style="text-align:right;font-family:var(--mono)"></td>
+        <td><select onchange="updateUnit('${cat}',${i},'complexity',this.value)">
+          ${[1,2,3,4,5].map(c=>`<option value="${c}"${c==row.complexity?' selected':''}>${c} — ${['','Trivial','Low','Medium','High','Novel'][c]}</option>`).join('')}
+        </select></td>
+        <td><input type="number" value="${row.baseHrs}" placeholder="0" min="1" oninput="updateUnit('${cat}',${i},'baseHrs',this.value)" style="text-align:right;font-family:var(--mono)"></td>
+        <td class="cv" style="color:var(--muted)">${catMult[cat].toFixed(2)}×</td>
+        <td class="cv ${adj>0?'g':''}" id="sz_adj_${cat}_${i}">${adj>0?fmt(adj):''}</td>
+        <td class="fc" id="sz_w_${cat}_${i}">${workTxt(cat,row)}</td>
+        <td><button class="del-btn" onclick="delUnit('${cat}',${i})">×</button></td>`;
+      tbody.appendChild(tr);
+    });
+
+    const atr = document.createElement('tr');
+    atr.innerHTML = `<td class="rn"></td><td colspan="8" style="padding:0"><button class="add-btn" onclick="addUnit('${cat}')">＋ Add ${catLabel[cat].split(' ')[0]} Unit</button></td>`;
+    tbody.appendChild(atr);
+
+    const tot = units[cat].reduce((s,r)=>s+calcAdj(cat,r),0);
+    const ttr = document.createElement('tr');
+    ttr.className = 'tr';
+    ttr.innerHTML = `<td class="rn"></td><td colspan="5" style="color:var(--muted);font-size:11px">${catLabel[cat]} SUBTOTAL</td><td class="cv g" id="sz_tot_${cat}">${tot>0?fmt(tot):''}</td><td colspan="2"></td>`;
+    tbody.appendChild(ttr);
+  });
+}
+
+function calcAdj(cat, row) {
+  return (parseFloat(row.count)||0)*(parseFloat(row.complexity)||1)*(parseFloat(row.baseHrs)||0)*catMult[cat];
+}
+function workTxt(cat, row) {
+  if (!row.count&&!row.baseHrs) return '';
+  const adj = calcAdj(cat,row);
+  return `=${row.count||'?'}×${row.complexity||'?'}×${row.baseHrs||'?'}×${catMult[cat]}=${adj>0?fmt(adj):''}`;
+}
+function updateUnit(cat, i, field, val) {
+  units[cat][i][field] = field==='name'?val:(parseFloat(val)||'');
+  const adj = calcAdj(cat, units[cat][i]);
+  const ae = document.getElementById(`sz_adj_${cat}_${i}`);
+  const we = document.getElementById(`sz_w_${cat}_${i}`);
+  if(ae){ae.textContent=adj>0?fmt(adj):'';ae.className='cv '+(adj>0?'g':'');}
+  if(we) we.textContent = workTxt(cat, units[cat][i]);
+  const tot = units[cat].reduce((s,r)=>s+calcAdj(cat,r),0);
+  const te = document.getElementById(`sz_tot_${cat}`);
+  if(te) te.textContent = tot>0?fmt(tot):'';
+  recalc();
+}
+function addUnit(cat){units[cat].push({name:'',count:'',complexity:2,baseHrs:''});buildSizingTable();recalc();}
+function delUnit(cat,i){units[cat].splice(i,1);buildSizingTable();recalc();}
+
+// ══════════════════════════════════════════════════════
+// MULTIPLIER TABLE
+// ══════════════════════════════════════════════════════
+function buildMultTable() {
+  const tbody = document.getElementById('multBody');
+  tbody.innerHTML = '';
+  const dis = parseFloat(document.getElementById('discountP')?.value)||0;
+  let rn = 1;
+  Object.entries(multipliers).forEach(([fn, val]) => {
+    const eff = (1-val)*100, gap = eff-dis;
+    const gCol = gap>=0?'g':'r';
+    const id = 'ml_'+fn.replace(/[^a-z]/gi,'_');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rn">${rn++}</td>
+      <td><strong>${fn}</strong></td>
+      <td class="cv" style="text-align:right">1.00×</td>
+      <td style="padding:4px 8px">
+        <input type="number" value="${val}" min="0.3" max="1.0" step="0.05"
+          id="${id}_n" oninput="updateMult('${fn}',this.value)"
+          style="width:80px;border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-family:var(--mono);font-size:12px;text-align:right;background:var(--white)">
+        <span style="font-size:11px;color:var(--muted);margin-left:4px">×</span>
+      </td>
+      <td class="cv b">${eff.toFixed(0)}%</td>
+      <td class="cv">${dis>0?dis+'%':'—'}</td>
+      <td class="cv ${gCol}">${dis>0?(gap>=0?'+':'')+gap.toFixed(0)+'%':'—'}</td>
+      <td class="fc">${multNotes[fn]||''}</td>`;
+    tbody.appendChild(tr);
+  });
+  const avg = Object.values(multipliers).reduce((s,v)=>s+v,0)/Object.keys(multipliers).length;
+  const avgEff = (1-avg)*100, avgGap = avgEff-dis;
+  setText('m_avgEff', avgEff.toFixed(0)+'%');
+  setText('m_cSees', dis>0?dis+'%':'—');
+  setText('m_avgGap', dis>0?(avgGap>=0?'+':'')+avgGap.toFixed(0)+'%':'—');
+}
+
+function updateMult(fn, val) {
+  multipliers[fn] = Math.min(1.0,Math.max(0.3,parseFloat(val)||0.5));
+  recalc(); buildMultTable();
+}
+
+// ══════════════════════════════════════════════════════
+// POD TABLE (text fields for rates, no sliders)
+// ══════════════════════════════════════════════════════
+function buildPodTable() {
+  const tbody = document.getElementById('podBody');
+  tbody.innerHTML = '';
+  const bufHrs = getBufferedHours();
+  const timeline = parseFloat(document.getElementById('timeline')?.value)||6;
+  const hrsPerMonth = parseFloat(document.getElementById('hrsPerMonth')?.value)||140;
+
+  podRoles.forEach((r, i) => {
+    const roleHrs = bufHrs*(r.pct/100);
+    const fte = (timeline>0&&hrsPerMonth>0) ? roleHrs/(timeline*hrsPerMonth) : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rn">${i+1}</td>
+      <td><input type="text" value="${r.role}" placeholder="Role name" oninput="podRoles[${i}].role=this.value;recalc()" style="font-weight:500"></td>
+      <td><input type="number" value="${r.pct}" min="0" max="100" step="1"
+        oninput="podRoles[${i}].pct=parseFloat(this.value)||0;recalc()"
+        style="text-align:right;font-family:var(--mono)"></td>
+      <td><input type="number" value="${r.clientRate}" min="0" step="5"
+        oninput="podRoles[${i}].clientRate=parseFloat(this.value)||0;recalc()"
+        style="text-align:right;font-family:var(--mono);color:var(--blue)"></td>
+      <td><input type="number" value="${r.salaryRate}" min="0" step="5"
+        oninput="podRoles[${i}].salaryRate=parseFloat(this.value)||0;recalc()"
+        style="text-align:right;font-family:var(--mono);color:var(--orange)"></td>
+      <td class="cv b" id="pod_rh_${i}">${bufHrs>0?fmt(roleHrs):''}</td>
+      <td class="cv p" id="pod_fte_${i}">${bufHrs>0?fte.toFixed(1):''}</td>
+      <td><button class="del-btn" onclick="delPodRow(${i})">×</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function addPodRow(){podRoles.push({role:'New Role',pct:0,clientRate:150,salaryRate:75});buildPodTable();recalc();}
+function delPodRow(i){podRoles.splice(i,1);buildPodTable();recalc();}
+
+// ══════════════════════════════════════════════════════
+// CORE MATH
+// ══════════════════════════════════════════════════════
+function getCatTot(cat){return units[cat].reduce((s,r)=>s+calcAdj(cat,r),0);}
+function getGrand(){return['eu','lu','du','aiu','pu'].reduce((s,c)=>s+getCatTot(c),0);}
+function getBufferedHours(){
+  const rm = parseFloat(document.getElementById('riskLevel')?.value)||1.0;
+  return getGrand()*rm;
+}
+function getAvgMult(){
+  const v=Object.values(multipliers);return v.reduce((s,x)=>s+x,0)/v.length;
+}
+function getRoleNumbers(bufHrs, timeline, hrsPerMonth) {
+  let totalClientRev=0, totalCTC=0, totalHrs=0, totalFTE=0, pctSum=0;
+  const rows=[];
+  podRoles.forEach(r=>{
+    const rh = bufHrs*(r.pct/100);
+    const fte = (timeline>0&&hrsPerMonth>0)?rh/(timeline*hrsPerMonth):0;
+    const rev = rh*r.clientRate;
+    const ctc = rh*r.salaryRate;
+    totalClientRev+=rev; totalCTC+=ctc; totalHrs+=rh; totalFTE+=fte; pctSum+=r.pct;
+    rows.push({...r, rh, fte, rev, ctc, margin: rev>0?(rev-ctc)/rev:0});
+  });
+  return {totalClientRev,totalCTC,totalHrs,totalFTE,pctSum,rows};
+}
+
+// ══════════════════════════════════════════════════════
+// MAIN RECALC
+// ══════════════════════════════════════════════════════
+function recalc() {
+  const timeline     = parseFloat(document.getElementById('timeline')?.value)||6;
+  const riskMult     = parseFloat(document.getElementById('riskLevel')?.value)||1.0;
+  const hrsPerMonth  = parseFloat(document.getElementById('hrsPerMonth')?.value)||140;
+  const bizImpact    = parseFloat(document.getElementById('bizImpact')?.value)||0;
+  const captureP     = parseFloat(document.getElementById('captureP')?.value)||0;
+  const valueMult    = parseFloat(document.getElementById('valueMult')?.value)||1;
+  const discountP    = parseFloat(document.getElementById('discountP')?.value)||0;
+  const targetMargin = parseFloat(document.getElementById('targetMargin')?.value)||40;
+
+  const grand   = getGrand();
+  const bufHrs  = grand*riskMult;
+  const {totalClientRev,totalCTC,totalHrs,totalFTE,pctSum,rows} = getRoleNumbers(bufHrs, timeline, hrsPerMonth);
+
+  const overhead    = totalCTC*0.10;
+  const loadedCost  = totalCTC*1.10;
+  const valuePrice  = totalCTC*valueMult;
+  const finalQuote  = valuePrice*(1-discountP/100);
+  const profitQ     = finalQuote-totalCTC;
+  const marginQ     = finalQuote>0?profitQ/finalQuote:0;
+  const profitRev   = totalClientRev-totalCTC;
+  const marginRev   = totalClientRev>0?profitRev/totalClientRev:0;
+  const anchLow     = bizImpact*.10, anchHigh=bizImpact*.20;
+  const avgMult     = getAvgMult();
+  const aiEff       = (1-avgMult)*100;
+  const marginGap   = aiEff-discountP;
+  const vsTarget    = marginQ*100-targetMargin;
+  const durationCalc= (totalFTE>0&&hrsPerMonth>0)?bufHrs/(totalFTE*hrsPerMonth):0;
+  const burnCalc    = durationCalc>0?totalCTC/durationCalc:0;
+
+  // blended avg rates
+  const avgClientRate = totalHrs>0?totalClientRev/totalHrs:0;
+  const avgSalaryRate = totalHrs>0?totalCTC/totalHrs:0;
+
+  // ── Opportunity grid
+  setText('g_client',     document.getElementById('clientName')?.value||'—');
+  setText('g_typeind',    (document.getElementById('oppType')?.value||'—')+' / '+(document.getElementById('industry')?.value||'—'));
+  setText('g_timeline',   timeline?timeline+' months':'—');
+  setText('g_risk',       riskMult.toFixed(2)+'×');
+  setText('g_ai',         document.getElementById('aiLeverage')?.value?document.getElementById('aiLeverage').value+'%':'—');
+  setText('g_rawHrs',     grand?fmt(grand)+' hrs':'—');
+  setText('g_buffHrs',    bufHrs?fmt(bufHrs)+' hrs':'—');
+  setText('g_ctc',        totalCTC?'$'+fmt(totalCTC):'—');
+  setText('g_revenue',    totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('g_valuePrice', valuePrice?'$'+fmt(valuePrice):'—');
+  setText('g_finalQuote', finalQuote?'$'+fmt(finalQuote):'—');
+  setText('g_profit',     finalQuote?'$'+fmt(profitQ):'—');
+  setText('g_margin',     finalQuote?(marginQ*100).toFixed(1)+'%':'—');
+  setText('g_anchLow',    anchLow?'$'+fmt(anchLow):'—');
+  setText('g_anchHigh',   anchHigh?'$'+fmt(anchHigh):'—');
+
+  // ── KPI sidebar
+  setText('ks_hours',    bufHrs?fmt(bufHrs)+' hrs':'—');
+  setText('ks_ctc',      totalCTC?'$'+fmt(totalCTC):'—');
+  setText('ks_rev',      totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('ks_quote',    finalQuote?'$'+fmt(finalQuote):'—');
+  setText('ks_margin',   finalQuote?(marginQ*100).toFixed(1)+'%':'—');
+  setText('ks_duration', durationCalc?durationCalc.toFixed(1)+' mo':'—');
+  setText('ks_burn',     burnCalc?'$'+fmt(burnCalc)+'/mo':'—');
+  setW('ks_hb', Math.min(bufHrs/2000*100,100)+'%');
+  setW('ks_mb', Math.min(marginQ*100,100)+'%');
+
+  // ── Summary panel
+  const cats=['eu','lu','du','aiu','pu'];
+  const sb = document.getElementById('summaryBody');
+  if(sb){
+    sb.innerHTML='';
+    cats.forEach((cat,idx)=>{
+      const tot=getCatTot(cat), pct=grand>0?(tot/grand*100):0;
+      const col=catColors[cat];
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="rn">${idx+1}</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-right:6px"></span>${catLabel[cat]}</td><td class="cv" style="color:${col}">${tot>0?fmt(tot):''}</td><td class="cv">${tot>0?pct.toFixed(1)+'%':''}</td><td style="padding:0 8px;vertical-align:middle"><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .3s"></div></div></td><td class="fc">=Σ(units×cx×hrs×${catMult[cat]})</td>`;
+      sb.appendChild(tr);
+    });
+  }
+  setText('sum_grand', grand?fmt(grand)+' hrs':'—');
+  setText('sum_riskM', riskMult.toFixed(2)+'×');
+  setText('sum_buff',  bufHrs?fmt(bufHrs)+' hrs':'—');
+
+  // Working detail
+  const wb = document.getElementById('workingBody');
+  if(wb){
+    wb.innerHTML='';
+    let wrn=1;
+    cats.forEach(cat=>{
+      units[cat].forEach(row=>{
+        const adj=calcAdj(cat,row);
+        if(!adj) return;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td class="rn">${wrn++}</td><td><span class="chip ${chipCls[cat]}" style="font-size:10px">${cat.toUpperCase()}</span></td><td>${row.name||'—'}</td><td class="cv">${row.count}</td><td class="cv">${row.complexity}</td><td class="cv">${row.baseHrs}</td><td class="cv" style="color:var(--muted)">${catMult[cat].toFixed(2)}×</td><td class="fc">${row.count}×${row.complexity}×${row.baseHrs}×${catMult[cat]}</td><td class="cv g">${fmt(adj)}</td>`;
+        wb.appendChild(tr);
+      });
+    });
+  }
+
+  // Multiplier table
+  buildMultTable();
+
+  // ── Delivery pod
+  buildPodTable();
+  // update live cells in pod table
+  rows.forEach((r,i)=>{
+    const rhe=document.getElementById(`pod_rh_${i}`);
+    const fte=document.getElementById(`pod_fte_${i}`);
+    if(rhe) rhe.textContent=bufHrs>0?fmt(r.rh):'';
+    if(fte)  fte.textContent=bufHrs>0?r.fte.toFixed(1):'';
+  });
+
+  // Pod totals
+  setText('pod_pct', pctSum+'%');
+  setText('pod_avgRate', avgClientRate>0?'$'+Math.round(avgClientRate)+' avg':'—');
+  setText('pod_avgSal',  avgSalaryRate>0?'$'+Math.round(avgSalaryRate)+' avg':'—');
+  setText('pod_hrsTotal', totalHrs>0?fmt(totalHrs)+' hrs':'—');
+  setText('pod_fteTotal', totalFTE>0?totalFTE.toFixed(1)+' FTEs':'—');
+
+  // Delivery outputs
+  setText('d_hours',      bufHrs?fmt(bufHrs)+' hrs':'—');
+  setText('d_team',       totalFTE>0?totalFTE.toFixed(1)+' FTEs':'—');
+  setText('d_ctc',        totalCTC?'$'+fmt(totalCTC):'—');
+  setText('d_rev',        totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('d_profit',     totalClientRev?'$'+fmt(profitRev):'—');
+  setText('d_roleMargin', totalClientRev?(marginRev*100).toFixed(1)+'%':'—');
+  setText('d_duration',   durationCalc?durationCalc.toFixed(1)+' months':'—');
+  setText('d_burn',       burnCalc?'$'+fmt(burnCalc)+'/mo':'—');
+
+  // Pod detail table
+  const db = document.getElementById('podDetailBody');
+  if(db){
+    db.innerHTML='';
+    let drn=1;
+    rows.forEach(r=>{
+      const rMar = r.rev>0?((r.rev-r.ctc)/r.rev*100).toFixed(1)+'%':'—';
+      const marColor = r.margin>=0.3?'var(--green)':(r.margin>=0.15?'var(--orange)':'var(--red)');
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="rn">${drn++}</td><td>${r.role}</td><td class="cv">${r.pct}%</td><td class="cv b">${bufHrs>0?fmt(r.rh):''}</td><td class="cv" style="color:var(--blue)">$${r.clientRate}/hr</td><td class="cv" style="color:var(--orange)">$${r.salaryRate}/hr</td><td class="cv b">${r.rev>0?'$'+fmt(r.rev):''}</td><td class="cv o">${r.ctc>0?'$'+fmt(r.ctc):''}</td><td class="cv" style="color:${marColor}">${rMar}</td><td class="cv p">${bufHrs>0?r.fte.toFixed(1):''}</td>`;
+      db.appendChild(tr);
+    });
+  }
+  setText('pd_pct',    pctSum+'%');
+  setText('pd_hrs',    totalHrs>0?fmt(totalHrs)+' hrs':'—');
+  setText('pd_rev',    totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('pd_ctc',    totalCTC?'$'+fmt(totalCTC):'—');
+  setText('pd_margin', totalClientRev?(marginRev*100).toFixed(1)+'%':'—');
+  setText('pd_fte',    totalFTE>0?totalFTE.toFixed(1):'—');
+
+  // ── Pricing — Cost to Company column
+  setText('pc_bufHrs',   bufHrs?fmt(bufHrs)+' hrs':'—');
+  setText('pc_risk',     riskMult.toFixed(2)+'×');
+  const pcRoles = document.getElementById('pc_roleRows');
+  if(pcRoles){
+    pcRoles.innerHTML='';
+    let pcrn=5;
+    rows.forEach(r=>{
+      if(!r.ctc) return;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="rn">${pcrn++}</td><td style="color:var(--muted)">${r.role} (${fmt(r.rh)} hrs × $${r.salaryRate})</td><td class="cv o">${'$'+fmt(r.ctc)}</td><td class="fc">${fmt(r.rh)} hrs × $${r.salaryRate}/hr</td>`;
+      pcRoles.appendChild(tr);
+    });
+  }
+  setText('pc_totalCTC', totalCTC?'$'+fmt(totalCTC):'—');
+  setText('pc_overhead', overhead?'$'+fmt(overhead):'—');
+  setText('pc_loaded',   loadedCost?'$'+fmt(loadedCost):'—');
+
+  // ── Pricing — Client column
+  setText('pp_impact',    bizImpact?'$'+fmt(bizImpact):'—');
+  setText('pp_captureP',  captureP?captureP+'%':'—');
+  setText('pp_anchLow',   anchLow?'$'+fmt(anchLow):'—');
+  setText('pp_anchHigh',  anchHigh?'$'+fmt(anchHigh):'—');
+  setText('pp_anchLowF',  bizImpact?`=$${(bizImpact/1e6).toFixed(1)}M × 10%`:'—');
+  setText('pp_anchHighF', bizImpact?`=$${(bizImpact/1e6).toFixed(1)}M × 20%`:'—');
+  const ppRoles = document.getElementById('pp_roleRows');
+  if(ppRoles){
+    ppRoles.innerHTML='';
+    let pprn=7;
+    rows.forEach(r=>{
+      if(!r.rev) return;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="rn">${pprn++}</td><td style="color:var(--muted)">${r.role} (${fmt(r.rh)} hrs × $${r.clientRate})</td><td class="cv b">${'$'+fmt(r.rev)}</td><td class="fc">${fmt(r.rh)} hrs × $${r.clientRate}/hr</td>`;
+      ppRoles.appendChild(tr);
+    });
+  }
+  setText('pp_totalRev',   totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('pp_ctc',        totalCTC?'$'+fmt(totalCTC):'—');
+  setText('pp_mult',       valueMult.toFixed(1)+'×');
+  setText('pp_valuePrice', valuePrice?'$'+fmt(valuePrice):'—');
+  setText('pp_vpF',        totalCTC?`=$${fmt(totalCTC)} × ${valueMult.toFixed(1)}`:'—');
+  setText('pp_dis',        discountP?discountP+'%':'—');
+  setText('pp_finalQuote', finalQuote?'$'+fmt(finalQuote):'—');
+  setText('pp_quoteF',     valuePrice?`=$${fmt(valuePrice)} × (1−${discountP}%)`:'—');
+
+  // ── Pricing — Margin column
+  const vsCol = vsTarget>=0?'g':'r';
+  setText('pm_ctc',       totalCTC?'$'+fmt(totalCTC):'—');
+  setText('pm_loaded',    loadedCost?'$'+fmt(loadedCost):'—');
+  setText('pm_rev',       totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('pm_quote',     finalQuote?'$'+fmt(finalQuote):'—');
+  setText('pm_profitRev', totalClientRev?'$'+fmt(profitRev):'—');
+  setText('pm_marginRev', totalClientRev?(marginRev*100).toFixed(1)+'%':'—');
+  setText('pm_profitQ',   finalQuote?'$'+fmt(profitQ):'—');
+  setText('pm_marginQ',   finalQuote?(marginQ*100).toFixed(1)+'%':'—');
+  setText('pm_target',    targetMargin+'%');
+  const vsEl = document.getElementById('pm_vs_target');
+  if(vsEl){vsEl.textContent=finalQuote?(vsTarget>=0?'+':'')+vsTarget.toFixed(1)+'%':'—';vsEl.className='cv '+vsCol;}
+  setText('pm_aiEff',     aiEff.toFixed(0)+'%');
+  setText('pm_visDis',    discountP?discountP+'%':'—');
+  setText('pm_gap',       (marginGap>=0?'+':'')+marginGap.toFixed(0)+'%');
+
+  // KPI strip
+  setText('kp_ctc',      totalCTC?'$'+fmt(totalCTC):'—');
+  setText('kp_rev',      totalClientRev?'$'+fmt(totalClientRev):'—');
+  setText('kp_quote',    finalQuote?'$'+fmt(finalQuote):'—');
+  setText('kp_quoteF',   finalQuote?`= $${fmt(valuePrice)} × (1−${discountP}%)`:'—');
+  setText('kp_rateMar',  totalClientRev?(marginRev*100).toFixed(1)+'%':'—');
+  setText('kp_quoteMar', finalQuote?(marginQ*100).toFixed(1)+'%':'—');
+  setW('kp_mb', Math.min(marginQ*100,100)+'%');
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function setW(id,v){const e=document.getElementById(id);if(e)e.style.width=v;}
+function fmt(n){return Math.round(n).toLocaleString();}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+buildSizingTable();
+buildMultTable();
+buildPodTable();
+recalc();
+</script>
+</body>
+</html>
