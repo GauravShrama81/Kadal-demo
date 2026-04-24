@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kadal OS — Education Ontology</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400&family=Red+Hat+Display:wght@400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:#FAFAF8;font-family:'Red Hat Display',sans-serif;color:#1C1917;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#E0DDD6;border-radius:3px}
+::selection{background:rgba(67,56,202,.15)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, Fragment } = React;
+
+// ═══ SVG ICON SYSTEM ═══
+const I = {
+  book: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  star: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+  file: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  layers: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+  user: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  check: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
+  settings: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  building: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></svg>,
+  palette: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2"/><circle cx="17.5" cy="10.5" r="2"/><circle cx="8.5" cy="7.5" r="2"/><circle cx="6.5" cy="12" r="2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>,
+  chart: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+  briefcase: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
+  refresh: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>,
+  search: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  link: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+  target: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+  zap: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  shield: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  arrowR: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+  chevDown: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>,
+  database: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
+  globe: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+};
+
+const DOMAIN_ICONS = [I.layers, I.star, I.file, I.book, I.user, I.check, I.settings, I.building, I.palette, I.chart, I.briefcase, I.refresh];
+
+// ═══ ONTOLOGY DATA ═══
+const DOMAINS = [
+  {code:'KNW', name:'Knowledge & Concepts', icon:0, color:'#4338CA', bg:'#EEF2FF', bd:'#C7D2FE',
+    desc:'Concepts, topics, skills, and the prerequisite lattice connecting them.',
+    k12: {focus:'Developmental progression through grade bands. Concepts sequenced by cognitive readiness (concrete→abstract). Bloom\'s and Webb\'s DOK drive difficulty calibration.',
+      entities:['Concept','Skill','Prerequisite','GradeBandExpectation','DevelopmentalStage','ConceptCluster','LexileMapping','Misconception'],
+      uniqueAttrs:['Grade Band Ceiling','Developmental Stage','Lexile Correlation','Misconception Map','Concrete/Abstract Flag'],
+      uniqueRels:['progresses_through_grade','has_misconception','correlates_to_lexile']},
+    he: {focus:'Competency frameworks and workforce skill taxonomies. Concepts map to O*NET codes and industry certifications. No grade bands — difficulty is course-level.',
+      entities:['Concept','Competency','Skill','ThresholdConcept','O*NET_SkillCode','IndustryCertification','ResearchDomain','TransferableSkill'],
+      uniqueAttrs:['O*NET Code','Competency Level (Intro/Developing/Mastery)','Industry Sector','Research Domain','Credential Linkage'],
+      uniqueRels:['maps_to_onet','requires_for_certification','transfers_to_industry']},
+    sharedAttrs:["Bloom's Level","Webb's DOK","Cognitive Load","Abstraction Level","Domain"],
+    sharedRels:['is_prerequisite_of','is_part_of','requires_skill','decomposes_into']},
+  {code:'STD', name:'Standards & Frameworks', icon:1, color:'#047857', bg:'#ECFDF5', bd:'#A7F3D0',
+    desc:'Every standard, benchmark, and outcome from every authority.',
+    k12:{focus:'State-mandated, grade-banded standards (CCSS, NGSS, TEKS). 50+ jurisdictions with different frameworks. Standards drive assessment design and pacing guides.',
+      entities:['Standard','StateFramework','GradeBandExpectation','CrosscuttingConcept','DisciplinaryCore','Practice','Crosswalk','TestBlueprint'],
+      uniqueAttrs:['State Jurisdiction','Grade Band','Assessment Weight','Testing Window','Adoption Year','Crosswalk Confidence'],
+      uniqueRels:['mandated_by_state','tested_in_window','crosswalks_to_state']},
+    he:{focus:'Institution-defined CLOs/PLOs mapped to accreditation criteria. Faculty governance over curriculum. No state mandate — accreditors set the floor.',
+      entities:['CLO','PLO','AccreditationCriterion','ProgramOutcome','InstitutionalOutcome','QualityAssuranceFramework','CredentialStandard'],
+      uniqueAttrs:['Accreditor Body','Criterion ID','Self-Study Cycle','Evidence Type Required','Faculty Approval Date'],
+      uniqueRels:['approved_by_faculty','evidenced_in_portfolio','satisfies_criterion']},
+    sharedAttrs:['Authority','Code','Statement','Subject','Status','Revision Date'],
+    sharedRels:['belongs_to_framework','crosswalks_to','is_assessed_by','supersedes']},
+  {code:'CNT', name:'Content & Assets', icon:2, color:'#0369A1', bg:'#F0F9FF', bd:'#BAE6FD',
+    desc:'Every piece of publishable content — the atoms of the catalog.',
+    k12:{focus:'Textbook chapters, lessons, workbooks, test banks. Each unit carries Lexile score, reading grade, and IEP accessibility flags. Derivatives: Spanish, audio, simplified.',
+      entities:['ContentUnit','Lesson','Chapter','Passage','Problem','Figure','Workbook','TeacherGuide','StudentEdition','SimplifiedVariant'],
+      uniqueAttrs:['Lexile Score','Reading Grade Level','IEP Accessibility Flags','State Adoption Status','Print Run ID'],
+      uniqueRels:['adopted_by_state','has_simplified_variant','has_teacher_guide']},
+    he:{focus:'Courseware, OER, research papers, simulations, case studies. Content carries CLO mapping, competency level, and credential linkage. Derivatives: micro-credentials, CE modules.',
+      entities:['ContentUnit','CourseModule','CaseStudy','Simulation','LabProtocol','ResearchPaper','OERResource','MicroCredentialUnit','CEModule'],
+      uniqueAttrs:['CLO Mapping','Competency Level','OER License','Credit Hour Weight','Clinical Hours','Research Citation Index'],
+      uniqueRels:['satisfies_CLO','contributes_credit_hours','requires_lab_facility']},
+    sharedAttrs:['Title','Media Type','Language','Version','License','WCAG Level',"Bloom's Level",'DOK'],
+    sharedRels:['covers_concept','aligns_to_standard','has_derivative','is_variant_of']},
+  {code:'CUR', name:'Curriculum & Programs', icon:3, color:'#7C3AED', bg:'#F5F3FF', bd:'#DDD6FE',
+    desc:'How content is organized into teachable, sequenced experiences.',
+    k12:{focus:'Scope-and-sequence tied to grade bands and state testing windows. Pacing guides mandate weekly coverage. Prerequisite chains are implicit in grade progression.',
+      entities:['Course','Unit','PacingGuide','ScopeSequence','GradeLevelCurriculum','Strand','LearningPath','InterventionPath'],
+      uniqueAttrs:['Pacing Week','Testing Window','Grade Level','State Adoption','Intervention Tier (1/2/3)'],
+      uniqueRels:['paced_to_testing_window','assigned_to_grade','has_intervention_tier']},
+    he:{focus:'Credit-hour modules with elective pools, degree pathways, and clinical rotations. Faculty own curriculum design. Prerequisites are explicit and enforced by registrar.',
+      entities:['Course','Program','DegreePathway','CreditModule','Elective','ClinicalRotation','Capstone','Thesis','PriorLearningAssessment','TransferCredit'],
+      uniqueAttrs:['Credit Hours','Delivery Mode (F2F/Online/Hybrid)','Clinical Hours','Prerequisite GPA','Transfer Articulation','Catalog Year'],
+      uniqueRels:['satisfies_degree_requirement','accepts_transfer_from','requires_minimum_GPA']},
+    sharedAttrs:['Duration','Prerequisites','Sequence Position','Delivery Mode'],
+    sharedRels:['contains_module','sequences_before','maps_to_standard','covers_concept']},
+  {code:'LRN', name:'Learner & Identity', icon:4, color:'#B45309', bg:'#FFFBEB', bd:'#FDE68A',
+    desc:'Every person, their profiles, mastery states, and histories.',
+    k12:{focus:'Developmental stage, IEP/504 accommodations, COPPA-protected identity, parent/guardian relationships. Mastery is grade-band relative. At-risk = falling behind grade level.',
+      entities:['Student','Teacher','Parent','Guardian','Cohort','IEP_Profile','504_Plan','LearnerProfile','DevelopmentalRecord','AttendanceRecord'],
+      uniqueAttrs:['Grade Level','Lexile Level','IEP Flags','504 Flags','COPPA Status','Parent Contact','Attendance Rate','Free/Reduced Lunch'],
+      uniqueRels:['has_IEP','has_504','has_parent','assigned_to_teacher','in_intervention_tier']},
+    he:{focus:'Credit hours earned, GPA, degree audit progress, prior learning, transfer credits, workforce skill inventory. Identity includes SIS record, financial aid, and advisor assignment.',
+      entities:['Student','Faculty','Advisor','Cohort','LearnerProfile','DegreeAudit','TranscriptRecord','FinancialAidRecord','WorkforceProfile','AlumniRecord'],
+      uniqueAttrs:['Credits Earned','Cumulative GPA','Degree Audit Status','Transfer Credits','Financial Aid Type','Advisor ID','Employment Status'],
+      uniqueRels:['advised_by','has_degree_audit','has_transfer_credit','employed_at','has_financial_aid']},
+    sharedAttrs:['Role','Language','Mastery Map','Risk Score','Engagement %','Preferred Modality'],
+    sharedRels:['enrolled_in','has_mastery_in','belongs_to_cohort']},
+  {code:'ASM', name:'Assessment & Measurement', icon:5, color:'#E11D48', bg:'#FFF1F2', bd:'#FECDD3',
+    desc:'How learning is measured — item banks, rubrics, psychometrics.',
+    k12:{focus:'Formative/summative with state standardized tests. DOK levels drive item design. Mastery-based progression. Item banks tagged to state standards with testing window constraints.',
+      entities:['AssessmentItem','StateTest','FormativeCheck','BenchmarkExam','ItemBank','TestBlueprint','AccommodatedVersion','DistractorSet'],
+      uniqueAttrs:['State Test Window','DOK Target','Accommodation Type','Item Exposure Rate','State Reporting Code','Print/Digital Flag'],
+      uniqueRels:['appears_on_state_test','accommodated_for_IEP','blueprinted_to_standard']},
+    he:{focus:'Competency-based assessment, portfolio evaluation, capstone projects, licensure exam prep. No cross-institutional standardized testing. IRT models for adaptive assessment.',
+      entities:['AssessmentItem','PortfolioEvidence','CapstoneProject','LicensureExamPrep','CompetencyRubric','AdaptiveTest','ClinicalEvaluation','PeerReview'],
+      uniqueAttrs:['Competency Level','Portfolio Artifact Type','Licensure Board','Clinical Competency','Peer Review Score','Credit Bearing'],
+      uniqueRels:['evidences_CLO','prepares_for_licensure','evaluated_by_faculty','demonstrates_competency']},
+    sharedAttrs:['Item Type','IRT Difficulty','Discrimination',"Bloom's Level",'Bias Flag','Max Points'],
+    sharedRels:['assesses_concept','aligns_to_standard','scored_by_rubric','measures_mastery']},
+  {code:'PIP', name:'Content Pipeline', icon:6, color:'#C2410C', bg:'#FFF7ED', bd:'#FDBA74',
+    desc:'Editorial workflows, QA gates, transformation, publication.',
+    k12:{focus:'State adoption review cycles (3–7 year windows). Correlation documents required per state. Print+digital dual publication. Readability and IEP compliance gates.',
+      entities:['ContentJob','AdoptionReview','CorrelationDocument','StateSubmission','ReadabilityCheck','IEP_ComplianceGate','PrintProduction','DigitalConversion'],
+      uniqueAttrs:['State Submission Deadline','Adoption Window','Correlation Status','Print Specs','Binding Type'],
+      uniqueRels:['submitted_to_state','correlated_against_framework','cleared_readability_gate']},
+    he:{focus:'Faculty review and approval workflows. Accreditation evidence collection. OER licensing compliance. Peer review cycles. No state adoption — institutional governance.',
+      entities:['ContentJob','FacultyReview','CurriculumCommitteeApproval','AccreditationEvidenceCollection','OER_LicenseCheck','PeerReviewCycle','IRB_Clearance'],
+      uniqueAttrs:['Faculty Reviewer','Committee Vote Date','Accreditation Cycle','OER License Type','IRB Status'],
+      uniqueRels:['approved_by_committee','collected_for_accreditation','cleared_IRB']},
+    sharedAttrs:['Status','Priority','SLA','Owner','Quality Score','Output Format'],
+    sharedRels:['progresses_through','assigned_to','reviewed_by','publishes_to']},
+  {code:'GOV', name:'Institution & Governance', icon:7, color:'#334155', bg:'#F8FAFC', bd:'#CBD5E1',
+    desc:'Organizational hierarchy, compliance, licenses, audit trails.',
+    k12:{focus:'State DOE → District → School → Classroom. FERPA + COPPA + IDEA + ADA + ESSA. State-mandated reporting. District-level textbook adoption.',
+      entities:['StateDOE','District','School','Classroom','Policy','FERPA_Rule','COPPA_Rule','IDEA_Rule','StateReportingRequirement','TextbookAdoptionCommittee'],
+      uniqueAttrs:['District ID','School NCES Code','Title I Status','ESSA Rating','State Report Due Date','COPPA Threshold Age'],
+      uniqueRels:['reports_to_state','governed_by_district','subject_to_COPPA','rated_under_ESSA']},
+    he:{focus:'Accreditor → Institution → College → Department → Program. FERPA + ADA + Title IX. Accreditation self-study cycles. Faculty senate governance. Regional vs. specialized accreditors.',
+      entities:['AccreditationBody','Institution','College','Department','Program','FacultySenate','Board','Title_IX_Office','IRB','FERPA_Office'],
+      uniqueAttrs:['Accreditor Type (Regional/Specialized)','Self-Study Due Date','Reaffirmation Year','Carnegie Classification','IPEDS ID'],
+      uniqueRels:['accredited_by','governed_by_senate','classified_as_carnegie','reports_to_IPEDS']},
+    sharedAttrs:['Institution Type','Compliance Level','Jurisdiction','Policy Version','License Terms'],
+    sharedRels:['governed_by','complies_with','licenses_to','audits']},
+  {code:'EXP', name:'Content Experience', icon:8, color:'#0D9488', bg:'#F0FDFA', bd:'#99F6E4',
+    desc:'How content is rendered, adapted, and personalized.',
+    k12:{focus:'Reading level adaptation (Lexile targeting). IEP accommodation rendering (text-to-speech, high contrast, extended time). Device targeting for 1:1 Chromebook programs.',
+      entities:['RenderTemplate','LexileVariant','IEP_AccommodationProfile','ChromebookTarget','SimplifiedDisplay','BilingualVariant','PrintAccessibleVersion'],
+      uniqueAttrs:['Target Lexile Range','IEP Accommodation Type','Chromebook Compatibility','Bilingual Layout','Large Print Flag'],
+      uniqueRels:['accommodates_IEP','targets_lexile_range','optimized_for_chromebook']},
+    he:{focus:'Multi-modality (lecture capture, simulation, VR lab). Adaptive display based on competency level. Mobile-first for commuter students. LTI integration with LMS.',
+      entities:['RenderTemplate','ModalityVariant','LTI_Integration','SimulationRenderer','VR_LabEnvironment','MobileOptimizedView','AccessibilityProfile'],
+      uniqueAttrs:['LTI Version','Simulation Engine','VR Headset Target','Mobile Breakpoint','LMS Deep Link Pattern'],
+      uniqueRels:['integrates_via_LTI','renders_in_VR','optimized_for_mobile']},
+    sharedAttrs:['WCAG Level','Reading Grade','Media Format','Device Class','Alt Text Status'],
+    sharedRels:['renders','adapts_for','personalizes_for','falls_back_to']},
+  {code:'ANA', name:'Analytics & Intelligence', icon:9, color:'#7C3AED', bg:'#F5F3FF', bd:'#DDD6FE',
+    desc:'Learning analytics, predictive models, and alert systems.',
+    k12:{focus:'State-mandated reporting metrics. At-risk = below grade level. Growth models (SGP). Attendance as a leading indicator. District-level dashboards for board reporting.',
+      entities:['StudentGrowthPercentile','AttendanceMetric','BehaviorIncident','StateReportCard','DistrictDashboard','EarlyWarningSystem','InterventionTracker'],
+      uniqueAttrs:['SGP Score','Attendance Rate','Behavior Incident Count','State Report Card Grade','Title I Flag','Intervention Tier'],
+      uniqueRels:['triggers_intervention','reported_to_state','flagged_for_early_warning']},
+    he:{focus:'Retention/completion rates. DFW analysis. Time-to-degree. Employer outcomes. Accreditation evidence analytics. No state-mandated growth models.',
+      entities:['RetentionMetric','DFW_Rate','TimeToDegreeStat','EmployerOutcome','AccreditationEvidence','CohortAnalysis','AlumniSurveyResult','GainfulEmploymentMetric'],
+      uniqueAttrs:['Retention Rate','DFW Rate','Median Time-to-Degree','Employment Rate at 6mo','Salary Percentile','IPEDS Completion Rate'],
+      uniqueRels:['evidences_for_accreditation','reported_to_IPEDS','correlates_with_employment']},
+    sharedAttrs:['Metric Type','Aggregation Level','Time Window','Confidence','Threshold'],
+    sharedRels:['measures','predicts','triggers_alert','benchmarks_against']},
+  {code:'MKT', name:'Product & Market', icon:10, color:'#B45309', bg:'#FFFBEB', bd:'#FDE68A',
+    desc:'Products, SKUs, bundles, editions, adoptions, and market intelligence.',
+    k12:{focus:'State textbook adoption cycles (3–7 years). Correlation requirements. Basal + supplemental programs. District-level purchasing. Print + digital bundles.',
+      entities:['Product','BasalProgram','Supplement','StateAdoption','CorrelationPackage','DistrictPurchaseOrder','PrintBundle','DigitalLicense','SampleKit'],
+      uniqueAttrs:['State Adoption List','Adoption Window','Correlation Document ID','District Purchase Volume','Sample Request Count','Binding Type'],
+      uniqueRels:['adopted_in_state','correlated_to_framework','purchased_by_district']},
+    he:{focus:'Courseware licensing. OER + commercial hybrid models. Inclusive access programs. LMS integration bundles. Institutional site licenses. No state adoption — direct institutional sale.',
+      entities:['Product','CoursewareLicense','InclusiveAccessDeal','InstitutionalSiteLicense','OER_Adaptation','LMS_Bundle','MicroCredentialPackage','ContinuingEdProduct'],
+      uniqueAttrs:['License Model (Seat/Site/Concurrent)','Inclusive Access Terms','LMS Compatibility','Renewal Terms','Usage Analytics Included'],
+      uniqueRels:['licensed_to_institution','bundled_with_LMS','adapted_from_OER']},
+    sharedAttrs:['ISBN','Format','Price','Territory','Edition','Publication Date'],
+    sharedRels:['is_edition_of','bundles_with','competes_with','derived_from']},
+  {code:'META', name:'Meta-Learning & Feedback', icon:11, color:'#0D9488', bg:'#F0FDFA', bd:'#99F6E4',
+    desc:'The system\'s self-improvement — feedback, bias checks, experiments.',
+    k12:{focus:'Bias detection for culturally diverse K-12 populations. Age-appropriate content filtering. State test item performance feedback loops.',
+      entities:['BiasCheck','CulturalSensitivityAudit','AgeAppropriatenessFilter','ItemPerformanceFeedback','StateTestCalibration','TeacherFeedbackSignal'],
+      uniqueAttrs:['Cultural Sensitivity Score','Age Appropriateness Flag','State Test Calibration Delta','Teacher Satisfaction Rating'],
+      uniqueRels:['calibrated_against_state_test','flagged_by_teacher','filtered_for_age']},
+    he:{focus:'Research-informed model improvement. IRB-cleared experimentation. Faculty feedback loops. Accreditation outcome tracking for continuous improvement.',
+      entities:['ModelPerformance','FacultyFeedback','AccreditationOutcomeLoop','IRB_ClearedExperiment','LaborMarketFeedback','AlumniOutcomeSignal'],
+      uniqueAttrs:['IRB Clearance ID','Faculty Rating','Accreditation Improvement Delta','Labor Market Alignment Score','Alumni Outcome Correlation'],
+      uniqueRels:['cleared_by_IRB','improved_by_faculty_feedback','aligned_to_labor_market']},
+    sharedAttrs:['Signal Type','Confidence','Bias Score','Model Version','Experiment Status'],
+    sharedRels:['evaluates','improves','detects_bias_in','validates','closes_loop_on']},
+];
+
+// ═══ INTERCONNECTION DATA ═══
+const CONNECTIONS = {
+  'KNW→STD': {s:3, params:['concept_id','standard_id','bloom_level','dok','coverage_depth'], desc:'Every concept maps to standards that address it. In K-12, this is grade-banded (CCSS.MATH.4.NF.A.1 covers "equivalent fractions" at Bloom\'s Understand). In HE, concepts map to CLOs/PLOs at competency levels.', flow:['Concept','aligns_to','Standard','at_bloom','Level']},
+  'KNW→CNT': {s:3, params:['concept_id','content_id','coverage_depth','bloom_level','lexile_or_competency'], desc:'Content units cover concepts at varying depths (introduces/develops/masters). K-12 adds Lexile correlation. HE adds competency level.', flow:['Concept','covered_by','ContentUnit','at_depth','Coverage']},
+  'KNW→LRN': {s:2, params:['concept_id','learner_id','mastery_float','evidence_count','confidence'], desc:'Each learner has a mastery score (0–1) for each concept, backed by assessment evidence. K-12 mastery is grade-relative. HE mastery is competency-relative.', flow:['Concept','mastered_by','Learner','at_score','MasteryState']},
+  'STD→CNT': {s:3, params:['standard_id','content_id','confidence','alignment_type','verified_by'], desc:'The backbone of compliance. Every content unit must trace to ≥1 standard. K-12: state standards with crosswalk confidence. HE: CLOs with faculty verification.', flow:['Standard','aligned_by','ContentUnit','confidence','Float']},
+  'STD→ASM': {s:3, params:['standard_id','item_id','bloom_level','dok','item_count','test_blueprint_weight'], desc:'Assessment items are designed to measure specific standards. K-12: items blueprinted to state test specs. HE: items mapped to CLO attainment levels.', flow:['Standard','assessed_by','Item','at_dok','DOK Level']},
+  'STD→GOV': {s:2, params:['standard_id','authority_id','jurisdiction','status','effective_date'], desc:'Standards are published by authorities and governed by jurisdictions. K-12: state DOEs mandate standards. HE: accreditation bodies set criteria.', flow:['Standard','published_by','Authority','in','Jurisdiction']},
+  'CNT→CUR': {s:3, params:['content_id','module_id','position','pacing_week_or_credit_weight'], desc:'Content is sequenced into curriculum structures. K-12: pacing weeks within scope-and-sequence. HE: credit-weighted modules within degree pathways.', flow:['Content','belongs_to','Module','at_position','Sequence']},
+  'CNT→PIP': {s:3, params:['content_id','job_id','stage','status','quality_score','sla_hours'], desc:'Content flows through production pipelines. K-12: state adoption submission workflows. HE: faculty review and accreditation evidence collection.', flow:['Content','processed_by','Pipeline','at_stage','WorkflowStage']},
+  'CNT→EXP': {s:2, params:['content_id','variant_id','modality','wcag_level','target_device'], desc:'Content is rendered in multiple variants. K-12: Lexile-targeted, IEP-accommodated, Chromebook-optimized. HE: LTI-integrated, VR-enabled, mobile-first.', flow:['Content','rendered_as','Variant','on','Device']},
+  'CNT→MKT': {s:2, params:['content_id','product_id','isbn','territory','license_model'], desc:'Content is packaged into commercial products. K-12: state-adopted bundles with print+digital. HE: institutional licenses with inclusive access.', flow:['Content','packaged_in','Product','for','Territory']},
+  'CUR→LRN': {s:2, params:['course_id','learner_id','enrollment_status','progress_pct','grade_or_mastery'], desc:'Learners enroll in curriculum structures. K-12: grade-level assignment with intervention tiers. HE: credit enrollment with degree audit tracking.', flow:['Course','enrolls','Learner','at_progress','Percentage']},
+  'LRN→ASM': {s:3, params:['learner_id','result_id','score','mastery_achieved','proficiency_level','time_on_task'], desc:'The core measurement loop. Learner attempts assessment, system records result and updates mastery state. K-12: state test results. HE: competency demonstrations.', flow:['Learner','attempts','Assessment','produces','Result']},
+  'LRN→ANA': {s:3, params:['learner_id','risk_score','engagement_pct','trend_direction','alert_triggered'], desc:'Analytics monitors learner signals. K-12: attendance + grade-level performance + behavior. HE: retention risk + DFW probability + engagement patterns.', flow:['Learner','monitored_by','Analytics','generates','RiskScore']},
+  'ASM→ANA': {s:2, params:['assessment_id','avg_score','mastery_rate','item_difficulty_drift','bias_flag_count'], desc:'Assessment results feed aggregate analytics. K-12: state test performance trends. HE: CLO attainment rates and DFW analysis.', flow:['Assessment','feeds','Analytics','produces','AggregateStat']},
+  'PIP→GOV': {s:2, params:['pipeline_id','policy_id','compliance_status','audit_trail_id'], desc:'Pipeline stages must comply with governance policies. K-12: state adoption rules, COPPA content filtering. HE: IRB clearance, accreditation evidence standards.', flow:['Pipeline','governed_by','Policy','logged_in','AuditTrail']},
+  'ANA→META': {s:2, params:['model_id','quality_signal','bias_score','drift_magnitude','improvement_delta'], desc:'Analytics signals feed the meta-learning loop for continuous model improvement. Both contexts: bias detection, drift monitoring, quality scoring.', flow:['Analytics','feeds','MetaLearning','improves','ModelVersion']},
+  'MKT→GOV': {s:1, params:['product_id','license_id','territory','license_terms'], desc:'Products require governance approval for distribution. K-12: state adoption list inclusion. HE: institutional procurement and site licensing.', flow:['Product','licensed_via','Governance','for','Territory']},
+};
+
+// ═══ ANIMATED NUCLEUS COMPONENT ═══
+const NUCLEUS_DOMAINS = [
+  {label:'Content',color:'#0369A1',angle:0,orbitR:135,speed:0.0007,icon:'📄'},
+  {label:'Standards',color:'#047857',angle:Math.PI*0.33,orbitR:135,speed:0.0006,icon:'⭐'},
+  {label:'Learner',color:'#B45309',angle:Math.PI*0.66,orbitR:135,speed:0.0008,icon:'👤'},
+  {label:'Assessment',color:'#E11D48',angle:Math.PI,orbitR:135,speed:0.00065,icon:'📝'},
+  {label:'Curriculum',color:'#7C3AED',angle:Math.PI*1.33,orbitR:135,speed:0.00055,icon:'📚'},
+  {label:'Knowledge',color:'#4338CA',angle:Math.PI*1.66,orbitR:135,speed:0.00075,icon:'🧠'},
+  {label:'Product',color:'#B45309',angle:Math.PI*0.16,orbitR:92,speed:0.0009,icon:'💼'},
+  {label:'Experience',color:'#0D9488',angle:Math.PI*0.83,orbitR:92,speed:0.001,icon:'🎨'},
+  {label:'Pipeline',color:'#C2410C',angle:Math.PI*1.5,orbitR:92,speed:0.00085,icon:'⚙️'},
+];
+
+function OntologyNucleus({ ctx }) {
+  const canvasRef = useRef(null);
+  const wrapRef = useRef(null);
+  const nodesRef = useRef(NUCLEUS_DOMAINS.map(d=>({...d})));
+  const particlesRef = useRef([]);
+  const frameRef = useRef(0);
+  const tRef = useRef(0);
+  const [hoveredNode, setHoveredNode] = useState(null);
+  const [nodePositions, setNodePositions] = useState([]);
+  const mouseRef = useRef({x:0,y:0});
+
+  const initParticles = useCallback((W,H) => {
+    if (particlesRef.current.length >= 45) return;
+    const colors = ['#4338CA','#047857','#7C3AED','#0D9488','#B45309','#E11D48','#0369A1'];
+    while(particlesRef.current.length < 45) {
+      particlesRef.current.push({
+        x:Math.random()*W, y:Math.random()*H,
+        vx:(Math.random()-0.5)*0.22, vy:(Math.random()-0.5)*0.22,
+        r:Math.random()*1.6+0.4,
+        color:colors[Math.floor(Math.random()*colors.length)],
+        alpha:Math.random()*0.25+0.05,
+      });
+    }
+  },[]);
+
+  useEffect(()=>{
+    const canvas = canvasRef.current;
+    const wrap = wrapRef.current;
+    if(!canvas || !wrap) return;
+    const ctx2d = canvas.getContext('2d');
+    let W, H, cx, cy, dpr;
+    let running = true;
+
+    function resize(){
+      dpr = window.devicePixelRatio || 1;
+      W = wrap.clientWidth; H = wrap.clientHeight;
+      canvas.width = W*dpr; canvas.height = H*dpr;
+      canvas.style.width = W+'px'; canvas.style.height = H+'px';
+      ctx2d.setTransform(dpr,0,0,dpr,0,0);
+      cx = W/2; cy = H/2;
+      initParticles(W,H);
+    }
+
+    function draw(){
+      if(!running) return;
+      tRef.current++;
+      const t = tRef.current;
+      ctx2d.clearRect(0,0,W,H);
+
+      // Rings
+      [{r:135,c:'67,56,202',s:0.0002},{r:92,c:'13,148,136',s:-0.00015},{r:48,c:'124,58,237',s:0.00025}].forEach(ring=>{
+        ctx2d.save(); ctx2d.translate(cx,cy); ctx2d.rotate(t*ring.s*60);
+        ctx2d.beginPath(); ctx2d.arc(0,0,ring.r,0,Math.PI*2);
+        ctx2d.strokeStyle=`rgba(${ring.c},0.08)`; ctx2d.lineWidth=0.8;
+        ctx2d.setLineDash([5,8]); ctx2d.stroke(); ctx2d.restore();
+      });
+
+      // Particles
+      particlesRef.current.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+        if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+        const dx=cx-p.x, dy=cy-p.y, dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist>130){p.vx+=dx*0.000015; p.vy+=dy*0.000015;}
+        // Mouse repulsion
+        const mx=mouseRef.current.x-p.x, my=mouseRef.current.y-p.y;
+        const md=Math.sqrt(mx*mx+my*my);
+        if(md<60 && md>0){p.vx-=mx*0.0008; p.vy-=my*0.0008;}
+        ctx2d.beginPath(); ctx2d.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx2d.fillStyle=p.color;
+        ctx2d.globalAlpha=p.alpha*(0.5+0.5*Math.sin(t*0.0012+p.x));
+        ctx2d.fill(); ctx2d.globalAlpha=1;
+      });
+
+      // Connection lines from nodes to center
+      const nodes = nodesRef.current;
+      const positions = [];
+      nodes.forEach((n,i)=>{
+        n.angle += n.speed;
+        const nx = cx + Math.cos(n.angle)*n.orbitR;
+        const ny = cy + Math.sin(n.angle)*n.orbitR;
+        positions.push({x:nx, y:ny});
+
+        // Line to center with gradient
+        const grad = ctx2d.createLinearGradient(cx,cy,nx,ny);
+        grad.addColorStop(0, n.color+'08');
+        grad.addColorStop(1, n.color+'30');
+        ctx2d.beginPath(); ctx2d.moveTo(cx,cy); ctx2d.lineTo(nx,ny);
+        ctx2d.strokeStyle=grad; ctx2d.lineWidth= hoveredNode===i ? 2 : 0.7;
+        ctx2d.setLineDash([]); ctx2d.stroke();
+
+        // Lines between adjacent nodes
+        const next = nodes[(i+1)%nodes.length];
+        const nnx = cx + Math.cos(next.angle)*next.orbitR;
+        const nny = cy + Math.sin(next.angle)*next.orbitR;
+        ctx2d.beginPath(); ctx2d.moveTo(nx,ny); ctx2d.lineTo(nnx,nny);
+        ctx2d.strokeStyle = n.color+'0A'; ctx2d.lineWidth=0.4;
+        ctx2d.setLineDash([3,5]); ctx2d.stroke();
+      });
+
+      // Core glow
+      const pulse = 1 + Math.sin(t*0.002)*0.12;
+      const g = ctx2d.createRadialGradient(cx,cy,0,cx,cy,44*pulse);
+      g.addColorStop(0,'rgba(67,56,202,0.06)');
+      g.addColorStop(0.5,'rgba(13,148,136,0.03)');
+      g.addColorStop(1,'transparent');
+      ctx2d.beginPath(); ctx2d.arc(cx,cy,44*pulse,0,Math.PI*2);
+      ctx2d.fillStyle=g; ctx2d.fill();
+
+      // Hovered node highlight ring
+      if(hoveredNode !== null && positions[hoveredNode]){
+        const hp = positions[hoveredNode];
+        const hg = ctx2d.createRadialGradient(hp.x,hp.y,0,hp.x,hp.y,28);
+        hg.addColorStop(0, nodes[hoveredNode].color+'20');
+        hg.addColorStop(1, 'transparent');
+        ctx2d.beginPath(); ctx2d.arc(hp.x,hp.y,28,0,Math.PI*2);
+        ctx2d.fillStyle=hg; ctx2d.fill();
+      }
+
+      setNodePositions(positions);
+      frameRef.current = requestAnimationFrame(draw);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    frameRef.current = requestAnimationFrame(draw);
+
+    return ()=>{
+      running = false;
+      cancelAnimationFrame(frameRef.current);
+      window.removeEventListener('resize', resize);
+    };
+  },[initParticles, hoveredNode]);
+
+  const handleMouseMove = useCallback((e)=>{
+    const rect = wrapRef.current?.getBoundingClientRect();
+    if(rect){
+      mouseRef.current = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+    }
+  },[]);
+
+  const coreStyle = {
+    position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)',
+    width:78, height:78, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+    background:'#fff', border:'2px solid #E0DDD6', zIndex:3,
+    boxShadow:'0 0 0 4px rgba(67,56,202,0.06), 0 4px 16px rgba(0,0,0,0.06)',
+  };
+
+  const isK12 = ctx === 'k12';
+
+  return (
+    <div ref={wrapRef} onMouseMove={handleMouseMove}
+      style={{position:'relative',height:400,cursor:'default',userSelect:'none'}}>
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',zIndex:1}}/>
+
+      {/* Core */}
+      <div style={coreStyle}>
+        <div style={{textAlign:'center',fontFamily:"'Source Serif 4',serif",fontSize:10,fontWeight:700,color:'#4338CA',lineHeight:1.2,letterSpacing:'.04em'}}>
+          KADAL<br/>ONTOLOGY
+        </div>
+      </div>
+
+      {/* Orbiting domain labels */}
+      {nodePositions.map((pos,i)=>{
+        const n = nodesRef.current[i];
+        if(!n || !pos) return null;
+        const isHovered = hoveredNode === i;
+        return (
+          <div key={i}
+            onMouseEnter={()=>setHoveredNode(i)}
+            onMouseLeave={()=>setHoveredNode(null)}
+            style={{
+              position:'absolute', left:pos.x-17, top:pos.y-17,
+              zIndex: isHovered ? 10 : 4, pointerEvents:'auto',
+              display:'flex', flexDirection:'column', alignItems:'center',
+              transition:'transform 0.3s cubic-bezier(.34,1.56,.64,1)',
+              transform: isHovered ? 'scale(1.35)' : 'scale(1)',
+              cursor:'pointer',
+            }}>
+            <div style={{
+              width:34, height:34, borderRadius:'50%',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              fontSize:14,
+              background:'#fff', border:`2px solid ${n.color}30`,
+              boxShadow: isHovered
+                ? `0 6px 20px ${n.color}25, 0 0 0 3px ${n.color}15`
+                : `0 2px 8px rgba(0,0,0,0.08)`,
+              transition:'all 0.3s',
+            }}>
+              {DOMAIN_ICONS[i] ? <span style={{color:n.color,display:'flex'}}>{DOMAIN_ICONS[i]}</span> : n.icon}
+            </div>
+            <div style={{
+              fontFamily:"'Fira Code',monospace", fontSize:7, fontWeight:500,
+              letterSpacing:'.05em', textTransform:'uppercase', marginTop:3,
+              color: isHovered ? n.color : '#A8A29E',
+              opacity: isHovered ? 1 : 0, transition:'all 0.2s',
+              textShadow:'0 1px 3px rgba(255,255,255,0.8)',
+              whiteSpace:'nowrap',
+            }}>
+              {n.label}
+            </div>
+            {/* Tooltip on hover */}
+            {isHovered && (
+              <div style={{
+                position:'absolute', top:-40, left:'50%', transform:'translateX(-50%)',
+                background:'#1C1917', color:'#fff', padding:'4px 10px', borderRadius:6,
+                fontFamily:"'Fira Code',monospace", fontSize:8, fontWeight:500,
+                whiteSpace:'nowrap', boxShadow:'0 4px 12px rgba(0,0,0,0.15)',
+                animation:'fadeIn 0.15s ease',
+              }}>
+                {isK12
+                  ? {Content:'Chapters · Lessons · Workbooks',Standards:'CCSS · NGSS · State Frameworks',Learner:'IEP/504 · Lexile · Grade Band',Assessment:'State Tests · DOK · Mastery',Curriculum:'Scope & Sequence · Pacing',Knowledge:'Prerequisite Lattice · Concepts',Product:'Adoptions · Print+Digital',Experience:'Lexile Variants · Chromebook',Pipeline:'State Adoption Workflows'}[n.label]
+                  : {Content:'Courseware · OER · Simulations',Standards:'CLOs · PLOs · Accreditation',Learner:'Credits · GPA · Degree Audit',Assessment:'Portfolios · Licensure Prep',Curriculum:'Credit Modules · Pathways',Knowledge:'Competencies · O*NET Skills',Product:'Site Licenses · Micro-Creds',Experience:'LTI · VR Labs · Mobile',Pipeline:'Faculty Review · IRB'}[n.label]
+                }
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      <style>{`@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`}</style>
+    </div>
+  );
+}
+
+// ═══ COMPONENT ═══
+function KadalOS() {
+  const [ctx, setCtx] = useState('k12');
+  const [tab, setTab] = useState('ai');
+  const [selectedConn, setSelectedConn] = useState(null);
+  const [expandedDomain, setExpandedDomain] = useState(null);
+
+  const isK12 = ctx === 'k12';
+  const ctxColor = isK12 ? '#047857' : '#7C3AED';
+  const ctxBg = isK12 ? '#ECFDF5' : '#F5F3FF';
+  const ctxBd = isK12 ? '#A7F3D0' : '#DDD6FE';
+  const ctxLabel = isK12 ? 'K–12 Education' : 'HE + Workforce';
+
+  const tabs = [
+    {id:'ai', label:'AI × Ontology'},
+    {id:'diff', label:'K-12 vs HE Differences'},
+    {id:'connect', label:'Interconnections'},
+    {id:'domains', label:'Living Ontology'},
+    {id:'schema', label:'Database & Schema'},
+  ];
+
+  const CAPS = isK12 ? [
+    {icon:I.search, title:'Standards-Aligned Discovery', color:'#4338CA', desc:'"Grade 5 passages covering fractions but not equivalents, Lexile 600–700" — a graph traversal across concept nodes, standard edges, and Lexile attributes. Not keyword search.', pills:['CCSS traversal','Lexile filter','Gap-aware','Grade-band scoped']},
+    {icon:I.globe, title:'50-State Re-Alignment', color:'#047857', desc:'When Texas rewrites TEKS, the ontology\'s crosswalk edges auto-propagate. Re-align your K-12 catalog in hours, with confidence scores and human-review routing for low-confidence edges.', pills:['Auto-crosswalk','State frameworks','CCSS/NGSS','Confidence scoring']},
+    {icon:I.link, title:'Derivative Generation', color:'#7C3AED', desc:'From one master lesson, generate Spanish edition, audio, simplified reading level, teacher guide, workbook — all semantically linked, auto-aligned, diff-tracked.', pills:['Localization','Lexile variants','Teacher ed.','Workbook']},
+    {icon:I.target, title:'IEP-Aware Personalization', color:'#B45309', desc:'The concept prerequisite graph + IEP/504 accommodation profiles enable truly adaptive paths that respect each student\'s learning plan. Not just "next chapter."', pills:['IEP/504','Mastery gates','Remediation','Developmental']},
+    {icon:I.shield, title:'DOK & Bloom\'s Audit', color:'#E11D48', desc:'"Chapter 7 has zero DOK-3 problems for RI.5.6." AI continuously monitors Bloom\'s coverage, DOK distribution, readability, and accessibility — across the entire catalog.', pills:["Bloom's audit",'DOK distribution','Bias scan','WCAG check']},
+    {icon:I.briefcase, title:'Adoption Intelligence', color:'#0D9488', desc:'"Which states adopted our Grade 4 Science vs. competitor X?" — from the ontology\'s adoption edges and product nodes, not a 3-month research project.', pills:['State adoption','Competitive','Coverage map','Bundle intel']},
+  ] : [
+    {icon:I.search, title:'Competency-Mapped Discovery', color:'#4338CA', desc:'"OER covering thermodynamics aligned to ABET Criterion 3a-k and ACS program outcomes" — semantic graph traversal across CLO nodes, accreditation edges, and competency attributes.', pills:['CLO/PLO mapping','Competency','OER discovery','Program outcome']},
+    {icon:I.globe, title:'Accreditation Evidence Engine', color:'#047857', desc:'Auto-map every course artifact to HLC criteria, SACSCOC standards, or specialized accreditors like ABET/ACBSP. Generate evidence portfolios for self-study in hours, not months.', pills:['HLC mapping','ABET criteria','Evidence portfolio','Self-study']},
+    {icon:I.link, title:'Micro-Credential Derivatives', color:'#7C3AED', desc:'From a full course, generate stackable micro-credentials, badge pathways, CE modules, and certificate programs — all linked to the master, all carrying CLO/PLO alignment.', pills:['Micro-credentials','Badges','CE modules','Stackable']},
+    {icon:I.target, title:'Career Pathway Personalization', color:'#B45309', desc:'Link program outcomes to O*NET skill codes and labor market data. Students see how each course connects to specific careers and industry certifications.', pills:['O*NET skills','Labor market','Degree audit','Career pathways']},
+    {icon:I.shield, title:'Program Review Intelligence', color:'#E11D48', desc:'AI aggregates CLO attainment rates, DFW patterns, time-to-degree, retention curves, and employer outcomes for every program. Board-ready visualizations.', pills:['CLO attainment','DFW analysis','Time-to-degree','Employer outcomes']},
+    {icon:I.briefcase, title:'Workforce Alignment', color:'#0D9488', desc:'"Which programs produce graduates with the top 10 skills employers in this metro demand?" — a graph query across O*NET, EMSI, and program outcome nodes.', pills:['EMSI skills','Employer demand','Gap analysis','Regional intel']},
+  ];
+
+  // Difference dimensions for the comparison view
+  const DIFF_DIMS = [
+    {dim:'Standards Authority', k12:'State DOEs mandate standards (CCSS, NGSS, TEKS). 50+ jurisdictions. Standards are grade-banded and externally imposed.', he:'Institutions define CLOs/PLOs. Accreditation bodies (HLC, SACSCOC, ABET) set criteria. Faculty governance over curriculum content.', icon:I.star},
+    {dim:'Learner Model', k12:'Grade level, Lexile score, developmental stage, IEP/504 accommodations, COPPA-protected identity, parent/guardian linkage.', he:'Credits earned, GPA, degree audit status, prior learning assessment, transfer credits, workforce skill inventory (O*NET), advisor assignment.', icon:I.user},
+    {dim:'Curriculum Structure', k12:'Scope-and-sequence with pacing guides tied to grade bands and state testing windows. Prerequisites implicit in grade progression.', he:'Credit-hour modules with prerequisite GPA requirements, elective pools, degree pathways, clinical rotations, capstone/thesis tracks.', icon:I.book},
+    {dim:'Assessment Model', k12:'Formative/summative + state standardized tests. DOK/Bloom\'s drive item design. Mastery = proficiency on grade-level standards.', he:'Competency-based, portfolio/capstone evaluation, licensure exam prep. No cross-institutional standardized testing. Mastery = CLO attainment.', icon:I.check},
+    {dim:'Content Derivatives', k12:'Student edition, teacher edition, workbook, test bank, Spanish edition, simplified reading level, audio version, IEP-accessible variant.', he:'Micro-credentials, stackable certificates, CE modules, OER adaptations, course-to-badge pathways, LMS-integrated courseware.', icon:I.file},
+    {dim:'Institutional Hierarchy', k12:'State DOE → District → School → Classroom. State mandates curriculum, testing, and reporting. District adopts textbooks.', he:'Accreditor → Institution → College → Department → Program. Faculty senate governs curriculum. Accreditor sets the floor, not the ceiling.', icon:I.building},
+    {dim:'Compliance Framework', k12:'FERPA + COPPA + IDEA + ADA + ESSA. State-mandated reporting calendars. Title I accountability. COPPA age thresholds.', he:'FERPA + ADA + Title IX + IRB. Accreditation self-study cycles (5–10 year). IPEDS reporting. Gainful employment disclosures.', icon:I.shield},
+    {dim:'Pipeline & Publishing', k12:'State adoption review cycles (3–7 years). Correlation documents per state. Print+digital dual publication. Readability gates.', he:'Faculty review and curriculum committee approval. Accreditation evidence collection. OER licensing compliance. No state adoption.', icon:I.settings},
+  ];
+
+  const DOM_CODES = DOMAINS.map(d=>d.code);
+
+  function getConnStrength(a,b) {
+    const k = a+'→'+b;
+    const k2 = b+'→'+a;
+    return CONNECTIONS[k]?.s || CONNECTIONS[k2]?.s || 0;
+  }
+  function getConn(a,b) {
+    return CONNECTIONS[a+'→'+b] || CONNECTIONS[b+'→'+a] || null;
+  }
+
+  const sty = {
+    page: {background:'#FAFAF8', minHeight:'100vh', fontFamily:"'Red Hat Display', sans-serif", color:'#1C1917', fontSize:15, lineHeight:1.65, WebkitFontSmoothing:'antialiased'},
+    hero: {background:'#fff', borderBottom:'1px solid #E0DDD6', position:'relative', overflow:'hidden'},
+    heroInner: {maxWidth:1180, margin:'0 auto', padding:'56px 44px 48px', position:'relative', zIndex:2},
+    badge: {display:'inline-flex', alignItems:'center', gap:8, padding:'5px 14px', borderRadius:20, background:ctxBg, border:`1px solid ${ctxBd}`, marginBottom:16},
+    h1: {fontFamily:"'Source Serif 4', Georgia, serif", fontSize:'clamp(28px, 3.2vw, 44px)', fontWeight:700, lineHeight:1.12, letterSpacing:'-.01em', marginBottom:12},
+    sub: {fontSize:15.5, color:'#44403C', maxWidth:560, lineHeight:1.7, fontWeight:300, marginBottom:24},
+    toggle: {display:'flex', background:'#F3F2EF', border:'1px solid #E0DDD6', borderRadius:10, padding:3, width:'fit-content', marginBottom:20},
+    toggleBtn: (on) => ({padding:'7px 20px', borderRadius:7, border:'none', background: on ? '#4338CA' : 'transparent', fontFamily:'inherit', fontSize:12, fontWeight:600, color: on ? '#fff' : '#78716C', cursor:'pointer', transition:'all .2s'}),
+    nav: {position:'sticky', top:0, zIndex:100, background:'rgba(255,255,255,.92)', backdropFilter:'blur(16px)', borderBottom:'1px solid #E0DDD6', padding:'0 44px'},
+    navInner: {maxWidth:1180, margin:'0 auto', display:'flex', gap:0, overflowX:'auto'},
+    navBtn: (on) => ({display:'flex', alignItems:'center', gap:6, padding:'12px 16px', fontSize:12.5, fontWeight: on ? 600 : 500, color: on ? '#4338CA' : '#A8A29E', cursor:'pointer', border:'none', borderBottom: on ? '2px solid #4338CA' : '2px solid transparent', background:'none', fontFamily:'inherit', whiteSpace:'nowrap', transition:'all .15s'}),
+    wrap: {maxWidth:1180, margin:'0 auto', padding:'44px 44px 80px'},
+    secHead: {marginBottom:32},
+    label: {fontFamily:"'Fira Code', monospace", fontSize:10, fontWeight:500, letterSpacing:'.12em', textTransform:'uppercase', color:'#4338CA', marginBottom:5},
+    h2: {fontFamily:"'Source Serif 4', serif", fontSize:26, fontWeight:700, color:'#1C1917', lineHeight:1.2, marginBottom:6},
+    p: {color:'#44403C', maxWidth:600, fontSize:14, lineHeight:1.7, fontWeight:300},
+    ctxBadge: {display:'inline-flex', alignItems:'center', gap:6, fontFamily:"'Fira Code', monospace", fontSize:9, fontWeight:500, letterSpacing:'.08em', textTransform:'uppercase', padding:'3px 10px', borderRadius:12, background:ctxBg, border:`1px solid ${ctxBd}`, color:ctxColor, marginBottom:12},
+    card: (color, bd) => ({background:'#fff', border:`1px solid ${bd || '#E0DDD6'}`, borderRadius:12, overflow:'hidden', transition:'all .25s', cursor:'default'}),
+    cardBar: (color) => ({height:3, background:color}),
+    cardBody: {padding:'20px 22px'},
+    iconBox: (bg, bd) => ({width:38, height:38, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', background:bg, border:`1px solid ${bd}`, color: bg === '#EEF2FF' ? '#4338CA' : undefined, flexShrink:0, transition:'all .25s'}),
+    pill: (bg, bd, color) => ({fontFamily:"'Fira Code', monospace", fontSize:8, fontWeight:500, padding:'2px 8px', borderRadius:12, background:bg, border:`1px solid ${bd}`, color}),
+    mono: {fontFamily:"'Fira Code', monospace"},
+    matrix: {background:'#fff', border:'1px solid #E0DDD6', borderRadius:14, padding:24, marginBottom:24},
+  };
+
+  return (
+    <div style={sty.page}>
+      <div id="sbar" style={{position:'fixed',top:0,left:0,height:2,background:'linear-gradient(90deg,#4338CA,#0D9488)',zIndex:999,width:'0%',transition:'width .08s linear'}}/>
+
+      {/* HERO */}
+      <div style={sty.hero}>
+        <div style={{position:'absolute',top:-200,right:-150,width:600,height:600,borderRadius:'50%',background:'radial-gradient(circle,rgba(67,56,202,.04),transparent 65%)',pointerEvents:'none'}}/>
+        <div style={{position:'absolute',bottom:-150,left:-100,width:450,height:450,borderRadius:'50%',background:'radial-gradient(circle,rgba(13,148,136,.03),transparent 65%)',pointerEvents:'none'}}/>
+        <div style={{...sty.heroInner, display:'grid', gridTemplateColumns:'1fr 400px', gap:48, alignItems:'center'}}>
+          <div>
+            <div style={sty.badge}>
+              <div style={{width:6,height:6,borderRadius:'50%',background:ctxColor}}/>
+              <span style={{...sty.mono, fontSize:10, fontWeight:500, letterSpacing:'.07em', textTransform:'uppercase', color:ctxColor}}>Kadal OS · {ctxLabel}</span>
+            </div>
+            <h1 style={sty.h1}>
+              The Ontology That <em style={{fontStyle:'italic',fontWeight:300,color:'#0D9488'}}>Understands</em> Education
+            </h1>
+            <p style={sty.sub}>12 domains, 200+ entities, 80+ semantic relationships — with fundamentally different structures for K-12 and Higher Education. The same ontological spine, radically different attribute profiles.</p>
+            <div style={sty.toggle}>
+              <button style={sty.toggleBtn(ctx==='k12')} onClick={()=>setCtx('k12')}>K–12</button>
+              <button style={sty.toggleBtn(ctx==='he')} onClick={()=>setCtx('he')}>HE + Workforce</button>
+            </div>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              {[{n:'12',l:'Domains'},{n:'200+',l:'Entities'},{n:'600+',l:'Properties'},{n:'80+',l:'Relations'},{n:'24',l:'AI Agents'}].map((s,i)=>(
+                <div key={i} style={{textAlign:'center',padding:'10px 14px',background:'#fff',border:'1px solid #E0DDD6',borderRadius:8,minWidth:64,cursor:'default',transition:'all .2s'}}>
+                  <div style={{fontFamily:"'Source Serif 4',serif",fontSize:20,fontWeight:700,color:'#4338CA',lineHeight:1}}>{s.n}</div>
+                  <div style={{fontSize:8.5,color:'#A8A29E',marginTop:1,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase'}}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <OntologyNucleus ctx={ctx} />
+        </div>
+      </div>
+
+      {/* NAV */}
+      <nav style={sty.nav}><div style={sty.navInner}>
+        {tabs.map(t=>(
+          <button key={t.id} style={sty.navBtn(tab===t.id)} onClick={()=>setTab(t.id)}>{t.label}</button>
+        ))}
+      </div></nav>
+
+      <div style={sty.wrap}>
+
+        {/* ═══ AI × ONTOLOGY ═══ */}
+        {tab==='ai' && (
+          <div>
+            <div style={sty.ctxBadge}>{ctxLabel}</div>
+            <div style={sty.secHead}>
+              <div style={sty.label}>01 · AI × Ontology</div>
+              <h2 style={sty.h2}>What AI Can Do Because the Ontology Exists</h2>
+              <p style={sty.p}>{isK12 ? 'In K–12, the ontology tracks grade bands, state standards, IEP accommodations, Lexile levels, and developmental progressions — giving AI the structure to auto-align, adapt, and personalize at scale.' : 'In HE + Workforce, the ontology maps credit hours, accreditation criteria, competency frameworks, CLOs/PLOs, O*NET skill codes, and career pathways — giving AI the structure to map, evidence, and connect.'}</p>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(340px,1fr))',gap:12}}>
+              {CAPS.map((c,i)=>(
+                <div key={i} style={sty.card(c.color)}>
+                  <div style={sty.cardBar(c.color)}/>
+                  <div style={sty.cardBody}>
+                    <div style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:10}}>
+                      <div style={{...sty.iconBox(c.color+'12', c.color+'30'), color:c.color}}>{c.icon}</div>
+                      <div style={{fontFamily:"'Source Serif 4',serif",fontSize:15,fontWeight:600,color:'#1C1917',lineHeight:1.3}}>{c.title}</div>
+                    </div>
+                    <div style={{fontSize:12.5,color:'#78716C',lineHeight:1.55,marginBottom:12}}>{c.desc}</div>
+                    <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+                      {c.pills.map((p,j)=><span key={j} style={sty.pill(c.color+'10',c.color+'25',c.color)}>{p}</span>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ K-12 vs HE DIFFERENCES ═══ */}
+        {tab==='diff' && (
+          <div>
+            <div style={sty.secHead}>
+              <div style={sty.label}>02 · Structural Differences</div>
+              <h2 style={sty.h2}>What's Actually Different Between K-12 and HE</h2>
+              <p style={sty.p}>These aren't cosmetic differences — they're structural. The same ontological spine carries fundamentally different attribute profiles, entity types, compliance rules, and AI behaviors.</p>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:12}}>
+              {DIFF_DIMS.map((d,i)=>(
+                <div key={i} style={{background:'#fff',border:'1px solid #E0DDD6',borderRadius:12,overflow:'hidden'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:0}}>
+                    {/* K-12 side */}
+                    <div style={{padding:'20px 24px',borderRight:'1px solid #E0DDD6'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                        <div style={{color:'#047857',flexShrink:0}}>{d.icon}</div>
+                        <div>
+                          <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:'#047857'}}>K–12</div>
+                          <div style={{fontFamily:"'Source Serif 4',serif",fontSize:14,fontWeight:600,color:'#1C1917'}}>{d.dim}</div>
+                        </div>
+                      </div>
+                      <div style={{fontSize:13,color:'#44403C',lineHeight:1.55}}>{d.k12}</div>
+                    </div>
+                    {/* HE side */}
+                    <div style={{padding:'20px 24px',background:'#FDFCFB'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                        <div style={{color:'#7C3AED',flexShrink:0}}>{d.icon}</div>
+                        <div>
+                          <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:'#7C3AED'}}>HE + Workforce</div>
+                          <div style={{fontFamily:"'Source Serif 4',serif",fontSize:14,fontWeight:600,color:'#1C1917'}}>{d.dim}</div>
+                        </div>
+                      </div>
+                      <div style={{fontSize:13,color:'#44403C',lineHeight:1.55}}>{d.he}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ INTERCONNECTIONS ═══ */}
+        {tab==='connect' && (
+          <div>
+            <div style={sty.secHead}>
+              <div style={sty.label}>03 · Domain Interconnections</div>
+              <h2 style={sty.h2}>How Domains Talk to Each Other</h2>
+              <p style={sty.p}>Click any cell to see the shared parameters, semantic contract, and data flow between two domains. Darker cells = stronger relationships.</p>
+            </div>
+            <div style={sty.matrix}>
+              <div style={{display:'grid',gridTemplateColumns:`80px repeat(${DOM_CODES.length},1fr)`,gap:2,marginBottom:20}}>
+                <div/>
+                {DOM_CODES.map((c,j)=>(
+                  <div key={j} style={{...sty.mono,fontSize:7.5,fontWeight:500,color:'#A8A29E',textAlign:'center',padding:'4px 0',writingMode:'vertical-lr',transform:'rotate(180deg)',height:48,display:'flex',alignItems:'center',justifyContent:'center'}}>{c}</div>
+                ))}
+                {DOM_CODES.map((r,i)=>(
+                  <>
+                    <div key={'rh'+i} style={{...sty.mono,fontSize:8,fontWeight:500,color:'#78716C',display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:8}}>{r}</div>
+                    {DOM_CODES.map((c,j)=>{
+                      if(i===j) return <div key={i+'-'+j} style={{background:'#F3F2EF',borderRadius:3,height:28}}/>;
+                      const s = getConnStrength(r,c);
+                      const opacity = s===0?0:s===1?.1:s===2?.25:.5;
+                      const isSelected = selectedConn && ((selectedConn[0]===r && selectedConn[1]===c) || (selectedConn[0]===c && selectedConn[1]===r));
+                      return <div key={i+'-'+j} onClick={()=>setSelectedConn([r,c])} style={{background:`rgba(67,56,202,${opacity})`,borderRadius:3,height:28,cursor: s>0 ? 'pointer':'default',transition:'all .15s',border: isSelected ? '2px solid #4338CA' : '2px solid transparent',transform: isSelected ? 'scale(1.1)' : 'scale(1)'}}/>;
+                    })}
+                  </>
+                ))}
+              </div>
+              {/* Detail panel */}
+              <div style={{background:'#FAFAF8',border:'1px solid #E0DDD6',borderRadius:10,padding:20,minHeight:80}}>
+                {!selectedConn || !getConn(selectedConn[0],selectedConn[1]) ? (
+                  <div style={{textAlign:'center',color:'#A8A29E',fontSize:13,padding:16,fontStyle:'italic'}}>Click a colored cell above to explore how two domains connect</div>
+                ) : (()=>{
+                  const conn = getConn(selectedConn[0], selectedConn[1]);
+                  const ai = DOM_CODES.indexOf(selectedConn[0]);
+                  const bi = DOM_CODES.indexOf(selectedConn[1]);
+                  return (
+                    <div>
+                      <div style={{fontFamily:"'Source Serif 4',serif",fontSize:17,fontWeight:600,marginBottom:3}}>{DOMAINS[ai].name} ↔ {DOMAINS[bi].name}</div>
+                      <div style={{...sty.mono,fontSize:9.5,color:'#78716C',marginBottom:14}}>
+                        Strength: {'●'.repeat(conn.s)}{'○'.repeat(3-conn.s)} · {conn.params.length} shared parameters
+                      </div>
+                      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:8,marginBottom:14}}>
+                        {conn.params.map((p,i)=>(
+                          <div key={i} style={{background:'#fff',border:'1px solid #E0DDD6',borderRadius:6,padding:'8px 10px'}}>
+                            <div style={{...sty.mono,fontSize:7.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:'#A8A29E',marginBottom:2}}>Parameter</div>
+                            <div style={{...sty.mono,fontSize:11,fontWeight:500,color:'#1C1917'}}>{p}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{fontSize:13,color:'#44403C',lineHeight:1.6,marginBottom:14}}>{conn.desc}</div>
+                      <div style={{...sty.mono,fontSize:8.5,color:'#A8A29E',letterSpacing:'.06em',textTransform:'uppercase',marginBottom:6}}>Data Flow</div>
+                      <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
+                        {conn.flow.map((n,i)=>(
+                          <React.Fragment key={i}>
+                            <span style={{...sty.mono,fontSize:10,fontWeight:500,padding:'4px 10px',borderRadius:6,background: i===0 ? DOMAINS[ai].bg : i===conn.flow.length-1 ? DOMAINS[bi].bg : '#F3F2EF',border:`1px solid ${i===0 ? DOMAINS[ai].bd : i===conn.flow.length-1 ? DOMAINS[bi].bd : '#E0DDD6'}`,color: i===0 ? DOMAINS[ai].color : i===conn.flow.length-1 ? DOMAINS[bi].color : '#44403C'}}>{n}</span>
+                            {i < conn.flow.length-1 && <span style={{color:'#D6D3D1'}}>{I.arrowR}</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ LIVING ONTOLOGY ═══ */}
+        {tab==='domains' && (
+          <div>
+            <div style={sty.ctxBadge}>{ctxLabel}</div>
+            <div style={sty.secHead}>
+              <div style={sty.label}>04 · Living Ontology</div>
+              <h2 style={sty.h2}>Twelve Domains — Context-Specific Detail</h2>
+              <p style={sty.p}>Click any domain to see how its entities, attributes, and relationships differ between K-12 and HE contexts. Green = shared. Colored = context-specific.</p>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(370px,1fr))',gap:12}}>
+              {DOMAINS.map((d,i)=>{
+                const isOpen = expandedDomain === i;
+                const ctxData = isK12 ? d.k12 : d.he;
+                return (
+                  <div key={i} onClick={()=>setExpandedDomain(isOpen?null:i)} style={{...sty.card(d.color, d.bd),cursor:'pointer',borderColor: isOpen ? d.bd : '#E0DDD6'}}>
+                    <div style={{height:3,background:d.color}}/>
+                    <div style={{padding:'18px 20px'}}>
+                      <div style={{display:'flex',alignItems:'flex-start',gap:12,marginBottom:6}}>
+                        <div style={{...sty.iconBox(d.bg,d.bd),color:d.color}}>{DOMAIN_ICONS[d.icon]}</div>
+                        <div>
+                          <div style={{...sty.mono,fontSize:9,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:d.color}}>{d.code}</div>
+                          <div style={{fontFamily:"'Source Serif 4',serif",fontSize:14.5,fontWeight:600,color:'#1C1917',lineHeight:1.25}}>{d.name}</div>
+                        </div>
+                        <div style={{marginLeft:'auto',color:'#D6D3D1',transform:isOpen?'rotate(180deg)':'none',transition:'transform .2s'}}>{I.chevDown}</div>
+                      </div>
+                      <div style={{fontSize:12,color:'#78716C',lineHeight:1.5,marginBottom:8}}>{ctxData.focus}</div>
+                      <div style={{display:'flex',flexWrap:'wrap',gap:3}}>
+                        {ctxData.entities.slice(0,6).map((e,j)=><span key={j} style={{...sty.mono,fontSize:8,fontWeight:500,padding:'2px 6px',borderRadius:3,background:d.bg,border:`1px solid ${d.bd}`,color:d.color}}>{e}</span>)}
+                        {ctxData.entities.length > 6 && <span style={{...sty.mono,fontSize:8,color:'#A8A29E'}}>+{ctxData.entities.length-6}</span>}
+                      </div>
+                      {!isOpen && <div style={{...sty.mono,fontSize:7.5,color:'#D6D3D1',textAlign:'right',marginTop:4}}>Click to expand</div>}
+                    </div>
+                    {isOpen && (
+                      <div style={{padding:'0 20px 18px',borderTop:'1px solid #E0DDD6',marginTop:0,paddingTop:14}}>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:10}}>
+                          <div>
+                            <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:ctxColor,marginBottom:4}}>Context-Specific Attributes</div>
+                            {ctxData.uniqueAttrs.map((a,j)=><div key={j} style={{fontSize:11.5,color:'#44403C',padding:'1.5px 0',display:'flex',alignItems:'center',gap:4}}><span style={{color:ctxColor,fontSize:9}}>●</span>{a}</div>)}
+                          </div>
+                          <div>
+                            <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:ctxColor,marginBottom:4}}>Context-Specific Relations</div>
+                            {ctxData.uniqueRels.map((r,j)=><div key={j} style={{...sty.mono,fontSize:10,color:'#44403C',padding:'1.5px 0',display:'flex',alignItems:'center',gap:4}}><span style={{color:ctxColor,fontSize:9}}>●</span>{r}</div>)}
+                          </div>
+                        </div>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                          <div>
+                            <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:'#047857',marginBottom:4}}>Shared Attributes</div>
+                            {d.sharedAttrs.map((a,j)=><div key={j} style={{fontSize:11.5,color:'#78716C',padding:'1.5px 0',display:'flex',alignItems:'center',gap:4}}><span style={{color:'#047857',fontSize:9}}>○</span>{a}</div>)}
+                          </div>
+                          <div>
+                            <div style={{...sty.mono,fontSize:8.5,fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',color:'#047857',marginBottom:4}}>Shared Relations</div>
+                            {d.sharedRels.map((r,j)=><div key={j} style={{...sty.mono,fontSize:10,color:'#78716C',padding:'1.5px 0',display:'flex',alignItems:'center',gap:4}}><span style={{color:'#047857',fontSize:9}}>○</span>{r}</div>)}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ DATABASE & SCHEMA ═══ */}
+        {tab==='schema' && (
+          <div>
+            <div style={sty.secHead}>
+              <div style={sty.label}>05 · Database Architecture</div>
+              <h2 style={sty.h2}>The Schema Behind the Ontology</h2>
+              <p style={sty.p}>Every ontological entity maps to typed, versioned, indexed database tables. These are the actual contracts that AI agents read and write.</p>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(340px,1fr))',gap:12}}>
+              {[
+                {name:'content_units',color:'#0369A1',fields:['id UUID PK','title VARCHAR','body TEXT','media_type ENUM IDX','lexile INT','bloom ENUM IDX','dok INT','version INT','status ENUM IDX','wcag ENUM','parent_id UUID FK','kg_node UUID FK']},
+                {name:'standards',color:'#047857',fields:['id UUID PK','authority VARCHAR IDX','code VARCHAR UNQ','statement TEXT','grade_band VARCHAR IDX','subject VARCHAR IDX','framework ENUM','parent_id UUID FK','depth INT','is_leaf BOOL','status ENUM']},
+                {name:'learner_profiles',color:'#B45309',fields:['id UUID PK','user_id UUID FK','grade INT IDX','reading_lvl FLOAT','mastery JSONB','risk FLOAT IDX','engagement FLOAT','modality ENUM','cohort_id UUID FK','last_active TIMESTAMPTZ']},
+                {name:'assessment_results',color:'#E11D48',fields:['id UUID PK','learner_id UUID FK','assess_id UUID FK','score FLOAT','mastery BOOL IDX','proficiency ENUM','time_s INT','responses JSONB','created_at TIMESTAMPTZ IDX']},
+                {name:'knowledge_nodes',color:'#7C3AED',fields:['id UUID PK','entity_type ENUM IDX','entity_id UUID FK','embedding VEC(1536) ANN','label VARCHAR','props JSONB','confidence FLOAT','source ENUM','updated_at TIMESTAMPTZ']},
+                {name:'content_standard_map',color:'#0D9488',fields:['content_id UUID FK','standard_id UUID FK','confidence FLOAT IDX','align_type ENUM','aligned_by ENUM','verified BOOL']},
+              ].map((s,si)=>(
+                <div key={si} style={{background:'#fff',border:'1px solid #E0DDD6',borderRadius:10,overflow:'hidden'}}>
+                  <div style={{padding:'10px 14px',display:'flex',alignItems:'center',gap:7,borderBottom:'1px solid #E0DDD6',background:'#FAFAF8'}}>
+                    <div style={{width:8,height:8,borderRadius:'50%',background:s.color}}/>
+                    <div style={{...sty.mono,fontSize:11,fontWeight:500,color:'#1C1917'}}>{s.name}</div>
+                    <div style={{marginLeft:'auto',...sty.mono,fontSize:7.5,fontWeight:500,padding:'1px 6px',borderRadius:8,background:'#F3F2EF',color:'#A8A29E'}}>{s.fields.length} cols</div>
+                  </div>
+                  {s.fields.map((f,fi)=>{
+                    const parts = f.split(' ');
+                    const name = parts[0], type = parts[1], key = parts[2] || '';
+                    const keyColors = {PK:s.color, FK:'#7C3AED', IDX:'#0D9488', UNQ:'#B45309', ANN:'#4338CA'};
+                    return (
+                      <div key={fi} style={{padding:'4px 14px',borderBottom: fi < s.fields.length-1 ? '1px solid #F3F2EF' : 'none',display:'grid',gridTemplateColumns:'1fr auto auto',gap:5,alignItems:'center',transition:'background .1s'}}>
+                        <span style={{...sty.mono,fontSize:10,color:'#44403C'}}>{name}</span>
+                        {key ? <span style={{...sty.mono,fontSize:7,fontWeight:600,padding:'1px 5px',borderRadius:3,background:(keyColors[key]||'#ccc')+'15',color:keyColors[key]||'#666'}}>{key}</span> : <span/>}
+                        <span style={{...sty.mono,fontSize:8.5,color:'#A8A29E',background:'#FAFAF8',padding:'1px 5px',borderRadius:3}}>{type}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      <ScrollTracker/>
+    </div>
+  );
+}
+
+function ScrollTracker(){
+  useEffect(()=>{
+    const handler = ()=>{
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const bar = document.getElementById('sbar');
+      if(bar && h > 0) bar.style.width = (window.scrollY/h*100)+'%';
+    };
+    window.addEventListener('scroll',handler);
+    return ()=>window.removeEventListener('scroll',handler);
+  },[]);
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(KadalOS));
+</script>
+</body>
+</html>
