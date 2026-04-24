@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kadal OS — The Education Ontology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,300;1,9..144,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   DESIGN SYSTEM — Kadal OS
+   Tone: Editorial luxury meets engineering precision
+   ═══════════════════════════════════════ */
+:root {
+  --white:#FFF;--bg:#F7F8FB;--bg2:#F1F3F8;
+  --sf:#FFF;--sf2:#F4F6FA;--sf3:#E9ECF3;
+  --bd:#DFE3EC;--bdl:#EDF0F6;--bdw:#E3DFD8;
+  --ink:#131833;--ink2:#3A3F5C;--ink3:#656B8A;--ink4:#929AB8;--ink5:#B5BAD0;
+  --blue:#1D4ED8;--bluem:#3B82F6;--bluel:#EFF6FF;--bluebd:#BFDBFE;
+  --teal:#0F766E;--teall:#F0FDFA;--tealbd:#99F6E4;
+  --violet:#6D28D9;--violetl:#F5F3FF;--violetbd:#DDD6FE;
+  --amber:#B45309;--amberl:#FFFBEB;--amberbd:#FDE68A;
+  --rose:#BE123C;--rosel:#FFF1F2;--rosebd:#FECDD3;
+  --emerald:#047857;--emeraldl:#ECFDF5;--emeraldbd:#A7F3D0;
+  --orange:#C2410C;--orangel:#FFF7ED;--orangebd:#FDBA74;
+  --sky:#0369A1;--skyl:#F0F9FF;--skybd:#BAE6FD;
+  --slate:#334155;--slatel:#F8FAFC;--slatebd:#CBD5E1;
+  --pink:#BE185D;--pinkl:#FDF2F8;--pinkbd:#FBCFE8;
+  --r:8px;--r2:12px;--r3:16px;
+  --s1:0 1px 2px rgba(0,0,0,.03);--s2:0 2px 8px rgba(0,0,0,.05);--s3:0 8px 24px rgba(0,0,0,.07);--s4:0 16px 48px rgba(0,0,0,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+.serif{font-family:'Fraunces',Georgia,serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideR{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(59,130,246,.15)}50%{box-shadow:0 0 20px rgba(59,130,246,.35)}}
+@keyframes orbitSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes dash{to{stroke-dashoffset:0}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes ripple{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.5);opacity:0}}
+.anim-fu{animation:fadeUp .6s ease both;}
+.anim-fi{animation:fadeIn .5s ease both;}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}.d7{animation-delay:.7s}.d8{animation-delay:.8s}
+
+/* ═══ HERO — AI + ONTOLOGY (FIRST PAGE) ═══ */
+.hero{background:var(--white);border-bottom:1px solid var(--bd);position:relative;overflow:hidden;}
+.hero-mesh{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;}
+.hero-orb.o1{width:500px;height:500px;top:-150px;right:-100px;background:radial-gradient(circle,rgba(29,78,216,.12),transparent 70%);animation:float 8s ease-in-out infinite;}
+.hero-orb.o2{width:400px;height:400px;bottom:-100px;left:-80px;background:radial-gradient(circle,rgba(15,118,110,.1),transparent 70%);animation:float 10s ease-in-out infinite 2s;}
+.hero-orb.o3{width:200px;height:200px;top:40%;left:55%;background:radial-gradient(circle,rgba(109,40,217,.08),transparent 70%);animation:float 7s ease-in-out infinite 1s;}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,.02) 1px,transparent 1px);background-size:32px 32px;opacity:.6;}
+.hero-inner{max-width:1320px;margin:0 auto;padding:72px 56px 64px;position:relative;z-index:2;display:grid;grid-template-columns:1fr 440px;gap:60px;align-items:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:9px;padding:7px 18px;border-radius:24px;background:var(--bluel);border:1px solid var(--bluebd);margin-bottom:20px;animation:fadeUp .5s ease both;}
+.hero-pulse{width:7px;height:7px;border-radius:50%;background:var(--bluem);animation:pulse 2.5s ease-in-out infinite;}
+.hero-badge span{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(32px,4vw,56px);font-weight:800;line-height:1.06;letter-spacing:-.025em;animation:fadeUp .6s ease both .1s;opacity:0;}
+.hero h1 em{font-style:italic;font-weight:300;color:var(--teal);}
+.hero-sub{margin-top:16px;font-size:17px;color:var(--ink2);max-width:540px;line-height:1.7;font-weight:300;animation:fadeUp .6s ease both .2s;opacity:0;}
+.hero-stats{display:flex;gap:28px;margin-top:32px;animation:fadeUp .6s ease both .35s;opacity:0;}
+.hero-stat{text-align:center;padding:14px 18px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);box-shadow:var(--s1);transition:all .25s;cursor:default;}
+.hero-stat:hover{transform:translateY(-3px);box-shadow:var(--s3);border-color:var(--bluebd);}
+.hero-stat .n{font-family:'Fraunces',serif;font-size:28px;font-weight:800;color:var(--ink);line-height:1;}
+.hero-stat .l{font-size:10px;color:var(--ink4);margin-top:2px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+
+/* Hero visual — Animated Ontology Nucleus */
+.nucleus-wrap{display:flex;align-items:center;justify-content:center;height:420px;position:relative;animation:fadeIn .8s ease both .4s;opacity:0;}
+.nucleus-core{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,rgba(29,78,216,.12),rgba(15,118,110,.12));border:2px solid rgba(29,78,216,.25);display:flex;align-items:center;justify-content:center;position:relative;z-index:3;animation:glow 4s ease-in-out infinite;}
+.nucleus-core-text{text-align:center;font-family:'Fraunces',serif;font-size:12px;font-weight:700;color:var(--blue);line-height:1.2;}
+.nucleus-ring{position:absolute;border-radius:50%;border:1px dashed;opacity:.25;top:50%;left:50%;}
+.nucleus-ring.r1{width:180px;height:180px;margin:-90px 0 0 -90px;border-color:var(--bluem);animation:orbitSlow 20s linear infinite;}
+.nucleus-ring.r2{width:280px;height:280px;margin:-140px 0 0 -140px;border-color:var(--teal);animation:orbitSlow 30s linear infinite reverse;}
+.nucleus-ring.r3{width:370px;height:370px;margin:-185px 0 0 -185px;border-color:var(--violet);animation:orbitSlow 40s linear infinite;}
+.orbit-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:var(--s2);cursor:default;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:4;}
+.orbit-node:hover{transform:scale(1.35) !important;box-shadow:var(--s4);z-index:10;}
+.orbit-node .tip{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:500;color:var(--ink3);white-space:nowrap;opacity:0;transition:opacity .2s;letter-spacing:.04em;text-transform:uppercase;}
+.orbit-node:hover .tip{opacity:1;}
+
+/* ═══ NAV ═══ */
+.nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 56px;}
+.nav-in{max-width:1320px;margin:0 auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-in::-webkit-scrollbar{display:none;}
+.ntab{display:flex;align-items:center;gap:7px;padding:14px 18px;font-size:13px;font-weight:500;color:var(--ink4);cursor:pointer;border:none;border-bottom:2.5px solid transparent;background:none;transition:all .2s;white-space:nowrap;position:relative;}
+.ntab:hover{color:var(--ink2);}
+.ntab.active{color:var(--ink);border-bottom-color:var(--blue);font-weight:600;}
+.ntab::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2.5px;background:var(--bluem);transition:all .25s;transform:translateX(-50%);}
+.ntab:hover::after{width:60%;}
+.ntab.active::after{display:none;}
+.npip{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ═══ WRAP ═══ */
+.wrap{max-width:1320px;margin:0 auto;padding:52px 56px 80px;}
+.sec{display:none;}.sec.active{display:block;}
+.sh{margin-bottom:40px;}
+.sh .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;}
+.sh h2{font-family:'Fraunces',serif;font-size:30px;font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:8px;}
+.sh p{color:var(--ink2);max-width:680px;font-size:15px;line-height:1.65;font-weight:300;}
+
+/* ═══ AI CAPABILITIES — FIRST PAGE ═══ */
+.ai-banner{background:linear-gradient(135deg,#EFF6FF 0%,#F0FDFA 40%,#F5F3FF 100%);border:1px solid var(--bd);border-radius:var(--r3);padding:52px;margin-bottom:36px;position:relative;overflow:hidden;}
+.ai-banner::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(29,78,216,.04) 1px,transparent 1px);background-size:24px 24px;}
+.ai-banner h2{font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:var(--ink);max-width:600px;line-height:1.15;margin-bottom:14px;position:relative;}
+.ai-banner h2 em{font-style:italic;font-weight:300;color:var(--teal);}
+.ai-banner p{color:var(--ink2);max-width:560px;font-size:16px;line-height:1.7;font-weight:300;position:relative;}
+
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}
+.cap-card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);padding:0;overflow:hidden;box-shadow:var(--s1);transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:default;position:relative;}
+.cap-card:hover{transform:translateY(-4px);box-shadow:var(--s3);}
+.cap-bar{height:4px;transition:height .3s;}
+.cap-card:hover .cap-bar{height:6px;}
+.cap-body{padding:24px 26px 26px;}
+.cap-icon{width:44px;height:44px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.cap-card:hover .cap-icon{transform:scale(1.15) rotate(-5deg);}
+.cap-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.cap-desc{font-size:13px;color:var(--ink3);line-height:1.55;margin-bottom:14px;}
+.cap-pills{display:flex;flex-wrap:wrap;gap:4px;}
+.cap-pill{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;padding:3px 10px;border-radius:20px;transition:all .2s;}
+.cap-card:hover .cap-pill{transform:translateY(-1px);}
+
+/* ═══ STORY FLOW — Animated Steps ═══ */
+.story-flow{display:flex;flex-direction:column;gap:0;position:relative;}
+.story-flow::before{content:'';position:absolute;left:32px;top:24px;bottom:24px;width:2px;background:linear-gradient(to bottom,var(--bluebd),var(--tealbd),var(--violetbd));border-radius:2px;}
+.sf-step{display:flex;gap:20px;padding:20px 0;position:relative;opacity:0;animation:slideR .5s ease both;}
+.sf-step:nth-child(1){animation-delay:.1s}.sf-step:nth-child(2){animation-delay:.25s}.sf-step:nth-child(3){animation-delay:.4s}.sf-step:nth-child(4){animation-delay:.55s}.sf-step:nth-child(5){animation-delay:.7s}.sf-step:nth-child(6){animation-delay:.85s}
+.sf-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;position:relative;z-index:2;margin-left:18px;margin-top:4px;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+.sf-step:hover .sf-num{transform:scale(1.2);}
+.sf-card{flex:1;background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);padding:20px 24px;box-shadow:var(--s1);transition:all .25s;overflow:hidden;}
+.sf-step:hover .sf-card{box-shadow:var(--s2);border-color:var(--bluebd);transform:translateX(4px);}
+.sf-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.sf-title{font-weight:600;color:var(--ink);margin-bottom:4px;}
+.sf-desc{font-size:13px;color:var(--ink3);line-height:1.55;margin-bottom:10px;}
+.sf-data{background:var(--sf2);border:1px solid var(--bdl);border-radius:var(--r);padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--ink2);overflow-x:auto;}
+.sf-data .k{color:var(--ink4)}.sf-data .s{color:var(--blue)}.sf-data .n{color:var(--violet)}.sf-data .b{color:var(--emerald)}
+
+/* ═══ DOMAIN CARDS ═══ */
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:14px;}
+.dc{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;box-shadow:var(--s1);transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer;position:relative;}
+.dc:hover{transform:translateY(-3px);box-shadow:var(--s3);}
+.dc-bar{height:4px;transition:height .3s;}.dc:hover .dc-bar{height:5px;}
+.dc-body{padding:22px 24px;}
+.dc-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:10px;}
+.dc-icon{width:44px;height:44px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.dc:hover .dc-icon{transform:scale(1.1) rotate(-3deg);}
+.dc-code{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.dc-name{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);line-height:1.25;}
+.dc-desc{font-size:13px;color:var(--ink3);line-height:1.55;margin-bottom:14px;}
+.dc-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.dc-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--sf2);border:1px solid var(--bdl);color:var(--ink4);transition:all .15s;}
+.dc:hover .dc-tag{background:var(--sf3);}
+.dc-exp{padding:0 24px 22px;display:none;animation:fadeUp .3s ease;}
+.dc.open .dc-exp{display:block;}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dc-grp h5{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+.dc-grp ul{list-style:none;}
+.dc-grp li{font-size:12.5px;color:var(--ink2);padding:2.5px 0;display:flex;align-items:center;gap:5px;transition:transform .15s;}
+.dc-grp li:hover{transform:translateX(4px);}
+.dc-grp li::before{content:'→';font-size:9px;opacity:.3;}
+.dc-grp.full{grid-column:1/-1;margin-top:6px;}
+.ai-tag{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;padding:4px 11px;border-radius:20px;margin:2px 3px 2px 0;transition:all .2s;}
+.ai-tag:hover{transform:translateY(-2px) scale(1.03);}
+
+/* ═══ DATABASE SCHEMA ═══ */
+.schema-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.schema-card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;box-shadow:var(--s1);transition:all .25s;}
+.schema-card:hover{box-shadow:var(--s2);transform:translateY(-2px);}
+.schema-hdr{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd);background:var(--sf2);}
+.schema-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.schema-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--ink);}
+.schema-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;padding:2px 8px;border-radius:10px;background:var(--sf3);color:var(--ink4);}
+.schema-field{padding:6px 18px;border-bottom:1px solid var(--bdl);display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;font-size:12px;transition:background .12s;}
+.schema-field:hover{background:var(--sf2);}
+.schema-field:last-child{border-bottom:none;}
+.fname{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--ink2);}
+.ftype{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);background:var(--sf2);padding:1px 7px;border-radius:4px;}
+.fkey{font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;padding:1px 6px;border-radius:3px;letter-spacing:.06em;}
+
+/* ═══ ERD VISUAL ═══ */
+.erd-wrap{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);padding:36px;box-shadow:var(--s1);margin-bottom:32px;position:relative;overflow:hidden;}
+.erd-visual{position:relative;height:500px;overflow:hidden;}
+.erd-node{position:absolute;transform:translate(-50%,-50%);background:var(--white);border:2px solid;border-radius:var(--r2);padding:10px 16px;text-align:center;box-shadow:var(--s2);cursor:default;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:3;}
+.erd-node:hover{transform:translate(-50%,-50%) scale(1.12);box-shadow:var(--s4);z-index:10;}
+.erd-node .erd-icon{font-size:18px;margin-bottom:2px;}
+.erd-node .erd-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.erd-node .erd-count{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink4);margin-top:1px;}
+svg.erd-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+
+/* ═══ REL TABLE ═══ */
+.rel-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;box-shadow:var(--s1);}
+.rel-table th{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);padding:12px 16px;text-align:left;background:var(--sf2);border-bottom:1px solid var(--bd);}
+.rel-table td{padding:11px 16px;border-bottom:1px solid var(--bdl);vertical-align:top;transition:background .12s;}
+.rel-table tr:hover td{background:var(--sf2);}
+.rel-table tr:last-child td{border-bottom:none;}
+.rel-badge{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;padding:2px 9px;border-radius:20px;white-space:nowrap;}
+
+/* ═══ PUBLISHER — Before/After ═══ */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+.ba-card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;box-shadow:var(--s1);}
+.ba-hdr{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;}
+.ba-body{padding:4px 22px 16px;}
+.ba-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdl);transition:transform .15s;}
+.ba-item:hover{transform:translateX(4px);}
+.ba-item:last-child{border-bottom:none;}
+.ba-icon{font-size:15px;margin-top:1px;flex-shrink:0;}
+.ba-text{font-size:13.5px;color:var(--ink2);line-height:1.5;}
+
+/* ═══ METRICS BANNER ═══ */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;}
+.metric-card{background:var(--white);border:1px solid var(--bd);border-radius:var(--r2);padding:24px;text-align:center;box-shadow:var(--s1);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+.metric-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:var(--s3);}
+.metric-val{font-family:'Fraunces',serif;font-size:36px;font-weight:800;line-height:1;}
+.metric-label{font-size:12px;color:var(--ink3);margin-top:4px;font-weight:500;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;padding:48px 28px;}
+  .nucleus-wrap{height:300px;}
+  .wrap{padding:32px 28px 60px;}
+  .nav{padding:0 28px;}
+  .dg,.cap-grid,.schema-grid,.ba-grid,.metrics{grid-template-columns:1fr;}
+  .hero-stats{flex-wrap:wrap;gap:10px;}
+  .dc-grid{grid-template-columns:1fr;}
+  .ai-banner{padding:32px;}
+}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-mesh">
+    <div class="hero-orb o1"></div><div class="hero-orb o2"></div><div class="hero-orb o3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><div class="hero-pulse"></div><span>Kadal OS · AI-Powered Education Ontology</span></div>
+      <h1>When AI Reads the <em>Ontology,</em> Everything Changes</h1>
+      <p class="hero-sub">Without structure, AI is guessing. With the Kadal OS ontology — 12 domains, 200+ entity classes, 80+ relationship types — AI understands what a "Grade 3 ELA standard" <em>means</em>, how it connects to a "Lexile 520 passage," and what "mastery" looks like for a student with an IEP.</p>
+      <div class="hero-stats">
+        <div class="hero-stat anim-fu d4"><div class="n">12</div><div class="l">Domains</div></div>
+        <div class="hero-stat anim-fu d5"><div class="n">200+</div><div class="l">Entities</div></div>
+        <div class="hero-stat anim-fu d6"><div class="n">600+</div><div class="l">Properties</div></div>
+        <div class="hero-stat anim-fu d7"><div class="n">80+</div><div class="l">Relations</div></div>
+        <div class="hero-stat anim-fu d8"><div class="n">24</div><div class="l">AI Agents</div></div>
+      </div>
+    </div>
+    <div class="nucleus-wrap" id="nucleusWrap">
+      <div class="nucleus-ring r1"></div>
+      <div class="nucleus-ring r2"></div>
+      <div class="nucleus-ring r3"></div>
+      <div class="nucleus-core"><div class="nucleus-core-text">KADAL<br>ONTOLOGY</div></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav"><div class="nav-in">
+  <button class="ntab active" data-t="ai" onclick="go('ai',this)"><span class="npip" style="background:var(--bluem)"></span>AI × Ontology</button>
+  <button class="ntab" data-t="ontology" onclick="go('ontology',this)"><span class="npip" style="background:var(--teal)"></span>Living Ontology</button>
+  <button class="ntab" data-t="schema" onclick="go('schema',this)"><span class="npip" style="background:var(--violet)"></span>Database & Schema</button>
+  <button class="ntab" data-t="graph" onclick="go('graph',this)"><span class="npip" style="background:var(--emerald)"></span>Knowledge Graph</button>
+  <button class="ntab" data-t="publisher" onclick="go('publisher',this)"><span class="npip" style="background:var(--amber)"></span>Publisher Story</button>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ═══ SEC: AI × ONTOLOGY (FIRST PAGE) ═══ -->
+<section class="sec active" id="ai">
+  <div class="ai-banner">
+    <h2>The Difference Between a Language Model and an Education <em>Intelligence System</em></h2>
+    <p>An LLM reads text. An ontology-powered AI reads <strong>meaning</strong>. It knows that CCSS.MATH.7.EE.A.1 is a Grade 7 math standard about expressions and equations, that it requires understanding of variables and order of operations, and that a DOK-3 performance task assessing it should look fundamentally different from a DOK-1 recall question.</p>
+  </div>
+  <div class="cap-grid" id="capGrid"></div>
+  <div class="sh" style="margin-top:48px;">
+    <div class="lbl">The Ontology Advantage · Storytelling</div>
+    <h2>From Raw PDF to Living Intelligence</h2>
+    <p>Here's the story the Kadal OS ontology tells about a single math chapter — from inert file to a queryable, AI-navigable, derivative-generating educational asset.</p>
+  </div>
+  <div class="story-flow" id="storyFlow"></div>
+</section>
+
+<!-- ═══ SEC: LIVING ONTOLOGY ═══ -->
+<section class="sec" id="ontology">
+  <div class="sh">
+    <div class="lbl">02 · The Living Ontology</div>
+    <h2>Twelve Domains of Educational Intelligence</h2>
+    <p>Unlike flat taxonomies or tag clouds, every entity in the Kadal OS ontology carries typed attributes, semantic relationships, and AI-agent contracts. Click any domain to explore its full model.</p>
+  </div>
+  <div class="dg" id="domainGrid"></div>
+</section>
+
+<!-- ═══ SEC: DATABASE & SCHEMA ═══ -->
+<section class="sec" id="schema">
+  <div class="sh">
+    <div class="lbl">03 · Database Architecture</div>
+    <h2>The Schema Behind the Ontology</h2>
+    <p>Every ontological entity maps to a database schema. Typed, versioned, indexed, and connected via foreign keys and graph edges. These are the actual data contracts that AI agents read and write.</p>
+  </div>
+  <div class="erd-wrap">
+    <div class="sh" style="margin-bottom:16px;"><div class="lbl">Entity Relationship Diagram</div></div>
+    <div class="erd-visual" id="erdVis"><svg class="erd-edges" id="erdEdges"></svg></div>
+  </div>
+  <div class="sh" style="margin-top:12px;"><div class="lbl">Core Table Schemas</div><p>Six canonical tables. Every field is typed, every key is explicit, every relationship is enforced.</p></div>
+  <div class="schema-grid" id="schemaGrid"></div>
+  <div class="sh" style="margin-top:40px;"><div class="lbl">Relationship Contracts</div><p>Every edge in the system carries semantic weight. These aren't just foreign keys — they're contracts that AI agents interpret to reason about educational content.</p></div>
+  <table class="rel-table"><thead><tr><th>Source</th><th>Predicate</th><th>Target</th><th>Card.</th><th>Semantic Contract</th><th>AI Use</th></tr></thead><tbody id="relBody"></tbody></table>
+</section>
+
+<!-- ═══ SEC: KNOWLEDGE GRAPH ═══ -->
+<section class="sec" id="graph">
+  <div class="sh">
+    <div class="lbl">04 · Knowledge Graph</div>
+    <h2>How Everything Connects</h2>
+    <p>The ontology auto-generates a knowledge graph from every content ingestion event. No manual curation. Concepts, standards, skills, assessments, and learner records form a self-maintaining web of semantic relationships. Hover nodes to explore.</p>
+  </div>
+  <div class="erd-wrap">
+    <div class="erd-visual" id="kgVis"><svg class="erd-edges" id="kgEdges"></svg></div>
+  </div>
+</section>
+
+<!-- ═══ SEC: PUBLISHER STORY ═══ -->
+<section class="sec" id="publisher">
+  <div class="sh">
+    <div class="lbl">05 · The Publisher Case</div>
+    <h2>For the Publisher with 10,000 Titles</h2>
+    <p>You have thousands of textbooks, workbooks, digital resources, assessment banks, and ancillaries. They're in PDFs, InDesign files, LMS packages, and spreadsheets. Here's what happens when they become ontologically alive.</p>
+  </div>
+  <div class="metrics" id="metricsBar"></div>
+  <div class="ba-grid">
+    <div class="ba-card"><div class="ba-hdr" style="background:var(--rosel);border-color:var(--rosebd);"><span style="font-size:18px">🚫</span><strong>Without Ontology</strong></div><div class="ba-body" id="baNo"></div></div>
+    <div class="ba-card"><div class="ba-hdr" style="background:var(--emeraldl);border-color:var(--emeraldbd);"><span style="font-size:18px">✅</span><strong>With Kadal OS</strong></div><div class="ba-body" id="baYes"></div></div>
+  </div>
+  <div class="sh" style="margin-top:36px;"><div class="lbl">What You Build on This Ontology</div></div>
+  <div class="cap-grid" id="pubGrid"></div>
+</section>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+
+const CAPS=[
+  {icon:'🔍',title:'Semantic Content Discovery',c:'--blue',desc:'Navigate your catalog by meaning, not keywords. "Find all Grade 5 passages covering fractions that don\'t address equivalent fractions" becomes a graph traversal returning results in milliseconds.',pills:['Graph traversal','Concept matching','Gap-aware search','Derivative discovery']},
+  {icon:'⭐',title:'Intelligent Standards Alignment',c:'--emerald',desc:'When Texas rewrites TEKS or California updates its framework, the ontology\'s crosswalk relationships let AI re-align your entire catalog in hours — with confidence scores and human-review routing for edge cases.',pills:['Auto-alignment','Crosswalk inference','Confidence scoring','50-state mapping']},
+  {icon:'🔗',title:'Derivative Generation at Scale',c:'--violet',desc:'From one ontologically-typed master, generate Spanish editions, audio versions, simplified reading levels, teacher editions, and test banks — all semantically linked, all auto-aligned, all diff-tracked.',pills:['Localization','Reading variants','Teacher editions','Assessment banks']},
+  {icon:'🎯',title:'Prerequisite-Aware Personalization',c:'--amber',desc:'The concept prerequisite graph enables truly adaptive paths. Not "next chapter" but "this student lacks inverse operations mastery, prerequisite for linear equations — route to remediation first."',pills:['Mastery gates','Remediation routing','Readiness scoring','Adaptive pacing']},
+  {icon:'📊',title:'Content Quality as Signal',c:'--rose',desc:'Every entity carries quality dimensions: readability, accessibility, Bloom\'s coverage, bias score. AI monitors continuously — "Chapter 7 has zero DOK-3 problems" — without human audit.',pills:["Bloom's audit",'Accessibility scan','Bias detection','DOK distribution']},
+  {icon:'💼',title:'Market Intelligence from Content DNA',c:'--teal',desc:'"What % of California Grade 4 NGSS does our catalog cover vs. Competitor X?" — a graph query, not a research project. Content, standards, products, and adoptions share one ontology.',pills:['Coverage maps','Competitive analysis','Adoption prediction','Bundle intelligence']},
+];
+
+const STORY=[
+  {label:'Raw Content',c:'--slate',desc:'A PDF: "Chapter 4: Solving Equations." 24 pages of text, images, and 15 problems. The AI sees: bytes.',data:'<span class="k">file:</span> <span class="s">chapter4_equations.pdf</span>\n<span class="k">size:</span> <span class="n">2.4MB</span> | <span class="k">pages:</span> <span class="n">24</span> | <span class="k">problems:</span> <span class="n">15</span>'},
+  {label:'Entity Extraction',c:'--blue',desc:'Ontology Builder extracts 18 Concepts, 32 Content Units, 15 Problems, 6 Figures. Each is typed with Bloom\'s, DOK, and reading level.',data:'<span class="k">concepts:</span> <span class="n">18</span> | <span class="k">content_units:</span> <span class="n">32</span>\n<span class="k">problems:</span> <span class="n">15</span> | <span class="k">figures:</span> <span class="n">6</span>\n<span class="k">knowledge_nodes:</span> <span class="n">71</span>'},
+  {label:'Standards Alignment',c:'--emerald',desc:'Each content unit aligned to CCSS.Math.7.EE. 28/32 high-confidence. 4 flagged for human review with rationale.',data:'<span class="k">aligned:</span> <span class="n">28</span>/<span class="n">32</span> (<span class="n">87.5%</span>)\n<span class="k">framework:</span> <span class="s">CCSS.Math.Content.7.EE</span>\n<span class="k">human_review:</span> <span class="n">4</span> items'},
+  {label:'Prerequisite Resolution',c:'--violet',desc:'"Solving two-step equations" requires "inverse operations" requires "order of operations." 3-deep prerequisite chain resolved. Catalog gap: none.',data:'<span class="k">prerequisite_depth:</span> <span class="n">3</span>\n<span class="k">chain:</span> <span class="s">order_of_ops → inverse_ops → two_step_eq</span>\n<span class="k">catalog_gaps:</span> <span class="b">0</span>'},
+  {label:'Quality Scoring',c:'--rose',desc:'DOK: 40/35/25/0%. Bloom\'s ceiling: Apply. 2 images missing alt text (auto-generated). Reading level: Grade 7.2.',data:'<span class="k">dok_distribution:</span> [<span class="n">40</span>, <span class="n">35</span>, <span class="n">25</span>, <span class="n">0</span>]%\n<span class="k">bloom_ceiling:</span> <span class="s">Apply</span>\n<span class="k">accessibility_flags:</span> <span class="n">2</span> (auto-fixed)\n<span class="k">lexile:</span> <span class="n">840</span>'},
+  {label:'Living Intelligence',c:'--teal',desc:'This chapter is now alive. AI can find it by concept, standard, difficulty, modality, or market — and generate derivatives, assessments, and learning paths from it. Infinitely.',data:'<span class="k">queryable_dimensions:</span> <span class="n">14</span>\n<span class="k">derivative_types:</span> <span class="n">8</span>\n<span class="k">assessment_items_generable:</span> <span class="n">45+</span>\n<span class="k">learning_paths_possible:</span> <span class="s">∞</span>'},
+];
+
+const DOMAINS=[
+  {code:'KNW',icon:'🧠',name:'Knowledge & Concepts',c:'--blue',desc:'Concepts, topics, facts, skills, and the prerequisite lattice connecting them.',
+   ents:['Concept','Topic','Fact','Skill','Competency','Prerequisite','ConceptCluster','DifficultyLevel','CognitiveProcess','KnowledgeDimension','TransferableSkill','ThresholdConcept'],
+   attrs:["Bloom's Level","Webb's DOK","Cognitive Load","Abstraction Level","Domain Specificity","Transfer Potential","Misconception Map"],
+   rels:['is_prerequisite_of','is_part_of','is_analogous_to','requires_skill','builds_toward','decomposes_into','has_misconception'],
+   ai:['Prerequisite graph gen','Gap detection','Difficulty calibration','Cross-domain analogy','Misconception identification']},
+  {code:'STD',icon:'⭐',name:'Standards & Frameworks',c:'--emerald',desc:'CCSS, NGSS, state frameworks, IB, AP, Cambridge, accreditation, licensure boards.',
+   ents:['Standard','StandardSet','Framework','Benchmark','LearningOutcome','PerformanceExpectation','CrosscuttingConcept','DisciplinaryCore','Practice','GradeBand'],
+   attrs:['Authority','Jurisdiction','Grade Band','Subject','Revision Date','Status','Identifier Code','Depth','Crosswalk ID','Assessment Weight'],
+   rels:['belongs_to_framework','crosswalks_to','is_assessed_by','aligns_to','supersedes','is_equivalent_to','has_parent'],
+   ai:['Multi-framework alignment','50-state crosswalk','Deprecation tracking','Coverage gap analysis','Re-alignment automation']},
+  {code:'CNT',icon:'📄',name:'Content & Assets',c:'--sky',desc:'Chapters, lessons, problems, passages, figures, videos, simulations — the atoms of the catalog.',
+   ents:['ContentUnit','Lesson','Chapter','Passage','Problem','Figure','Video','Simulation','Interactive','AudioClip','Glossary','Sidebar','WorkedExample','LabActivity','CaseStudy'],
+   attrs:['Title','Media Type','Word Count','Lexile','Reading Level','Language','Version','License','DOK',"Bloom's",'WCAG Level','Duration','Interactivity Type','Alt Text Status'],
+   rels:['belongs_to','covers_concept','aligns_to_standard','has_derivative','is_variant_of','requires_prerequisite','supplements','assesses'],
+   ai:['Auto-tagging','Readability scoring','Accessibility audit','Similarity detection','Derivative generation']},
+  {code:'CUR',icon:'📚',name:'Curriculum & Programs',c:'--violet',desc:'Courses, programs, modules, pacing guides, scope-and-sequence — how content becomes teachable.',
+   ents:['Course','Program','Module','Unit','PacingGuide','ScopeSequence','LearningPath','CurriculumMap','Strand','Elective','CoreRequirement','CreditModule'],
+   attrs:['Credit Hours','Duration','Delivery Mode','Grade Level','Subject','Prerequisites','Pacing Weeks','Certification','Accreditation','Program Type'],
+   rels:['contains_module','sequences_before','requires_prerequisite','leads_to','maps_to_standard','covers_concept','assessed_by'],
+   ai:['Auto-sequencing','Pacing optimization','Prerequisite resolution','Gap detection','Path generation']},
+  {code:'LRN',icon:'👤',name:'Learner & Identity',c:'--amber',desc:'Students, instructors, authors, profiles, mastery states, accommodations, engagement signals.',
+   ents:['Learner','Instructor','Author','Reviewer','Administrator','Parent','Cohort','LearnerProfile','MasteryState','AccommodationProfile','InteractionLog','EngagementSignal'],
+   attrs:['Grade Level','Reading Level','Lexile','Learning Style','IEP/504 Flags','Language','Mastery Map','Risk Score','Engagement %','Preferred Modality'],
+   rels:['enrolled_in','taught_by','authored_by','belongs_to_cohort','has_mastery_in','needs_accommodation','progresses_through'],
+   ai:['At-risk prediction','Mastery inference','Engagement prediction','Accommodation auto-apply','Path personalization']},
+  {code:'ASM',icon:'📝',name:'Assessment & Measurement',c:'--rose',desc:'Item banks, rubrics, performance tasks, adaptive tests, psychometric models.',
+   ents:['AssessmentItem','ItemBank','Rubric','PerformanceTask','FormativeCheck','SummativeExam','DiagnosticAssessment','AdaptiveTest','GradingCriteria','MasteryThreshold','DistractorAnalysis'],
+   attrs:['Item Type','IRT Difficulty','Discrimination','DOK',"Bloom's",'Max Points','Time Limit','Distractor Quality','Bias Flag','Standard Aligned'],
+   rels:['assesses_concept','aligns_to_standard','belongs_to_bank','scored_by_rubric','measures_mastery','has_distractor','is_variant_of'],
+   ai:["Bloom's-calibrated generation",'Distractor analysis','IRT adaptive routing','Bias screening','Auto-scoring']},
+  {code:'PIP',icon:'⚙️',name:'Content Pipeline',c:'--orange',desc:'Editorial workflows, transformation pipelines, QA gates, approval chains, publication events.',
+   ents:['ContentJob','WorkflowStage','EditorialReview','QAGate','Pipeline','ApprovalChain','PublicationEvent','RevisionRequest','StyleCheck','FactCheck','ProofingPass'],
+   attrs:['Status','Priority','SLA','Owner','Due Date','Quality Score','Pass/Fail','Reviewer','Transformation Type','Output Format'],
+   rels:['progresses_through','assigned_to','reviewed_by','triggers','publishes_to','blocked_by','approved_by'],
+   ai:['Automated QA','Style compliance','Intelligent routing','SLA prediction','Bottleneck detection']},
+  {code:'GOV',icon:'🏛️',name:'Institution & Governance',c:'--slate',desc:'Districts, schools, accreditation, compliance, licenses, audit trails, data governance.',
+   ents:['Institution','District','School','Department','AccreditationBody','StandardsAuthority','Policy','ComplianceRule','License','AuditLog','Jurisdiction'],
+   attrs:['Institution Type','Accreditation Status','Jurisdiction','Policy Version','Compliance Level','License Terms','Data Classification'],
+   rels:['governed_by','accredited_by','complies_with','licenses_to','audits','enforces','reports_to'],
+   ai:['Compliance auto-check','License tracking','Policy drift detection','Audit generation','Regulatory alert']},
+  {code:'EXP',icon:'🎨',name:'Content Experience',c:'--teal',desc:'Rendering, accessibility, adaptive display, modality variants, personalization, device targeting.',
+   ents:['RenderTemplate','DisplayVariant','ModalityProfile','AccessibilityProfile','PersonalizationRule','DeviceTarget','LanguageVariant','ReadingLevelVariant','InteractionMode'],
+   attrs:['WCAG Level','Reading Grade','Media Format','Device Class','Language','Interaction Type','Alt Text','Color Contrast'],
+   rels:['renders','adapts_for','targets_device','supports_modality','personalizes_for','falls_back_to','translates_to'],
+   ai:['Auto-alt-text','Reading level adaptation','Modality switching','Accessibility audit','Responsive optimization']},
+  {code:'ANA',icon:'📊',name:'Analytics & Intelligence',c:'--violet',desc:'Learning analytics, engagement metrics, performance trends, predictive models, alert rules.',
+   ents:['EngagementMetric','PerformanceTrend','PredictiveModel','AlertRule','Dashboard','Report','Benchmark','CohortAnalysis','RetentionCurve','MasteryTrajectory'],
+   attrs:['Metric Type','Aggregation Level','Time Window','Confidence','Threshold','Trend Direction','Statistical Significance','Effect Size'],
+   rels:['measures','predicts','triggers_alert','benchmarks_against','aggregates','correlates_with','informs_decision'],
+   ai:['At-risk warning','Trajectory prediction','Anomaly detection','Cohort comparison','Impact analysis']},
+  {code:'MKT',icon:'💼',name:'Product & Market',c:'--amber',desc:'Products, SKUs, bundles, editions, market segments, pricing, adoptions, competitor mapping.',
+   ents:['Product','SKU','Bundle','Edition','Supplement','TeacherEdition','StudentEdition','DigitalLicense','MarketSegment','AdoptionRecord','CompetitorTitle','PricingTier'],
+   attrs:['ISBN','Format','Price','Territory','Language','Edition','Pub Date','Market','Adoption State','Sales Volume','License Duration'],
+   rels:['is_edition_of','bundles_with','competes_with','adopted_by','priced_at','targets_market','has_supplement','derived_from'],
+   ai:['Adoption prediction','Competitive gaps','Bundle optimization','Coverage mapping','Pricing intelligence']},
+  {code:'META',icon:'🔄',name:'Meta-Learning & Feedback',c:'--teal',desc:'Feedback loops, model performance, quality signals, bias checks, experiments, continuous improvement.',
+   ents:['FeedbackSignal','QualityScore','BiasCheck','ModelPerformance','ExperimentRun','ABTest','GroundTruth','HumanAnnotation','DriftDetector','ImprovementTask'],
+   attrs:['Signal Type','Confidence','Sample Size','Bias Score','Model Version','Experiment Status','Drift Magnitude','Improvement Delta'],
+   rels:['evaluates','improves','detects_bias_in','trains','validates','closes_loop_on','calibrates'],
+   ai:['Continuous improvement','Bias detection','Quality aggregation','Experiment orchestration','Drift monitoring']},
+];
+
+const SCHEMAS=[
+  {name:'content_units',dot:'--sky',count:'15 cols',fields:[
+    {n:'id',t:'UUID',k:'PK',kc:'--sky'},{n:'title',t:'VARCHAR(500)',k:'',kc:''},{n:'body_html',t:'TEXT',k:'',kc:''},{n:'media_type',t:'ENUM',k:'IDX',kc:'--teal'},
+    {n:'lexile_score',t:'INT',k:'',kc:''},{n:'bloom_level',t:'ENUM',k:'IDX',kc:'--teal'},{n:'dok_level',t:'INT',k:'',kc:''},
+    {n:'version',t:'INT',k:'',kc:''},{n:'status',t:'ENUM',k:'IDX',kc:'--teal'},{n:'wcag_level',t:'ENUM',k:'',kc:''},{n:'word_count',t:'INT',k:'',kc:''},
+    {n:'language',t:'VARCHAR(10)',k:'',kc:''},{n:'license',t:'VARCHAR(100)',k:'',kc:''},{n:'parent_id',t:'UUID',k:'FK',kc:'--violet'},{n:'kg_node_id',t:'UUID',k:'FK',kc:'--violet'}]},
+  {name:'standards',dot:'--emerald',count:'12 cols',fields:[
+    {n:'id',t:'UUID',k:'PK',kc:'--emerald'},{n:'authority',t:'VARCHAR(200)',k:'IDX',kc:'--teal'},{n:'code',t:'VARCHAR(100)',k:'UNQ',kc:'--amber'},
+    {n:'statement',t:'TEXT',k:'',kc:''},{n:'grade_band',t:'VARCHAR(20)',k:'IDX',kc:'--teal'},{n:'subject',t:'VARCHAR(100)',k:'IDX',kc:'--teal'},
+    {n:'framework',t:'ENUM',k:'',kc:''},{n:'parent_id',t:'UUID',k:'FK',kc:'--violet'},{n:'depth',t:'INT',k:'',kc:''},{n:'is_leaf',t:'BOOL',k:'',kc:''},
+    {n:'status',t:'ENUM',k:'',kc:''},{n:'effective_date',t:'DATE',k:'',kc:''}]},
+  {name:'learner_profiles',dot:'--amber',count:'12 cols',fields:[
+    {n:'id',t:'UUID',k:'PK',kc:'--amber'},{n:'user_id',t:'UUID',k:'FK',kc:'--violet'},{n:'grade_level',t:'INT',k:'IDX',kc:'--teal'},
+    {n:'reading_level',t:'FLOAT',k:'',kc:''},{n:'mastery_map',t:'JSONB',k:'',kc:''},{n:'accommodation_flags',t:'TEXT[]',k:'',kc:''},
+    {n:'risk_score',t:'FLOAT',k:'IDX',kc:'--teal'},{n:'engagement_pct',t:'FLOAT',k:'',kc:''},{n:'preferred_modality',t:'ENUM',k:'',kc:''},
+    {n:'language',t:'VARCHAR(10)',k:'',kc:''},{n:'cohort_id',t:'UUID',k:'FK',kc:'--violet'},{n:'last_active',t:'TIMESTAMP',k:'',kc:''}]},
+  {name:'assessment_results',dot:'--rose',count:'11 cols',fields:[
+    {n:'id',t:'UUID',k:'PK',kc:'--rose'},{n:'learner_id',t:'UUID',k:'FK',kc:'--violet'},{n:'assessment_id',t:'UUID',k:'FK',kc:'--violet'},
+    {n:'score_raw',t:'FLOAT',k:'',kc:''},{n:'score_scaled',t:'FLOAT',k:'',kc:''},{n:'mastery_achieved',t:'BOOL',k:'IDX',kc:'--teal'},
+    {n:'proficiency',t:'ENUM',k:'',kc:''},{n:'time_on_task_s',t:'INT',k:'',kc:''},{n:'attempt_num',t:'INT',k:'',kc:''},
+    {n:'response_data',t:'JSONB',k:'',kc:''},{n:'created_at',t:'TIMESTAMP',k:'IDX',kc:'--teal'}]},
+  {name:'knowledge_nodes',dot:'--violet',count:'10 cols',fields:[
+    {n:'id',t:'UUID',k:'PK',kc:'--violet'},{n:'entity_type',t:'ENUM',k:'IDX',kc:'--teal'},{n:'entity_id',t:'UUID',k:'FK',kc:'--violet'},
+    {n:'embedding',t:'VECTOR(1536)',k:'ANN',kc:'--blue'},{n:'label',t:'VARCHAR(500)',k:'',kc:''},{n:'properties',t:'JSONB',k:'',kc:''},
+    {n:'confidence',t:'FLOAT',k:'',kc:''},{n:'created_by',t:'ENUM',k:'',kc:''},{n:'updated_at',t:'TIMESTAMP',k:'',kc:''},{n:'edge_count',t:'INT',k:'',kc:''}]},
+  {name:'content_standard_map',dot:'--teal',count:'6 cols',fields:[
+    {n:'content_id',t:'UUID',k:'FK',kc:'--violet'},{n:'standard_id',t:'UUID',k:'FK',kc:'--violet'},{n:'confidence',t:'FLOAT',k:'IDX',kc:'--teal'},
+    {n:'alignment_type',t:'ENUM',k:'',kc:''},{n:'aligned_by',t:'ENUM',k:'',kc:''},{n:'verified',t:'BOOL',k:'',kc:''}]},
+];
+
+const ERD_NODES=[
+  {id:'cu',label:'content_units',icon:'📄',x:30,y:20,c:'--sky'},{id:'std',label:'standards',icon:'⭐',x:70,y:15,c:'--emerald'},
+  {id:'lp',label:'learner_profiles',icon:'👤',x:15,y:55,c:'--amber'},{id:'ar',label:'assessment_results',icon:'📝',x:55,y:55,c:'--rose'},
+  {id:'kn',label:'knowledge_nodes',icon:'💡',x:85,y:50,c:'--violet'},{id:'csm',label:'content_standard_map',icon:'🔗',x:50,y:20,c:'--teal'},
+  {id:'wf',label:'workflow_stages',icon:'⚙️',x:30,y:85,c:'--orange'},{id:'prod',label:'products',icon:'💼',x:75,y:82,c:'--amber'},
+];
+const ERD_EDGES=[
+  {f:'cu',t:'csm'},{f:'csm',t:'std'},{f:'cu',t:'kn'},{f:'std',t:'kn'},{f:'ar',t:'lp'},{f:'ar',t:'cu'},
+  {f:'wf',t:'cu'},{f:'prod',t:'cu'},{f:'lp',t:'ar'},{f:'prod',t:'std'},
+];
+
+const KG_NODES=[
+  {id:'concept',label:'Concept',icon:'💡',x:50,y:12,sz:54,c:'#1D4ED8',bg:'#EFF6FF',bd:'#BFDBFE'},
+  {id:'standard',label:'Standard',icon:'⭐',x:84,y:20,sz:50,c:'#047857',bg:'#ECFDF5',bd:'#A7F3D0'},
+  {id:'content',label:'Content Unit',icon:'📄',x:20,y:26,sz:50,c:'#0369A1',bg:'#F0F9FF',bd:'#BAE6FD'},
+  {id:'course',label:'Course',icon:'📚',x:8,y:56,sz:46,c:'#6D28D9',bg:'#F5F3FF',bd:'#DDD6FE'},
+  {id:'learner',label:'Learner',icon:'👤',x:50,y:50,sz:62,c:'#B45309',bg:'#FFFBEB',bd:'#FDE68A'},
+  {id:'assess',label:'Assessment',icon:'📝',x:90,y:50,sz:46,c:'#BE123C',bg:'#FFF1F2',bd:'#FECDD3'},
+  {id:'skill',label:'Skill',icon:'🎯',x:72,y:76,sz:44,c:'#BE185D',bg:'#FDF2F8',bd:'#FBCFE8'},
+  {id:'record',label:'Mastery Record',icon:'📊',x:34,y:80,sz:44,c:'#C2410C',bg:'#FFF7ED',bd:'#FDBA74'},
+  {id:'path',label:'Learning Path',icon:'🗺️',x:14,y:82,sz:40,c:'#0F766E',bg:'#F0FDFA',bd:'#99F6E4'},
+  {id:'product',label:'Product',icon:'💼',x:86,y:84,sz:38,c:'#334155',bg:'#F8FAFC',bd:'#CBD5E1'},
+  {id:'prereq',label:'Prerequisite',icon:'🔗',x:36,y:14,sz:36,c:'#6D28D9',bg:'#F5F3FF',bd:'#DDD6FE'},
+  {id:'rubric',label:'Rubric',icon:'📋',x:96,y:34,sz:36,c:'#BE123C',bg:'#FFF1F2',bd:'#FECDD3'},
+];
+const KG_EDGES=[
+  {f:'learner',t:'course',l:'enrolled_in'},{f:'course',t:'content',l:'contains'},{f:'content',t:'concept',l:'covers'},
+  {f:'content',t:'standard',l:'aligns_to'},{f:'standard',t:'assess',l:'assessed_by'},{f:'assess',t:'skill',l:'measures'},
+  {f:'assess',t:'rubric',l:'scored_by'},{f:'skill',t:'record',l:'evidenced_in'},{f:'record',t:'learner',l:'belongs_to'},
+  {f:'learner',t:'path',l:'follows'},{f:'path',t:'course',l:'sequences'},{f:'concept',t:'prereq',l:'has_prerequisite'},
+  {f:'prereq',t:'content',l:'taught_by'},{f:'content',t:'product',l:'packaged_in'},{f:'skill',t:'concept',l:'requires'},
+];
+
+const RELS=[
+  {s:'ContentUnit',p:'aligns_to',t:'Standard',card:'N:M',contract:'Every content unit must trace to ≥1 standard. Confidence score + alignment_type required.',ai:'Coverage gap detection, compliance audit, re-alignment'},
+  {s:'Concept',p:'is_prerequisite_of',t:'Concept',card:'N:M',contract:'Directed acyclic graph. No circular deps. Depth tracked.',ai:'Learning path generation, readiness scoring, remediation'},
+  {s:'ContentUnit',p:'has_derivative',t:'ContentUnit',card:'1:N',contract:'Master→derivative lineage. Derivatives inherit alignment. Diff-tracked.',ai:'Derivative gen, variant sync, localization management'},
+  {s:'AssessmentItem',p:'measures',t:'Skill',card:'N:M',contract:"Each item specifies Bloom's, DOK, and IRT params. Bias-screened.",ai:'Adaptive routing, mastery inference, item bank optimization'},
+  {s:'Learner',p:'has_mastery_in',t:'Skill',card:'1:N',contract:'Mastery: 0–1 float + confidence + evidence count. Updated per assessment.',ai:'At-risk prediction, personalized path, portfolio generation'},
+  {s:'Product',p:'bundles',t:'ContentUnit',card:'1:N',contract:'SKU→content with territory, format, and license constraints.',ai:'Bundle optimization, coverage mapping, adoption forecasting'},
+  {s:'Standard',p:'crosswalks_to',t:'Standard',card:'N:M',contract:'Match_type: exact | broad | narrow | related. Bidirectional.',ai:'50-state re-alignment, framework migration, multi-market'},
+  {s:'ContentUnit',p:'covers',t:'Concept',card:'N:M',contract:"Depth: introduces | develops | masters. Bloom's level tagged.",ai:'Concept gap analysis, redundancy detection, recommendation'},
+];
+
+const BA_NO=[
+  {i:'😰',t:'Standards re-alignment: 6–12 months per framework change. Manual tagging by contractors at $2–5/item.'},
+  {i:'🔍',t:'Content discovery is keyword-based. Teams recreate assets that exist but can\'t be found. 12% reuse rate.'},
+  {i:'📦',t:'Derivatives disconnected from masters. Update a chapter — Spanish, audio, workbook versions left stale.'},
+  {i:'📊',t:'"What % of NGSS do we cover?" requires a 3-month manual audit by curriculum specialists.'},
+  {i:'🤖',t:'AI tools hallucinate because they have no structured understanding of your domain, standards, or products.'},
+  {i:'⏱️',t:'New product bundles need weeks of manual content mapping, compliance review, and legal clearance.'},
+];
+const BA_YES=[
+  {i:'⚡',t:'Re-alignment in hours. Crosswalk relationships auto-propagate. Human review only for low-confidence edges.'},
+  {i:'🧠',t:'Semantic discovery: "passages covering photosynthesis at Lexile 600–700 not in any Grade 5 bundle." Instant.'},
+  {i:'🔗',t:'Derivative lineage is ontological. Update master → all derivatives flag for review. All linked, all tracked.'},
+  {i:'📈',t:'"Coverage vs. NGSS" is a real-time dashboard. 50-state gap analysis in 3 minutes.'},
+  {i:'🎯',t:'AI reads the ontology as its contract. DOK-3 performance task has a definition — no hallucination.'},
+  {i:'🚀',t:'Bundle assembly is a graph query: select by standard, grade, difficulty, license. Minutes, not weeks.'},
+];
+
+const METRICS=[
+  {val:'24×',c:'--blue',label:'Faster standards re-alignment'},
+  {val:'87%',c:'--teal',label:'Content reuse rate (vs. 12%)'},
+  {val:'3 min',c:'--violet',label:'50-state gap report generation'},
+  {val:'∞',c:'--amber',label:'Derivatives from one ontological core'},
+];
+
+const PUB_CASES=[
+  {icon:'📊',title:'Catalog-Wide Standards Audit',c:'--emerald',desc:'Full coverage analysis of your 10,000-title catalog against any standards framework. Gaps by grade, subject, standard cluster, and Bloom\'s level — in minutes.',pills:['50-state coverage','Gap heatmaps','Priority scoring','Board-ready reports']},
+  {icon:'🎯',title:'Adaptive Courseware from Static Content',c:'--blue',desc:'Transform existing textbooks into adaptive digital courseware. The prerequisite graph and mastery model enable personalized paths — without rewriting a page.',pills:['Prerequisite paths','Mastery gates','Formative checks','Remediation branches']},
+  {icon:'🔗',title:'Multi-Format Derivative Engine',c:'--violet',desc:'From one master: student edition, teacher edition, workbook, test bank, Spanish, audio, simplified — all linked and auto-aligned. 10+ derivative types.',pills:['Auto-alignment','Diff tracking','Cascade updates','License inheritance']},
+  {icon:'📝',title:'AI Assessment Factory',c:'--rose',desc:"Generate items at any Bloom's level and DOK for any standard. Each item is typed, bias-screened, and linked to the concept it assesses. Item banks in hours.",pills:["Bloom's calibration",'Distractor gen','Bias screening','IRT metadata']},
+  {icon:'💡',title:'Intelligent Commissioning',c:'--amber',desc:'Stop guessing what to publish. The ontology reveals exactly where your catalog has gaps — by standard, grade, concept, difficulty, and market — so you commission with precision.',pills:['Gap-driven briefs','Market coverage','ROI projection','Competitive intel']},
+  {icon:'♿',title:'Accessibility at Ontological Scale',c:'--teal',desc:'Every content unit carries WCAG metadata. AI audits, auto-generates alt text, flags contrast issues, and ensures accommodations at render time — across the entire catalog.',pills:['WCAG AA/AAA','Auto alt-text','Reading variants','IEP accommodation']},
+];
+
+// ═══════════════════════════════════════
+// RENDERS
+// ═══════════════════════════════════════
+function cv(v){return `var(${v})`}
+function cvl(v){return `var(${v}l)`}
+function cvbd(v){return `var(${v}bd)`}
+
+function renderNucleus(){
+  const w=document.getElementById('nucleusWrap');
+  const orbs=[
+    {icon:'📄',tip:'Content',x:50,y:2,bg:cvl('--sky'),bd:cvbd('--sky'),sz:36},
+    {icon:'⭐',tip:'Standards',x:92,y:30,bg:cvl('--emerald'),bd:cvbd('--emerald'),sz:34},
+    {icon:'👤',tip:'Learner',x:88,y:72,bg:cvl('--amber'),bd:cvbd('--amber'),sz:34},
+    {icon:'📝',tip:'Assessment',x:50,y:96,bg:cvl('--rose'),bd:cvbd('--rose'),sz:34},
+    {icon:'📚',tip:'Curriculum',x:10,y:72,bg:cvl('--violet'),bd:cvbd('--violet'),sz:34},
+    {icon:'🧠',tip:'Knowledge',x:8,y:28,bg:cvl('--blue'),bd:cvbd('--blue'),sz:34},
+    {icon:'💼',tip:'Product',x:72,y:8,bg:cvl('--amber'),bd:cvbd('--amber'),sz:28},
+    {icon:'🎨',tip:'Experience',x:96,y:52,bg:cvl('--teal'),bd:cvbd('--teal'),sz:28},
+    {icon:'⚙️',tip:'Pipeline',x:28,y:94,bg:cvl('--orange'),bd:cvbd('--orange'),sz:28},
+  ];
+  orbs.forEach(o=>{
+    const d=document.createElement('div');d.className='orbit-node';
+    d.style.cssText=`left:${o.x}%;top:${o.y}%;width:${o.sz}px;height:${o.sz}px;background:${o.bg};border:1.5px solid ${o.bd};`;
+    d.innerHTML=`${o.icon}<span class="tip">${o.tip}</span>`;
+    w.appendChild(d);
+  });
+}
+
+function renderCaps(){
+  document.getElementById('capGrid').innerHTML=CAPS.map(c=>`
+    <div class="cap-card"><div class="cap-bar" style="background:${cv(c.c)}"></div><div class="cap-body">
+      <div class="cap-icon" style="background:${cvl(c.c)};border:1px solid ${cvbd(c.c)}">${c.icon}</div>
+      <div class="cap-title">${c.title}</div><div class="cap-desc">${c.desc}</div>
+      <div class="cap-pills">${c.pills.map(p=>`<span class="cap-pill" style="background:${cvl(c.c)};border:1px solid ${cvbd(c.c)};color:${cv(c.c)}">${p}</span>`).join('')}</div>
+    </div></div>`).join('');
+}
+
+function renderStory(){
+  document.getElementById('storyFlow').innerHTML=STORY.map((s,i)=>`
+    <div class="sf-step">
+      <div class="sf-num" style="background:${cvl(s.c)};color:${cv(s.c)};border:2px solid ${cvbd(s.c)}">${i+1}</div>
+      <div class="sf-card"><div class="sf-label" style="color:${cv(s.c)}">${s.label}</div>
+        <div class="sf-title">${s.desc}</div>
+        <div class="sf-data">${s.data}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderDomains(){
+  document.getElementById('domainGrid').innerHTML=DOMAINS.map(d=>`
+    <div class="dc" style="--cb:${cvbd(d.c)}" onclick="this.classList.toggle('open')">
+      <div class="dc-bar" style="background:${cv(d.c)}"></div>
+      <div class="dc-body">
+        <div class="dc-hdr"><div class="dc-icon" style="background:${cvl(d.c)};border:1px solid ${cvbd(d.c)}">${d.icon}</div>
+          <div><div class="dc-code mono" style="color:${cv(d.c)}">${d.code}</div><div class="dc-name">${d.name}</div></div></div>
+        <div class="dc-desc">${d.desc}</div>
+        <div class="dc-tags">${d.ents.map(e=>`<span class="dc-tag mono">${e}</span>`).join('')}</div>
+      </div>
+      <div class="dc-exp">
+        <div class="dc-grid">
+          <div class="dc-grp"><h5 class="mono" style="color:${cv(d.c)}">Attributes</h5><ul>${d.attrs.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+          <div class="dc-grp"><h5 class="mono" style="color:${cv(d.c)}">Relationships</h5><ul>${d.rels.map(r=>`<li class="mono" style="font-size:11px">${r}</li>`).join('')}</ul></div>
+          <div class="dc-grp full"><h5 class="mono" style="color:${cv(d.c)}">AI Capabilities</h5><div style="margin-top:6px">${d.ai.map(a=>`<span class="ai-tag" style="background:${cvl(d.c)};border:1px solid ${cvbd(d.c)};color:${cv(d.c)}">⚡ ${a}</span>`).join('')}</div></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSchemas(){
+  document.getElementById('schemaGrid').innerHTML=SCHEMAS.map(s=>`
+    <div class="schema-card"><div class="schema-hdr"><div class="schema-dot" style="background:${cv(s.dot)}"></div>
+      <div class="schema-name">${s.name}</div><div class="schema-count">${s.count}</div></div>
+      ${s.fields.map(f=>`<div class="schema-field"><span class="fname">${f.n}</span>
+        ${f.k?`<span class="fkey" style="background:${cvl(f.kc)};color:${cv(f.kc)}">${f.k}</span>`:'<span></span>'}
+        <span class="ftype">${f.t}</span></div>`).join('')}
+    </div>`).join('');
+}
+
+function renderGraphVis(containerId,svgId,nodes,edges){
+  const vis=document.getElementById(containerId);
+  const w=vis.clientWidth||800,h=vis.clientHeight||500;
+  nodes.forEach(n=>{
+    const d=document.createElement('div');d.className='erd-node';
+    const nc=n.c?cv(n.c):n.c2||'#333';
+    const nbg=n.bg||cvl(n.c);
+    const nbd=n.bd||cvbd(n.c);
+    d.style.cssText=`left:${n.x/100*w}px;top:${n.y/100*h}px;border-color:${typeof n.c==='string'&&n.c.startsWith('--')?cv(n.c):n.bd||'#ccc'};background:${typeof n.bg==='string'&&n.bg.startsWith('#')?n.bg:nbg};`;
+    d.innerHTML=`<div class="erd-icon">${n.icon}</div><div class="erd-label" style="color:${typeof n.c==='string'&&n.c.startsWith('--')?cv(n.c):n.c||'#333'}">${n.label}</div>${n.count?`<div class="erd-count">${n.count}</div>`:''}`;
+    vis.appendChild(d);
+  });
+  const svg=document.getElementById(svgId);
+  const gn=id=>nodes.find(n=>n.id===id);
+  edges.forEach(e=>{
+    const s=gn(e.f),t=gn(e.t);if(!s||!t)return;
+    const x1=s.x/100*w,y1=s.y/100*h,x2=t.x/100*w,y2=t.y/100*h,mx=(x1+x2)/2,my=(y1+y2)/2;
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);
+    ln.setAttribute('stroke','#D0D5E0');ln.setAttribute('stroke-width','1.5');ln.setAttribute('stroke-dasharray','6 4');
+    svg.appendChild(ln);
+    if(e.l){
+      const tx=document.createElementNS('http://www.w3.org/2000/svg','text');
+      tx.setAttribute('x',mx);tx.setAttribute('y',my-5);tx.setAttribute('text-anchor','middle');
+      tx.setAttribute('font-family','JetBrains Mono,monospace');tx.setAttribute('font-size','8.5');tx.setAttribute('fill','#929AB8');tx.setAttribute('font-weight','500');
+      tx.textContent=e.l;svg.appendChild(tx);
+    }
+  });
+}
+
+function renderRelTable(){
+  document.getElementById('relBody').innerHTML=RELS.map(r=>`<tr>
+    <td class="fname">${r.s}</td>
+    <td><span class="rel-badge" style="background:var(--bluel);color:var(--blue)">${r.p}</span></td>
+    <td class="fname">${r.t}</td><td class="ftype" style="color:var(--violet)">${r.card}</td>
+    <td style="font-size:12px;color:var(--ink3)">${r.contract}</td>
+    <td style="font-size:12px;color:var(--ink2)">${r.ai}</td></tr>`).join('');
+}
+
+function renderMetrics(){
+  document.getElementById('metricsBar').innerHTML=METRICS.map(m=>`
+    <div class="metric-card"><div class="metric-val" style="color:${cv(m.c)}">${m.val}</div><div class="metric-label">${m.label}</div></div>`).join('');
+}
+
+function renderBA(){
+  document.getElementById('baNo').innerHTML=BA_NO.map(b=>`<div class="ba-item"><span class="ba-icon">${b.i}</span><div class="ba-text">${b.t}</div></div>`).join('');
+  document.getElementById('baYes').innerHTML=BA_YES.map(b=>`<div class="ba-item"><span class="ba-icon">${b.i}</span><div class="ba-text">${b.t}</div></div>`).join('');
+}
+
+function renderPub(){
+  document.getElementById('pubGrid').innerHTML=PUB_CASES.map(c=>`
+    <div class="cap-card"><div class="cap-bar" style="background:${cv(c.c)}"></div><div class="cap-body">
+      <div class="cap-icon" style="background:${cvl(c.c)};border:1px solid ${cvbd(c.c)}">${c.icon}</div>
+      <div class="cap-title">${c.title}</div><div class="cap-desc">${c.desc}</div>
+      <div class="cap-pills">${c.pills.map(p=>`<span class="cap-pill" style="background:${cvl(c.c)};border:1px solid ${cvbd(c.c)};color:${cv(c.c)}">${p}</span>`).join('')}</div>
+    </div></div>`).join('');
+}
+
+function go(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:document.querySelector('.nav').offsetTop,behavior:'smooth'});
+  // Lazy render graphs when their tab opens
+  if(id==='graph'&&!window._kgRendered){renderGraphVis('kgVis','kgEdges',KG_NODES,KG_EDGES);window._kgRendered=true;}
+  if(id==='schema'&&!window._erdRendered){renderGraphVis('erdVis','erdEdges',ERD_NODES,ERD_EDGES);window._erdRendered=true;}
+}
+
+// INIT
+renderNucleus();renderCaps();renderStory();renderDomains();renderSchemas();renderRelTable();renderMetrics();renderBA();renderPub();
+// Render ERD on schema tab by default (lazy)
+</script>
+</body>
+</html>
