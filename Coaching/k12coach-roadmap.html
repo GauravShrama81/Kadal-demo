@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>K12Coach – AI Initiative Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1B4CC4;
+  --blue-dk:#0F2E8A;
+  --blue-lt:#EFF6FF;
+  --blue-mid:#3B6FE8;
+  --blue-pale:#DBEAFE;
+  --green:#16A34A;
+  --green-lt:#DCFCE7;
+  --amber:#D97706;
+  --amber-lt:#FEF3C7;
+  --red:#DC2626;
+  --red-lt:#FEE2E2;
+  --ink:oklch(18% 0.008 250);
+  --mid:oklch(42% 0.008 250);
+  --lt:oklch(60% 0.006 250);
+  --xlt:oklch(78% 0.005 250);
+  --rule:oklch(91% 0.004 250);
+  --surf:oklch(97% 0.004 240);
+  --paper:oklch(99.5% 0.002 240);
+  --r:10px;--rl:16px;
+  --shadow:0 1px 3px oklch(0% 0 0 / .07),0 1px 2px oklch(0% 0 0 / .05);
+  --shadow-md:0 4px 16px oklch(0% 0 0 / .08),0 2px 6px oklch(0% 0 0 / .05);
+  --shadow-lg:0 12px 40px oklch(0% 0 0 / .13);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--surf);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ─────────────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--paper);
+  border-bottom:1px solid var(--rule);
+  height:60px;
+  display:flex;align-items:center;
+  padding:0 2.5rem;
+  box-shadow:var(--shadow);
+}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:2.5rem}
+.nav-logo{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.nav-logo svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.nav-wordmark{font-size:1.15rem;font-weight:800;color:var(--blue);letter-spacing:-.02em}
+.nav-wordmark span{color:var(--green)}
+.nav-links{display:flex;gap:0;height:60px}
+.nav-link{
+  display:flex;align-items:center;padding:0 1.1rem;
+  font-size:.85rem;font-weight:600;color:var(--lt);
+  text-decoration:none;border-bottom:2.5px solid transparent;
+  transition:all .15s;white-space:nowrap;
+}
+.nav-link:hover{color:var(--ink)}
+.nav-link.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+.nav-cta{
+  background:var(--blue);color:#fff;
+  border:none;border-radius:8px;
+  padding:.42rem 1rem;
+  font-size:.8rem;font-weight:700;
+  cursor:pointer;transition:background .15s;
+  text-decoration:none;display:inline-flex;align-items:center;gap:.35rem;
+}
+.nav-cta:hover{background:var(--blue-dk)}
+.nav-cta svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero{
+  background:linear-gradient(135deg, var(--blue-dk) 0%, var(--blue) 55%, var(--blue-mid) 100%);
+  padding:5.5rem 2.5rem 5rem;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-inner{position:relative;max-width:860px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.85);
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:.35rem .9rem;border-radius:100px;margin-bottom:1.75rem;
+}
+.hero h1{
+  font-size:clamp(2rem,5vw,3.4rem);font-weight:900;
+  color:#fff;line-height:1.1;letter-spacing:-.03em;
+  margin-bottom:1.25rem;
+}
+.hero h1 em{font-style:normal;color:#7DD3FC}
+.hero-sub{
+  font-size:1.05rem;color:rgba(255,255,255,.72);
+  max-width:560px;margin:0 auto 2.75rem;line-height:1.75;
+}
+.hero-stats{
+  display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;
+  margin-bottom:2.75rem;
+  padding-bottom:2.75rem;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.hstat{text-align:center}
+.hstat-num{font-size:2.1rem;font-weight:900;color:#fff;line-height:1;letter-spacing:-.03em}
+.hstat-label{font-size:.75rem;color:rgba(255,255,255,.55);margin-top:.3rem;font-weight:500}
+.hero-ctas{display:flex;justify-content:center;gap:.85rem;flex-wrap:wrap}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-size:.875rem;font-weight:700;
+  padding:.7rem 1.5rem;border-radius:9px;
+  cursor:pointer;border:none;transition:all .18s;text-decoration:none;
+}
+.btn-hero-white{background:#fff;color:var(--blue)}
+.btn-hero-white:hover{background:#EFF6FF;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-hero-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.btn-hero-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-hero svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── SECTION SHELL ────────────────────────────────────── */
+.section{padding:5.5rem 2.5rem}
+.section-white{background:var(--paper)}
+.section-surf{background:var(--surf)}
+.section-navy{background:var(--blue-dk)}
+.inner{max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:3.5rem}
+.section-tag{
+  display:inline-block;
+  font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:.65rem;
+}
+.section-navy .section-tag{color:#7DD3FC}
+h2{
+  font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;
+  color:var(--ink);letter-spacing:-.025em;line-height:1.15;
+  margin-bottom:.65rem;
+}
+.section-navy h2{color:#fff}
+.section-desc{
+  font-size:.975rem;color:var(--lt);
+  max-width:54ch;margin:0 auto;line-height:1.75;
+}
+.section-navy .section-desc{color:rgba(255,255,255,.6)}
+
+/* ── FLOW CARDS ───────────────────────────────────────── */
+.flow-grid{
+  display:grid;
+  grid-template-columns:1fr 40px 1fr 40px 1fr;
+  align-items:start;
+  gap:0;
+}
+.flow-arrow{
+  display:flex;align-items:flex-start;justify-content:center;
+  padding-top:3rem;color:var(--blue);font-size:1.25rem;opacity:.5;
+}
+.flow-card{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:var(--rl);
+  padding:2rem 1.75rem;
+  box-shadow:var(--shadow);
+  transition:box-shadow .2s,transform .2s;
+}
+.flow-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.flow-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;margin-bottom:1.25rem;
+}
+.fi-blue{background:var(--blue-lt)}
+.fi-green{background:var(--green-lt)}
+.fi-amber{background:var(--amber-lt)}
+.flow-step{
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--lt);margin-bottom:.35rem;
+}
+.flow-card h3{
+  font-size:1.05rem;font-weight:800;color:var(--ink);
+  letter-spacing:-.015em;margin-bottom:1rem;
+}
+.flow-list{list-style:none;display:flex;flex-direction:column;gap:.8rem}
+.flow-list li{
+  display:flex;gap:.7rem;
+  font-size:.84rem;color:var(--mid);line-height:1.55;
+}
+.flow-list li::before{
+  content:'✓';font-size:.65rem;font-weight:800;
+  color:var(--blue);background:var(--blue-pale);
+  width:19px;height:19px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.flow-list strong{font-weight:600;color:var(--ink)}
+
+/* ── RUBRIC ───────────────────────────────────────────── */
+.rubric-scroll{overflow-x:auto;border-radius:var(--rl);box-shadow:var(--shadow-md)}
+.rubric-table{
+  width:100%;border-collapse:collapse;font-size:.84rem;
+  background:#0D1829;border-radius:var(--rl);overflow:hidden;
+}
+.rubric-table thead tr{background:#060E1C}
+.rubric-table th{
+  padding:1rem 1.2rem;text-align:left;
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+}
+.th-dim{color:oklch(60% 0.01 250)}
+.th-1{color:#FCA5A5}.th-2{color:#FCD34D}.th-3{color:#93C5FD}.th-4{color:#6EE7B7}
+.rubric-table tbody tr{border-top:1px solid rgba(255,255,255,.05);transition:background .12s}
+.rubric-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.rubric-table td{padding:1.1rem 1.2rem;vertical-align:top;line-height:1.6;color:rgba(255,255,255,.45)}
+.td-dim{font-weight:700;color:rgba(255,255,255,.82);background:rgba(255,255,255,.025);white-space:nowrap;font-size:.84rem}
+.td-best{color:rgba(255,255,255,.88);font-weight:500}
+.lv{
+  display:inline-block;font-size:.6rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:4px;margin-bottom:.4rem;
+}
+.l1{background:rgba(252,165,165,.12);color:#FCA5A5}
+.l2{background:rgba(252,211,77,.12);color:#FCD34D}
+.l3{background:rgba(147,197,253,.12);color:#93C5FD}
+.l4{background:rgba(110,231,183,.12);color:#6EE7B7}
+
+/* ── DISCOVERY ────────────────────────────────────────── */
+.disc-callout{
+  background:#EFF6FF;
+  border:1px solid #BFDBFE;
+  border-radius:var(--rl);
+  padding:1.5rem 1.75rem;
+  margin-bottom:2.25rem;
+  display:flex;gap:1rem;align-items:flex-start;
+}
+.disc-callout-icon{font-size:1.5rem;flex-shrink:0;line-height:1}
+.disc-callout h3{font-size:.925rem;font-weight:700;color:var(--blue-dk);margin-bottom:.3rem}
+.disc-callout p{font-size:.84rem;color:var(--mid);line-height:1.65}
+
+.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.disc-card{
+  background:var(--paper);
+  border:1.5px solid var(--rule);
+  border-radius:var(--rl);
+  padding:1.6rem 1.5rem;
+  transition:border-color .18s,box-shadow .18s;
+  cursor:default;
+}
+.disc-card:hover{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-lt)}
+.disc-card.span2{grid-column:span 2}
+.disc-card-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+.disc-num{
+  width:30px;height:30px;
+  background:var(--blue);color:#fff;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:800;flex-shrink:0;
+}
+.disc-theme{font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--blue)}
+.disc-question{font-size:.92rem;font-weight:600;color:var(--ink);line-height:1.6;margin-bottom:.85rem}
+.disc-followups{display:flex;flex-direction:column;gap:.5rem}
+.disc-followup{
+  display:flex;gap:.55rem;
+  font-size:.8rem;color:var(--mid);line-height:1.55;
+}
+.disc-followup::before{content:'→';color:var(--blue);flex-shrink:0;font-size:.8rem}
+
+/* ── FADE IN ──────────────────────────────────────────── */
+.fade{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.fade.in{opacity:1;transform:none}
+.d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer{
+  background:#060E1C;padding:2.25rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.footer-logo{width:28px;height:28px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.footer-logo svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.footer-name{font-size:.9rem;font-weight:800;color:#fff;letter-spacing:-.01em}
+.footer-name span{color:#7DD3FC}
+footer p{font-size:.75rem;color:rgba(255,255,255,.28)}
+
+@media(max-width:860px){
+  .flow-grid{grid-template-columns:1fr}
+  .flow-arrow{display:none}
+  .disc-grid{grid-template-columns:1fr}
+  .disc-card.span2{grid-column:span 1}
+  .nav-links{display:none}
+  .hero-stats{gap:1.75rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="nav-wordmark">K12<span>Coach</span></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link active" href="#how-it-works">How It Works</a>
+    <a class="nav-link" href="#quality">Quality Standards</a>
+    <a class="nav-link" href="#discovery">Discovery</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-cta" href="#discovery">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Share Your Needs
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🎓 National Coaching Initiative &nbsp;·&nbsp; 2026</div>
+    <h1>Smarter Coaching.<br><em>Better Teachers.</em> Every Week.</h1>
+    <p class="hero-sub">We are building a system that takes everything happening in a classroom and turns it into a clear, focused coaching plan. Coaches spend less time digging through data and more time having conversations that actually move the needle.</p>
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-num">200</div>
+        <div class="hstat-label">Transformation Coaches</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">3 to 4</div>
+        <div class="hstat-label">Weekly Focus Areas Per Teacher</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">1</div>
+        <div class="hstat-label">Unified National Model</div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <a href="#how-it-works" class="btn-hero btn-hero-white">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="10 15 15 12 10 9"/></svg>
+        See How It Works
+      </a>
+      <a href="#discovery" class="btn-hero btn-hero-ghost">Share Your Needs</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-surf" id="how-it-works">
+  <div class="inner">
+    <div class="section-header fade">
+      <div class="section-tag">How It Works</div>
+      <h2>From Classroom to Coaching Brief in One Seamless Flow</h2>
+      <p class="section-desc">The system pulls together everything that matters, surfaces what is most important, and puts it in front of coaches before they walk into a session.</p>
+    </div>
+
+    <div class="flow-grid">
+      <div class="flow-card fade d1">
+        <div class="flow-icon fi-blue">📥</div>
+        <div class="flow-step">Step 1 &nbsp;·&nbsp; Gather</div>
+        <h3>Everything Comes Together</h3>
+        <ul class="flow-list">
+          <li><span><strong>Classroom recordings</strong> are automatically collected so nobody has to download them manually.</span></li>
+          <li><span><strong>Observation history</strong> syncs from Standards for Success, including prior walkthrough scores and notes.</span></li>
+          <li><span><strong>Teacher check-ins</strong> give teachers a simple way to share informal data like quiz results or weekly reflections.</span></li>
+          <li><span><strong>PD resource library</strong> is loaded in the background so relevant strategies are always ready to surface.</span></li>
+        </ul>
+      </div>
+
+      <div class="flow-arrow fade d1">&#8594;</div>
+
+      <div class="flow-card fade d2">
+        <div class="flow-icon fi-green">🧠</div>
+        <div class="flow-step">Step 2 &nbsp;·&nbsp; Analyze</div>
+        <h3>AI Finds What Matters</h3>
+        <ul class="flow-list">
+          <li><span><strong>Classroom patterns</strong> are identified across student talk time, participation rates, and question quality.</span></li>
+          <li><span><strong>Instructional rubrics</strong> map automatically to what was observed, with video timestamps anchoring every insight.</span></li>
+          <li><span><strong>PD strategies</strong> are matched to each teacher's growth areas from the repository.</span></li>
+          <li><span><strong>3 to 4 focus areas</strong> are surfaced per teacher, the highest-leverage opportunities for that specific week.</span></li>
+        </ul>
+      </div>
+
+      <div class="flow-arrow fade d2">&#8594;</div>
+
+      <div class="flow-card fade d3">
+        <div class="flow-icon fi-amber">🚀</div>
+        <div class="flow-step">Step 3 &nbsp;·&nbsp; Deliver</div>
+        <h3>Coaches Are Ready to Act</h3>
+        <ul class="flow-list">
+          <li><span><strong>Coach Briefs</strong> arrive with clear focus areas, conversation starters, and direct links to video moments.</span></li>
+          <li><span><strong>Teacher Briefs</strong> give teachers a self-reflection view so growth continues between sessions.</span></li>
+          <li><span><strong>National dashboard</strong> gives leaders a consistent view across regions to track coaching fidelity.</span></li>
+          <li><span><strong>Role-based access</strong> means coaches see only their teachers and leaders see exactly what they need.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUALITY STANDARDS / RUBRIC -->
+<section class="section section-navy" id="quality">
+  <div class="inner">
+    <div class="section-header fade">
+      <div class="section-tag">Quality Standards</div>
+      <h2>What Great Coaching Looks Like</h2>
+      <p class="section-desc">This rubric describes what coaching excellence looks like at each stage, from getting started all the way to fully thriving with the system.</p>
+    </div>
+
+    <div class="rubric-scroll fade">
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th class="th-dim" style="min-width:150px">Dimension</th>
+            <th class="th-1" style="min-width:185px">Getting Started</th>
+            <th class="th-2" style="min-width:185px">Building Momentum</th>
+            <th class="th-3" style="min-width:185px">Accomplished</th>
+            <th class="th-4" style="min-width:205px">Exemplary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-dim">Coaching Clarity</td>
+            <td><div class="lv l1">Level 1</div><br>Feedback is general with no specific weekly priorities set.</td>
+            <td><div class="lv l2">Level 2</div><br>One or two areas identified but next steps are vague and untimed.</td>
+            <td><div class="lv l3">Level 3</div><br>Three to four clear weekly priorities with concrete, observable actions.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Priorities come with coaching scripts, video timestamps, and anticipated teacher responses.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Feedback Quality</td>
+            <td><div class="lv l1">Level 1</div><br>Score-focused with no coaching language or growth pathway.</td>
+            <td><div class="lv l2">Level 2</div><br>Suggestions included but not tied to rubrics or classroom evidence.</td>
+            <td><div class="lv l3">Level 3</div><br>Every piece of feedback is grounded in rubric criteria and specific classroom moments.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Briefs anticipate objections, offer alternative framings, and include follow-up checkpoints.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">PD Connection</td>
+            <td><div class="lv l1">Level 1</div><br>No professional development resources are surfaced or referenced.</td>
+            <td><div class="lv l2">Level 2</div><br>PD is mentioned but without direct links or specific modules to act on.</td>
+            <td><div class="lv l3">Level 3</div><br>One or two targeted PD resources are integrated into the teacher's growth plan.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>PD is sequenced by priority and mapped to timestamped classroom evidence automatically.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Use of Evidence</td>
+            <td><div class="lv l1">Level 1</div><br>Coaching relies on memory or general impressions rather than data.</td>
+            <td><div class="lv l2">Level 2</div><br>Data points referenced but without the context needed to act on them.</td>
+            <td><div class="lv l3">Level 3</div><br>AI-generated insights like talk-time ratios are used alongside rubric scores.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Every focus area is anchored to a timestamped video clip. Teachers reflect on specific moments.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Coach Preparedness</td>
+            <td><div class="lv l1">Level 1</div><br>Coach enters conversations without a brief or any prep materials.</td>
+            <td><div class="lv l2">Level 2</div><br>A summary brief exists but lacks conversation guidance or anticipated challenges.</td>
+            <td><div class="lv l3">Level 3</div><br>Brief includes background, talking points, and guiding questions per focus area.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Brief includes teacher history, suggested conversation arc, and clear session exit criteria.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Teacher Ownership</td>
+            <td><div class="lv l1">Level 1</div><br>Feedback is delivered to teachers with no self-reflection pathway.</td>
+            <td><div class="lv l2">Level 2</div><br>Teachers receive a summary but are not supported in acting on it independently.</td>
+            <td><div class="lv l3">Level 3</div><br>Teacher Portal provides focus areas, self-coaching prompts, and linked video moments.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Teachers co-construct their own next steps and progress is tracked across coaching cycles.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Regional Consistency</td>
+            <td><div class="lv l1">Level 1</div><br>No cross-region visibility. Implementation varies significantly by location.</td>
+            <td><div class="lv l2">Level 2</div><br>Basic aggregation exists but metrics are not standardized across regions.</td>
+            <td><div class="lv l3">Level 3</div><br>Leaders can compare coaching fidelity across regions on a shared dashboard.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>Real-time variance alerts flag regions where implementation gaps are emerging before they compound.</td>
+          </tr>
+          <tr>
+            <td class="td-dim">Trust in AI Insights</td>
+            <td><div class="lv l1">Level 1</div><br>Coaches accept or dismiss AI output without any way to flag disagreement.</td>
+            <td><div class="lv l2">Level 2</div><br>Coaches can flag concerns but there is no feedback loop back into the system.</td>
+            <td><div class="lv l3">Level 3</div><br>A structured override process exists. Coach edits are logged and reviewed.</td>
+            <td class="td-best"><div class="lv l4">Level 4</div><br>AI confidence levels are shown per recommendation. Conflicts between AI and teacher data are explained clearly.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- DISCOVERY -->
+<section class="section section-white" id="discovery">
+  <div class="inner">
+    <div class="section-header fade">
+      <div class="section-tag">Design Discovery</div>
+      <h2>Help Us Build This Right for You</h2>
+      <p class="section-desc">The answers to these questions shape every design decision we make. The more we understand how your team actually works, the better the tool we can build together.</p>
+    </div>
+
+    <div class="disc-callout fade">
+      <div class="disc-callout-icon">💬</div>
+      <div>
+        <h3>How to use this section</h3>
+        <p>Bring these questions to your team before our next working session. You do not need final answers. Even rough thinking helps us prioritize the right things. Mary and Iman will compile responses and share them by Friday ahead of the review on the 4th.</p>
+      </div>
+    </div>
+
+    <div class="disc-grid">
+
+      <div class="disc-card fade d1">
+        <div class="disc-card-top">
+          <div class="disc-num">1</div>
+          <div class="disc-theme">Workflows and Day-to-Day Reality</div>
+        </div>
+        <div class="disc-question">Walk us through a typical week leading up to a coaching conversation. Where does the process feel like it is working against you?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">What currently takes the most time that feels like it should not?</div>
+          <div class="disc-followup">What do you wish you knew before walking into a coaching session?</div>
+          <div class="disc-followup">If you could remove one step from your prep routine, what would it be?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d2">
+        <div class="disc-card-top">
+          <div class="disc-num">2</div>
+          <div class="disc-theme">Video and Recording Collection</div>
+        </div>
+        <div class="disc-question">How are classroom recordings currently collected and accessed, and what would fully automated collection change about your workflow?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Who is currently responsible for downloading recordings, and how long does it take?</div>
+          <div class="disc-followup">Are recordings stored in a consistent place or scattered across multiple systems?</div>
+          <div class="disc-followup">Are there privacy or consent considerations we should plan around from day one?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d1">
+        <div class="disc-card-top">
+          <div class="disc-num">3</div>
+          <div class="disc-theme">Standards for Success Integration</div>
+        </div>
+        <div class="disc-question">How does your team currently use Standards for Success, and what evaluation data would be most valuable to bring into the coaching system?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Which rubrics in SFS are most directly tied to your coaching priorities?</div>
+          <div class="disc-followup">How often is SFS updated? Daily, weekly, or only after a formal observation?</div>
+          <div class="disc-followup">Are there data points in SFS that coaches rarely use today but probably should?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d2">
+        <div class="disc-card-top">
+          <div class="disc-num">4</div>
+          <div class="disc-theme">Speed vs. Depth of Analysis</div>
+        </div>
+        <div class="disc-question">When does coaching data need to reach you to be useful that week, and would you trade speed for deeper analysis?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Is there a point after which data arrives too late to use in that week's coaching?</div>
+          <div class="disc-followup">What day do coaching conversations typically happen in your weekly cadence?</div>
+          <div class="disc-followup">Would a lighter brief within a few hours be more useful than a full analysis within 48?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d1">
+        <div class="disc-card-top">
+          <div class="disc-num">5</div>
+          <div class="disc-theme">Roles, Access and Permissions</div>
+        </div>
+        <div class="disc-question">How should the system determine who sees what, and are there edge cases around coaches who cover multiple regions or share teachers?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Are coaches exclusively assigned to specific teachers, or is there overlap?</div>
+          <div class="disc-followup">What should a national leader be able to see that a regional coach cannot?</div>
+          <div class="disc-followup">How should substitute or interim coaches be handled in the permission model?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d2">
+        <div class="disc-card-top">
+          <div class="disc-num">6</div>
+          <div class="disc-theme">Teacher Self-Reporting</div>
+        </div>
+        <div class="disc-question">When teachers share informal data like quiz results or lesson notes, how structured does that need to be, and how often should it happen?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Would teachers submit this through a form, a simple text field, or a document upload?</div>
+          <div class="disc-followup">How do you currently handle gaps between what teachers report and what observations show?</div>
+          <div class="disc-followup">Should teachers be able to see how their input influences their coaching brief?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d1">
+        <div class="disc-card-top">
+          <div class="disc-num">7</div>
+          <div class="disc-theme">Professional Development Recommendations</div>
+        </div>
+        <div class="disc-question">When you recommend a PD resource to a teacher, what triggers that decision, and how do you think about sequencing resources over time?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">Is PD triggered by a rubric score threshold, a repeated pattern, or a specific observed behavior?</div>
+          <div class="disc-followup">Are there existing PD resources the system should connect to automatically from day one?</div>
+          <div class="disc-followup">How do you know when a PD recommendation actually worked?</div>
+        </div>
+      </div>
+
+      <div class="disc-card fade d2">
+        <div class="disc-card-top">
+          <div class="disc-num">8</div>
+          <div class="disc-theme">Coach Training and Onboarding</div>
+        </div>
+        <div class="disc-question">As we bring 200 coaches onto this new system, what would make the difference between a smooth rollout and one that loses momentum?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">What do coaches need before they will trust the AI's recommendations enough to use them in a real conversation?</div>
+          <div class="disc-followup">Are there coaches who might push back, and what would their concern likely be?</div>
+          <div class="disc-followup">Should training be self-paced, live-led, or a combination of both?</div>
+        </div>
+      </div>
+
+      <div class="disc-card span2 fade">
+        <div class="disc-card-top">
+          <div class="disc-num">9</div>
+          <div class="disc-theme">National Consistency and Leadership Oversight</div>
+        </div>
+        <div class="disc-question">If a national leader wanted to confirm coaching is being implemented consistently across every region, what three signals would you put on their dashboard, and what threshold would trigger a direct conversation?</div>
+        <div class="disc-followups">
+          <div class="disc-followup">What does inconsistent implementation look like from where you sit today?</div>
+          <div class="disc-followup">Are there regions where you would expect natural variation, and is that acceptable?</div>
+          <div class="disc-followup">How often should national leaders review the data? Weekly, monthly, or only when something flags?</div>
+          <div class="disc-followup">What is the difference between a coaching system problem and a regional leadership problem, and how should the system help distinguish between the two?</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a class="footer-brand" href="#">
+    <div class="footer-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="footer-name">K12<span>Coach</span></span>
+  </a>
+  <p>© 2026 AI Coaching Integration Initiative &nbsp;·&nbsp; Confidential, for internal and partner use only</p>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
