@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>K12Coach</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -20,37 +20,40 @@
   --red:#DC2626;
   --red-lt:#FEE2E2;
   --ink:oklch(18% 0.008 250);
-  --mid:oklch(42% 0.008 250);
-  --lt:oklch(60% 0.006 250);
-  --xlt:oklch(78% 0.005 250);
+  --mid:oklch(40% 0.008 250);
+  --lt:oklch(58% 0.006 250);
+  --xlt:oklch(76% 0.005 250);
   --rule:oklch(91% 0.004 250);
   --surf:oklch(97% 0.004 240);
   --paper:oklch(99.5% 0.002 240);
   --r:10px;--rl:16px;
-  --shadow:0 1px 3px oklch(0% 0 0 / .07),0 1px 2px oklch(0% 0 0 / .05);
-  --shadow-md:0 4px 16px oklch(0% 0 0 / .08),0 2px 6px oklch(0% 0 0 / .05);
-  --shadow-lg:0 12px 40px oklch(0% 0 0 / .12);
+  --shadow:0 1px 3px oklch(0% 0 0/.07),0 1px 2px oklch(0% 0 0/.05);
+  --shadow-md:0 4px 16px oklch(0% 0 0/.08),0 2px 6px oklch(0% 0 0/.05);
+  --shadow-lg:0 12px 40px oklch(0% 0 0/.12);
 }
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--surf);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
-/* ── NAV ──────────────────────────────────────────────── */
+html,body{
+  height:100%;
+  font-family:'Inter',sans-serif;
+  background:var(--surf);
+  color:var(--ink);
+  font-size:15px;          /* up from 14px to match roadmap */
+  line-height:1.65;        /* roomier, like roadmap */
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── NAV ─────────────────────────────────────────────── */
 .nav{
   position:sticky;top:0;z-index:100;
   background:var(--paper);
   border-bottom:1px solid var(--rule);
-  height:60px;
+  height:62px;
   display:flex;align-items:center;
-  padding:0 2rem;
-  gap:0;
+  padding:0 2.25rem;
   box-shadow:var(--shadow);
 }
 .nav-brand{display:flex;align-items:center;gap:10px;margin-right:2.5rem;text-decoration:none}
-.nav-logo{
-  width:38px;height:38px;
-  background:var(--blue);
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-}
+.nav-logo{width:38px;height:38px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center}
 .nav-logo svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .nav-wordmark{font-size:1.2rem;font-weight:800;color:var(--blue);letter-spacing:-.02em}
 .nav-wordmark span{color:var(--green)}
@@ -58,380 +61,296 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--surf);colo
 .nav-tab{
   display:flex;align-items:center;
   padding:0 1.25rem;
-  font-size:.875rem;font-weight:600;
+  font-size:.9rem;font-weight:600;
   color:var(--lt);
   cursor:pointer;
   border-bottom:2.5px solid transparent;
   transition:all .15s;
-  white-space:nowrap;
-  text-decoration:none;
+  white-space:nowrap;text-decoration:none;
 }
 .nav-tab:hover{color:var(--ink)}
 .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
 .nav-week{
-  font-size:.78rem;font-weight:600;
-  color:var(--lt);
-  background:var(--surf);
-  padding:.3rem .75rem;
-  border-radius:100px;
-  border:1px solid var(--rule);
+  font-size:.8rem;font-weight:600;color:var(--lt);
+  background:var(--surf);padding:.3rem .8rem;
+  border-radius:100px;border:1px solid var(--rule);
 }
 .nav-avatar{
-  width:34px;height:34px;
-  background:var(--blue);
-  border-radius:50%;
+  width:36px;height:36px;background:var(--blue);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:.75rem;font-weight:700;color:#fff;
-  cursor:pointer;
+  font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;
 }
 .nav-notif{
-  width:34px;height:34px;
-  border:1.5px solid var(--rule);
-  border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  transition:border-color .15s;
-  position:relative;
+  width:36px;height:36px;border:1.5px solid var(--rule);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:border-color .15s;position:relative;
 }
 .nav-notif:hover{border-color:var(--blue)}
-.nav-notif svg{width:16px;height:16px;stroke:var(--mid);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-notif svg{width:17px;height:17px;stroke:var(--mid);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nav-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid var(--paper)}
 
-/* ── PAGES ────────────────────────────────────────────── */
-.page{display:none;padding:2rem;max-width:1300px;margin:0 auto;animation:fadeIn .2s ease}
+/* ── PAGES ───────────────────────────────────────────── */
+.page{display:none;padding:2.25rem;max-width:1340px;margin:0 auto;animation:fadeIn .22s ease}
 .page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* ── PAGE HEADER ──────────────────────────────────────── */
-.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:1rem;flex-wrap:wrap}
-.ph-left{}
-.ph-title{font-size:1.5rem;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.2}
-.ph-sub{font-size:.875rem;color:var(--lt);margin-top:.25rem}
+/* ── PAGE HEADER ─────────────────────────────────────── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
+.ph-title{font-size:1.65rem;font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.2}
+.ph-sub{font-size:.95rem;color:var(--lt);margin-top:.3rem;line-height:1.6}
 .ph-right{display:flex;gap:.75rem;align-items:center;flex-shrink:0}
 .btn{
   display:inline-flex;align-items:center;gap:.4rem;
-  font-size:.8rem;font-weight:700;
-  padding:.5rem 1rem;border-radius:8px;
+  font-size:.85rem;font-weight:700;
+  padding:.55rem 1.1rem;border-radius:8px;
   cursor:pointer;border:none;transition:all .15s;
   white-space:nowrap;text-decoration:none;
 }
-.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-primary:hover{background:var(--blue-dk);transform:translateY(-1px);box-shadow:var(--shadow-md)}
 .btn-ghost{background:var(--paper);color:var(--mid);border:1.5px solid var(--rule)}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
 
-/* ── SUMMARY STRIP ────────────────────────────────────── */
-.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem}
+/* ── SUMMARY STRIP ───────────────────────────────────── */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:2rem}
 .strip-card{
-  background:var(--paper);
-  border:1px solid var(--rule);
-  border-radius:var(--rl);
-  padding:1.1rem 1.25rem;
-  box-shadow:var(--shadow);
-  display:flex;align-items:flex-start;gap:.85rem;
+  background:var(--paper);border:1px solid var(--rule);
+  border-radius:var(--rl);padding:1.25rem 1.4rem;
+  box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:.9rem;
   transition:box-shadow .15s;
 }
 .strip-card:hover{box-shadow:var(--shadow-md)}
-.sc-icon{
-  width:42px;height:42px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;font-size:1.15rem;
-}
-.sc-body{}
-.sc-label{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--lt);margin-bottom:.2rem}
-.sc-val{font-size:1.45rem;font-weight:800;color:var(--ink);line-height:1;margin-bottom:.2rem;letter-spacing:-.02em}
-.sc-trend{font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:.25rem}
+.sc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem}
+.sc-label{font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--lt);margin-bottom:.25rem}
+.sc-val{font-size:1.55rem;font-weight:800;color:var(--ink);line-height:1;margin-bottom:.25rem;letter-spacing:-.025em}
+.sc-trend{font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:.25rem}
 .up{color:var(--green)}.dn{color:var(--red)}.eq{color:var(--amber)}
 
-/* ── GRID LAYOUT ──────────────────────────────────────── */
+/* ── GRID LAYOUT ─────────────────────────────────────── */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
 .grid-main{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
-.grid-main-rev{display:grid;grid-template-columns:1fr 2fr;gap:1.25rem;margin-bottom:1.25rem}
 
-/* ── CARD ─────────────────────────────────────────────── */
-.card{
-  background:var(--paper);
-  border:1px solid var(--rule);
-  border-radius:var(--rl);
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
+/* ── CARD ────────────────────────────────────────────── */
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--shadow);overflow:hidden}
 .card-header{
-  padding:.9rem 1.25rem;
-  border-bottom:1px solid var(--rule);
-  display:flex;align-items:center;justify-content:space-between;
-  gap:.75rem;
+  padding:1rem 1.4rem;border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
 }
-.card-title{font-size:.875rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.5rem}
-.card-title svg{width:15px;height:15px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.card-action{font-size:.75rem;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;padding:0;transition:opacity .15s}
+.card-title{font-size:.95rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.5rem}
+.card-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card-action{font-size:.8rem;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;padding:0;transition:opacity .15s}
 .card-action:hover{opacity:.7}
-.card-body{padding:1.25rem}
+.card-body{padding:1.4rem}
 .card-body-flush{padding:0}
 
-/* ── CHART CONTAINERS ─────────────────────────────────── */
-.chart-wrap{position:relative;height:200px}
-.chart-wrap-sm{position:relative;height:140px}
-.chart-wrap-lg{position:relative;height:260px}
+/* ── CHART WRAPPERS ──────────────────────────────────── */
+.chart-wrap{position:relative;height:210px}
+.chart-wrap-sm{position:relative;height:150px}
+.chart-wrap-lg{position:relative;height:270px}
 
-/* ── TEACHER CARDS (HOME) ─────────────────────────────── */
+/* ── ALERT ───────────────────────────────────────────── */
+.alert-strip{
+  background:oklch(98% 0.015 50);border:1px solid oklch(90% 0.04 50);
+  border-radius:var(--r);padding:.9rem 1.1rem;
+  display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.4rem;
+}
+.alert-strip svg{width:17px;height:17px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+.as-text{font-size:.88rem;color:var(--mid);line-height:1.6}
+.as-text strong{color:var(--amber);font-weight:700}
+
+/* ── TEACHER ROWS ────────────────────────────────────── */
 .teacher-row{
   display:flex;align-items:center;gap:1rem;
-  padding:.9rem 1.25rem;
-  border-bottom:1px solid var(--rule);
-  cursor:pointer;
-  transition:background .12s;
+  padding:1rem 1.4rem;border-bottom:1px solid var(--rule);
+  cursor:pointer;transition:background .12s;
 }
 .teacher-row:last-child{border-bottom:none}
 .teacher-row:hover{background:var(--blue-lt)}
-.tr-avatar{
-  width:38px;height:38px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.8rem;font-weight:700;color:#fff;
-  flex-shrink:0;
-}
+.tr-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0}
 .tr-info{flex:1;min-width:0}
-.tr-name{font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:.1rem}
-.tr-grade{font-size:.75rem;color:var(--lt)}
-.tr-spark{width:80px;flex-shrink:0}
-.tr-score{
-  text-align:right;flex-shrink:0;width:48px;
-}
-.tr-score-num{font-size:1rem;font-weight:800;color:var(--ink);line-height:1}
-.tr-score-label{font-size:.65rem;color:var(--lt);margin-top:.1rem}
-.tr-badges{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.2rem}
-.badge{
-  font-size:.63rem;font-weight:700;
-  padding:.12rem .45rem;border-radius:4px;
-  letter-spacing:.02em;white-space:nowrap;
-}
+.tr-name{font-size:.925rem;font-weight:700;color:var(--ink);margin-bottom:.12rem}
+.tr-grade{font-size:.8rem;color:var(--lt)}
+.tr-badges{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.25rem}
+.tr-score{text-align:right;flex-shrink:0;width:52px}
+.tr-score-num{font-size:1.1rem;font-weight:800;color:var(--ink);line-height:1}
+.tr-score-label{font-size:.68rem;color:var(--lt);margin-top:.1rem}
+.badge{font-size:.67rem;font-weight:700;padding:.13rem .48rem;border-radius:4px;letter-spacing:.02em;white-space:nowrap}
 .bg{background:var(--green-lt);color:var(--green)}
 .ba{background:var(--amber-lt);color:var(--amber)}
 .br{background:var(--red-lt);color:var(--red)}
 .bb{background:var(--blue-pale);color:var(--blue)}
 
-/* ── ALERT STRIP ──────────────────────────────────────── */
-.alert-strip{
-  background:oklch(98% 0.015 50);
-  border:1px solid oklch(90% 0.04 50);
-  border-radius:var(--r);
-  padding:.75rem 1rem;
-  display:flex;gap:.75rem;align-items:flex-start;
-  margin-bottom:1.25rem;
-}
-.alert-strip svg{width:16px;height:16px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
-.as-text{font-size:.82rem;color:var(--mid);line-height:1.55}
-.as-text strong{color:var(--amber);font-weight:700}
-
-/* ── FOCUS AREA ITEMS ─────────────────────────────────── */
+/* ── FOCUS AREA ITEMS ────────────────────────────────── */
 .fa-item{
-  padding:.85rem 1.25rem;
-  border-bottom:1px solid var(--rule);
-  display:flex;gap:.85rem;align-items:flex-start;
-  transition:background .12s;
+  padding:.95rem 1.4rem;border-bottom:1px solid var(--rule);
+  display:flex;gap:.9rem;align-items:flex-start;transition:background .12s;
 }
 .fa-item:last-child{border-bottom:none}
 .fa-item:hover{background:var(--blue-lt)}
-.fa-rank{
-  width:26px;height:26px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.75rem;font-weight:800;color:#fff;
-  flex-shrink:0;margin-top:1px;
-}
+.fa-rank{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px}
 .fa-body{flex:1;min-width:0}
-.fa-name{font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:.15rem}
-.fa-detail{font-size:.78rem;color:var(--mid);line-height:1.5}
-.fa-meta{display:flex;gap:.5rem;margin-top:.35rem;flex-wrap:wrap}
+.fa-name{font-size:.925rem;font-weight:700;color:var(--ink);margin-bottom:.2rem}
+.fa-detail{font-size:.83rem;color:var(--mid);line-height:1.6}
+.fa-meta{display:flex;gap:.5rem;margin-top:.4rem;flex-wrap:wrap}
 
-/* ── TIMELINE / LOG ───────────────────────────────────── */
+/* ── TIMELINE ────────────────────────────────────────── */
 .timeline{display:flex;flex-direction:column;gap:0}
-.tl-item{
-  display:flex;gap:.9rem;
-  padding:.85rem 1.25rem;
-  border-bottom:1px solid var(--rule);
-  position:relative;
-}
+.tl-item{display:flex;gap:.9rem;padding:.95rem 1.4rem;border-bottom:1px solid var(--rule);position:relative}
 .tl-item:last-child{border-bottom:none}
-.tl-line{
-  position:absolute;left:calc(1.25rem + 9px);top:calc(.85rem + 18px);
-  width:2px;bottom:0;background:var(--rule);
-}
+.tl-line{position:absolute;left:calc(1.4rem + 9px);top:calc(.95rem + 18px);width:2px;bottom:0;background:var(--rule)}
 .tl-item:last-child .tl-line{display:none}
-.tl-dot{
-  width:20px;height:20px;border-radius:50%;
-  flex-shrink:0;margin-top:2px;
-  display:flex;align-items:center;justify-content:center;
-  z-index:1;
-}
+.tl-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;z-index:1}
 .tl-dot svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .tl-content{flex:1;min-width:0}
-.tl-header-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem;flex-wrap:wrap}
-.tl-type{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.1rem .4rem;border-radius:4px}
+.tl-header-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;flex-wrap:wrap}
+.tl-type{font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.1rem .4rem;border-radius:4px}
 .tt-ai{background:var(--blue-pale);color:var(--blue)}
 .tt-note{background:var(--green-lt);color:var(--green)}
 .tt-obs{background:var(--amber-lt);color:var(--amber)}
-.tl-date{font-size:.7rem;color:var(--xlt);margin-left:auto}
-.tl-text{font-size:.82rem;color:var(--mid);line-height:1.6}
+.tl-date{font-size:.75rem;color:var(--xlt);margin-left:auto}
+.tl-text{font-size:.87rem;color:var(--mid);line-height:1.65}
 .tl-text strong{color:var(--ink);font-weight:600}
 
-/* ── TEACHER DETAIL PAGE ──────────────────────────────── */
+/* ── TEACHER DETAIL HEADER ───────────────────────────── */
 .td-header{
   background:linear-gradient(135deg,var(--blue-dk) 0%,var(--blue) 60%,var(--blue-mid) 100%);
-  border-radius:var(--rl);
-  padding:1.75rem 2rem;
-  margin-bottom:1.25rem;
-  display:flex;align-items:center;gap:1.5rem;
-  box-shadow:var(--shadow-md);
+  border-radius:var(--rl);padding:2rem 2.25rem;margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:1.75rem;box-shadow:var(--shadow-md);
 }
-.td-avatar{
-  width:58px;height:58px;border-radius:50%;
-  border:3px solid rgba(255,255,255,.25);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;font-weight:800;color:#fff;
-  flex-shrink:0;
-}
+.td-avatar{width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:800;color:#fff;flex-shrink:0}
 .td-meta{flex:1}
-.td-name{font-size:1.3rem;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:.2rem}
-.td-sub{font-size:.85rem;color:rgba(255,255,255,.7)}
-.td-stats{display:flex;gap:1.5rem;margin-top:.75rem;flex-wrap:wrap}
-.td-stat{text-align:left}
-.td-stat-num{font-size:1.3rem;font-weight:800;color:#fff;line-height:1}
-.td-stat-label{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:.1rem}
+.td-name{font-size:1.4rem;font-weight:800;color:#fff;letter-spacing:-.025em;margin-bottom:.2rem}
+.td-sub{font-size:.88rem;color:rgba(255,255,255,.7)}
+.td-stats{display:flex;gap:2rem;margin-top:.85rem;flex-wrap:wrap}
+.td-stat-num{font-size:1.4rem;font-weight:800;color:#fff;line-height:1}
+.td-stat-label{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:.15rem}
 .td-actions{display:flex;gap:.6rem;flex-shrink:0;flex-wrap:wrap}
 .td-action{
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.25);
-  color:#fff;
-  border-radius:8px;
-  padding:.45rem .9rem;
-  font-size:.78rem;font-weight:700;
-  cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;gap:.35rem;
-  white-space:nowrap;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  color:#fff;border-radius:8px;padding:.5rem 1rem;
+  font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:.4rem;white-space:nowrap;
 }
-.td-action svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.td-action svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .td-action:hover{background:rgba(255,255,255,.25)}
 .td-action.prim{background:var(--green);border-color:var(--green)}
 .td-action.prim:hover{background:#15803d}
 
-/* ── SCORE BAR ────────────────────────────────────────── */
-.score-bar-wrap{margin-bottom:.9rem}
-.score-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem}
-.score-bar-label{font-size:.8rem;font-weight:600;color:var(--ink)}
-.score-bar-val{font-size:.8rem;font-weight:700;color:var(--blue)}
-.score-bar-track{height:7px;background:var(--rule);border-radius:100px;overflow:hidden}
-.score-bar-fill{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+/* ── SCORE BARS ──────────────────────────────────────── */
+.score-bar-wrap{margin-bottom:1rem}
+.score-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.score-bar-label{font-size:.85rem;font-weight:600;color:var(--ink)}
+.score-bar-val{font-size:.85rem;font-weight:700;color:var(--blue)}
+.score-bar-track{height:8px;background:var(--rule);border-radius:100px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:100px;transition:width .7s cubic-bezier(.22,1,.36,1)}
 
-/* ── IMPROVEMENT CALLOUT ──────────────────────────────── */
+/* ── IMPROVEMENT CARD ────────────────────────────────── */
 .improve-card{
-  background:oklch(97.5% 0.01 50);
-  border:1.5px solid oklch(88% 0.05 50);
-  border-radius:var(--r);
-  padding:1rem 1.1rem;
-  margin-bottom:.75rem;
+  background:oklch(97.5% 0.01 50);border:1.5px solid oklch(88% 0.05 50);
+  border-radius:var(--r);padding:1.1rem 1.25rem;margin-bottom:.85rem;
 }
 .ic-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
-.ic-icon{font-size:.95rem}
-.ic-title{font-size:.85rem;font-weight:700;color:oklch(40% 0.08 50)}
-.ic-body{font-size:.8rem;color:var(--mid);line-height:1.6}
+.ic-icon{font-size:1rem}
+.ic-title{font-size:.9rem;font-weight:700;color:oklch(38% 0.08 50)}
+.ic-body{font-size:.85rem;color:var(--mid);line-height:1.65}
 .ic-rec{
-  margin-top:.6rem;
-  background:var(--paper);
-  border:1px solid var(--rule);
-  border-radius:7px;
-  padding:.6rem .8rem;
-  font-size:.78rem;color:var(--mid);line-height:1.55;
+  margin-top:.65rem;background:var(--paper);
+  border:1px solid var(--rule);border-radius:7px;
+  padding:.65rem .9rem;font-size:.83rem;color:var(--mid);line-height:1.6;
 }
 .ic-rec strong{color:var(--blue);font-weight:600}
 
-/* ── MINI NOTE INPUT ──────────────────────────────────── */
-.note-input-wrap{padding:1rem 1.25rem;border-top:1px solid var(--rule);display:flex;gap:.6rem;align-items:flex-end}
+/* ── NOTE INPUT ──────────────────────────────────────── */
+.note-input-wrap{padding:1.1rem 1.4rem;border-top:1px solid var(--rule);display:flex;gap:.65rem;align-items:flex-end}
 .note-input{
   flex:1;border:1.5px solid var(--rule);border-radius:8px;
-  padding:.55rem .8rem;font-size:.82rem;font-family:'Inter',sans-serif;
+  padding:.6rem .9rem;font-size:.87rem;font-family:'Inter',sans-serif;
   color:var(--ink);background:var(--surf);resize:none;outline:none;
-  transition:border-color .15s;line-height:1.5;
+  transition:border-color .15s;line-height:1.55;
 }
 .note-input:focus{border-color:var(--blue)}
 .note-submit{
   background:var(--blue);color:#fff;border:none;
-  border-radius:8px;padding:.55rem .9rem;
-  font-size:.78rem;font-weight:700;cursor:pointer;
+  border-radius:8px;padding:.6rem 1rem;
+  font-size:.83rem;font-weight:700;cursor:pointer;
   transition:background .15s;white-space:nowrap;
 }
 .note-submit:hover{background:var(--blue-dk)}
 
-/* ── SPARKLINE ────────────────────────────────────────── */
-canvas.spark{width:80px!important;height:28px!important}
+/* ── SPARKLINE ───────────────────────────────────────── */
+canvas.spark{width:84px!important;height:30px!important}
 
-/* ── TOAST ────────────────────────────────────────────── */
-.toast{
-  position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;
-  background:var(--ink);color:#fff;
-  padding:.7rem 1.1rem;border-radius:10px;
-  font-size:.82rem;font-weight:600;
-  box-shadow:var(--shadow-lg);
-  display:flex;align-items:center;gap:.5rem;
-  transform:translateY(8px);opacity:0;
-  transition:all .22s cubic-bezier(.22,1,.36,1);
-  pointer-events:none;
-}
-.toast.show{transform:none;opacity:1}
-.toast svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-
-/* ── TABS (in-card) ───────────────────────────────────── */
+/* ── IN-CARD TABS ────────────────────────────────────── */
 .in-tabs{display:flex;border-bottom:1px solid var(--rule);background:var(--paper)}
 .in-tab{
-  padding:.65rem 1.1rem;
-  font-size:.8rem;font-weight:600;color:var(--lt);
-  cursor:pointer;border-bottom:2px solid transparent;
-  transition:all .12s;white-space:nowrap;
+  padding:.72rem 1.2rem;font-size:.85rem;font-weight:600;color:var(--lt);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;white-space:nowrap;
 }
 .in-tab:hover{color:var(--ink)}
 .in-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .in-tab-content{display:none}
 .in-tab-content.active{display:block;animation:fadeIn .15s ease}
 
-/* ── BACK BTN ─────────────────────────────────────────── */
+/* ── BACK BTN ────────────────────────────────────────── */
 .back-btn{
   display:inline-flex;align-items:center;gap:.4rem;
-  font-size:.82rem;font-weight:600;color:var(--lt);
+  font-size:.87rem;font-weight:600;color:var(--lt);
   cursor:pointer;background:none;border:none;padding:0;
-  margin-bottom:1rem;transition:color .12s;
+  margin-bottom:1.1rem;transition:color .12s;
 }
 .back-btn:hover{color:var(--blue)}
-.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.back-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── TEACHER LIST PAGE ────────────────────────────────── */
-.teacher-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:0}
+/* ── TEACHER GRID ────────────────────────────────────── */
+.teacher-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.1rem}
 .tg-card{
-  background:var(--paper);border:1.5px solid var(--rule);border-radius:var(--rl);
-  padding:1.25rem;cursor:pointer;transition:all .15s;
-  box-shadow:var(--shadow);
+  background:var(--paper);border:1.5px solid var(--rule);
+  border-radius:var(--rl);padding:1.4rem;
+  cursor:pointer;transition:all .15s;box-shadow:var(--shadow);
 }
 .tg-card:hover{border-color:var(--blue);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.tg-top{display:flex;align-items:center;gap:.85rem;margin-bottom:1rem}
-.tg-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0}
-.tg-name{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.1rem}
-.tg-grade{font-size:.78rem;color:var(--lt)}
-.tg-scores{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.75rem}
-.tgs-item{text-align:center;background:var(--surf);border-radius:8px;padding:.45rem .3rem}
-.tgs-val{font-size:.9rem;font-weight:800;color:var(--ink);line-height:1}
-.tgs-label{font-size:.62rem;color:var(--lt);margin-top:.15rem}
-.tg-bar{height:4px;background:var(--rule);border-radius:100px;overflow:hidden;margin-bottom:.75rem}
+.tg-top{display:flex;align-items:center;gap:.9rem;margin-bottom:1.1rem}
+.tg-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.92rem;font-weight:700;color:#fff;flex-shrink:0}
+.tg-name{font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.1rem}
+.tg-grade{font-size:.82rem;color:var(--lt)}
+.tg-scores{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.55rem;margin-bottom:.85rem}
+.tgs-item{text-align:center;background:var(--surf);border-radius:8px;padding:.5rem .3rem}
+.tgs-val{font-size:.95rem;font-weight:800;color:var(--ink);line-height:1}
+.tgs-label{font-size:.65rem;color:var(--lt);margin-top:.18rem}
+.tg-bar{height:5px;background:var(--rule);border-radius:100px;overflow:hidden;margin-bottom:.85rem}
 .tg-fill{height:100%;border-radius:100px}
 .tg-footer{display:flex;justify-content:space-between;align-items:center}
-.tg-last{font-size:.72rem;color:var(--xlt)}
-.tg-status{font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:4px}
+.tg-last{font-size:.76rem;color:var(--xlt)}
+.tg-status{font-size:.72rem;font-weight:700;padding:.17rem .5rem;border-radius:4px}
 
-/* ── SECTION LABEL ────────────────────────────────────── */
-.sec-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lt);margin-bottom:.65rem;display:block}
+/* ── SEC LABEL ───────────────────────────────────────── */
+.sec-label{font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--lt);margin-bottom:.75rem;display:block}
 
-/* RESPONSIVE */
-@media(max-width:900px){.strip{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3,.grid-main,.grid-main-rev{grid-template-columns:1fr}}
+/* ── TOAST ───────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;
+  background:var(--ink);color:#fff;
+  padding:.75rem 1.2rem;border-radius:10px;
+  font-size:.87rem;font-weight:600;box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:.5rem;
+  transform:translateY(10px);opacity:0;
+  transition:all .22s cubic-bezier(.22,1,.36,1);pointer-events:none;
+}
+.toast.show{transform:none;opacity:1}
+.toast svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── CHART LABEL LEGEND ──────────────────────────────── */
+.chart-legend{display:flex;flex-wrap:wrap;gap:.6rem 1.1rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--rule)}
+.cl-item{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--mid);font-weight:500}
+.cl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+@media(max-width:920px){
+  .strip{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-main{grid-template-columns:1fr}
+  .nav-tabs{display:none}
+}
 </style>
 </head>
 <body>
@@ -458,13 +377,13 @@ canvas.spark{width:80px!important;height:28px!important}
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════════════════════
-     PAGE: HOME
-══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════════════ -->
 <div class="page active" id="page-home">
 
   <div class="ph">
-    <div class="ph-left">
+    <div>
       <div class="ph-title">Good morning, Jamie</div>
       <div class="ph-sub">You have 3 coaching sessions this week. Two teacher briefs are ready to review.</div>
     </div>
@@ -480,17 +399,15 @@ canvas.spark{width:80px!important;height:28px!important}
     </div>
   </div>
 
-  <!-- ALERT -->
   <div class="alert-strip">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <div class="as-text"><strong>Attention needed:</strong> Brianna Williams has shown a declining student talk-time trend over the last 3 sessions. Her upcoming session is Monday, May 6 at 10:00 AM. Review her brief before then.</div>
+    <div class="as-text"><strong>Attention needed:</strong> Brianna Williams has shown a declining student talk-time trend over the last 3 sessions. Her next session is Monday, May 6 at 10:00 AM. Review her brief before then.</div>
   </div>
 
-  <!-- SUMMARY STRIP -->
   <div class="strip">
     <div class="strip-card">
       <div class="sc-icon" style="background:var(--blue-pale)">👥</div>
-      <div class="sc-body">
+      <div>
         <div class="sc-label">Active Teachers</div>
         <div class="sc-val">5</div>
         <div class="sc-trend up">↑ 2 new this term</div>
@@ -498,7 +415,7 @@ canvas.spark{width:80px!important;height:28px!important}
     </div>
     <div class="strip-card">
       <div class="sc-icon" style="background:var(--green-lt)">📈</div>
-      <div class="sc-body">
+      <div>
         <div class="sc-label">Avg SFS Score</div>
         <div class="sc-val">2.6</div>
         <div class="sc-trend up">↑ 0.3 from last cycle</div>
@@ -506,7 +423,7 @@ canvas.spark{width:80px!important;height:28px!important}
     </div>
     <div class="strip-card">
       <div class="sc-icon" style="background:var(--amber-lt)">🎯</div>
-      <div class="sc-body">
+      <div>
         <div class="sc-label">Sessions This Week</div>
         <div class="sc-val">3</div>
         <div class="sc-trend eq">2 briefs ready</div>
@@ -514,7 +431,7 @@ canvas.spark{width:80px!important;height:28px!important}
     </div>
     <div class="strip-card">
       <div class="sc-icon" style="background:var(--red-lt)">⚠️</div>
-      <div class="sc-body">
+      <div>
         <div class="sc-label">Areas Needing Focus</div>
         <div class="sc-val">7</div>
         <div class="sc-trend dn">↑ 2 flagged this week</div>
@@ -524,28 +441,25 @@ canvas.spark{width:80px!important;height:28px!important}
 
   <div class="grid-main">
 
-    <!-- LEFT: PROGRESS CHART + TEACHER LIST -->
+    <!-- LEFT COLUMN -->
     <div style="display:flex;flex-direction:column;gap:1.25rem">
 
-      <!-- CASELOAD PROGRESS CHART -->
+      <!-- CASELOAD SFS TREND -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Caseload SFS Score Trend
+            SFS Score Trend by Teacher
           </div>
-          <div style="display:flex;gap:.5rem">
-            <span class="badge bb" style="cursor:pointer" onclick="toast('Showing last 8 weeks')">8 Weeks</span>
-          </div>
+          <span class="badge bb">Last 8 Months</span>
         </div>
         <div class="card-body">
-          <div class="chart-wrap">
-            <canvas id="caseloadChart"></canvas>
-          </div>
+          <div class="chart-wrap"><canvas id="caseloadChart"></canvas></div>
+          <div class="chart-legend" id="caseload-legend"></div>
         </div>
       </div>
 
-      <!-- TEACHER SNAPSHOT LIST -->
+      <!-- TEACHER SNAPSHOT -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
@@ -560,86 +474,59 @@ canvas.spark{width:80px!important;height:28px!important}
             <div class="tr-info">
               <div class="tr-name">Brianna Williams</div>
               <div class="tr-grade">Grade 7 · Math</div>
-              <div class="tr-badges">
-                <span class="badge br">Talk Time ↓</span>
-                <span class="badge ba">Questions</span>
-              </div>
+              <div class="tr-badges"><span class="badge br">Talk Time ↓</span><span class="badge ba">Questions</span></div>
             </div>
             <canvas class="spark" id="spark-bw"></canvas>
-            <div class="tr-score">
-              <div class="tr-score-num" style="color:var(--amber)">2.4</div>
-              <div class="tr-score-label">SFS</div>
-            </div>
+            <div class="tr-score"><div class="tr-score-num" style="color:var(--amber)">2.4</div><div class="tr-score-label">SFS</div></div>
           </div>
           <div class="teacher-row" onclick="openTeacher('dk')">
             <div class="tr-avatar" style="background:#16A34A">DK</div>
             <div class="tr-info">
               <div class="tr-name">David Kim</div>
               <div class="tr-grade">Grade 5 · ELA</div>
-              <div class="tr-badges">
-                <span class="badge bg">On Track</span>
-              </div>
+              <div class="tr-badges"><span class="badge bg">On Track</span></div>
             </div>
             <canvas class="spark" id="spark-dk"></canvas>
-            <div class="tr-score">
-              <div class="tr-score-num" style="color:var(--green)">3.1</div>
-              <div class="tr-score-label">SFS</div>
-            </div>
+            <div class="tr-score"><div class="tr-score-num" style="color:var(--green)">3.1</div><div class="tr-score-label">SFS</div></div>
           </div>
           <div class="teacher-row" onclick="openTeacher('mo')">
             <div class="tr-avatar" style="background:#7C3AED">MO</div>
             <div class="tr-info">
               <div class="tr-name">Mara Osei</div>
               <div class="tr-grade">Grade 3 · Science</div>
-              <div class="tr-badges">
-                <span class="badge ba">Pacing</span>
-                <span class="badge ba">Engagement</span>
-              </div>
+              <div class="tr-badges"><span class="badge ba">Pacing</span><span class="badge ba">Engagement</span></div>
             </div>
             <canvas class="spark" id="spark-mo"></canvas>
-            <div class="tr-score">
-              <div class="tr-score-num" style="color:var(--amber)">2.2</div>
-              <div class="tr-score-label">SFS</div>
-            </div>
+            <div class="tr-score"><div class="tr-score-num" style="color:var(--amber)">2.2</div><div class="tr-score-label">SFS</div></div>
           </div>
           <div class="teacher-row" onclick="openTeacher('jt')">
             <div class="tr-avatar" style="background:#0891B2">JT</div>
             <div class="tr-info">
               <div class="tr-name">James Torres</div>
               <div class="tr-grade">Grade 9 · History</div>
-              <div class="tr-badges">
-                <span class="badge bg">Improving</span>
-              </div>
+              <div class="tr-badges"><span class="badge bg">Improving</span></div>
             </div>
             <canvas class="spark" id="spark-jt"></canvas>
-            <div class="tr-score">
-              <div class="tr-score-num" style="color:var(--green)">2.8</div>
-              <div class="tr-score-label">SFS</div>
-            </div>
+            <div class="tr-score"><div class="tr-score-num" style="color:var(--green)">2.8</div><div class="tr-score-label">SFS</div></div>
           </div>
           <div class="teacher-row" onclick="openTeacher('as')">
             <div class="tr-avatar" style="background:#D97706">AS</div>
             <div class="tr-info">
               <div class="tr-name">Anika Sharma</div>
               <div class="tr-grade">Grade 6 · Math</div>
-              <div class="tr-badges">
-                <span class="badge br">Student Agency ↓</span>
-              </div>
+              <div class="tr-badges"><span class="badge br">Student Agency ↓</span></div>
             </div>
             <canvas class="spark" id="spark-as"></canvas>
-            <div class="tr-score">
-              <div class="tr-score-num" style="color:var(--amber)">2.5</div>
-              <div class="tr-score-label">SFS</div>
-            </div>
+            <div class="tr-score"><div class="tr-score-num" style="color:var(--amber)">2.5</div><div class="tr-score-label">SFS</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: FOCUS AREAS + ACTIVITY -->
+    <!-- RIGHT COLUMN -->
     <div style="display:flex;flex-direction:column;gap:1.25rem">
 
-      <!-- TOP IMPROVEMENT AREAS ACROSS CASELOAD -->
+      <!-- PRIORITY IMPROVEMENT AREAS -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
@@ -653,7 +540,7 @@ canvas.spark{width:80px!important;height:28px!important}
             <div class="fa-rank" style="background:var(--red)">1</div>
             <div class="fa-body">
               <div class="fa-name">Student Talk Time</div>
-              <div class="fa-detail">Affects 3 of 5 teachers. Average student voice ratio across caseload is 28%, below the 45% target.</div>
+              <div class="fa-detail">Affects 3 of 5 teachers. Average student voice ratio is 28% across the caseload, below the 45% target.</div>
               <div class="fa-meta"><span class="badge br">3 teachers</span><span class="badge ba">High priority</span></div>
             </div>
           </div>
@@ -677,14 +564,14 @@ canvas.spark{width:80px!important;height:28px!important}
             <div class="fa-rank" style="background:var(--green)">4</div>
             <div class="fa-body">
               <div class="fa-name">Formative Assessment Use</div>
-              <div class="fa-detail">Informal checks for understanding are inconsistent. Teachers are moving on without confirming student readiness.</div>
+              <div class="fa-detail">Informal checks for understanding are inconsistent. Teachers are moving on before confirming student readiness.</div>
               <div class="fa-meta"><span class="badge bg">2 teachers</span></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- UPCOMING SESSIONS -->
+      <!-- THIS WEEK -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
@@ -694,8 +581,8 @@ canvas.spark{width:80px!important;height:28px!important}
         </div>
         <div class="card-body-flush">
           <div class="teacher-row" onclick="openTeacher('bw')">
-            <div style="width:38px;height:38px;background:var(--blue-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <div style="width:40px;height:40px;background:var(--blue-lt);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </div>
             <div class="tr-info">
               <div class="tr-name">Brianna Williams</div>
@@ -704,8 +591,8 @@ canvas.spark{width:80px!important;height:28px!important}
             <span class="badge br">Urgent</span>
           </div>
           <div class="teacher-row" onclick="openTeacher('as')">
-            <div style="width:38px;height:38px;background:var(--blue-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <div style="width:40px;height:40px;background:var(--blue-lt);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </div>
             <div class="tr-info">
               <div class="tr-name">Anika Sharma</div>
@@ -714,8 +601,8 @@ canvas.spark{width:80px!important;height:28px!important}
             <span class="badge bb">Ready</span>
           </div>
           <div class="teacher-row" onclick="openTeacher('mo')">
-            <div style="width:38px;height:38px;background:var(--blue-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <div style="width:40px;height:40px;background:var(--blue-lt);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </div>
             <div class="tr-info">
               <div class="tr-name">Mara Osei</div>
@@ -725,47 +612,47 @@ canvas.spark{width:80px!important;height:28px!important}
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- BOTTOM: DIMENSION BREAKDOWN CHART -->
+  <!-- BOTTOM CHARTS -->
   <div class="grid-2">
     <div class="card">
       <div class="card-header">
         <div class="card-title">
           <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Rubric Dimension Scores (Caseload Average)
+          Rubric Dimension Scores (Caseload Avg)
         </div>
       </div>
       <div class="card-body">
-        <div class="chart-wrap">
-          <canvas id="dimensionChart"></canvas>
-        </div>
+        <div class="chart-wrap"><canvas id="dimensionChart"></canvas></div>
       </div>
     </div>
     <div class="card">
       <div class="card-header">
         <div class="card-title">
           <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Talk Time Trend (Caseload Avg %)
+          Student Talk Time vs. Target
         </div>
       </div>
       <div class="card-body">
-        <div class="chart-wrap">
-          <canvas id="talkChart"></canvas>
+        <div class="chart-wrap"><canvas id="talkChart"></canvas></div>
+        <div class="chart-legend">
+          <div class="cl-item"><div class="cl-dot" style="background:#1B4CC4"></div>Avg Student Talk %</div>
+          <div class="cl-item"><div class="cl-dot" style="background:#16A34A;opacity:.6"></div>Target (45%)</div>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     PAGE: MY TEACHERS
-══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     MY TEACHERS PAGE
+═══════════════════════════════════════════ -->
 <div class="page" id="page-teachers">
   <div class="ph">
-    <div class="ph-left">
+    <div>
       <div class="ph-title">My Teachers</div>
       <div class="ph-sub">5 teachers assigned to your caseload this term</div>
     </div>
@@ -777,13 +664,9 @@ canvas.spark{width:80px!important;height:28px!important}
       </button>
     </div>
   </div>
-
   <div class="teacher-grid">
     <div class="tg-card" onclick="openTeacher('bw')">
-      <div class="tg-top">
-        <div class="tg-avatar" style="background:#1B4CC4">BW</div>
-        <div><div class="tg-name">Brianna Williams</div><div class="tg-grade">Grade 7 · Math · 5 sessions</div></div>
-      </div>
+      <div class="tg-top"><div class="tg-avatar" style="background:#1B4CC4">BW</div><div><div class="tg-name">Brianna Williams</div><div class="tg-grade">Grade 7 · Math · 5 sessions</div></div></div>
       <div class="tg-scores">
         <div class="tgs-item"><div class="tgs-val" style="color:var(--amber)">2.4</div><div class="tgs-label">SFS Score</div></div>
         <div class="tgs-item"><div class="tgs-val" style="color:var(--red)">26%</div><div class="tgs-label">Student Talk</div></div>
@@ -793,10 +676,7 @@ canvas.spark{width:80px!important;height:28px!important}
       <div class="tg-footer"><div class="tg-last">Session: Mon May 6</div><span class="tg-status ba">Needs Attention</span></div>
     </div>
     <div class="tg-card" onclick="openTeacher('dk')">
-      <div class="tg-top">
-        <div class="tg-avatar" style="background:#16A34A">DK</div>
-        <div><div class="tg-name">David Kim</div><div class="tg-grade">Grade 5 · ELA · 4 sessions</div></div>
-      </div>
+      <div class="tg-top"><div class="tg-avatar" style="background:#16A34A">DK</div><div><div class="tg-name">David Kim</div><div class="tg-grade">Grade 5 · ELA · 4 sessions</div></div></div>
       <div class="tg-scores">
         <div class="tgs-item"><div class="tgs-val" style="color:var(--green)">3.1</div><div class="tgs-label">SFS Score</div></div>
         <div class="tgs-item"><div class="tgs-val" style="color:var(--green)">44%</div><div class="tgs-label">Student Talk</div></div>
@@ -806,10 +686,7 @@ canvas.spark{width:80px!important;height:28px!important}
       <div class="tg-footer"><div class="tg-last">Session: Fri May 1</div><span class="tg-status bg">On Track</span></div>
     </div>
     <div class="tg-card" onclick="openTeacher('mo')">
-      <div class="tg-top">
-        <div class="tg-avatar" style="background:#7C3AED">MO</div>
-        <div><div class="tg-name">Mara Osei</div><div class="tg-grade">Grade 3 · Science · 5 sessions</div></div>
-      </div>
+      <div class="tg-top"><div class="tg-avatar" style="background:#7C3AED">MO</div><div><div class="tg-name">Mara Osei</div><div class="tg-grade">Grade 3 · Science · 5 sessions</div></div></div>
       <div class="tg-scores">
         <div class="tgs-item"><div class="tgs-val" style="color:var(--amber)">2.2</div><div class="tgs-label">SFS Score</div></div>
         <div class="tgs-item"><div class="tgs-val" style="color:var(--amber)">31%</div><div class="tgs-label">Student Talk</div></div>
@@ -819,10 +696,7 @@ canvas.spark{width:80px!important;height:28px!important}
       <div class="tg-footer"><div class="tg-last">Session: Thu May 9</div><span class="tg-status ba">Needs Attention</span></div>
     </div>
     <div class="tg-card" onclick="openTeacher('jt')">
-      <div class="tg-top">
-        <div class="tg-avatar" style="background:#0891B2">JT</div>
-        <div><div class="tg-name">James Torres</div><div class="tg-grade">Grade 9 · History · 4 sessions</div></div>
-      </div>
+      <div class="tg-top"><div class="tg-avatar" style="background:#0891B2">JT</div><div><div class="tg-name">James Torres</div><div class="tg-grade">Grade 9 · History · 4 sessions</div></div></div>
       <div class="tg-scores">
         <div class="tgs-item"><div class="tgs-val" style="color:var(--green)">2.8</div><div class="tgs-label">SFS Score</div></div>
         <div class="tgs-item"><div class="tgs-val" style="color:var(--green)">39%</div><div class="tgs-label">Student Talk</div></div>
@@ -832,10 +706,7 @@ canvas.spark{width:80px!important;height:28px!important}
       <div class="tg-footer"><div class="tg-last">No recording this week</div><span class="tg-status bg">Improving</span></div>
     </div>
     <div class="tg-card" onclick="openTeacher('as')">
-      <div class="tg-top">
-        <div class="tg-avatar" style="background:#D97706">AS</div>
-        <div><div class="tg-name">Anika Sharma</div><div class="tg-grade">Grade 6 · Math · 3 sessions</div></div>
-      </div>
+      <div class="tg-top"><div class="tg-avatar" style="background:#D97706">AS</div><div><div class="tg-name">Anika Sharma</div><div class="tg-grade">Grade 6 · Math · 3 sessions</div></div></div>
       <div class="tg-scores">
         <div class="tgs-item"><div class="tgs-val" style="color:var(--amber)">2.5</div><div class="tgs-label">SFS Score</div></div>
         <div class="tgs-item"><div class="tgs-val" style="color:var(--amber)">33%</div><div class="tgs-label">Student Talk</div></div>
@@ -847,26 +718,25 @@ canvas.spark{width:80px!important;height:28px!important}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     PAGE: TEACHER DETAIL
-══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     TEACHER DETAIL PAGE
+═══════════════════════════════════════════ -->
 <div class="page" id="page-teacher">
   <button class="back-btn" onclick="goBack()">
     <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     Back
   </button>
 
-  <!-- Dynamic header -->
   <div class="td-header" id="td-header">
     <div class="td-avatar" id="td-av">BW</div>
     <div class="td-meta">
       <div class="td-name" id="td-name">Brianna Williams</div>
-      <div class="td-sub" id="td-sub">Grade 7 · Math · 5 sessions this term</div>
+      <div class="td-sub" id="td-sub">Grade 7 · Math</div>
       <div class="td-stats">
-        <div class="td-stat"><div class="td-stat-num" id="td-sfs">2.4</div><div class="td-stat-label">SFS Score</div></div>
-        <div class="td-stat"><div class="td-stat-num" id="td-talk">26%</div><div class="td-stat-label">Student Talk</div></div>
-        <div class="td-stat"><div class="td-stat-num" id="td-hoq">11%</div><div class="td-stat-label">HOQ Ratio</div></div>
-        <div class="td-stat"><div class="td-stat-num" id="td-sessions">5</div><div class="td-stat-label">Sessions</div></div>
+        <div><div class="td-stat-num" id="td-sfs">2.4</div><div class="td-stat-label">SFS Score</div></div>
+        <div><div class="td-stat-num" id="td-talk">26%</div><div class="td-stat-label">Student Talk</div></div>
+        <div><div class="td-stat-num" id="td-hoq">11%</div><div class="td-stat-label">HOQ Ratio</div></div>
+        <div><div class="td-stat-num" id="td-sessions">5</div><div class="td-stat-label">Sessions</div></div>
       </div>
     </div>
     <div class="td-actions">
@@ -881,8 +751,7 @@ canvas.spark{width:80px!important;height:28px!important}
     </div>
   </div>
 
-  <!-- IN-PAGE TABS -->
-  <div class="card" style="margin-bottom:1.25rem">
+  <div class="card" style="margin-bottom:1.4rem">
     <div class="in-tabs">
       <div class="in-tab active" onclick="switchInTab(this,'overview')">Overview</div>
       <div class="in-tab" onclick="switchInTab(this,'focus')">Focus Areas</div>
@@ -890,26 +759,26 @@ canvas.spark{width:80px!important;height:28px!important}
       <div class="in-tab" onclick="switchInTab(this,'progress')">Progress Over Time</div>
     </div>
 
-    <!-- OVERVIEW TAB -->
+    <!-- OVERVIEW -->
     <div class="in-tab-content active" id="itc-overview">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
-        <div style="padding:1.25rem;border-right:1px solid var(--rule)">
+        <div style="padding:1.4rem;border-right:1px solid var(--rule)">
           <span class="sec-label">Rubric Dimension Scores</span>
           <div id="dim-bars"></div>
         </div>
-        <div style="padding:1.25rem">
+        <div style="padding:1.4rem">
           <span class="sec-label">Areas Needing Improvement</span>
           <div id="improve-areas"></div>
         </div>
       </div>
     </div>
 
-    <!-- FOCUS AREAS TAB -->
+    <!-- FOCUS AREAS -->
     <div class="in-tab-content" id="itc-focus">
       <div id="focus-list"></div>
     </div>
 
-    <!-- COACHING LOG TAB -->
+    <!-- COACHING LOG -->
     <div class="in-tab-content" id="itc-log">
       <div class="timeline" id="log-timeline"></div>
       <div class="note-input-wrap">
@@ -918,13 +787,13 @@ canvas.spark{width:80px!important;height:28px!important}
       </div>
     </div>
 
-    <!-- PROGRESS TAB -->
+    <!-- PROGRESS OVER TIME -->
     <div class="in-tab-content" id="itc-progress">
-      <div style="padding:1.25rem">
-        <span class="sec-label" style="margin-bottom:1rem;display:block">SFS Score Trajectory (Last 8 Weeks)</span>
+      <div style="padding:1.4rem">
+        <span class="sec-label" style="margin-bottom:1rem;display:block">SFS Score Trajectory (Last 8 Months, 15-Day Intervals)</span>
         <div class="chart-wrap-lg"><canvas id="teacherProgressChart"></canvas></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;padding:0 1.25rem 1.25rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;padding:0 1.4rem 1.4rem">
         <div>
           <span class="sec-label">Student Talk Time (%)</span>
           <div class="chart-wrap-sm"><canvas id="talkProgressChart"></canvas></div>
@@ -936,7 +805,6 @@ canvas.spark{width:80px!important;height:28px!important}
       </div>
     </div>
   </div>
-
 </div>
 
 <!-- TOAST -->
@@ -946,137 +814,171 @@ canvas.spark{width:80px!important;height:28px!important}
 </div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────
-const WEEKS = ['Mar 10','Mar 17','Mar 24','Mar 31','Apr 7','Apr 14','Apr 21','Apr 28'];
+// ── 15-DAY INTERVALS (16 points, ~8 months) ────────────────
+const INTERVALS = [
+  'Sep 1','Sep 16','Oct 1','Oct 16',
+  'Nov 1','Nov 16','Dec 1','Dec 16',
+  'Jan 1','Jan 16','Feb 1','Feb 16',
+  'Mar 1','Mar 16','Apr 1','Apr 16'
+];
 
+// ── SHARED CHART BASE OPTIONS ──────────────────────────────
+const BASE_FONT = { family:'Inter', size:11 };
+const TOOLTIP = { backgroundColor:'#0F2E8A', titleFont:{family:'Inter',size:11,weight:'600'}, bodyFont:BASE_FONT, padding:10, cornerRadius:8, displayColors:true };
+const ANIM_LINE = { duration:1100, easing:'easeOutQuart' };
+const ANIM_BAR  = { duration:900,  easing:'easeOutQuart' };
+const X_SCALE   = { grid:{display:false}, ticks:{font:BASE_FONT, color:'#718096', maxRotation:45, minRotation:30} };
+const Y_SCALE   = { grid:{color:'rgba(0,0,0,.045)', drawBorder:false}, ticks:{font:BASE_FONT, color:'#718096'} };
+
+// ── TEACHER DATA (16-point histories at 15-day intervals) ──
 const teachers = {
   bw:{
-    name:'Brianna Williams',grade:'Grade 7 · Math · 5 sessions this term',
-    initials:'BW',color:'#1B4CC4',
-    sfs:'2.4',talk:'26%',hoq:'11%',sessions:'5',
-    sfsHistory:[2.1,2.0,2.2,2.1,2.3,2.2,2.4,2.4],
-    talkHistory:[30,28,27,26,28,26,27,26],
-    hoqHistory:[10,10,11,9,11,10,12,11],
+    name:'Brianna Williams', grade:'Grade 7 · Math · 5 sessions this term',
+    initials:'BW', color:'#1B4CC4',
+    sfs:'2.4', talk:'26%', hoq:'11%', sessions:'5',
+    sfsHistory: [1.8,1.9,1.9,2.0,2.0,2.1,2.0,2.1,2.2,2.1,2.3,2.2,2.3,2.2,2.4,2.4],
+    talkHistory:[32,31,30,30,29,28,29,28,28,27,28,26,27,26,27,26],
+    hoqHistory: [9,9,10,10,10,11,10,11,11,9,11,10,12,11,12,11],
     dims:[
-      {label:'Coaching Clarity',score:2.0},
-      {label:'Feedback Quality',score:2.5},
-      {label:'PD Connection',score:2.0},
-      {label:'Use of Evidence',score:2.8},
-      {label:'Teacher Ownership',score:2.2},
+      {label:'Coaching Clarity',    score:2.0},
+      {label:'Feedback Quality',    score:2.5},
+      {label:'PD Connection',       score:2.0},
+      {label:'Use of Evidence',     score:2.8},
+      {label:'Teacher Ownership',   score:2.2},
     ],
     improvements:[
-      {title:'Student Talk Time Is Below Target',body:'Talk ratio is 26% student / 74% teacher. Best practice targets 45%+ student voice. This is the highest-leverage area to address.',rec:'AI Recommendation: Introduce Talk Moves protocol. Start with "revoicing" — after a student answers, ask another student to restate it in their own words.'},
-      {title:'Question Complexity Is Low',body:'89% of questions this lesson were recall or procedural. Only 2 of 22 questions required students to analyze or justify their thinking.',rec:'AI Recommendation: Before the lesson, identify 3 key moments where a higher-order question could replace a recall check. Plan these in advance.'},
+      {title:'Student Talk Time Is Below Target',
+       body:'Talk ratio is 26% student / 74% teacher. Best practice targets 45%+ student voice. This is the highest-leverage area to address.',
+       rec:'Introduce Talk Moves protocol. Start with "revoicing" — after a student answers, ask another student to restate it in their own words.'},
+      {title:'Question Complexity Is Low',
+       body:'89% of questions this lesson were recall or procedural. Only 2 of 22 questions required students to analyze or justify their thinking.',
+       rec:'Before each lesson, identify 3 moments where a higher-order question could replace a recall check. Plan these in advance.'},
     ],
     focuses:[
-      {num:1,color:'var(--red)',title:'Student Talk Time',detail:'Student voice ratio is 26%, well below the 45% target. Brianna tends to fill silence quickly rather than allowing wait time.',stamp:'14:22',pd:'Talk Moves Module'},
-      {num:2,color:'var(--amber)',title:'Question Quality',detail:'89% of questions asked were recall or procedural (Bloom\'s Level 1 or 2). Only 2 questions invited student reasoning this lesson.',stamp:'28:07',pd:"Bloom's Question Bank"},
-      {num:3,color:'var(--blue)',title:'Transition Pacing',detail:'Average transition time is 4.2 minutes, accounting for roughly 12 minutes of lost instructional time per lesson.',stamp:'7:45',pd:'Transition Routines Guide'},
+      {num:1,color:'var(--red)',   title:'Student Talk Time',     detail:'Student voice ratio is 26%, well below the 45% target. Brianna tends to fill silence quickly rather than allowing wait time.',stamp:'14:22',pd:'Talk Moves Module'},
+      {num:2,color:'var(--amber)', title:'Question Quality',       detail:"89% of questions were recall or procedural (Bloom's Level 1 or 2). Only 2 questions invited student reasoning this lesson.",stamp:'28:07',pd:"Bloom's Question Bank"},
+      {num:3,color:'var(--blue)',  title:'Transition Pacing',      detail:'Average transition time is 4.2 minutes, accounting for roughly 12 minutes of lost instructional time per lesson.',stamp:'7:45', pd:'Transition Routines Guide'},
     ],
     log:[
-      {type:'ai',icon:'🤖',date:'May 4, 2026',text:'<strong>AI Analysis Complete.</strong> 3 focus areas identified from 42-minute recording. Student talk time (26%), question quality (11% HOQ), and transition pacing (4.2 min avg) are the highest-leverage areas this week. Student talk has declined 3 sessions in a row.'},
-      {type:'note',icon:'✏️',date:'Apr 28, 2026',text:'<strong>Coach Note:</strong> Had a productive conversation about wait time today. Brianna acknowledged she rushes through silence because she worries students are confused. Agreed to try a 5-second wait time rule for the next 2 lessons. She seemed receptive and wrote it on her lesson plan.'},
-      {type:'ai',icon:'🤖',date:'Apr 21, 2026',text:'<strong>AI Analysis Complete.</strong> Student talk improved slightly to 27% (from 26% last session). Question quality remained low at 10% HOQ. Positive signal: Brianna used a "think-pair-share" structure once during the lesson at minute 22.'},
-      {type:'obs',icon:'👁️',date:'Apr 14, 2026',text:'<strong>SFS Observation Recorded.</strong> Score: 2.2 overall. Discourse dimension scored 1.8 (Developing). Observer noted limited opportunities for extended student response. Math content knowledge strong.'},
-      {type:'note',icon:'✏️',date:'Apr 7, 2026',text:'<strong>Coach Note:</strong> Introduced the Talk Moves PD module today. Brianna found the "revoicing" technique interesting but expressed concern about pacing. We role-played a 3-minute segment together. She committed to trying revoicing once per lesson for 2 weeks.'},
+      {type:'ai',   date:'May 4, 2026',  text:'<strong>AI Analysis Complete.</strong> 3 focus areas identified from 42-minute recording. Student talk time (26%), question quality (11% HOQ), and transition pacing (4.2 min avg) are the highest-leverage areas this week. Student talk has declined 3 sessions in a row.'},
+      {type:'note', date:'Apr 28, 2026', text:'<strong>Coach Note:</strong> Had a productive conversation about wait time today. Brianna acknowledged she rushes through silence because she worries students are confused. Agreed to try a 5-second wait time rule for the next 2 lessons. She seemed receptive and wrote it on her lesson plan.'},
+      {type:'ai',   date:'Apr 21, 2026', text:'<strong>AI Analysis Complete.</strong> Student talk improved slightly to 27% (from 26% last session). Question quality remained low at 10% HOQ. Positive signal: Brianna used a think-pair-share structure once during the lesson at minute 22.'},
+      {type:'obs',  date:'Apr 14, 2026', text:'<strong>SFS Observation Recorded.</strong> Score: 2.2 overall. Discourse dimension scored 1.8 (Developing). Observer noted limited opportunities for extended student response. Math content knowledge strong.'},
+      {type:'note', date:'Apr 7, 2026',  text:'<strong>Coach Note:</strong> Introduced the Talk Moves PD module today. Brianna found the "revoicing" technique interesting but expressed concern about pacing. We role-played a 3-minute segment together. She committed to trying revoicing once per lesson for 2 weeks.'},
     ]
   },
   dk:{
-    name:'David Kim',grade:'Grade 5 · ELA · 4 sessions this term',
-    initials:'DK',color:'#16A34A',
-    sfs:'3.1',talk:'44%',hoq:'31%',sessions:'4',
-    sfsHistory:[2.4,2.6,2.7,2.8,2.9,3.0,3.0,3.1],
-    talkHistory:[32,35,38,40,41,43,44,44],
-    hoqHistory:[18,20,22,24,26,28,30,31],
+    name:'David Kim', grade:'Grade 5 · ELA · 4 sessions this term',
+    initials:'DK', color:'#16A34A',
+    sfs:'3.1', talk:'44%', hoq:'31%', sessions:'4',
+    sfsHistory: [2.1,2.2,2.3,2.4,2.5,2.6,2.6,2.7,2.7,2.8,2.8,2.9,3.0,3.0,3.1,3.1],
+    talkHistory:[30,32,33,35,36,38,39,40,40,41,42,43,44,44,44,44],
+    hoqHistory: [15,16,18,19,20,21,22,23,24,25,26,27,28,30,31,31],
     dims:[
-      {label:'Coaching Clarity',score:3.2},{label:'Feedback Quality',score:3.0},
-      {label:'PD Connection',score:3.1},{label:'Use of Evidence',score:3.2},{label:'Teacher Ownership',score:2.9},
+      {label:'Coaching Clarity',  score:3.2},{label:'Feedback Quality',  score:3.0},
+      {label:'PD Connection',     score:3.1},{label:'Use of Evidence',   score:3.2},
+      {label:'Teacher Ownership', score:2.9},
     ],
     improvements:[
-      {title:'Teacher Ownership Has Room to Grow',body:'David often waits for coach validation before acting on feedback. Building his independent reflection habit will accelerate progress.',rec:'AI Recommendation: At the end of each session, ask David to identify his own next step before offering yours. Compare them together.'},
+      {title:'Teacher Ownership Has Room to Grow',
+       body:'David often waits for coach validation before acting on feedback. Building his independent reflection habit will accelerate progress.',
+       rec:'At the end of each session, ask David to identify his own next step before offering yours. Compare them together.'},
     ],
     focuses:[
       {num:1,color:'var(--blue)',title:'Teacher Ownership',detail:'David is responsive to coaching but tends to wait for external validation. Building self-directed reflection will accelerate his growth.',stamp:'N/A',pd:'Self-Coaching Protocol'},
     ],
     log:[
-      {type:'ai',icon:'🤖',date:'May 1, 2026',text:'<strong>AI Analysis Complete.</strong> Strong session. Student talk at 44%, HOQ ratio at 31%. David used 4 different question stems to invite student reasoning. One area to watch: transitions between stations averaged 3.8 min.'},
-      {type:'note',icon:'✏️',date:'Apr 24, 2026',text:'<strong>Coach Note:</strong> Really strong growth this month. David is using talk moves naturally now. He asked ME what to work on next, which is a shift. We talked about building student agency through choice in how they demonstrate understanding.'},
-      {type:'obs',icon:'👁️',date:'Apr 17, 2026',text:'<strong>SFS Observation Recorded.</strong> Score: 3.0. Discourse and questioning both in Accomplished range. Noted strong use of evidence in feedback. Student engagement high throughout.'},
+      {type:'ai',   date:'May 1, 2026',  text:'<strong>AI Analysis Complete.</strong> Strong session. Student talk at 44%, HOQ ratio at 31%. David used 4 different question stems to invite student reasoning. One area to watch: transitions between stations averaged 3.8 min.'},
+      {type:'note', date:'Apr 24, 2026', text:'<strong>Coach Note:</strong> Really strong growth this month. David is using talk moves naturally now. He asked me what to work on next, which is a shift. We talked about building student agency through choice in how they demonstrate understanding.'},
+      {type:'obs',  date:'Apr 17, 2026', text:'<strong>SFS Observation Recorded.</strong> Score: 3.0. Discourse and questioning both in Accomplished range. Noted strong use of evidence in feedback. Student engagement high throughout.'},
     ]
   },
   mo:{
-    name:'Mara Osei',grade:'Grade 3 · Science · 5 sessions this term',
-    initials:'MO',color:'#7C3AED',
-    sfs:'2.2',talk:'31%',hoq:'9%',sessions:'5',
-    sfsHistory:[2.0,2.1,2.0,2.1,2.2,2.1,2.3,2.2],
-    talkHistory:[28,29,30,28,31,30,31,31],
-    hoqHistory:[8,9,8,9,10,9,9,9],
+    name:'Mara Osei', grade:'Grade 3 · Science · 5 sessions this term',
+    initials:'MO', color:'#7C3AED',
+    sfs:'2.2', talk:'31%', hoq:'9%', sessions:'5',
+    sfsHistory: [1.7,1.8,1.9,1.9,2.0,2.0,2.1,2.0,2.1,2.1,2.2,2.1,2.3,2.2,2.2,2.2],
+    talkHistory:[25,26,27,28,28,29,30,29,30,30,31,30,31,31,31,31],
+    hoqHistory: [6,7,7,8,8,9,8,9,9,9,10,9,9,9,9,9],
     dims:[
-      {label:'Coaching Clarity',score:2.0},{label:'Feedback Quality',score:2.2},
-      {label:'PD Connection',score:2.5},{label:'Use of Evidence',score:2.0},{label:'Teacher Ownership',score:2.3},
+      {label:'Coaching Clarity',  score:2.0},{label:'Feedback Quality',  score:2.2},
+      {label:'PD Connection',     score:2.5},{label:'Use of Evidence',   score:2.0},
+      {label:'Teacher Ownership', score:2.3},
     ],
     improvements:[
-      {title:'Student Talk Time Needs Attention',body:'At 31%, student voice is below target. Mara tends to front-load explanations before activities, which compresses discussion time.',rec:'AI Recommendation: Flip the sequence. Let students attempt the task first, then debrief. This naturally creates more student talk.'},
-      {title:'Question Complexity Is Low',body:'9% HOQ is the lowest on the caseload. Most questions are procedural checks. Mara could build in 2 to 3 "why" or "how do you know" questions per lesson.',rec:'AI Recommendation: Post 3 sentence stems in the classroom: "What evidence supports...?", "Why do you think...?", "How is this similar to...?"'},
+      {title:'Student Talk Time Needs Attention',
+       body:'At 31%, student voice is below target. Mara tends to front-load explanations before activities, which compresses discussion time.',
+       rec:'Flip the sequence. Let students attempt the task first, then debrief. This naturally creates more student talk.'},
+      {title:'Question Complexity Is Low',
+       body:'9% HOQ is the lowest on the caseload. Most questions are procedural checks. Mara could build in 2 to 3 "why" or "how do you know" questions per lesson.',
+       rec:'Post 3 sentence stems in the classroom: "What evidence supports this?", "Why do you think that?", "How is this similar to what we learned before?"'},
     ],
     focuses:[
-      {num:1,color:'var(--red)',title:'Student Talk Time',detail:'31% student voice. Mara explains before students explore, which limits discussion time. Flip the sequence: task first, explanation after.',stamp:'8:15',pd:'Productive Talk Structures'},
-      {num:2,color:'var(--red)',title:'Higher-Order Questioning',detail:'Only 9% of questions require reasoning. Most are recall or comprehension level. Building in "why" and "how do you know" questions would help.',stamp:'21:40',pd:"Bloom's for Elementary Science"},
-      {num:3,color:'var(--amber)',title:'Engagement Dip (Late Lesson)',detail:'Student engagement drops noticeably after minute 30. AI detected a pattern of less varied activity types in the second half of each lesson.',stamp:'31:00',pd:'Engagement Structures Guide'},
+      {num:1,color:'var(--red)',   title:'Student Talk Time',        detail:'31% student voice. Mara explains before students explore, which limits discussion time. Flip the sequence: task first, explanation after.',stamp:'8:15', pd:'Productive Talk Structures'},
+      {num:2,color:'var(--red)',   title:'Higher-Order Questioning', detail:'Only 9% of questions require reasoning. Most are recall or comprehension level. Building in "why" and "how do you know" questions would help.',stamp:'21:40',pd:"Bloom's for Elementary Science"},
+      {num:3,color:'var(--amber)', title:'Engagement Dip Late in Lesson',detail:'Student engagement drops noticeably after minute 30. AI detected a pattern of less varied activity types in the second half of each lesson.',stamp:'31:00',pd:'Engagement Structures Guide'},
     ],
     log:[
-      {type:'ai',icon:'🤖',date:'May 5, 2026',text:'<strong>AI Analysis Complete.</strong> 3 focus areas flagged. Student talk at 31%, HOQ at 9%, and engagement dip detected at the 30-minute mark across 3 of 5 sessions this term.'},
-      {type:'note',icon:'✏️',date:'Apr 28, 2026',text:'<strong>Coach Note:</strong> Mara is eager to improve but feels overwhelmed by the number of focus areas. We agreed to narrow our focus to just student talk time for the next 3 sessions. Everything else waits.'},
-      {type:'obs',icon:'👁️',date:'Apr 21, 2026',text:'<strong>SFS Observation Recorded.</strong> Score: 2.3. Strong content knowledge evident. Lesson pacing is the primary concern. Observer noted students appeared disengaged during the direct instruction portion.'},
+      {type:'ai',   date:'May 5, 2026',  text:'<strong>AI Analysis Complete.</strong> 3 focus areas flagged. Student talk at 31%, HOQ at 9%, and engagement dip detected at the 30-minute mark across 3 of 5 sessions this term.'},
+      {type:'note', date:'Apr 28, 2026', text:'<strong>Coach Note:</strong> Mara is eager to improve but feels overwhelmed by the number of focus areas. We agreed to narrow our focus to just student talk time for the next 3 sessions. Everything else waits.'},
+      {type:'obs',  date:'Apr 21, 2026', text:'<strong>SFS Observation Recorded.</strong> Score: 2.3. Strong content knowledge evident. Lesson pacing is the primary concern. Observer noted students appeared disengaged during the direct instruction portion.'},
     ]
   },
   jt:{
-    name:'James Torres',grade:'Grade 9 · History · 4 sessions this term',
-    initials:'JT',color:'#0891B2',
-    sfs:'2.8',talk:'39%',hoq:'22%',sessions:'4',
-    sfsHistory:[1.9,2.1,2.2,2.4,2.5,2.6,2.7,2.8],
-    talkHistory:[25,27,30,32,34,36,38,39],
-    hoqHistory:[10,12,14,16,18,19,21,22],
+    name:'James Torres', grade:'Grade 9 · History · 4 sessions this term',
+    initials:'JT', color:'#0891B2',
+    sfs:'2.8', talk:'39%', hoq:'22%', sessions:'4',
+    sfsHistory: [1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.4,2.5,2.6,2.6,2.7,2.8,2.8],
+    talkHistory:[22,23,25,26,27,29,30,32,33,34,35,36,37,38,39,39],
+    hoqHistory: [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,22],
     dims:[
-      {label:'Coaching Clarity',score:2.8},{label:'Feedback Quality',score:2.9},
-      {label:'PD Connection',score:2.7},{label:'Use of Evidence',score:3.0},{label:'Teacher Ownership',score:2.6},
+      {label:'Coaching Clarity',  score:2.8},{label:'Feedback Quality',  score:2.9},
+      {label:'PD Connection',     score:2.7},{label:'Use of Evidence',   score:3.0},
+      {label:'Teacher Ownership', score:2.6},
     ],
     improvements:[
-      {title:'Consistent Growth — Keep the Momentum',body:'James has improved across all key metrics for 8 consecutive weeks. The focus now is sustaining this and moving from Proficient to Accomplished.',rec:'AI Recommendation: Introduce peer observation. Having James observe a colleague and reflect on what he notices will deepen his own practice.'},
+      {title:'Consistent Growth — Keep the Momentum',
+       body:'James has improved across all key metrics for 16 consecutive intervals. The focus now is sustaining this and moving from Proficient to Accomplished.',
+       rec:'Introduce peer observation. Having James observe a colleague and reflect on what he notices will deepen his own practice.'},
     ],
     focuses:[
       {num:1,color:'var(--blue)',title:'Sustaining Momentum',detail:'James is on a strong upward trajectory. The goal is to consolidate gains and push into the Accomplished range on questioning and student ownership.',stamp:'N/A',pd:'Peer Observation Protocol'},
     ],
     log:[
-      {type:'ai',icon:'🤖',date:'Apr 30, 2026',text:'<strong>AI Analysis Complete.</strong> Excellent session. Student talk at 39% (up from 25% at the start of term). HOQ ratio at 22%. James is using wait time consistently and has introduced Socratic questioning techniques.'},
-      {type:'note',icon:'✏️',date:'Apr 22, 2026',text:"<strong>Coach Note:</strong> James asked today if he could start leading the pre-session reflection himself. He reviewed his own recording before we met and came with 2 questions already. This is the shift we've been working toward. Huge growth."},
-      {type:'obs',icon:'👁️',date:'Apr 15, 2026',text:'<strong>SFS Observation Recorded.</strong> Score: 2.7. Strong discourse dimension. Students engaging in peer debate during the Civil Rights unit. Evidence use is a standout strength.'},
+      {type:'ai',   date:'Apr 30, 2026', text:'<strong>AI Analysis Complete.</strong> Excellent session. Student talk at 39% (up from 22% at the start of term). HOQ ratio at 22%. James is using wait time consistently and has introduced Socratic questioning techniques.'},
+      {type:'note', date:'Apr 22, 2026', text:"<strong>Coach Note:</strong> James asked today if he could start leading the pre-session reflection himself. He reviewed his own recording before we met and came with 2 questions already. This is the shift we've been working toward."},
+      {type:'obs',  date:'Apr 15, 2026', text:'<strong>SFS Observation Recorded.</strong> Score: 2.7. Strong discourse dimension. Students engaging in peer debate during the Civil Rights unit. Evidence use is a standout strength.'},
     ]
   },
   as:{
-    name:'Anika Sharma',grade:'Grade 6 · Math · 3 sessions this term',
-    initials:'AS',color:'#D97706',
-    sfs:'2.5',talk:'33%',hoq:'18%',sessions:'3',
-    sfsHistory:[2.2,2.3,2.3,2.4,2.4,2.5,2.5,2.5],
-    talkHistory:[28,29,30,31,31,32,33,33],
-    hoqHistory:[12,13,14,15,15,17,18,18],
+    name:'Anika Sharma', grade:'Grade 6 · Math · 3 sessions this term',
+    initials:'AS', color:'#D97706',
+    sfs:'2.5', talk:'33%', hoq:'18%', sessions:'3',
+    sfsHistory: [2.0,2.0,2.1,2.1,2.2,2.2,2.2,2.3,2.3,2.4,2.4,2.4,2.5,2.5,2.5,2.5],
+    talkHistory:[26,27,27,28,29,29,30,30,31,31,31,32,32,33,33,33],
+    hoqHistory: [10,11,11,12,12,13,13,14,14,15,15,16,16,17,18,18],
     dims:[
-      {label:'Coaching Clarity',score:2.5},{label:'Feedback Quality',score:2.6},
-      {label:'PD Connection',score:2.4},{label:'Use of Evidence',score:2.7},{label:'Teacher Ownership',score:2.3},
+      {label:'Coaching Clarity',  score:2.5},{label:'Feedback Quality',  score:2.6},
+      {label:'PD Connection',     score:2.4},{label:'Use of Evidence',   score:2.7},
+      {label:'Teacher Ownership', score:2.3},
     ],
     improvements:[
-      {title:'Student Agency Is Low',body:'Anika makes most decisions for students, including how to approach problems. Students rarely choose their own methods or tools.',rec:'AI Recommendation: Introduce choice boards for math tasks. Let students choose between 3 representations (visual, numeric, verbal) to show their thinking.'},
-      {title:'Student Talk Needs a Push',body:'At 33%, student voice is below target. Anika is making progress but the growth has plateaued over the last 3 sessions.',rec:'AI Recommendation: Try a "no hands up" protocol for one lesson. All responses drawn randomly. This changes the participation dynamic significantly.'},
+      {title:'Student Agency Is Low',
+       body:'Anika makes most decisions for students, including how to approach problems. Students rarely choose their own methods or tools.',
+       rec:'Introduce choice boards for math tasks. Let students choose between 3 representations (visual, numeric, verbal) to show their thinking.'},
+      {title:'Student Talk Has Plateaued',
+       body:'At 33%, student voice is below target. Anika is making progress but growth has stalled over the last 3 sessions.',
+       rec:'Try a "no hands up" protocol for one lesson. All responses drawn randomly. This changes the participation dynamic significantly.'},
     ],
     focuses:[
-      {num:1,color:'var(--amber)',title:'Student Agency',detail:'Anika controls most decisions in the classroom. Students rarely choose methods or tools. Introducing structured choice would increase ownership.',stamp:'11:30',pd:'Student Agency Strategies'},
-      {num:2,color:'var(--amber)',title:'Student Talk Plateau',detail:'Growth from 28% to 33% is positive, but has stalled for 3 sessions. A new technique is needed to break through.',stamp:'19:45',pd:'No Hands Up Protocol'},
-      {num:3,color:'var(--blue)',title:'Formative Assessment',detail:'End-of-lesson checks are infrequent. Anika often moves to the next topic without confirming student mastery.',stamp:'38:10',pd:'Exit Ticket Strategies'},
+      {num:1,color:'var(--amber)',title:'Student Agency',       detail:'Anika controls most decisions in the classroom. Students rarely choose methods or tools. Introducing structured choice would increase ownership.',stamp:'11:30',pd:'Student Agency Strategies'},
+      {num:2,color:'var(--amber)',title:'Student Talk Plateau', detail:'Growth from 26% to 33% is positive but has stalled for 3 sessions. A new technique is needed to break through.',stamp:'19:45',pd:'No Hands Up Protocol'},
+      {num:3,color:'var(--blue)', title:'Formative Assessment', detail:'End-of-lesson checks are infrequent. Anika often moves to the next topic without confirming student mastery.',stamp:'38:10',pd:'Exit Ticket Strategies'},
     ],
     log:[
-      {type:'ai',icon:'🤖',date:'May 4, 2026',text:'<strong>AI Analysis Complete.</strong> Student agency flagged for the second consecutive session. Student talk at 33% (plateaued). HOQ at 18% showing slow but steady improvement. Formative assessment use is inconsistent.'},
-      {type:'note',icon:'✏️',date:'Apr 28, 2026',text:'<strong>Coach Note:</strong> Introduced the concept of student choice boards today. Anika was skeptical at first but warmed to the idea when we looked at examples. She will try a simplified version in Friday\'s lesson. Follow up next session.'},
-      {type:'obs',icon:'👁️',date:'Apr 14, 2026',text:'<strong>SFS Observation Recorded.</strong> Score: 2.4. Content delivery strong. Student participation is uneven — same 6 students tend to respond. Observer recommended cold-calling and random selection strategies.'},
+      {type:'ai',   date:'May 4, 2026',  text:'<strong>AI Analysis Complete.</strong> Student agency flagged for the second consecutive session. Student talk at 33% (plateaued). HOQ at 18% showing slow but steady improvement. Formative assessment use is inconsistent.'},
+      {type:'note', date:'Apr 28, 2026', text:"<strong>Coach Note:</strong> Introduced the concept of student choice boards today. Anika was skeptical at first but warmed to the idea when we looked at examples. She will try a simplified version in Friday's lesson. Follow up next session."},
+      {type:'obs',  date:'Apr 14, 2026', text:'<strong>SFS Observation Recorded.</strong> Score: 2.4. Content delivery strong. Student participation is uneven. Same 6 students tend to respond. Observer recommended cold-calling and random selection strategies.'},
     ]
   }
 };
@@ -1087,84 +989,145 @@ let teacherProgressChart = null;
 let talkProgressChart = null;
 let hoqProgressChart = null;
 
-// ── CHARTS: HOME ──────────────────────────────────────────
-function initHomeCharts(){
-  const C = Chart;
-  const baseOpts = {
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A202C',titleFont:{family:'Inter',size:11},bodyFont:{family:'Inter',size:11},padding:10,cornerRadius:8}},
-    scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:10},color:'#718096'}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:'Inter',size:10},color:'#718096'}}}
-  };
+// ── CASELOAD HISTORY (16 points) ──────────────────────────
+const CASELOAD_HISTORIES = {
+  bw:{data:[1.8,1.9,1.9,2.0,2.0,2.1,2.0,2.1,2.2,2.1,2.3,2.2,2.3,2.2,2.4,2.4],color:'#1B4CC4',label:'Brianna'},
+  dk:{data:[2.1,2.2,2.3,2.4,2.5,2.6,2.6,2.7,2.7,2.8,2.8,2.9,3.0,3.0,3.1,3.1],color:'#16A34A',label:'David'},
+  mo:{data:[1.7,1.8,1.9,1.9,2.0,2.0,2.1,2.0,2.1,2.1,2.2,2.1,2.3,2.2,2.2,2.2],color:'#7C3AED',label:'Mara'},
+  jt:{data:[1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.4,2.5,2.6,2.6,2.7,2.8,2.8],color:'#0891B2',label:'James'},
+  as:{data:[2.0,2.0,2.1,2.1,2.2,2.2,2.2,2.3,2.3,2.4,2.4,2.4,2.5,2.5,2.5,2.5],color:'#D97706',label:'Anika'},
+};
 
-  // Caseload SFS trend
-  new C(document.getElementById('caseloadChart'),{
+// ── HOME CHART INIT ────────────────────────────────────────
+function initHomeCharts(){
+
+  // Caseload SFS trend — staggered line draw animation
+  const caseloadDatasets = Object.values(CASELOAD_HISTORIES).map((t,i)=>({
+    label:t.label,
+    data:t.data,
+    borderColor:t.color,
+    backgroundColor:'transparent',
+    tension:.38,
+    pointRadius:3,
+    pointHoverRadius:5,
+    pointBackgroundColor:t.color,
+    borderWidth:2.2,
+    // stagger the draw so lines appear one after another
+    animation:{delay: i * 160}
+  }));
+
+  const caseloadChart = new Chart(document.getElementById('caseloadChart'),{
     type:'line',
-    data:{
-      labels:WEEKS,
-      datasets:[
-        {label:'Brianna',data:[2.1,2.0,2.2,2.1,2.3,2.2,2.4,2.4],borderColor:'#1B4CC4',tension:.35,fill:false,pointRadius:3,pointBackgroundColor:'#1B4CC4',borderWidth:2},
-        {label:'David',data:[2.4,2.6,2.7,2.8,2.9,3.0,3.0,3.1],borderColor:'#16A34A',tension:.35,fill:false,pointRadius:3,pointBackgroundColor:'#16A34A',borderWidth:2},
-        {label:'Mara',data:[2.0,2.1,2.0,2.1,2.2,2.1,2.3,2.2],borderColor:'#7C3AED',tension:.35,fill:false,pointRadius:3,pointBackgroundColor:'#7C3AED',borderWidth:2},
-        {label:'James',data:[1.9,2.1,2.2,2.4,2.5,2.6,2.7,2.8],borderColor:'#0891B2',tension:.35,fill:false,pointRadius:3,pointBackgroundColor:'#0891B2',borderWidth:2},
-        {label:'Anika',data:[2.2,2.3,2.3,2.4,2.4,2.5,2.5,2.5],borderColor:'#D97706',tension:.35,fill:false,pointRadius:3,pointBackgroundColor:'#D97706',borderWidth:2},
-      ]
-    },
-    options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:true,position:'bottom',labels:{font:{family:'Inter',size:10},usePointStyle:true,pointStyle:'circle',padding:12,boxWidth:8}}},scales:{...baseOpts.scales,y:{...baseOpts.scales.y,min:1.5,max:4,ticks:{...baseOpts.scales.y.ticks,stepSize:.5}}}}
+    data:{labels:INTERVALS, datasets:caseloadDatasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:1200, easing:'easeOutQuart'},
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:TOOLTIP
+      },
+      scales:{
+        x:{...X_SCALE, ticks:{...X_SCALE.ticks, font:{family:'Inter',size:10}}},
+        y:{...Y_SCALE, min:1.4, max:3.4,
+           ticks:{...Y_SCALE.ticks, stepSize:.4, font:{family:'Inter',size:10}}}
+      }
+    }
+  });
+
+  // Custom legend
+  const legendEl = document.getElementById('caseload-legend');
+  Object.values(CASELOAD_HISTORIES).forEach(t=>{
+    legendEl.innerHTML += `<div class="cl-item"><div class="cl-dot" style="background:${t.color}"></div>${t.label}</div>`;
   });
 
   // Dimension bar chart
-  new C(document.getElementById('dimensionChart'),{
+  new Chart(document.getElementById('dimensionChart'),{
     type:'bar',
     data:{
       labels:['Coaching Clarity','Feedback Quality','PD Connection','Use of Evidence','Teacher Ownership'],
       datasets:[{
         data:[2.5,2.64,2.54,2.74,2.46],
-        backgroundColor:['#1B4CC41A','#16A34A1A','#D977061A','#1B4CC41A','#DC26261A'],
+        backgroundColor:['rgba(27,76,196,.12)','rgba(22,163,74,.12)','rgba(217,119,6,.12)','rgba(27,76,196,.12)','rgba(220,38,38,.12)'],
         borderColor:['#1B4CC4','#16A34A','#D97706','#1B4CC4','#DC2626'],
-        borderWidth:1.5,borderRadius:6,
+        borderWidth:1.8, borderRadius:6,
       }]
     },
-    options:{...baseOpts,scales:{x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,maxRotation:0,font:{family:'Inter',size:9}}},y:{...baseOpts.scales.y,min:0,max:4,ticks:{...baseOpts.scales.y.ticks,stepSize:1}}}}
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:900, easing:'easeOutQuart'},
+      plugins:{legend:{display:false}, tooltip:TOOLTIP},
+      scales:{
+        x:{...X_SCALE, ticks:{...X_SCALE.ticks, font:{family:'Inter',size:10}, maxRotation:30}},
+        y:{...Y_SCALE, min:0, max:4,
+           ticks:{...Y_SCALE.ticks, stepSize:1, font:{family:'Inter',size:10}}}
+      }
+    }
   });
 
-  // Talk time line
-  new C(document.getElementById('talkChart'),{
+  // Talk time chart
+  new Chart(document.getElementById('talkChart'),{
     type:'line',
     data:{
-      labels:WEEKS,
+      labels:INTERVALS,
       datasets:[
-        {label:'Avg Student Talk %',data:[28,30,31,31,33,31,33,33],borderColor:'#1B4CC4',backgroundColor:'rgba(27,76,196,.08)',tension:.35,fill:true,pointRadius:3,pointBackgroundColor:'#1B4CC4',borderWidth:2},
-        {label:'Target (45%)',data:[45,45,45,45,45,45,45,45],borderColor:'#16A34A',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false},
+        {label:'Avg Student Talk %',
+         data:[28,28,29,29,30,30,30,31,31,31,32,31,32,32,33,33],
+         borderColor:'#1B4CC4', backgroundColor:'rgba(27,76,196,.07)',
+         tension:.38, fill:true, pointRadius:3, pointHoverRadius:5,
+         pointBackgroundColor:'#1B4CC4', borderWidth:2.2},
+        {label:'Target (45%)',
+         data:Array(16).fill(45),
+         borderColor:'#16A34A', borderDash:[5,4],
+         borderWidth:1.5, pointRadius:0, fill:false},
       ]
     },
-    options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:true,position:'bottom',labels:{font:{family:'Inter',size:10},usePointStyle:true,pointStyle:'circle',padding:12,boxWidth:8}}},scales:{...baseOpts.scales,y:{...baseOpts.scales.y,min:0,max:60,ticks:{...baseOpts.scales.y.ticks,stepSize:10,callback:v=>v+'%'}}}}
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:1100, easing:'easeOutQuart'},
+      interaction:{mode:'index', intersect:false},
+      plugins:{legend:{display:false}, tooltip:{...TOOLTIP, callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}%`}}},
+      scales:{
+        x:{...X_SCALE, ticks:{...X_SCALE.ticks, font:{family:'Inter',size:10}}},
+        y:{...Y_SCALE, min:0, max:60,
+           ticks:{...Y_SCALE.ticks, stepSize:15, font:{family:'Inter',size:10}, callback:v=>v+'%'}}
+      }
+    }
   });
 
   // Sparklines
-  Object.entries({
-    bw:[2.1,2.0,2.2,2.1,2.3,2.2,2.4,2.4],
-    dk:[2.4,2.6,2.7,2.8,2.9,3.0,3.0,3.1],
-    mo:[2.0,2.1,2.0,2.1,2.2,2.1,2.3,2.2],
-    jt:[1.9,2.1,2.2,2.4,2.5,2.6,2.7,2.8],
-    as:[2.2,2.3,2.3,2.4,2.4,2.5,2.5,2.5]
-  }).forEach(([id,data])=>{
+  const sparkData = {
+    bw:{d:[1.8,1.9,1.9,2.0,2.1,2.2,2.3,2.4,2.4],c:'#1B4CC4'},
+    dk:{d:[2.1,2.3,2.5,2.6,2.7,2.8,2.9,3.0,3.1],c:'#16A34A'},
+    mo:{d:[1.7,1.8,1.9,2.0,2.1,2.0,2.1,2.2,2.2],c:'#7C3AED'},
+    jt:{d:[1.6,1.8,2.0,2.2,2.4,2.5,2.6,2.7,2.8],c:'#0891B2'},
+    as:{d:[2.0,2.1,2.2,2.3,2.4,2.4,2.5,2.5,2.5],c:'#D97706'},
+  };
+  Object.entries(sparkData).forEach(([id,s])=>{
     const el = document.getElementById('spark-'+id);
     if(!el) return;
-    new C(el,{
+    new Chart(el,{
       type:'line',
-      data:{labels:WEEKS,datasets:[{data,borderColor:data[data.length-1]>data[0]?'#16A34A':'#DC2626',borderWidth:1.5,pointRadius:0,tension:.3,fill:false}]},
-      options:{responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:0}}
+      data:{labels:Array(s.d.length).fill(''),datasets:[{
+        data:s.d, borderColor:s.c, borderWidth:1.8,
+        pointRadius:0, tension:.35, fill:false
+      }]},
+      options:{
+        responsive:false,
+        animation:{duration:800, easing:'easeOutQuart'},
+        plugins:{legend:{display:false}, tooltip:{enabled:false}},
+        scales:{x:{display:false}, y:{display:false}}
+      }
     });
   });
 }
 
-// ── OPEN TEACHER ──────────────────────────────────────────
+// ── OPEN TEACHER ───────────────────────────────────────────
 function openTeacher(id){
   currentTeacher = id;
   prevPage = document.querySelector('.page.active').id.replace('page-','');
   const t = teachers[id];
 
-  // Header
   document.getElementById('td-av').textContent = t.initials;
   document.getElementById('td-av').style.background = t.color;
   document.getElementById('td-name').textContent = t.name;
@@ -1174,25 +1137,33 @@ function openTeacher(id){
   document.getElementById('td-hoq').textContent = t.hoq;
   document.getElementById('td-sessions').textContent = t.sessions;
 
-  // Dim bars
   document.getElementById('dim-bars').innerHTML = t.dims.map(d=>{
     const pct = (d.score/4)*100;
     const col = d.score>=3?'var(--green)':d.score>=2.5?'var(--blue)':d.score>=2?'var(--amber)':'var(--red)';
     return `<div class="score-bar-wrap">
-      <div class="score-bar-header"><span class="score-bar-label">${d.label}</span><span class="score-bar-val">${d.score.toFixed(1)}</span></div>
-      <div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="score-bar-header">
+        <span class="score-bar-label">${d.label}</span>
+        <span class="score-bar-val">${d.score.toFixed(1)}</span>
+      </div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" style="width:0%;background:${col}" data-w="${pct}"></div>
+      </div>
     </div>`;
   }).join('');
+  // Animate bars
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('.score-bar-fill').forEach(el=>{
+      el.style.width = el.dataset.w+'%';
+    });
+  }));
 
-  // Improvement areas
   document.getElementById('improve-areas').innerHTML = t.improvements.map(i=>`
     <div class="improve-card">
       <div class="ic-header"><span class="ic-icon">⚠️</span><span class="ic-title">${i.title}</span></div>
       <div class="ic-body">${i.body}</div>
-      <div class="ic-rec"><strong>AI Rec:</strong> ${i.rec.replace('AI Recommendation: ','')}</div>
+      <div class="ic-rec"><strong>AI Rec:</strong> ${i.rec}</div>
     </div>`).join('');
 
-  // Focus areas
   document.getElementById('focus-list').innerHTML = t.focuses.map(f=>`
     <div class="fa-item">
       <div class="fa-rank" style="background:${f.color}">${f.num}</div>
@@ -1206,21 +1177,15 @@ function openTeacher(id){
       </div>
     </div>`).join('');
 
-  // Log
   renderLog(id);
-
-  // Reset to overview tab
   switchInTab(document.querySelector('.in-tab'), 'overview');
-
-  // Charts
   showPage('teacher');
-  setTimeout(()=>renderProgressCharts(id),80);
+  setTimeout(()=>renderProgressCharts(id), 80);
 }
 
 function renderLog(id){
   const t = teachers[id];
-  const logEl = document.getElementById('log-timeline');
-  logEl.innerHTML = t.log.map((e,i)=>`
+  document.getElementById('log-timeline').innerHTML = t.log.map(e=>`
     <div class="tl-item">
       <div class="tl-line"></div>
       <div class="tl-dot" style="background:${e.type==='ai'?'var(--blue)':e.type==='note'?'var(--green)':'var(--amber)'}">
@@ -1239,60 +1204,140 @@ function renderLog(id){
 function addNote(){
   const txt = document.getElementById('note-text').value.trim();
   if(!txt) return;
-  const t = teachers[currentTeacher];
-  t.log.unshift({type:'note',icon:'✏️',date:'May 5, 2026',text:`<strong>Coach Note:</strong> ${txt}`});
+  teachers[currentTeacher].log.unshift({type:'note',date:'May 5, 2026',text:`<strong>Coach Note:</strong> ${txt}`});
   renderLog(currentTeacher);
   document.getElementById('note-text').value='';
   toast('Note saved to coaching log');
 }
 
+// ── TEACHER PROGRESS CHARTS (animated, 15-day intervals) ──
 function renderProgressCharts(id){
   const t = teachers[id];
   if(teacherProgressChart) teacherProgressChart.destroy();
-  if(talkProgressChart) talkProgressChart.destroy();
-  if(hoqProgressChart) hoqProgressChart.destroy();
+  if(talkProgressChart)    talkProgressChart.destroy();
+  if(hoqProgressChart)     hoqProgressChart.destroy();
 
-  const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A202C',titleFont:{family:'Inter',size:11},bodyFont:{family:'Inter',size:11},padding:10,cornerRadius:8}},scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:10},color:'#718096'}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:'Inter',size:10},color:'#718096'}}}};
+  const base = {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index', intersect:false},
+    plugins:{legend:{display:false}, tooltip:TOOLTIP},
+    scales:{
+      x:{...X_SCALE, ticks:{...X_SCALE.ticks, font:{family:'Inter',size:10}}},
+      y:{...Y_SCALE, ticks:{...Y_SCALE.ticks, font:{family:'Inter',size:10}}}
+    }
+  };
 
+  // SFS trajectory — line draws from left
   teacherProgressChart = new Chart(document.getElementById('teacherProgressChart'),{
     type:'line',
-    data:{labels:WEEKS,datasets:[{label:'SFS Score',data:t.sfsHistory,borderColor:'#1B4CC4',backgroundColor:'rgba(27,76,196,.08)',tension:.35,fill:true,pointRadius:4,pointBackgroundColor:'#1B4CC4',borderWidth:2.5}]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:1,max:4,ticks:{...base.scales.y.ticks,stepSize:.5}}}}
+    data:{
+      labels:INTERVALS,
+      datasets:[{
+        label:'SFS Score',
+        data:t.sfsHistory,
+        borderColor:t.color||'#1B4CC4',
+        backgroundColor: hexAlpha(t.color||'#1B4CC4', .07),
+        tension:.38, fill:true,
+        pointRadius:4, pointHoverRadius:6,
+        pointBackgroundColor:t.color||'#1B4CC4',
+        borderWidth:2.5
+      }]
+    },
+    options:{
+      ...base,
+      animation:{duration:1300, easing:'easeOutQuart'},
+      scales:{
+        ...base.scales,
+        y:{...base.scales.y, min:1, max:4,
+           ticks:{...base.scales.y.ticks, stepSize:.5}}
+      }
+    }
   });
+
+  // Talk time bars — grow from bottom
   talkProgressChart = new Chart(document.getElementById('talkProgressChart'),{
     type:'bar',
-    data:{labels:WEEKS,datasets:[{data:t.talkHistory,backgroundColor:'rgba(27,76,196,.15)',borderColor:'#1B4CC4',borderWidth:1.5,borderRadius:4},{label:'Target',data:Array(8).fill(45),type:'line',borderColor:'#16A34A',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false}]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:60,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
+    data:{
+      labels:INTERVALS,
+      datasets:[
+        {label:'Student Talk %',
+         data:t.talkHistory,
+         backgroundColor:'rgba(27,76,196,.15)',
+         borderColor:'#1B4CC4',
+         borderWidth:1.5, borderRadius:4},
+        {label:'Target 45%',
+         data:Array(16).fill(45),
+         type:'line', borderColor:'#16A34A',
+         borderDash:[5,4], borderWidth:1.5,
+         pointRadius:0, fill:false}
+      ]
+    },
+    options:{
+      ...base,
+      animation:{duration:950, easing:'easeOutQuart'},
+      scales:{
+        ...base.scales,
+        y:{...base.scales.y, min:0, max:60,
+           ticks:{...base.scales.y.ticks, stepSize:15, callback:v=>v+'%'}}
+      }
+    }
   });
+
+  // HOQ bars — grow from bottom
   hoqProgressChart = new Chart(document.getElementById('hoqProgressChart'),{
     type:'bar',
-    data:{labels:WEEKS,datasets:[{data:t.hoqHistory,backgroundColor:'rgba(217,119,6,.15)',borderColor:'#D97706',borderWidth:1.5,borderRadius:4}]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:50,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
+    data:{
+      labels:INTERVALS,
+      datasets:[{
+        label:'HOQ %',
+        data:t.hoqHistory,
+        backgroundColor:'rgba(217,119,6,.15)',
+        borderColor:'#D97706',
+        borderWidth:1.5, borderRadius:4
+      }]
+    },
+    options:{
+      ...base,
+      animation:{duration:950, easing:'easeOutQuart'},
+      scales:{
+        ...base.scales,
+        y:{...base.scales.y, min:0, max:50,
+           ticks:{...base.scales.y.ticks, stepSize:10, callback:v=>v+'%'}}
+      }
+    }
   });
 }
 
-// ── NAVIGATION ────────────────────────────────────────────
+// ── HELPERS ────────────────────────────────────────────────
+function hexAlpha(hex, alpha){
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  const t = document.getElementById('tab-'+name);
-  if(t) t.classList.add('active');
+  const tab = document.getElementById('tab-'+name);
+  if(tab) tab.classList.add('active');
 }
 
-function goBack(){
-  showPage(prevPage);
-}
+function goBack(){ showPage(prevPage); }
 
-function switchInTab(el,name){
+function switchInTab(el, name){
   document.querySelectorAll('.in-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.in-tab-content').forEach(c=>c.classList.remove('active'));
   if(el) el.classList.add('active');
   const c = document.getElementById('itc-'+name);
   if(c) c.classList.add('active');
+  // Re-render charts when progress tab is opened so animation fires each time
+  if(name==='progress' && currentTeacher) renderProgressCharts(currentTeacher);
 }
 
-// ── TOAST ─────────────────────────────────────────────────
+// ── TOAST ──────────────────────────────────────────────────
 let toastTimer;
 function toast(msg){
   clearTimeout(toastTimer);
@@ -1302,7 +1347,6 @@ function toast(msg){
   toastTimer = setTimeout(()=>el.classList.remove('show'),3000);
 }
 
-// ── INIT ──────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', initHomeCharts);
 </script>
 </body>
