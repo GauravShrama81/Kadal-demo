@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 2 — Military MOS Matcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1e3a5f; --blue: #2563eb; --blue-light: #eff6ff;
+    --green: #16a34a; --amber: #d97706; --red: #dc2626;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-600: #4b5563;
+    --gray-700: #374151; --gray-900: #111827;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
+
+  .top-nav { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .back-link { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 500; }
+  .proto-title { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+  .proto-tag { font-size: 12px; color: var(--gray-400); background: var(--gray-100); padding: 4px 10px; border-radius: 100px; }
+
+  .stepper { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; display: flex; }
+  .step-tab { padding: 14px 20px; font-size: 13px; font-weight: 500; color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.25s; white-space: nowrap; }
+  .step-tab:hover { color: var(--blue); }
+  .step-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+  .step-tab.done { color: var(--gray-600); }
+  .step-tab .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--gray-100); color: var(--gray-400); font-size: 11px; font-weight: 700; margin-right: 8px; transition: all 0.25s; }
+  .step-tab.active .step-num { background: var(--blue); color: #fff; }
+  .step-tab.done .step-num { background: var(--green); color: #fff; }
+
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .nav-btns { display: flex; justify-content: flex-end; gap: 12px; padding: 24px 48px 40px; }
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  /* ===== SCREEN 1 ===== */
+  .s1-entry {
+    min-height: calc(100vh - 112px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 24px;
+    background: linear-gradient(160deg, #f0f4ff 0%, #fff 60%);
+  }
+  .s1-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 100px; margin-bottom: 24px; }
+  .s1-headline { font-size: 44px; font-weight: 800; color: var(--navy); text-align: center; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; max-width: 640px; }
+  .s1-sub { font-size: 17px; color: var(--gray-600); text-align: center; max-width: 520px; line-height: 1.65; margin-bottom: 40px; }
+
+  .search-wrap { position: relative; width: 100%; max-width: 520px; margin-bottom: 16px; }
+  .mos-input {
+    width: 100%; padding: 18px 22px; font-size: 16px;
+    border: 2px solid var(--gray-200); border-radius: 12px;
+    font-family: 'Inter', sans-serif; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .mos-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+  .autocomplete-list {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: #fff; border: 1.5px solid var(--gray-200); border-top: none;
+    border-radius: 0 0 12px 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    z-index: 50; display: none;
+  }
+  .autocomplete-list.open { display: block; }
+  .ac-item { padding: 13px 20px; cursor: pointer; font-size: 14px; transition: background 0.15s; border-bottom: 1px solid var(--gray-100); }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover { background: var(--blue-light); }
+  .ac-code { font-weight: 700; color: var(--navy); }
+  .ac-name { color: var(--gray-600); }
+
+  .or-divider { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 520px; margin-bottom: 16px; }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+  .or-text { color: var(--gray-400); font-size: 13px; font-weight: 500; }
+
+  .help-link { color: var(--blue); font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 24px; text-decoration: none; background: none; border: none; }
+  .branch-list { background: #fff; border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 20px; width: 100%; max-width: 520px; margin-bottom: 20px; display: none; }
+  .branch-list.open { display: block; }
+  .branch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .branch-item { padding: 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gray-700); transition: all 0.2s; text-align: center; }
+  .branch-item:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+  .find-btn {
+    width: 100%; max-width: 520px; background: var(--blue); color: #fff;
+    border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; margin-top: 4px;
+  }
+  .find-btn:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+
+  .trust-row { display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap; justify-content: center; }
+  .trust-item { font-size: 13px; color: var(--gray-400); display: flex; align-items: center; gap: 6px; }
+
+  /* ===== SCREEN 2 ===== */
+  .s2-wrap { padding: 40px 48px; max-width: 900px; margin: 0 auto; }
+  .s2-context { font-size: 13px; color: var(--gray-400); margin-bottom: 6px; }
+  .s2-headline { font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 28px; }
+
+  .featured-card {
+    background: #fff; border-radius: 16px; padding: 32px;
+    border: 2px solid var(--blue); box-shadow: 0 8px 32px rgba(37,99,235,0.1);
+    margin-bottom: 24px;
+  }
+  .feat-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .feat-title-group {}
+  .feat-label { font-size: 11px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .feat-title { font-size: 26px; font-weight: 800; color: var(--gray-900); }
+  .match-badge { background: var(--blue); color: #fff; font-size: 22px; font-weight: 800; padding: 10px 20px; border-radius: 10px; }
+  .match-sub { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7); text-align: center; }
+
+  .match-bar-section { margin-bottom: 24px; }
+  .match-bar-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
+  .match-bar-bg { height: 10px; background: var(--gray-100); border-radius: 100px; overflow: hidden; }
+  .match-bar-fill { height: 10px; background: linear-gradient(90deg, var(--blue) 0%, #60a5fa 100%); border-radius: 100px; width: 0%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  .tags-section { margin-bottom: 20px; }
+  .tags-label { font-size: 12px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; }
+  .tag-solid { background: #dbeafe; color: #1d4ed8; }
+  .tag-light { background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); }
+
+  .feat-ctas { display: flex; gap: 12px; margin-top: 24px; }
+  .feat-btn-primary { background: var(--blue); color: #fff; padding: 13px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
+  .feat-btn-primary:hover { background: #1d4ed8; }
+  .feat-btn-secondary { background: #fff; color: var(--blue); padding: 13px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; border: 2px solid var(--blue); cursor: pointer; transition: all 0.2s; }
+  .feat-btn-secondary:hover { background: var(--blue-light); }
+
+  .secondary-matches { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .sec-card { background: #fff; border-radius: 12px; padding: 20px; border: 1.5px solid var(--gray-200); }
+  .sec-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .sec-bar-bg { height: 6px; background: var(--gray-100); border-radius: 100px; margin-bottom: 6px; overflow: hidden; }
+  .sec-bar-fill { height: 6px; background: var(--blue); border-radius: 100px; width: 0%; transition: width 1.2s 0.3s ease; }
+  .sec-match-pct { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+
+  /* ===== SCREEN 3 ===== */
+  .s3-wrap { padding: 40px 48px; max-width: 860px; margin: 0 auto; }
+  .s3-headline { font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .s3-sub { font-size: 14px; color: var(--gray-600); margin-bottom: 32px; }
+  .funding-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+  .funding-card {
+    background: #fff; border-radius: 12px; border: 1.5px solid var(--gray-200);
+    overflow: hidden; cursor: pointer; transition: all 0.3s ease;
+  }
+  .funding-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(37,99,235,0.1); }
+  .funding-card.expanded { border-color: var(--blue); }
+  .funding-top { padding: 20px; }
+  .funding-icon { font-size: 28px; margin-bottom: 10px; }
+  .funding-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .funding-elig { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+  .funding-amount { font-size: 22px; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+  .funding-amount-label { font-size: 11px; color: var(--gray-400); }
+  .funding-apply-btn { width: 100%; background: var(--blue-light); color: var(--blue); border: none; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border-top: 1px solid var(--gray-100); transition: background 0.2s; }
+  .funding-apply-btn:hover { background: #dbeafe; }
+  .funding-expand { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
+  .funding-card.expanded .funding-expand { max-height: 300px; }
+  .funding-steps { padding: 0 20px 20px; border-top: 1px solid var(--gray-100); margin-top: 0; }
+  .funding-step { display: flex; align-items: flex-start; gap: 12px; margin-top: 14px; }
+  .step-circle { width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+
+  .info-box { background: var(--blue-light); border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px; display: flex; gap: 12px; align-items: flex-start; }
+  .info-icon { font-size: 18px; flex-shrink: 0; }
+  .info-text { font-size: 13px; color: #1e40af; line-height: 1.55; }
+
+  /* ===== SCREEN 4 ===== */
+  .s4-wrap { padding: 40px 48px; max-width: 720px; margin: 0 auto; }
+  .s4-welcome { background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%); border-radius: 16px; padding: 32px; color: #fff; text-align: center; margin-bottom: 32px; }
+  .s4-welcome h2 { font-size: 24px; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+  .s4-welcome p { color: #bfdbfe; font-size: 14px; }
+
+  .timeline-section { margin-bottom: 32px; }
+  .timeline-section h3 { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .phase-list { display: flex; flex-direction: column; gap: 0; }
+  .phase-item { display: flex; gap: 16px; position: relative; }
+  .phase-item::before { content: ''; position: absolute; left: 15px; top: 32px; bottom: -16px; width: 2px; background: var(--gray-200); z-index: 0; }
+  .phase-item:last-child::before { display: none; }
+  .phase-num { width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; margin-top: 2px; }
+  .phase-body { padding-bottom: 24px; }
+  .phase-name { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .phase-desc { font-size: 13px; color: var(--gray-600); margin-bottom: 4px; }
+  .phase-dur { font-size: 12px; color: var(--gray-400); }
+
+  .date-block { background: #fff; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .date-icon { font-size: 28px; }
+  .date-text strong { display: block; font-size: 15px; font-weight: 700; }
+  .date-text span { font-size: 13px; color: var(--gray-400); }
+
+  .module-preview { background: #fff; border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .module-badge { font-size: 11px; font-weight: 600; color: var(--blue); background: var(--blue-light); padding: 4px 10px; border-radius: 100px; display: inline-block; margin-bottom: 8px; }
+  .module-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .module-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .module-topic { font-size: 12px; color: var(--gray-600); background: var(--gray-100); padding: 4px 10px; border-radius: 6px; }
+
+  .coach-preview { background: var(--blue-light); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .coach-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .coach-text strong { display: block; font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .coach-text span { font-size: 13px; color: #1e40af; }
+
+  .begin-btn { width: 100%; background: var(--blue); color: #fff; border: none; padding: 18px; border-radius: 12px; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s; letter-spacing: -0.3px; }
+  .begin-btn:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="back-link">← Back to TOC</a>
+  <span class="proto-title">Military MOS Matcher</span>
+  <span class="proto-tag">Prototype 2 · 4 Screens</span>
+</nav>
+
+<div class="stepper">
+  <div class="step-tab active" onclick="goTo(1)"><span class="step-num">1</span>Enter MOS</div>
+  <div class="step-tab" onclick="goTo(2)"><span class="step-num">2</span>Match Results</div>
+  <div class="step-tab" onclick="goTo(3)"><span class="step-num">3</span>Funding Options</div>
+  <div class="step-tab" onclick="goTo(4)"><span class="step-num">4</span>Confirmation</div>
+</div>
+
+<!-- ===== SCREEN 1 ===== -->
+<div class="screen active" id="screen-1">
+  <div class="s1-entry">
+    <div class="s1-badge">🎖️ For Veterans, Active Duty & Military Families</div>
+    <h1 class="s1-headline">Your Service Has Value.<br>Let's Translate It.</h1>
+    <p class="s1-sub">Enter your Military Occupational Specialty code and we'll match your skills to civilian career pathways — with education funding already lined up.</p>
+
+    <div class="search-wrap">
+      <input class="mos-input" id="mos-input" type="text" placeholder="Enter your MOS code (e.g. 91B, 68W, 25U)" oninput="handleMosInput(this.value)" autocomplete="off">
+      <div class="autocomplete-list" id="ac-list">
+        <div class="ac-item" onclick="selectMos('91B','Wheeled Vehicle Mechanic')"><span class="ac-code">91B</span> — <span class="ac-name">Wheeled Vehicle Mechanic</span></div>
+        <div class="ac-item" onclick="selectMos('68W','Combat Medic Specialist')"><span class="ac-code">68W</span> — <span class="ac-name">Combat Medic Specialist</span></div>
+        <div class="ac-item" onclick="selectMos('25U','Signal Support Systems Specialist')"><span class="ac-code">25U</span> — <span class="ac-name">Signal Support Systems Specialist</span></div>
+        <div class="ac-item" onclick="selectMos('11B','Infantryman')"><span class="ac-code">11B</span> — <span class="ac-name">Infantryman</span></div>
+        <div class="ac-item" onclick="selectMos('42A','Human Resources Specialist')"><span class="ac-code">42A</span> — <span class="ac-name">Human Resources Specialist</span></div>
+      </div>
+    </div>
+
+    <div class="or-divider" style="width:100%;max-width:520px;"><div class="or-text">OR</div></div>
+
+    <button class="help-link" onclick="toggleBranch()">I don't know my code — help me find it ▾</button>
+
+    <div class="branch-list" id="branch-list">
+      <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:12px;">Select your branch to browse by specialty:</div>
+      <div class="branch-grid">
+        <div class="branch-item" onclick="selectMos('91B','Wheeled Vehicle Mechanic')">🪖 Army</div>
+        <div class="branch-item" onclick="selectMos('68W','Combat Medic Specialist')">⚓ Navy</div>
+        <div class="branch-item" onclick="selectMos('25U','Signal Support Systems Specialist')">✈️ Air Force</div>
+        <div class="branch-item" onclick="selectMos('42A','Human Resources Specialist')">🌊 Marines</div>
+        <div class="branch-item" onclick="selectMos('25U','Signal Support Systems Specialist')">🛡️ Space Force</div>
+        <div class="branch-item" onclick="selectMos('68W','Combat Medic Specialist')">⚓ Coast Guard</div>
+      </div>
+    </div>
+
+    <button class="find-btn" onclick="goTo(2)">Find My Path →</button>
+
+    <div class="trust-row">
+      <span class="trust-item">✅ GI Bill compatible</span>
+      <span class="trust-item">✅ MyCAA eligible</span>
+      <span class="trust-item">✅ Tuition Assistance accepted</span>
+      <span class="trust-item">✅ 100% online, self-paced</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 2 ===== -->
+<div class="screen" id="screen-2">
+  <div class="s2-wrap">
+    <div class="s2-context">MOS 91B — Wheeled Vehicle Mechanic</div>
+    <div class="s2-headline">Based on your MOS 91B background,<br>here's where you shine:</div>
+
+    <div class="featured-card">
+      <div class="feat-top">
+        <div class="feat-title-group">
+          <div class="feat-label">⭐ Best Match</div>
+          <div class="feat-title">Robotics &amp; Automation Technician</div>
+        </div>
+        <div class="match-badge">82%<div class="match-sub">Match</div></div>
+      </div>
+
+      <div class="match-bar-section">
+        <div class="match-bar-label">Match strength</div>
+        <div class="match-bar-bg">
+          <div class="match-bar-fill" id="main-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="tags-section">
+        <div class="tags-label">Why you're a match</div>
+        <div class="tags-row">
+          <span class="tag tag-solid">Mechanical systems experience</span>
+          <span class="tag tag-solid">Precision work</span>
+          <span class="tag tag-solid">Equipment maintenance</span>
+          <span class="tag tag-solid">Adaptability under pressure</span>
+        </div>
+      </div>
+
+      <div class="tags-section">
+        <div class="tags-label">What's new to learn</div>
+        <div class="tags-row">
+          <span class="tag tag-light">Electronics fundamentals</span>
+          <span class="tag tag-light">Automation software</span>
+          <span class="tag tag-light">Safety certification</span>
+        </div>
+      </div>
+
+      <div class="feat-ctas">
+        <button class="feat-btn-primary" onclick="goTo(3)">Start This Pathway</button>
+        <button class="feat-btn-secondary">See Other Matches</button>
+      </div>
+    </div>
+
+    <div class="secondary-matches">
+      <div class="sec-card">
+        <div class="sec-title">Supply Chain Tech</div>
+        <div class="sec-bar-bg"><div class="sec-bar-fill" id="sec-bar-1" style="width:0%"></div></div>
+        <div class="sec-match-pct">71% Match</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:6px;">6 months · Logistics expertise applies directly</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-title">Electrical Technician</div>
+        <div class="sec-bar-bg"><div class="sec-bar-fill" id="sec-bar-2" style="width:0%"></div></div>
+        <div class="sec-match-pct">65% Match</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:6px;">10 months · Technical aptitude transfers well</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(3)">View Funding Options →</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 3 ===== -->
+<div class="screen" id="screen-3">
+  <div class="s3-wrap">
+    <div class="s3-headline">Your Education Is Covered</div>
+    <div class="s3-sub">As a service member or veteran, you have multiple paths to fund your Penn Foster education — often at no out-of-pocket cost.</div>
+
+    <div class="funding-grid">
+      <div class="funding-card" id="fc-1">
+        <div class="funding-top">
+          <div class="funding-icon">🎖️</div>
+          <div class="funding-title">Tuition Assistance</div>
+          <div class="funding-elig">Active duty service members</div>
+          <div class="funding-amount">$4,500/yr</div>
+          <div class="funding-amount-label">estimated coverage</div>
+        </div>
+        <div class="funding-expand" id="fe-1">
+          <div class="funding-steps">
+            <div class="funding-step"><div class="step-circle">1</div><div class="step-text">Confirm eligibility with your education officer or installation education center</div></div>
+            <div class="funding-step"><div class="step-circle">2</div><div class="step-text">Submit TA authorization request through your branch's portal (GoArmyEd, AIM, etc.)</div></div>
+            <div class="funding-step"><div class="step-circle">3</div><div class="step-text">Penn Foster receives authorization and waives your upfront cost</div></div>
+            <div class="funding-step"><div class="step-circle">4</div><div class="step-text">Enroll and begin — no payment needed until next billing period</div></div>
+          </div>
+        </div>
+        <button class="funding-apply-btn" onclick="toggleFunding(1)">Apply with Penn Foster support ▾</button>
+      </div>
+
+      <div class="funding-card" id="fc-2">
+        <div class="funding-top">
+          <div class="funding-icon">🦅</div>
+          <div class="funding-title">GI Bill Chapter 33</div>
+          <div class="funding-elig">Veterans with 90+ days service</div>
+          <div class="funding-amount">100% tuition</div>
+          <div class="funding-amount-label">for eligible veterans</div>
+        </div>
+        <div class="funding-expand" id="fe-2">
+          <div class="funding-steps">
+            <div class="funding-step"><div class="step-circle">1</div><div class="step-text">Verify your eligibility at VA.gov and obtain your Certificate of Eligibility (COE)</div></div>
+            <div class="funding-step"><div class="step-circle">2</div><div class="step-text">Share your COE with Penn Foster's VA enrollment team</div></div>
+            <div class="funding-step"><div class="step-circle">3</div><div class="step-text">Penn Foster files your enrollment certification with the VA</div></div>
+            <div class="funding-step"><div class="step-circle">4</div><div class="step-text">VA pays tuition directly to Penn Foster. You may also receive a monthly housing allowance.</div></div>
+          </div>
+        </div>
+        <button class="funding-apply-btn" onclick="toggleFunding(2)">Apply with Penn Foster support ▾</button>
+      </div>
+
+      <div class="funding-card" id="fc-3">
+        <div class="funding-top">
+          <div class="funding-icon">💙</div>
+          <div class="funding-title">MyCAA Scholarship</div>
+          <div class="funding-elig">Military spouses (E-1 to O-3)</div>
+          <div class="funding-amount">Up to $4,000</div>
+          <div class="funding-amount-label">over 2 years</div>
+        </div>
+        <div class="funding-expand" id="fe-3">
+          <div class="funding-steps">
+            <div class="funding-step"><div class="step-circle">1</div><div class="step-text">Create a MyCAA account at aiportal.acc.af.mil using your sponsor's SSN</div></div>
+            <div class="funding-step"><div class="step-circle">2</div><div class="step-text">Complete your Education & Career Plan with guidance from Penn Foster</div></div>
+            <div class="funding-step"><div class="step-circle">3</div><div class="step-text">Request a scholarship and receive your approval letter</div></div>
+            <div class="funding-step"><div class="step-circle">4</div><div class="step-text">Penn Foster submits your invoice to MyCAA directly — you never pay out of pocket</div></div>
+          </div>
+        </div>
+        <button class="funding-apply-btn" onclick="toggleFunding(3)">Apply with Penn Foster support ▾</button>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-icon">ℹ️</div>
+      <div class="info-text">Penn Foster's dedicated Military Affairs team handles the paperwork. Once you enroll, a specialist will contact you within 24 hours to confirm your funding and get you started at zero cost.</div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Confirm My Path →</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN 4 ===== -->
+<div class="screen" id="screen-4">
+  <div class="s4-wrap">
+    <div class="s4-welcome">
+      <div style="font-size:32px;margin-bottom:12px;">🎖️</div>
+      <h2>Welcome. Your path to Robotics &amp; Automation Technician starts here.</h2>
+      <p>MOS 91B · GI Bill Chapter 33 · Est. completion: February 2026</p>
+    </div>
+
+    <div class="timeline-section">
+      <h3>Program Outline</h3>
+      <div class="phase-list">
+        <div class="phase-item">
+          <div class="phase-num">1</div>
+          <div class="phase-body">
+            <div class="phase-name">Phase 1: Safety &amp; Fundamentals</div>
+            <div class="phase-desc">Workplace safety, hand tool operation, technical reading, basic electricity</div>
+            <div class="phase-dur">Months 1–2 · 8 modules</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">2</div>
+          <div class="phase-body">
+            <div class="phase-name">Phase 2: Mechanical &amp; Electrical Systems</div>
+            <div class="phase-desc">Hydraulics, pneumatics, PLCs, wiring diagrams, motor controls</div>
+            <div class="phase-dur">Months 3–6 · 10 modules</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">3</div>
+          <div class="phase-body">
+            <div class="phase-name">Phase 3: Automation &amp; Certification</div>
+            <div class="phase-desc">Robotics systems, OSHA 10 certification, industry capstone project</div>
+            <div class="phase-dur">Months 7–8 · 6 modules</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="date-block">
+      <div class="date-icon">📅</div>
+      <div class="date-text">
+        <strong>Estimated Completion: February 14, 2026</strong>
+        <span>At your own pace · Avg. 8 hrs/week recommended</span>
+      </div>
+    </div>
+
+    <div class="module-preview">
+      <div class="module-badge">Module 1 — Unlocked</div>
+      <div class="module-title">Safety &amp; Tool Fundamentals</div>
+      <div style="font-size:13px;color:var(--gray-600);line-height:1.55;">Get familiar with your workspace, safety protocols, and the hand tools you'll use throughout your program. Includes a graded quiz and a virtual lab walkthrough.</div>
+      <div class="module-topics">
+        <span class="module-topic">OSHA basics</span>
+        <span class="module-topic">PPE requirements</span>
+        <span class="module-topic">Hand tool ID</span>
+        <span class="module-topic">Safety data sheets</span>
+      </div>
+    </div>
+
+    <div class="coach-preview">
+      <div class="coach-avatar">🤖</div>
+      <div class="coach-text">
+        <strong>Meet Alex — Your AI Learning Coach</strong>
+        <span>Alex tracks your progress, flags when you're stuck, and offers hints, extra practice, and encouragement 24/7. You can message Alex anytime from within any module.</span>
+      </div>
+    </div>
+
+    <button class="begin-btn" onclick="alert('Welcome! Module 1 is loading...')">Begin Module 1 — Safety &amp; Tool Fundamentals →</button>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const mosSuggestions = ['91B','68W','25U','11B','42A'];
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => s.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step-tab').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1===n) t.classList.add('active');
+    else if (i+1<n) t.classList.add('done');
+  });
+  current = n;
+  if (n === 2) {
+    setTimeout(() => {
+      document.getElementById('main-bar').style.width = '82%';
+      document.getElementById('sec-bar-1').style.width = '71%';
+      document.getElementById('sec-bar-2').style.width = '65%';
+    }, 200);
+  }
+}
+
+function handleMosInput(val) {
+  const list = document.getElementById('ac-list');
+  if (val.length >= 1) {
+    list.classList.add('open');
+  } else {
+    list.classList.remove('open');
+  }
+}
+
+function selectMos(code, name) {
+  document.getElementById('mos-input').value = code + ' — ' + name;
+  document.getElementById('ac-list').classList.remove('open');
+  document.getElementById('branch-list').classList.remove('open');
+}
+
+function toggleBranch() {
+  document.getElementById('branch-list').classList.toggle('open');
+}
+
+function toggleFunding(id) {
+  const card = document.getElementById('fc-'+id);
+  card.classList.toggle('expanded');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) {
+    document.getElementById('ac-list').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

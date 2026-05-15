@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 4 — PF Community Mentor Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1e3a5f; --blue: #2563eb; --blue-light: #eff6ff;
+    --green: #16a34a; --amber: #d97706; --red: #dc2626;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-600: #4b5563;
+    --gray-700: #374151; --gray-900: #111827;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); }
+  .top-nav { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .back-link { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 500; }
+  .proto-title { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+  .proto-tag { font-size: 12px; color: var(--gray-400); background: var(--gray-100); padding: 4px 10px; border-radius: 100px; }
+  .stepper { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; display: flex; }
+  .step-tab { padding: 14px 20px; font-size: 13px; font-weight: 500; color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.25s; white-space: nowrap; }
+  .step-tab:hover { color: var(--blue); }
+  .step-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+  .step-tab.done { color: var(--gray-600); }
+  .step-tab .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--gray-100); color: var(--gray-400); font-size: 11px; font-weight: 700; margin-right: 8px; transition: all 0.25s; }
+  .step-tab.active .step-num { background: var(--blue); color: #fff; }
+  .step-tab.done .step-num { background: var(--green); color: #fff; }
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .nav-btns { display: flex; justify-content: flex-end; gap: 12px; padding: 24px 32px 40px; }
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  /* ===== S1 ===== */
+  .s1-wrap { padding: 0; }
+  .community-header {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%);
+    padding: 32px 40px 0;
+  }
+  .community-title { color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .community-banner { color: #bfdbfe; font-size: 14px; margin-bottom: 20px; }
+  .community-tabs { display: flex; gap: 0; }
+  .com-tab {
+    padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+    color: #93c5fd; border-bottom: 3px solid transparent;
+    transition: all 0.2s; border-radius: 8px 8px 0 0;
+  }
+  .com-tab.active { background: #fff; color: var(--navy); border-bottom-color: transparent; }
+
+  .mentor-list-wrap { padding: 32px 40px; }
+  .mentor-list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .mentor-list-header h3 { font-size: 16px; font-weight: 700; }
+  .search-input { padding: 9px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; width: 220px; }
+  .search-input:focus { border-color: var(--blue); }
+
+  .mentor-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .mentor-card {
+    background: #fff; border-radius: 12px; border: 1px solid var(--gray-200);
+    padding: 24px; transition: all 0.3s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .mentor-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: var(--blue); }
+  .mentor-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+  .mentor-avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .mentor-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .mentor-role { font-size: 13px; color: var(--gray-600); margin-bottom: 4px; }
+  .avail-badge { display: inline-flex; align-items: center; gap: 5px; background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+  .avail-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .mentor-prog { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+  .mentor-rating { font-size: 13px; color: var(--amber); font-weight: 600; margin-bottom: 14px; }
+  .request-btn {
+    width: 100%; background: var(--blue); color: #fff; border: none;
+    padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .request-btn:hover { background: #1d4ed8; }
+
+  .become-tab-content { padding: 32px 40px; }
+
+  /* ===== S2 ===== */
+  .s2-wrap { padding: 32px 40px; max-width: 760px; margin: 0 auto; }
+  .profile-big-card {
+    background: #fff; border-radius: 16px; border: 1px solid var(--gray-200);
+    overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .profile-banner { background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%); height: 100px; position: relative; }
+  .profile-avatar-big {
+    position: absolute; bottom: -28px; left: 32px;
+    width: 72px; height: 72px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800; color: #fff;
+    border: 4px solid #fff; background: var(--blue);
+  }
+  .mentor-badge-ribbon {
+    position: absolute; bottom: -14px; left: 112px;
+    background: var(--amber); color: #fff; font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 100px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .profile-body { padding: 48px 32px 32px; }
+  .profile-big-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+  .profile-big-role { font-size: 15px; color: var(--gray-600); margin-bottom: 4px; }
+  .profile-big-prog { font-size: 13px; color: var(--gray-400); margin-bottom: 20px; }
+  .profile-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .meta-block label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+  .meta-block span { font-size: 14px; color: var(--gray-700); }
+  .spec-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .spec-tag { background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 100px; }
+  .about-text { font-size: 14px; color: var(--gray-600); line-height: 1.65; margin-bottom: 24px; }
+  .reviews-section h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .review-card { background: var(--gray-50); border-radius: 10px; padding: 16px; margin-bottom: 10px; cursor: pointer; }
+  .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .reviewer { font-size: 13px; font-weight: 600; }
+  .review-rating { color: var(--amber); font-size: 13px; }
+  .review-text { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+  .review-expand { font-size: 13px; color: var(--gray-600); margin-top: 8px; display: none; line-height: 1.55; }
+  .review-card.open .review-expand { display: block; }
+  .book-btn { width: 100%; background: var(--blue); color: #fff; border: none; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: all 0.2s; }
+  .book-btn:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+
+  /* ===== S3 ===== */
+  .s3-wrap { padding: 32px 40px; max-width: 680px; margin: 0 auto; }
+  .s3-header h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .s3-header p { font-size: 13px; color: var(--gray-600); margin-bottom: 28px; }
+  .calendar-widget { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 20px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-month { font-size: 16px; font-weight: 700; }
+  .cal-nav { background: none; border: 1.5px solid var(--gray-200); border-radius: 6px; width: 30px; height: 30px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day-label { text-align: center; font-size: 11px; font-weight: 600; color: var(--gray-400); padding: 4px; }
+  .cal-day {
+    text-align: center; padding: 8px 4px; font-size: 13px; border-radius: 8px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .cal-day.empty { opacity: 0; pointer-events: none; }
+  .cal-day.past { color: var(--gray-300); pointer-events: none; }
+  .cal-day.available { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+  .cal-day.available:hover { background: var(--blue); color: #fff; }
+  .cal-day.selected { background: var(--blue); color: #fff; font-weight: 700; }
+
+  .time-slots { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .time-slot {
+    padding: 9px 18px; border-radius: 8px; border: 1.5px solid var(--gray-200);
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: #fff;
+  }
+  .time-slot:hover, .time-slot.selected { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  .session-type { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 20px; margin-bottom: 20px; }
+  .session-type h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .radio-option { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+  .radio-option input[type=radio] { margin-top: 2px; cursor: pointer; accent-color: var(--blue); }
+  .radio-label { font-size: 14px; font-weight: 500; color: var(--gray-700); }
+  .topic-textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 10px; font-size: 13px; font-family: 'Inter', sans-serif; margin-top: 8px; resize: vertical; height: 80px; outline: none; display: none; }
+  .topic-textarea:focus { border-color: var(--blue); }
+  .confirm-btn { width: 100%; background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .confirm-btn:hover { background: #1d4ed8; }
+  .confirm-success { background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; text-align: center; display: none; }
+  .confirm-success h3 { font-size: 18px; font-weight: 800; color: var(--green); margin-bottom: 6px; }
+  .confirm-success p { font-size: 14px; color: #15803d; }
+
+  /* ===== S4 ===== */
+  .s4-wrap { padding: 32px 40px; max-width: 720px; margin: 0 auto; }
+  .s4-head { text-align: center; margin-bottom: 36px; }
+  .s4-head h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .s4-head p { font-size: 15px; color: var(--gray-600); line-height: 1.6; max-width: 520px; margin: 0 auto; }
+
+  .eligibility-section { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 24px; }
+  .eligibility-section h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+  .elig-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; color: var(--gray-700); }
+  .elig-check { width: 22px; height: 22px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; flex-shrink: 0; animation: popIn 0.4s ease backwards; }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+  .benefit-item { background: #fff; border-radius: 10px; border: 1px solid var(--gray-200); padding: 16px; display: flex; align-items: flex-start; gap: 12px; }
+  .benefit-icon { font-size: 20px; flex-shrink: 0; }
+  .benefit-text strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .benefit-text span { font-size: 12px; color: var(--gray-600); }
+
+  .step-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+  .step-ind { display: flex; align-items: center; gap: 8px; }
+  .step-ind-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .step-ind-num.active { background: var(--blue); color: #fff; }
+  .step-ind-num.done { background: var(--green); color: #fff; }
+  .step-ind-num.inactive { background: var(--gray-100); color: var(--gray-400); }
+  .step-ind-label { font-size: 12px; font-weight: 600; }
+  .step-connector { flex: 1; height: 2px; background: var(--gray-200); max-width: 40px; }
+
+  .form-step { display: none; }
+  .form-step.active { display: block; }
+  .form-section { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 20px; }
+  .form-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .day-toggles { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .day-toggle { padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--gray-200); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: #fff; color: var(--gray-600); }
+  .day-toggle:hover, .day-toggle.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .time-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+  .spec-checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+  .spec-check { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s; }
+  .spec-check:hover { background: var(--gray-50); }
+  .spec-check input { accent-color: var(--blue); cursor: pointer; }
+  .bio-textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 12px; font-size: 13px; font-family: 'Inter', sans-serif; height: 100px; resize: vertical; outline: none; }
+  .bio-textarea:focus { border-color: var(--blue); }
+  .form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .success-screen { text-align: center; padding: 48px 24px; background: #fff; border-radius: 16px; border: 1px solid var(--gray-200); }
+  .success-screen .success-icon { font-size: 48px; margin-bottom: 16px; }
+  .success-screen h3 { font-size: 22px; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+  .success-screen p { font-size: 14px; color: var(--gray-600); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="back-link">← Back to TOC</a>
+  <span class="proto-title">PF Community Mentor Marketplace</span>
+  <span class="proto-tag">Prototype 4 · 4 Screens</span>
+</nav>
+<div class="stepper">
+  <div class="step-tab active" onclick="goTo(1)"><span class="step-num">1</span>Community Home</div>
+  <div class="step-tab" onclick="goTo(2)"><span class="step-num">2</span>Mentor Profile</div>
+  <div class="step-tab" onclick="goTo(3)"><span class="step-num">3</span>Book a Session</div>
+  <div class="step-tab" onclick="goTo(4)"><span class="step-num">4</span>Become a Mentor</div>
+</div>
+
+<!-- S1 -->
+<div class="screen active" id="screen-1">
+  <div class="s1-wrap">
+    <div class="community-header">
+      <div class="community-title">PF Community — Robotics Pathways</div>
+      <div class="community-banner">"Connect with someone who's been exactly where you are."</div>
+      <div class="community-tabs">
+        <div class="com-tab active" id="tab-find" onclick="switchTab('find')">Find a Mentor</div>
+        <div class="com-tab" id="tab-become" onclick="switchTab('become')">Become a Mentor</div>
+      </div>
+    </div>
+
+    <div id="find-content">
+      <div class="mentor-list-wrap">
+        <div class="mentor-list-header">
+          <h3>3 mentors available in your program area</h3>
+          <input class="search-input" type="text" placeholder="Search by name or specialty…">
+        </div>
+        <div class="mentor-cards">
+          <div class="mentor-card">
+            <div class="mentor-top">
+              <div class="mentor-avatar" style="background:#2563eb">JT</div>
+              <div>
+                <div class="mentor-name">Jordan T.</div>
+                <div class="mentor-role">Automation Technician at Siemens</div>
+                <div class="avail-badge"><div class="avail-dot"></div>Available</div>
+              </div>
+            </div>
+            <div class="mentor-prog">Robotics &amp; Automation Technician · Class of 2024</div>
+            <div class="mentor-rating">★★★★★ 4.9 (23 sessions)</div>
+            <button class="request-btn" onclick="goTo(2)">Request a Session</button>
+          </div>
+          <div class="mentor-card">
+            <div class="mentor-top">
+              <div class="mentor-avatar" style="background:#16a34a">MR</div>
+              <div>
+                <div class="mentor-name">Maya R.</div>
+                <div class="mentor-role">CNC Operator at GE Aerospace</div>
+                <div class="avail-badge"><div class="avail-dot"></div>Available</div>
+              </div>
+            </div>
+            <div class="mentor-prog">Electrical Technician · Class of 2023</div>
+            <div class="mentor-rating">★★★★★ 4.8 (41 sessions)</div>
+            <button class="request-btn" onclick="goTo(2)">Request a Session</button>
+          </div>
+          <div class="mentor-card">
+            <div class="mentor-top">
+              <div class="mentor-avatar" style="background:#7c3aed">DK</div>
+              <div>
+                <div class="mentor-name">Darius K.</div>
+                <div class="mentor-role">Field Service Tech at Honeywell</div>
+                <div class="avail-badge"><div class="avail-dot"></div>Available</div>
+              </div>
+            </div>
+            <div class="mentor-prog">Robotics &amp; Automation Technician · Class of 2023</div>
+            <div class="mentor-rating">★★★★☆ 4.6 (17 sessions)</div>
+            <button class="request-btn" onclick="goTo(2)">Request a Session</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="become-content" style="display:none">
+      <div class="become-tab-content">
+        <div style="text-align:center;padding:32px 0 16px;">
+          <div style="font-size:36px;margin-bottom:12px;">🌟</div>
+          <h3 style="font-size:22px;font-weight:800;margin-bottom:8px;">Share What You Know.</h3>
+          <p style="font-size:15px;color:var(--gray-600);max-width:480px;margin:0 auto 24px;line-height:1.6;">Penn Foster alumni who become mentors report higher job satisfaction, stronger professional networks, and a lasting sense of purpose.</p>
+          <button class="btn btn-primary" style="font-size:15px;padding:14px 32px;" onclick="goTo(4)">Apply to Become a Mentor →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns"><button class="btn btn-primary" onclick="goTo(2)">View Mentor Profile →</button></div>
+</div>
+
+<!-- S2 -->
+<div class="screen" id="screen-2">
+  <div class="s2-wrap">
+    <div class="profile-big-card">
+      <div class="profile-banner">
+        <div class="profile-avatar-big">JT</div>
+        <div class="mentor-badge-ribbon">⭐ PF Mentor</div>
+      </div>
+      <div class="profile-body">
+        <div class="profile-big-name">Jordan T.</div>
+        <div class="profile-big-role">Automation Technician at Siemens</div>
+        <div class="profile-big-prog">Robotics &amp; Automation Technician · Penn Foster Class of 2024 · ★★★★★ 4.9</div>
+
+        <div class="profile-meta">
+          <div class="meta-block">
+            <label>Availability</label>
+            <span>Tuesdays 6–8 PM · Saturdays 10 AM–12 PM</span>
+          </div>
+          <div class="meta-block">
+            <label>Sessions Completed</label>
+            <span>23 sessions · 94% satisfaction</span>
+          </div>
+          <div class="meta-block">
+            <label>Response Time</label>
+            <span>Usually within 2 hours</span>
+          </div>
+          <div class="meta-block">
+            <label>Program Completed</label>
+            <span>8 months · GPA 3.8</span>
+          </div>
+        </div>
+
+        <div class="spec-tags">
+          <span class="spec-tag">PLC Programming</span>
+          <span class="spec-tag">Job Interview Prep</span>
+          <span class="spec-tag">Resume Review</span>
+        </div>
+
+        <div class="about-text">
+          "I was a mechanic for 6 years before I found Penn Foster. The program completely changed my career trajectory. Now I work on industrial automation systems at Siemens and I love every day. I mentor because I know what it's like to start from scratch — and I want to be the person I wish I'd had when I was starting out."
+        </div>
+
+        <div class="reviews-section">
+          <h4>Student Reviews</h4>
+          <div class="review-card" onclick="toggleReview(this)">
+            <div class="review-header">
+              <span class="reviewer">Sarah M. · Robotics Pathway</span>
+              <span class="review-rating">★★★★★</span>
+            </div>
+            <div class="review-text">"Jordan helped me understand PLCs in a way my textbook never could. We worked through a real example from his job."</div>
+            <div class="review-expand">Jordan spent 45 minutes walking me through a live troubleshooting scenario he actually encountered at Siemens. Seeing a real-world application made Module 7 click completely. I went from 58% on my practice quiz to 91% on the actual assessment. Highly recommend booking with Jordan if you're stuck on automation concepts.</div>
+          </div>
+          <div class="review-card" onclick="toggleReview(this)">
+            <div class="review-header">
+              <span class="reviewer">Marcus W. · Robotics Pathway</span>
+              <span class="review-rating">★★★★★</span>
+            </div>
+            <div class="review-text">"My job interview felt so much easier because Jordan had already walked me through the exact types of questions they'd ask."</div>
+            <div class="review-expand">We did a full mock interview where Jordan played the interviewer and gave me real feedback after each answer. He pointed out that I was underselling my mechanical background and helped me reframe it as automation experience. Got the job offer two weeks later. Cannot recommend this mentor program enough.</div>
+          </div>
+          <div class="review-card" onclick="toggleReview(this)">
+            <div class="review-header">
+              <span class="reviewer">Nina O. · Electrical Pathway</span>
+              <span class="review-rating">★★★★☆</span>
+            </div>
+            <div class="review-text">"Super knowledgeable and easy to talk to. He remembered exactly where I'd left off from our last session."</div>
+            <div class="review-expand">Jordan keeps great notes between sessions which makes the continuity really smooth. Even though I'm in a different track than he completed, his understanding of the technical concepts transferred perfectly. Would book again.</div>
+          </div>
+        </div>
+
+        <button class="book-btn" onclick="goTo(3)">Book a 30-min Session →</button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(3)">Book a Session →</button>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="screen" id="screen-3">
+  <div class="s3-wrap">
+    <div class="s3-header">
+      <h2>Book a Session with Jordan T.</h2>
+      <p>Select an available date and time slot, then choose your session type.</p>
+    </div>
+
+    <div class="calendar-widget">
+      <div class="cal-header">
+        <button class="cal-nav">‹</button>
+        <div class="cal-month">May 2025</div>
+        <button class="cal-nav">›</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-day-label">Sun</div><div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div><div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div>
+        <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day past">1</div><div class="cal-day past">2</div><div class="cal-day past">3</div><div class="cal-day past">4</div>
+        <div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div><div class="cal-day past">8</div><div class="cal-day past">9</div><div class="cal-day past">10</div><div class="cal-day past">11</div>
+        <div class="cal-day past">12</div><div class="cal-day past">13</div><div class="cal-day past">14</div><div class="cal-day past">15</div><div class="cal-day past">16</div><div class="cal-day past">17</div><div class="cal-day past">18</div>
+        <div class="cal-day past">19</div><div class="cal-day available" onclick="selectDate(this,'May 20')">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day available" onclick="selectDate(this,'May 24')">24</div>
+        <div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day available" onclick="selectDate(this,'May 27')">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div><div class="cal-day available" onclick="selectDate(this,'May 31')">31</div>
+      </div>
+
+      <div id="time-slots-wrap" style="display:none;margin-top:16px;border-top:1px solid var(--gray-100);padding-top:16px;">
+        <div style="font-size:12px;font-weight:600;color:var(--gray-400);margin-bottom:10px;">SELECT A TIME — <span id="selected-date-label"></span></div>
+        <div class="time-slots">
+          <div class="time-slot" onclick="selectTime(this,'6:00 PM')">6:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'6:30 PM')">6:30 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'7:00 PM')">7:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'7:30 PM')">7:30 PM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-type">
+      <h4>Session Type</h4>
+      <label class="radio-option"><input type="radio" name="stype" value="checkin" checked> <span class="radio-label">General check-in — review progress, answer questions</span></label>
+      <label class="radio-option"><input type="radio" name="stype" value="topic" onchange="toggleTopic(this)"> <span class="radio-label">Specific topic — dive deep into a concept or module</span></label>
+      <textarea class="topic-textarea" id="topic-area" placeholder="Describe the topic or concept you'd like to cover…"></textarea>
+      <label class="radio-option"><input type="radio" name="stype" value="jobprep" onchange="hideTopic()"> <span class="radio-label">Job application prep — resume, portfolio, or interview practice</span></label>
+    </div>
+
+    <div id="confirm-success" class="confirm-success">
+      <div style="font-size:32px;margin-bottom:8px;">✅</div>
+      <h3>Session Booked!</h3>
+      <p id="confirm-msg">Your session is confirmed — Tuesday May 20, 6:00 PM. You'll get a reminder 1 hour before.</p>
+    </div>
+
+    <button class="confirm-btn" id="confirm-btn" onclick="confirmBooking()">Confirm Booking →</button>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Become a Mentor →</button>
+  </div>
+</div>
+
+<!-- S4 -->
+<div class="screen" id="screen-4">
+  <div class="s4-wrap">
+    <div class="s4-head">
+      <h2>Share What You Know.<br>Help Someone Start Their Journey.</h2>
+      <p>Penn Foster alumni who've completed a program and entered the workforce can apply to mentor current students — and make a real difference.</p>
+    </div>
+
+    <div class="eligibility-section">
+      <h3>You're eligible if you…</h3>
+      <div class="elig-item"><div class="elig-check" style="animation-delay:0.1s">✓</div>Have completed a Penn Foster program</div>
+      <div class="elig-item"><div class="elig-check" style="animation-delay:0.3s">✓</div>Are currently employed in your field (or a related one)</div>
+      <div class="elig-item"><div class="elig-check" style="animation-delay:0.5s">✓</div>Can commit at least 1 hour per week to mentoring</div>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-icon">🏅</div><div class="benefit-text"><strong>Mentor Badge</strong><span>Earn a verified mentor credential for your LinkedIn profile</span></div></div>
+      <div class="benefit-item"><div class="benefit-icon">🌐</div><div class="benefit-text"><strong>Grow Your Network</strong><span>Connect with motivated learners across your field</span></div></div>
+      <div class="benefit-item"><div class="benefit-icon">📣</div><div class="benefit-text"><strong>Featured Profile</strong><span>Your profile is promoted to students in your program area</span></div></div>
+      <div class="benefit-item"><div class="benefit-icon">🎁</div><div class="benefit-text"><strong>PF Perks</strong><span>Access to continuing education credits and alumni events</span></div></div>
+      <div class="benefit-item"><div class="benefit-icon">💬</div><div class="benefit-text"><strong>Meaningful Impact</strong><span>94% of mentored students report higher program completion rates</span></div></div>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator" id="step-ind">
+      <div class="step-ind"><div class="step-ind-num active" id="si1">1</div><div class="step-ind-label">Availability</div></div>
+      <div class="step-connector"></div>
+      <div class="step-ind"><div class="step-ind-num inactive" id="si2">2</div><div class="step-ind-label">Specialisms &amp; Bio</div></div>
+      <div class="step-connector"></div>
+      <div class="step-ind"><div class="step-ind-num inactive" id="si3">3</div><div class="step-ind-label">Review &amp; Submit</div></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="form-step active" id="fs1">
+      <div class="form-section">
+        <h3>When are you available?</h3>
+        <div style="font-size:13px;color:var(--gray-400);margin-bottom:12px;">Days of week</div>
+        <div class="day-toggles">
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Mon</div>
+          <div class="day-toggle on" onclick="this.classList.toggle('on')">Tue</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Wed</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Thu</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Fri</div>
+          <div class="day-toggle on" onclick="this.classList.toggle('on')">Sat</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Sun</div>
+        </div>
+        <div style="font-size:13px;color:var(--gray-400);margin-bottom:12px;">Preferred time slots</div>
+        <div class="time-toggles">
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Morning (6–9am)</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Afternoon (12–5pm)</div>
+          <div class="day-toggle on" onclick="this.classList.toggle('on')">Evening (6–9pm)</div>
+          <div class="day-toggle" onclick="this.classList.toggle('on')">Weekends only</div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <div></div>
+        <button class="btn btn-primary" onclick="formStep(2)">Next: Specialisms →</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="form-step" id="fs2">
+      <div class="form-section">
+        <h3>What can you help with?</h3>
+        <div class="spec-checks">
+          <label class="spec-check"><input type="checkbox" checked> Module content questions</label>
+          <label class="spec-check"><input type="checkbox" checked> Resume &amp; job applications</label>
+          <label class="spec-check"><input type="checkbox"> Interview preparation</label>
+          <label class="spec-check"><input type="checkbox" checked> PLC programming</label>
+          <label class="spec-check"><input type="checkbox"> Study planning &amp; time management</label>
+          <label class="spec-check"><input type="checkbox"> Career exploration</label>
+          <label class="spec-check"><input type="checkbox"> First job navigation</label>
+          <label class="spec-check"><input type="checkbox"> Industry certifications</label>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:8px;">About you (shown on your public profile)</div>
+        <textarea class="bio-textarea" placeholder="Tell students a bit about your journey — where you started, where you are now, and what you love about mentoring…"></textarea>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-secondary" onclick="formStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="formStep(3)">Next: Review →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="form-step" id="fs3">
+      <div class="form-section">
+        <h3>Review Your Application</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+          <div><strong style="display:block;color:var(--gray-400);font-size:11px;text-transform:uppercase;margin-bottom:3px;">Available Days</strong>Tuesday, Saturday</div>
+          <div><strong style="display:block;color:var(--gray-400);font-size:11px;text-transform:uppercase;margin-bottom:3px;">Time Slot</strong>Evenings (6–9 PM)</div>
+          <div><strong style="display:block;color:var(--gray-400);font-size:11px;text-transform:uppercase;margin-bottom:3px;">Specialisms Selected</strong>3 areas</div>
+          <div><strong style="display:block;color:var(--gray-400);font-size:11px;text-transform:uppercase;margin-bottom:3px;">Profile Visibility</strong>Public to enrolled students</div>
+        </div>
+        <div style="margin-top:14px;padding:12px;background:var(--blue-light);border-radius:8px;font-size:13px;color:#1e40af;">
+          By submitting, you agree to Penn Foster's Mentor Code of Conduct and commit to responding to session requests within 48 hours.
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-secondary" onclick="formStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="submitMentor()">Submit Application →</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="form-step" id="fs-success">
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <h3>Application Received!</h3>
+        <p>Welcome to the PF Mentor community. Our team will review your application within 2 business days. You'll receive a welcome email with next steps and your mentor profile setup link.</p>
+        <button class="btn btn-primary" style="margin-top:24px;" onclick="goTo(1)">Back to Community Home</button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+  </div>
+</div>
+
+<script>
+let current = 1;
+let selectedDate = '';
+let selectedTime = '';
+let formCurrentStep = 1;
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => s.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step-tab').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1===n) t.classList.add('active');
+    else if (i+1<n) t.classList.add('done');
+  });
+  current = n;
+}
+
+function switchTab(tab) {
+  document.getElementById('find-content').style.display = tab === 'find' ? 'block' : 'none';
+  document.getElementById('become-content').style.display = tab === 'become' ? 'block' : 'none';
+  document.getElementById('tab-find').classList.toggle('active', tab === 'find');
+  document.getElementById('tab-become').classList.toggle('active', tab === 'become');
+}
+
+function toggleReview(el) { el.classList.toggle('open'); }
+
+function selectDate(el, date) {
+  document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDate = date;
+  document.getElementById('selected-date-label').textContent = date;
+  document.getElementById('time-slots-wrap').style.display = 'block';
+}
+
+function selectTime(el, time) {
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime = time;
+}
+
+function toggleTopic(radio) { document.getElementById('topic-area').style.display = radio.value === 'topic' ? 'block' : 'none'; }
+function hideTopic() { document.getElementById('topic-area').style.display = 'none'; }
+
+function confirmBooking() {
+  const d = selectedDate || 'Tuesday May 20';
+  const t = selectedTime || '6:00 PM';
+  document.getElementById('confirm-msg').textContent = `Your session is confirmed — ${d}, ${t}. You'll get a reminder 1 hour before.`;
+  document.getElementById('confirm-success').style.display = 'block';
+  document.getElementById('confirm-btn').style.display = 'none';
+}
+
+function formStep(n) {
+  document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
+  document.getElementById('fs' + n).classList.add('active');
+  formCurrentStep = n;
+  ['si1','si2','si3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'step-ind-num ' + (i+1 < n ? 'done' : i+1 === n ? 'active' : 'inactive');
+    el.textContent = i+1 < n ? '✓' : i+1;
+  });
+}
+
+function submitMentor() {
+  document.querySelectorAll('.form-step').forEach(f => f.classList.remove('active'));
+  document.getElementById('fs-success').classList.add('active');
+  document.getElementById('step-ind').style.display = 'none';
+}
+</script>
+</body>
+</html>

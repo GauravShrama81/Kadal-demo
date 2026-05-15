@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 1 — Employer Upskill Partnership Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1e3a5f; --blue: #2563eb; --blue-light: #eff6ff;
+    --green: #16a34a; --amber: #d97706; --red: #dc2626;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-600: #4b5563;
+    --gray-700: #374151; --gray-900: #111827;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
+
+  /* NAV */
+  .top-nav {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .back-link { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: gap 0.2s; }
+  .back-link:hover { gap: 10px; }
+  .proto-title { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+  .proto-tag { font-size: 12px; color: var(--gray-400); background: var(--gray-100); padding: 4px 10px; border-radius: 100px; }
+
+  /* STEPPER */
+  .stepper {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    display: flex; gap: 0;
+  }
+  .step-tab {
+    padding: 14px 20px;
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-400);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+  .step-tab:hover { color: var(--blue); }
+  .step-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+  .step-tab .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--gray-100); color: var(--gray-400);
+    font-size: 11px; font-weight: 700;
+    margin-right: 8px; transition: all 0.25s;
+  }
+  .step-tab.active .step-num { background: var(--blue); color: #fff; }
+  .step-tab.done .step-num { background: var(--green); color: #fff; }
+  .step-tab.done { color: var(--gray-600); }
+
+  /* SCREENS */
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* NAV BUTTONS */
+  .nav-btns {
+    display: flex; justify-content: flex-end; gap: 12px;
+    padding: 24px 32px 32px;
+  }
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  /* ====== SCREEN 1 ====== */
+  .s1-hero {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    padding: 56px 48px;
+    background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%);
+  }
+  .s1-left { display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+  .s1-eyebrow { color: #93c5fd; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .s1-headline { color: #fff; font-size: 38px; font-weight: 800; line-height: 1.15; letter-spacing: -0.5px; }
+  .s1-sub { color: #bfdbfe; font-size: 16px; line-height: 1.6; }
+  .s1-ctas { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .s1-btn-primary { background: #fff; color: var(--blue); padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; border: none; transition: transform 0.2s; }
+  .s1-btn-primary:hover { transform: translateY(-2px); }
+  .s1-btn-ghost { color: #93c5fd; font-size: 14px; font-weight: 500; cursor: pointer; background: none; border: none; }
+  .s1-btn-ghost:hover { color: #fff; }
+
+  /* Mini dashboard card */
+  .s1-dashboard {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .dash-header { color: #93c5fd; font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+  .dash-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+  .dash-stat {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 12px;
+  }
+  .dash-stat-num { color: #fff; font-size: 22px; font-weight: 800; }
+  .dash-stat-label { color: #93c5fd; font-size: 11px; margin-top: 2px; }
+  .dash-bar-row { margin-bottom: 8px; }
+  .dash-bar-label { display: flex; justify-content: space-between; color: #bfdbfe; font-size: 11px; margin-bottom: 4px; }
+  .dash-bar-bg { background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; }
+  .dash-bar-fill { height: 6px; border-radius: 4px; background: #60a5fa; }
+
+  /* Trust callouts */
+  .s1-callouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 32px 48px; background: #fff; }
+  .callout { display: flex; align-items: flex-start; gap: 14px; }
+  .callout-icon { font-size: 24px; flex-shrink: 0; }
+  .callout-text strong { display: block; font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .callout-text span { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+
+  /* ====== SCREEN 2 ====== */
+  .s2-wrap { padding: 40px 48px; }
+  .s2-header { margin-bottom: 32px; }
+  .s2-header h2 { font-size: 26px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; }
+  .s2-header p { color: var(--gray-600); font-size: 14px; }
+  .program-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .program-card {
+    background: #fff; border: 2px solid var(--gray-200); border-radius: 12px;
+    padding: 20px; cursor: pointer; transition: all 0.25s ease;
+  }
+  .program-card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(37,99,235,0.1); }
+  .program-card.selected { border-color: var(--blue); background: var(--blue-light); }
+  .prog-icon { font-size: 28px; margin-bottom: 10px; }
+  .prog-name { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .prog-dur { font-size: 12px; color: var(--gray-400); margin-bottom: 10px; }
+  .prog-meta { display: flex; align-items: center; justify-content: space-between; }
+  .prog-completion { font-size: 12px; font-weight: 600; color: var(--green); background: #dcfce7; padding: 3px 8px; border-radius: 100px; }
+  .add-btn {
+    font-size: 12px; font-weight: 600; padding: 7px 14px;
+    border-radius: 7px; border: 1.5px solid var(--blue);
+    color: var(--blue); background: #fff; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-btn.added { background: var(--blue); color: #fff; }
+  .sticky-bar {
+    position: sticky; bottom: 0;
+    background: var(--navy); color: #fff;
+    padding: 16px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sticky-bar-text { font-size: 15px; font-weight: 600; }
+  .sticky-btn { background: #fff; color: var(--navy); padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: transform 0.2s; }
+  .sticky-btn:hover { transform: scale(1.02); }
+
+  /* ====== SCREEN 3 ====== */
+  .s3-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 40px 48px; }
+  .s3-left h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .s3-left p { color: var(--gray-600); font-size: 13px; margin-bottom: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; display: block; }
+  .form-input, .form-select {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200);
+    border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s; outline: none; background: #fff;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+  .bulk-upload {
+    border: 2px dashed var(--gray-200); border-radius: 8px;
+    padding: 20px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s; margin-bottom: 20px;
+  }
+  .bulk-upload:hover { border-color: var(--blue); }
+  .bulk-text { font-size: 13px; color: var(--gray-400); margin-top: 6px; }
+  .send-btn { width: 100%; background: var(--blue); color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .send-btn:hover { background: #1d4ed8; }
+
+  /* Email preview */
+  .email-preview {
+    background: #fff; border-radius: 12px; border: 1px solid var(--gray-200);
+    overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  .email-header-bar {
+    background: var(--navy); padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .email-dots { display: flex; gap: 6px; }
+  .email-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .email-body { padding: 24px; }
+  .email-from { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .email-subject { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+  .email-greeting { font-size: 14px; color: var(--gray-700); line-height: 1.6; margin-bottom: 12px; }
+  .email-cta { background: var(--blue); color: #fff; padding: 10px 20px; border-radius: 7px; font-size: 13px; font-weight: 600; display: inline-block; margin-top: 4px; }
+  .email-co-brand { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-100); }
+  .co-brand-logo { font-size: 11px; font-weight: 700; color: var(--gray-400); }
+  .plus-sign { color: var(--gray-300); font-size: 14px; }
+
+  /* ====== SCREEN 4 ====== */
+  .s4-wrap { padding: 32px 48px; }
+  .s4-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: #fff; border-radius: 12px; padding: 20px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .stat-num { font-size: 32px; font-weight: 800; color: var(--gray-900); }
+  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .stat-change { font-size: 12px; font-weight: 600; color: var(--green); margin-top: 6px; }
+
+  .filter-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-pill {
+    padding: 7px 16px; border-radius: 100px; font-size: 13px; font-weight: 500;
+    background: #fff; border: 1.5px solid var(--gray-200); cursor: pointer; transition: all 0.2s;
+  }
+  .filter-pill:hover, .filter-pill.active { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+
+  .data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .data-table th { background: var(--gray-50); font-size: 12px; font-weight: 600; color: var(--gray-400); text-align: left; padding: 12px 16px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); }
+  .data-table td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tbody tr { cursor: pointer; transition: background 0.15s; }
+  .data-table tbody tr:hover { background: var(--gray-50); }
+
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-bg { flex: 1; height: 6px; background: var(--gray-100); border-radius: 4px; }
+  .progress-fill { height: 6px; border-radius: 4px; background: var(--blue); }
+  .progress-fill.green { background: var(--green); }
+  .progress-fill.amber { background: var(--amber); }
+  .progress-fill.red { background: var(--red); }
+  .progress-pct { font-size: 12px; font-weight: 600; color: var(--gray-600); white-space: nowrap; }
+
+  .status-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+  .status-green { background: #dcfce7; color: #15803d; }
+  .status-amber { background: #fef3c7; color: #92400e; }
+  .status-red { background: #fee2e2; color: #991b1b; }
+  .status-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  /* Slide panel */
+  .slide-panel {
+    position: fixed; top: 0; right: -480px; width: 460px; height: 100vh;
+    background: #fff; box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+    z-index: 200; transition: right 0.35s ease;
+    overflow-y: auto; padding: 32px;
+  }
+  .slide-panel.open { right: 0; }
+  .panel-close { float: right; background: var(--gray-100); border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--gray-600); }
+  .panel-name { font-size: 20px; font-weight: 800; margin-top: 8px; margin-bottom: 4px; }
+  .panel-prog { font-size: 13px; color: var(--gray-400); margin-bottom: 24px; }
+  .panel-section { margin-bottom: 20px; }
+  .panel-section h4 { font-size: 12px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .week-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+  .week-label { width: 60px; color: var(--gray-600); }
+  .week-bar-bg { flex: 1; height: 8px; background: var(--gray-100); border-radius: 4px; }
+  .week-bar-fill { height: 8px; border-radius: 4px; }
+  .ai-coach-box { background: var(--blue-light); border-radius: 10px; padding: 14px; font-size: 13px; color: var(--gray-700); line-height: 1.55; margin-bottom: 16px; }
+  .nudge-btn { width: 100%; background: var(--amber); color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 12px; }
+
+  /* Certificate modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 300; display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .cert-modal { background: #fff; border-radius: 16px; padding: 40px; max-width: 480px; width: 90%; text-align: center; }
+  .cert-frame { border: 4px solid var(--navy); border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; position: relative; }
+  .cert-frame::after { content: ''; position: absolute; inset: 6px; border: 1px solid var(--navy); border-radius: 8px; pointer-events: none; opacity: 0.3; }
+  .cert-logo { font-size: 13px; font-weight: 800; color: var(--navy); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .cert-title { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+  .cert-name { font-size: 26px; font-weight: 700; color: var(--navy); font-style: italic; margin-bottom: 8px; }
+  .cert-program { font-size: 14px; color: var(--gray-600); }
+  .cert-date { font-size: 12px; color: var(--gray-400); margin-top: 12px; }
+  .verify-link { color: var(--blue); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .modal-close-btn { margin-top: 16px; background: var(--gray-100); border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+
+  .overlay-bg { position: fixed; inset: 0; z-index: 150; display: none; }
+  .overlay-bg.open { display: block; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="back-link">← Back to TOC</a>
+  <span class="proto-title">Employer Upskill Partnership Portal</span>
+  <span class="proto-tag">Prototype 1 · 4 Screens</span>
+</nav>
+
+<!-- STEPPER -->
+<div class="stepper">
+  <div class="step-tab active" onclick="goTo(1)"><span class="step-num">1</span>Employer Landing</div>
+  <div class="step-tab" onclick="goTo(2)"><span class="step-num">2</span>Program Selection</div>
+  <div class="step-tab" onclick="goTo(3)"><span class="step-num">3</span>Employee Invitation</div>
+  <div class="step-tab" onclick="goTo(4)"><span class="step-num">4</span>Employer Dashboard</div>
+</div>
+
+<!-- ============ SCREEN 1 ============ -->
+<div class="screen active" id="screen-1">
+  <div class="s1-hero">
+    <div class="s1-left">
+      <div class="s1-eyebrow">Penn Foster Workforce Solutions</div>
+      <h1 class="s1-headline">Upskill Your Workforce.<br>Track Real Results.</h1>
+      <p class="s1-sub">Partner with Penn Foster to offer accredited, career-focused programs to your employees — with real-time progress tracking and dedicated employer support.</p>
+      <div class="s1-ctas">
+        <button class="s1-btn-primary" onclick="goTo(2)">Request a Demo</button>
+        <button class="s1-btn-ghost" onclick="goTo(2)">See how it works →</button>
+      </div>
+    </div>
+    <div class="s1-dashboard">
+      <div class="dash-header">ACME Corp Dashboard — Live Preview</div>
+      <div class="dash-stats">
+        <div class="dash-stat"><div class="dash-stat-num">47</div><div class="dash-stat-label">Enrolled</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">62%</div><div class="dash-stat-label">Avg. Progress</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">8</div><div class="dash-stat-label">Completed</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">94%</div><div class="dash-stat-label">Satisfaction</div></div>
+      </div>
+      <div class="dash-bar-row">
+        <div class="dash-bar-label"><span>Robotics & Automation</span><span>78%</span></div>
+        <div class="dash-bar-bg"><div class="dash-bar-fill" style="width:78%"></div></div>
+      </div>
+      <div class="dash-bar-row">
+        <div class="dash-bar-label"><span>Supply Chain Tech</span><span>54%</span></div>
+        <div class="dash-bar-bg"><div class="dash-bar-fill" style="width:54%"></div></div>
+      </div>
+      <div class="dash-bar-row">
+        <div class="dash-bar-label"><span>Business Admin</span><span>91%</span></div>
+        <div class="dash-bar-bg"><div class="dash-bar-fill" style="width:91%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s1-callouts">
+    <div class="callout">
+      <div class="callout-icon">📊</div>
+      <div class="callout-text">
+        <strong>Real-Time Progress Tracking</strong>
+        <span>Monitor every employee's learning journey with live dashboards and weekly reports delivered to your inbox.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">🎓</div>
+      <div class="callout-text">
+        <strong>Accredited Credentials</strong>
+        <span>Penn Foster programs are nationally accredited and recognized by hundreds of employers across 60+ industries.</span>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">🤝</div>
+      <div class="callout-text">
+        <strong>Dedicated Partner Support</strong>
+        <span>Your account team handles onboarding, employee invitations, and learner support — so you don't have to.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-primary" onclick="goTo(2)">Next: Choose Programs →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2 ============ -->
+<div class="screen" id="screen-2">
+  <div class="s2-wrap">
+    <div class="s2-header">
+      <h2>Choose Programs for Your Team</h2>
+      <p>Select one or more career programs to include in your workforce upskilling package. Mix and match based on your team's needs.</p>
+    </div>
+    <div class="program-grid">
+      <div class="program-card" id="prog-1" onclick="toggleProgram(1)">
+        <div class="prog-icon">🤖</div>
+        <div class="prog-name">Robotics & Automation</div>
+        <div class="prog-dur">8 months · 24 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">87% completion</span>
+          <button class="add-btn" id="btn-1">Add to Package</button>
+        </div>
+      </div>
+      <div class="program-card" id="prog-2" onclick="toggleProgram(2)">
+        <div class="prog-icon">📦</div>
+        <div class="prog-name">Supply Chain Tech</div>
+        <div class="prog-dur">6 months · 18 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">91% completion</span>
+          <button class="add-btn" id="btn-2">Add to Package</button>
+        </div>
+      </div>
+      <div class="program-card" id="prog-3" onclick="toggleProgram(3)">
+        <div class="prog-icon">🏥</div>
+        <div class="prog-name">Medical Assistant</div>
+        <div class="prog-dur">9 months · 30 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">84% completion</span>
+          <button class="add-btn" id="btn-3">Add to Package</button>
+        </div>
+      </div>
+      <div class="program-card" id="prog-4" onclick="toggleProgram(4)">
+        <div class="prog-icon">⚡</div>
+        <div class="prog-name">Electrical Technician</div>
+        <div class="prog-dur">10 months · 32 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">79% completion</span>
+          <button class="add-btn" id="btn-4">Add to Package</button>
+        </div>
+      </div>
+      <div class="program-card" id="prog-5" onclick="toggleProgram(5)">
+        <div class="prog-icon">💬</div>
+        <div class="prog-name">Customer Service</div>
+        <div class="prog-dur">4 months · 12 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">93% completion</span>
+          <button class="add-btn" id="btn-5">Add to Package</button>
+        </div>
+      </div>
+      <div class="program-card" id="prog-6" onclick="toggleProgram(6)">
+        <div class="prog-icon">📋</div>
+        <div class="prog-name">Business Admin</div>
+        <div class="prog-dur">7 months · 21 modules</div>
+        <div class="prog-meta">
+          <span class="prog-completion">88% completion</span>
+          <button class="add-btn" id="btn-6">Add to Package</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sticky-bar">
+    <span class="sticky-bar-text" id="sticky-text">No programs selected yet</span>
+    <button class="sticky-btn" onclick="goTo(3)">Continue →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3 ============ -->
+<div class="screen" id="screen-3">
+  <div class="s3-wrap">
+    <div class="s3-left">
+      <h2>Invite Your Employees</h2>
+      <p>Add employees individually or upload a CSV to bulk-invite your team. Each employee receives a personalized welcome email.</p>
+
+      <div class="form-group">
+        <label class="form-label">Employee Name</label>
+        <input class="form-input" type="text" id="emp-name" placeholder="e.g. Sarah Johnson" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Work Email</label>
+        <input class="form-input" type="email" id="emp-email" placeholder="sarah@company.com" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Department</label>
+        <input class="form-input" type="text" id="emp-dept" placeholder="e.g. Operations" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <input class="form-input" type="text" id="emp-role" placeholder="e.g. Line Supervisor" oninput="updatePreview()">
+      </div>
+
+      <div class="bulk-upload">
+        <div style="font-size:24px">📂</div>
+        <div style="font-size:13px; font-weight:600; color:var(--gray-600); margin-top:6px">Upload CSV for bulk invitations</div>
+        <div class="bulk-text">Drag & drop or click to browse · Max 500 employees per upload</div>
+      </div>
+
+      <button class="send-btn" onclick="goTo(4)">Send Invitations →</button>
+    </div>
+
+    <div>
+      <div style="font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">Live Email Preview</div>
+      <div class="email-preview">
+        <div class="email-header-bar">
+          <div class="email-dots">
+            <div class="email-dot" style="background:#ef4444"></div>
+            <div class="email-dot" style="background:#f59e0b"></div>
+            <div class="email-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <div class="email-body">
+          <div class="email-co-brand">
+            <div class="co-brand-logo">PENN FOSTER</div>
+            <div class="plus-sign">+</div>
+            <div class="co-brand-logo" style="color:var(--blue)">YOUR COMPANY</div>
+          </div>
+          <div class="email-from">From: partnerships@pennfoster.edu</div>
+          <div class="email-subject">You're invited to upskill with Penn Foster 🎓</div>
+          <div class="email-greeting" id="email-greeting">Hi <strong>there</strong>,<br><br>Your employer has partnered with Penn Foster to offer you access to a free, career-advancing education program. Your enrollment has been set up — all you need to do is get started.<br><br>Your program: <strong>Robotics &amp; Automation Technician</strong><br>Your department: <strong>Operations</strong></div>
+          <div class="email-cta">Begin My Program →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Send & View Dashboard →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4 ============ -->
+<div class="screen" id="screen-4">
+  <div class="s4-wrap">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+      <div>
+        <h2 style="font-size:22px; font-weight:800;">Employer Dashboard</h2>
+        <div style="font-size:13px; color:var(--gray-400); margin-top:2px;">ACME Corp · Updated just now</div>
+      </div>
+      <button class="btn btn-primary" style="font-size:13px;">+ Invite More Employees</button>
+    </div>
+
+    <div class="s4-stats">
+      <div class="stat-card">
+        <div class="stat-num">47</div>
+        <div class="stat-label">Total Enrolled</div>
+        <div class="stat-change">↑ 4 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">31</div>
+        <div class="stat-label">Active This Week</div>
+        <div class="stat-change" style="color:var(--amber);">↓ 2 from last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">62%</div>
+        <div class="stat-label">Avg. Progress</div>
+        <div class="stat-change">↑ 3% this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Completed</div>
+        <div class="stat-change">↑ 2 this month</div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-pill active">All Employees</button>
+      <button class="filter-pill">By Department</button>
+      <button class="filter-pill">By Program</button>
+      <button class="filter-pill">On Track</button>
+      <button class="filter-pill">Needs Attention</button>
+      <button class="filter-pill">At Risk</button>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Program</th>
+          <th>Progress</th>
+          <th>Last Active</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="openPanel('Sarah Johnson','Robotics & Automation','risk')">
+          <td><strong>Sarah Johnson</strong><br><span style="font-size:12px;color:var(--gray-400)">Operations</span></td>
+          <td style="font-size:13px;">Robotics &amp; Automation</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill red" style="width:18%"></div></div><span class="progress-pct">18%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">9 days ago</td>
+          <td><span class="status-badge status-red">At Risk</span></td>
+        </tr>
+        <tr onclick="openPanel('Marcus Williams','Supply Chain Tech','track')">
+          <td><strong>Marcus Williams</strong><br><span style="font-size:12px;color:var(--gray-400)">Warehouse</span></td>
+          <td style="font-size:13px;">Supply Chain Tech</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill green" style="width:74%"></div></div><span class="progress-pct">74%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">Today</td>
+          <td><span class="status-badge status-green">On Track</span></td>
+        </tr>
+        <tr onclick="openPanel('Priya Patel','Medical Assistant','complete')">
+          <td><strong>Priya Patel</strong><br><span style="font-size:12px;color:var(--gray-400)">Admin</span></td>
+          <td style="font-size:13px;">Medical Assistant</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill green" style="width:100%"></div></div><span class="progress-pct">100%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">May 8</td>
+          <td><span class="status-badge status-gray">Completed</span></td>
+        </tr>
+        <tr onclick="openPanel('Derek Thompson','Business Admin','attention')">
+          <td><strong>Derek Thompson</strong><br><span style="font-size:12px;color:var(--gray-400)">Finance</span></td>
+          <td style="font-size:13px;">Business Admin</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill amber" style="width:41%"></div></div><span class="progress-pct">41%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">4 days ago</td>
+          <td><span class="status-badge status-amber">Needs Attention</span></td>
+        </tr>
+        <tr onclick="openPanel('Aaliya Rodriguez','Electrical Technician','track')">
+          <td><strong>Aaliya Rodriguez</strong><br><span style="font-size:12px;color:var(--gray-400)">Maintenance</span></td>
+          <td style="font-size:13px;">Electrical Technician</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill green" style="width:88%"></div></div><span class="progress-pct">88%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">Yesterday</td>
+          <td><span class="status-badge status-green">On Track</span></td>
+        </tr>
+        <tr onclick="openPanel('James Chen','Customer Service','risk')">
+          <td><strong>James Chen</strong><br><span style="font-size:12px;color:var(--gray-400)">Sales</span></td>
+          <td style="font-size:13px;">Customer Service</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill red" style="width:12%"></div></div><span class="progress-pct">12%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">12 days ago</td>
+          <td><span class="status-badge status-red">At Risk</span></td>
+        </tr>
+        <tr onclick="openPanel('Nina Okafor','Robotics & Automation','track')">
+          <td><strong>Nina Okafor</strong><br><span style="font-size:12px;color:var(--gray-400)">Engineering</span></td>
+          <td style="font-size:13px;">Robotics &amp; Automation</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill green" style="width:63%"></div></div><span class="progress-pct">63%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">Today</td>
+          <td><span class="status-badge status-green">On Track</span></td>
+        </tr>
+        <tr onclick="openPanel('Robert Ellis','Supply Chain Tech','attention')">
+          <td><strong>Robert Ellis</strong><br><span style="font-size:12px;color:var(--gray-400)">Logistics</span></td>
+          <td style="font-size:13px;">Supply Chain Tech</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill amber" style="width:33%"></div></div><span class="progress-pct">33%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">5 days ago</td>
+          <td><span class="status-badge status-amber">Needs Attention</span></td>
+        </tr>
+        <tr onclick="openPanel('Tanya Brooks','Business Admin','complete')">
+          <td><strong>Tanya Brooks</strong><br><span style="font-size:12px;color:var(--gray-400)">HR</span></td>
+          <td style="font-size:13px;">Business Admin</td>
+          <td><div class="progress-wrap"><div class="progress-bg"><div class="progress-fill green" style="width:100%"></div></div><span class="progress-pct">100%</span></div></td>
+          <td style="font-size:13px;color:var(--gray-400);">May 2</td>
+          <td><span class="status-badge status-gray">Completed</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+  </div>
+</div>
+
+<!-- SLIDE PANEL -->
+<div class="overlay-bg" id="overlay-bg" onclick="closePanel()"></div>
+<div class="slide-panel" id="slide-panel">
+  <button class="panel-close" onclick="closePanel()">✕ Close</button>
+  <div id="panel-content"></div>
+</div>
+
+<!-- CERT MODAL -->
+<div class="modal-overlay" id="cert-modal">
+  <div class="cert-modal">
+    <div class="cert-frame">
+      <div class="cert-logo">Penn Foster</div>
+      <div class="cert-title">Certificate of Completion</div>
+      <div class="cert-name" id="cert-name">Priya Patel</div>
+      <div class="cert-program" id="cert-program">Medical Assistant</div>
+      <div class="cert-date">Awarded May 8, 2025 · Credential ID: PF-2025-MA-4821</div>
+    </div>
+    <a href="#" class="verify-link">🔗 Verify this credential online</a>
+    <div><button class="modal-close-btn" onclick="closeCert()">Close</button></div>
+  </div>
+</div>
+
+<script>
+let current = 1;
+let selectedProgs = new Set();
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => {
+    s.classList.toggle('active', i+1 === n);
+  });
+  document.querySelectorAll('.step-tab').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1 === n) t.classList.add('active');
+    else if (i+1 < n) t.classList.add('done');
+  });
+  current = n;
+}
+
+function toggleProgram(id) {
+  if (selectedProgs.has(id)) {
+    selectedProgs.delete(id);
+    document.getElementById('prog-'+id).classList.remove('selected');
+    document.getElementById('btn-'+id).classList.remove('added');
+    document.getElementById('btn-'+id).textContent = 'Add to Package';
+  } else {
+    selectedProgs.add(id);
+    document.getElementById('prog-'+id).classList.add('selected');
+    document.getElementById('btn-'+id).classList.add('added');
+    document.getElementById('btn-'+id).textContent = '✓ Added';
+  }
+  const count = selectedProgs.size;
+  document.getElementById('sticky-text').textContent = count === 0
+    ? 'No programs selected yet'
+    : `Continue with ${count} program${count > 1 ? 's' : ''} selected`;
+}
+
+function updatePreview() {
+  const name = document.getElementById('emp-name').value || 'there';
+  const dept = document.getElementById('emp-dept').value || 'Operations';
+  document.getElementById('email-greeting').innerHTML = `Hi <strong>${name}</strong>,<br><br>Your employer has partnered with Penn Foster to offer you access to a free, career-advancing education program. Your enrollment has been set up — all you need to do is get started.<br><br>Your program: <strong>Robotics &amp; Automation Technician</strong><br>Your department: <strong>${dept}</strong>`;
+}
+
+function openPanel(name, prog, type) {
+  if (type === 'complete') {
+    document.getElementById('cert-name').textContent = name;
+    document.getElementById('cert-program').textContent = prog;
+    document.getElementById('cert-modal').classList.add('open');
+    return;
+  }
+  const isRisk = type === 'risk';
+  const html = `
+    <div class="panel-name">${name}</div>
+    <div class="panel-prog">${prog} · ${isRisk ? '<span style="color:var(--red);font-weight:600;">At Risk</span>' : '<span style="color:var(--amber);font-weight:600;">Needs Attention</span>'}</div>
+    <div class="panel-section">
+      <h4>Study Activity — Past 4 Weeks</h4>
+      ${['Week 1','Week 2','Week 3','Week 4'].map((w,i) => {
+        const vals = isRisk ? [42,28,11,0] : [55,60,38,20];
+        const pct = vals[i];
+        const color = pct < 20 ? 'var(--red)' : pct < 45 ? 'var(--amber)' : 'var(--blue)';
+        return `<div class="week-bar-row"><span class="week-label">${w}</span><div class="week-bar-bg"><div class="week-bar-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:12px;color:var(--gray-400);width:40px;text-align:right">${pct}min</span></div>`;
+      }).join('')}
+    </div>
+    <div class="panel-section">
+      <h4>AI Coach Last Interaction</h4>
+      <div class="ai-coach-box">${isRisk ? `"${name} has not logged in for 9 days. Last session ended abruptly on Module 3. Suggested a study break and scheduled a check-in, but no response. Recommend human outreach."` : `"${name} completed Module 5 but quiz scores have declined from 82% to 61% over the past two sessions. Offered additional practice problems. Student opened them but hasn't completed."`}</div>
+    </div>
+    <button class="nudge-btn" onclick="alert('Nudge email sent to ${name}!')">📧 Send Nudge Email</button>
+    <button class="btn btn-secondary" style="width:100%">📞 Flag for Advisor Call</button>
+  `;
+  document.getElementById('panel-content').innerHTML = html;
+  document.getElementById('slide-panel').classList.add('open');
+  document.getElementById('overlay-bg').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('slide-panel').classList.remove('open');
+  document.getElementById('overlay-bg').classList.remove('open');
+}
+
+function closeCert() {
+  document.getElementById('cert-modal').classList.remove('open');
+}
+
+document.querySelectorAll('.filter-pill').forEach(p => {
+  p.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pill').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

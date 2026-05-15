@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype 3 — Student Health Score Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1e3a5f; --blue: #2563eb; --blue-light: #eff6ff;
+    --green: #16a34a; --amber: #d97706; --red: #dc2626;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-600: #4b5563;
+    --gray-700: #374151; --gray-900: #111827;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); }
+  .top-nav { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .back-link { color: var(--blue); text-decoration: none; font-size: 14px; font-weight: 500; }
+  .proto-title { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+  .proto-tag { font-size: 12px; color: var(--gray-400); background: var(--gray-100); padding: 4px 10px; border-radius: 100px; }
+  .stepper { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 32px; display: flex; }
+  .step-tab { padding: 14px 20px; font-size: 13px; font-weight: 500; color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.25s; white-space: nowrap; }
+  .step-tab:hover { color: var(--blue); }
+  .step-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+  .step-tab.done { color: var(--gray-600); }
+  .step-tab .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--gray-100); color: var(--gray-400); font-size: 11px; font-weight: 700; margin-right: 8px; transition: all 0.25s; }
+  .step-tab.active .step-num { background: var(--blue); color: #fff; }
+  .step-tab.done .step-num { background: var(--green); color: #fff; }
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .nav-btns { display: flex; justify-content: flex-end; gap: 12px; padding: 24px 32px 40px; }
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+
+  /* ===== S1 ===== */
+  .s1-wrap { padding: 28px 32px; }
+  .s1-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .s1-header h2 { font-size: 20px; font-weight: 800; }
+  .s1-header p { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+
+  .stat-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat-chip { background: #fff; border-radius: 10px; padding: 14px 18px; border: 1px solid var(--gray-200); display: flex; align-items: center; gap: 10px; }
+  .stat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .stat-chip-num { font-size: 22px; font-weight: 800; }
+  .stat-chip-label { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+
+  .filter-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+  .filter-select { padding: 8px 14px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: #fff; cursor: pointer; }
+  .filter-select:focus { border-color: var(--blue); }
+
+  .data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .data-table th { background: var(--gray-50); font-size: 11px; font-weight: 600; color: var(--gray-400); text-align: left; padding: 12px 16px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); }
+  .data-table td { padding: 13px 16px; font-size: 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tbody tr { cursor: pointer; transition: background 0.15s; }
+  .data-table tbody tr:hover { background: var(--gray-50); }
+
+  .health-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 100px; font-size: 13px; font-weight: 700; }
+  .health-high { background: #dcfce7; color: #15803d; }
+  .health-med { background: #fef3c7; color: #92400e; }
+  .health-low { background: #fee2e2; color: #991b1b; }
+
+  .flag-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; }
+  .flag-badge.zero { background: var(--gray-200); color: var(--gray-600); }
+
+  .view-btn { background: var(--blue-light); color: var(--blue); border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .view-btn:hover { background: #dbeafe; }
+
+  /* ===== S2 ===== */
+  .s2-wrap { padding: 28px 32px; }
+  .s2-back { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-size: 13px; font-weight: 500; cursor: pointer; margin-bottom: 20px; background: none; border: none; }
+  .s2-grid { display: grid; grid-template-columns: 220px 1fr 280px; gap: 20px; }
+
+  /* Left col */
+  .profile-card { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 20px; }
+  .avatar-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; margin: 0 auto 12px; }
+  .profile-name { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 2px; }
+  .profile-prog { font-size: 12px; color: var(--gray-400); text-align: center; margin-bottom: 4px; }
+  .profile-enroll { font-size: 11px; color: var(--gray-400); text-align: center; margin-bottom: 16px; }
+  .prog-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-600); margin-bottom: 4px; }
+  .prog-bar-bg { height: 8px; background: var(--gray-100); border-radius: 100px; margin-bottom: 16px; overflow: hidden; }
+  .prog-bar-fill { height: 8px; border-radius: 100px; }
+
+  /* Health gauge SVG */
+  .gauge-wrap { text-align: center; margin-top: 8px; }
+  .gauge-label { font-size: 11px; color: var(--gray-400); margin-bottom: 6px; }
+  .gauge-num { font-size: 28px; font-weight: 800; margin-top: -8px; }
+  .gauge-sub { font-size: 11px; color: var(--gray-400); }
+
+  /* Middle col */
+  .activity-card { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 20px; }
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
+  .bar-col { flex: 1; border-radius: 3px 3px 0 0; min-width: 4px; cursor: pointer; transition: opacity 0.2s; position: relative; }
+  .bar-col:hover { opacity: 0.7; }
+  .streak-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; margin-top: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #9a3412; }
+
+  /* Right col */
+  .flags-card { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 20px; }
+  .flag-entry { border-bottom: 1px solid var(--gray-100); padding: 12px 0; cursor: pointer; }
+  .flag-entry:last-child { border-bottom: none; }
+  .flag-date { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .flag-text { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+  .flag-transcript { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 12px; color: var(--gray-600); line-height: 1.6; display: none; }
+  .flag-entry.open .flag-transcript { display: block; }
+
+  .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding: 16px 32px; background: #fff; border-top: 1px solid var(--gray-200); }
+  .action-btn { padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--gray-200); background: #fff; color: var(--gray-700); transition: all 0.2s; }
+  .action-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .action-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .action-btn.primary:hover { background: #1d4ed8; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 90%; max-width: 520px; }
+  .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 20px; }
+  .modal-textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 12px; font-size: 13px; font-family: 'Inter', sans-serif; line-height: 1.6; height: 140px; resize: vertical; outline: none; }
+  .modal-textarea:focus { border-color: var(--blue); }
+  .modal-btns { display: flex; gap: 10px; margin-top: 16px; }
+  .modal-send { background: var(--blue); color: #fff; border: none; padding: 11px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .modal-schedule { background: var(--gray-100); color: var(--gray-700); border: none; padding: 11px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .modal-close { background: none; border: none; color: var(--gray-400); font-size: 20px; cursor: pointer; float: right; }
+
+  /* ===== S3 — Health Score Explainer ===== */
+  .s3-wrap { padding: 28px 32px; max-width: 620px; }
+  .explainer-panel { background: #fff; border-radius: 16px; border: 1px solid var(--gray-200); padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+  .explainer-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .explainer-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 24px; }
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .factor-name { flex: 0 0 180px; font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .factor-weight { flex: 0 0 36px; font-size: 12px; color: var(--gray-400); text-align: right; }
+  .factor-bar-wrap { flex: 1; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 100px; overflow: hidden; }
+  .factor-bar-fill { height: 8px; border-radius: 100px; transition: width 1s 0.3s ease; }
+  .factor-score { flex: 0 0 36px; font-size: 13px; font-weight: 700; text-align: right; }
+  .total-row { border-top: 2px solid var(--gray-200); padding-top: 16px; display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .total-label { font-size: 14px; font-weight: 700; }
+  .total-score { font-size: 28px; font-weight: 800; color: var(--amber); }
+
+  /* ===== S4 ===== */
+  .s4-wrap { padding: 28px 32px; }
+  .s4-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .s4-header h2 { font-size: 20px; font-weight: 800; }
+  .s4-layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+  .risk-list { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); overflow: hidden; }
+  .risk-list-header { padding: 14px 18px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 10px; }
+  .select-all-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .selected-badge { background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+  .risk-row { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background 0.15s; }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-row:hover { background: var(--gray-50); }
+  .risk-row.checked { background: var(--blue-light); }
+  .risk-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .risk-name { font-size: 14px; font-weight: 600; flex: 1; }
+  .risk-prog { font-size: 12px; color: var(--gray-400); }
+  .risk-score { font-size: 13px; font-weight: 700; color: var(--red); }
+
+  .email-panel { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 20px; }
+  .email-panel-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .email-template { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 12px; font-size: 13px; font-family: 'Inter', sans-serif; line-height: 1.65; height: 200px; resize: vertical; outline: none; }
+  .email-template:focus { border-color: var(--blue); }
+  .action-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .action-btn-full { width: 100%; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+  .abf-blue { background: var(--blue); color: #fff; }
+  .abf-blue:hover { background: #1d4ed8; }
+  .abf-outline { background: #fff; color: var(--gray-700); border: 1.5px solid var(--gray-200) !important; border: none; }
+  .abf-outline:hover { border-color: var(--blue); color: var(--blue); }
+  .abf-green { background: #dcfce7; color: var(--green); }
+  .abf-green:hover { background: #bbf7d0; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="back-link">← Back to TOC</a>
+  <span class="proto-title">Student Health Score Dashboard</span>
+  <span class="proto-tag">Prototype 3 · 4 Screens</span>
+</nav>
+<div class="stepper">
+  <div class="step-tab active" onclick="goTo(1)"><span class="step-num">1</span>Advisor Home</div>
+  <div class="step-tab" onclick="goTo(2)"><span class="step-num">2</span>Student Profile</div>
+  <div class="step-tab" onclick="goTo(3)"><span class="step-num">3</span>Score Explainer</div>
+  <div class="step-tab" onclick="goTo(4)"><span class="step-num">4</span>Bulk Actions</div>
+</div>
+
+<!-- S1 -->
+<div class="screen active" id="screen-1">
+  <div class="s1-wrap">
+    <div class="s1-header">
+      <div>
+        <h2>Student Health Dashboard</h2>
+        <p>Week of May 12, 2025 · Advisor: Jordan Patel · 193 active students</p>
+      </div>
+      <button class="btn btn-primary" onclick="goTo(3)">? Health Score Guide</button>
+    </div>
+
+    <div class="stat-bar">
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--green)"></div>
+        <div><div class="stat-chip-num" style="color:var(--green)">142</div><div class="stat-chip-label">On Track</div></div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--amber)"></div>
+        <div><div class="stat-chip-num" style="color:var(--amber)">28</div><div class="stat-chip-label">Needs Attention</div></div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--red)"></div>
+        <div><div class="stat-chip-num" style="color:var(--red)">9</div><div class="stat-chip-label">At Risk</div></div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--blue)"></div>
+        <div><div class="stat-chip-num" style="color:var(--blue)">14</div><div class="stat-chip-label">Completed This Week</div></div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <select class="filter-select"><option>All Health Scores</option><option>High (75+)</option><option>Medium (45–74)</option><option>Low (&lt;45)</option></select>
+      <select class="filter-select"><option>All Programs</option><option>Medical Assistant</option><option>Veterinary Assistant</option><option>Robotics &amp; Automation</option><option>Business Admin</option></select>
+      <select class="filter-select"><option>All Flags</option><option>Missed sessions</option><option>Quiz score drop</option><option>No login 7+ days</option></select>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Program</th><th>Health Score</th><th>Last Login</th><th>Weekly Sessions</th><th>AI Flags</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="goTo(2)">
+          <td><strong>Camille Torres</strong></td>
+          <td style="font-size:13px;">Medical Assistant</td>
+          <td><span class="health-pill health-high">92</span></td>
+          <td style="font-size:13px;">Today</td>
+          <td style="font-size:13px;">5</td>
+          <td><span class="flag-badge zero">0</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();goTo(2)">View</button></td>
+        </tr>
+        <tr onclick="goTo(2)">
+          <td><strong>Devon Marsh</strong></td>
+          <td style="font-size:13px;">Robotics &amp; Auto.</td>
+          <td><span class="health-pill health-high">87</span></td>
+          <td style="font-size:13px;">Yesterday</td>
+          <td style="font-size:13px;">4</td>
+          <td><span class="flag-badge zero">0</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();goTo(2)">View</button></td>
+        </tr>
+        <tr onclick="openStudentProfile('Aaliyah Reyes','Veterinary Assistant',63,'med')">
+          <td><strong>Aaliyah Reyes</strong></td>
+          <td style="font-size:13px;">Veterinary Assistant</td>
+          <td><span class="health-pill health-med">63</span></td>
+          <td style="font-size:13px;">3 days ago</td>
+          <td style="font-size:13px;">2</td>
+          <td><span class="flag-badge">2</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();openStudentProfile('Aaliyah Reyes','Veterinary Assistant',63,'med')">View</button></td>
+        </tr>
+        <tr onclick="openStudentProfile('Marcus Webb','Business Admin',58,'med')">
+          <td><strong>Marcus Webb</strong></td>
+          <td style="font-size:13px;">Business Admin</td>
+          <td><span class="health-pill health-med">58</span></td>
+          <td style="font-size:13px;">4 days ago</td>
+          <td style="font-size:13px;">1</td>
+          <td><span class="flag-badge">1</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();openStudentProfile('Marcus Webb','Business Admin',58,'med')">View</button></td>
+        </tr>
+        <tr onclick="openStudentProfile('Destiny Okafor','Medical Assistant',34,'low')">
+          <td><strong>Destiny Okafor</strong></td>
+          <td style="font-size:13px;">Medical Assistant</td>
+          <td><span class="health-pill health-low">34</span></td>
+          <td style="font-size:13px;">9 days ago</td>
+          <td style="font-size:13px;">0</td>
+          <td><span class="flag-badge">4</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();openStudentProfile('Destiny Okafor','Medical Assistant',34,'low')">View</button></td>
+        </tr>
+        <tr onclick="goTo(2)">
+          <td><strong>Liam Fitzgerald</strong></td>
+          <td style="font-size:13px;">Electrical Tech.</td>
+          <td><span class="health-pill health-high">85</span></td>
+          <td style="font-size:13px;">Today</td>
+          <td style="font-size:13px;">6</td>
+          <td><span class="flag-badge zero">0</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();goTo(2)">View</button></td>
+        </tr>
+        <tr onclick="openStudentProfile('Priya Nair','Veterinary Assistant',27,'low')">
+          <td><strong>Priya Nair</strong></td>
+          <td style="font-size:13px;">Veterinary Assistant</td>
+          <td><span class="health-pill health-low">27</span></td>
+          <td style="font-size:13px;">12 days ago</td>
+          <td style="font-size:13px;">0</td>
+          <td><span class="flag-badge">5</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();openStudentProfile('Priya Nair','Veterinary Assistant',27,'low')">View</button></td>
+        </tr>
+        <tr onclick="goTo(2)">
+          <td><strong>Tyler Nguyen</strong></td>
+          <td style="font-size:13px;">Robotics &amp; Auto.</td>
+          <td><span class="health-pill health-med">69</span></td>
+          <td style="font-size:13px;">2 days ago</td>
+          <td style="font-size:13px;">3</td>
+          <td><span class="flag-badge">1</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();goTo(2)">View</button></td>
+        </tr>
+        <tr onclick="goTo(2)">
+          <td><strong>Bianca Morales</strong></td>
+          <td style="font-size:13px;">Business Admin</td>
+          <td><span class="health-pill health-high">91</span></td>
+          <td style="font-size:13px;">Today</td>
+          <td style="font-size:13px;">5</td>
+          <td><span class="flag-badge zero">0</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();goTo(2)">View</button></td>
+        </tr>
+        <tr onclick="openStudentProfile('Jordan Ellis','Medical Assistant',41,'low')">
+          <td><strong>Jordan Ellis</strong></td>
+          <td style="font-size:13px;">Medical Assistant</td>
+          <td><span class="health-pill health-low">41</span></td>
+          <td style="font-size:13px;">7 days ago</td>
+          <td style="font-size:13px;">0</td>
+          <td><span class="flag-badge">3</span></td>
+          <td><button class="view-btn" onclick="event.stopPropagation();openStudentProfile('Jordan Ellis','Medical Assistant',41,'low')">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nav-btns"><button class="btn btn-primary" onclick="goTo(2)">View Student Profile →</button></div>
+</div>
+
+<!-- S2 -->
+<div class="screen" id="screen-2">
+  <div class="s2-wrap">
+    <button class="s2-back" onclick="goTo(1)">← Back to Dashboard</button>
+    <div class="s2-grid">
+      <!-- Left -->
+      <div>
+        <div class="profile-card">
+          <div class="avatar-circle" id="profile-avatar" style="background:var(--amber)">DO</div>
+          <div class="profile-name" id="profile-name">Destiny Okafor</div>
+          <div class="profile-prog" id="profile-prog">Medical Assistant</div>
+          <div class="profile-enroll">Enrolled: September 14, 2024</div>
+          <div class="prog-bar-label"><span>Completion</span><span id="prog-pct">38%</span></div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill" style="width:38%;background:var(--amber)"></div></div>
+          <div class="gauge-wrap">
+            <div class="gauge-label">Health Score</div>
+            <svg width="100" height="60" viewBox="0 0 100 60">
+              <path d="M10,55 A45,45 0 0,1 90,55" fill="none" stroke="#e5e7eb" stroke-width="10" stroke-linecap="round"/>
+              <path id="gauge-arc" d="M10,55 A45,45 0 0,1 90,55" fill="none" stroke="#d97706" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 142" style="transition:stroke-dasharray 1.2s ease"/>
+            </svg>
+            <div class="gauge-num" id="gauge-num" style="color:var(--amber)">34</div>
+            <div class="gauge-sub">At Risk</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle -->
+      <div class="activity-card">
+        <div class="card-title">30-Day Activity</div>
+        <div class="card-sub">Daily study minutes · May 2025</div>
+        <div class="bar-chart" id="activity-chart"></div>
+        <div class="streak-box">🔥 <span id="streak-text">Last active 9 days ago — streak broken</span></div>
+        <div style="margin-top:16px;font-size:13px;color:var(--gray-600);">
+          <strong style="display:block;margin-bottom:6px;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);">Module Progress</strong>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Module 1 — Intro to Healthcare</span><span style="color:var(--green);font-weight:600;">✓ Done</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Module 2 — Medical Terminology</span><span style="color:var(--green);font-weight:600;">✓ Done</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Module 3 — Dosage Calculations</span><span style="color:var(--amber);font-weight:600;">⏸ Stalled</span></div>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="flags-card">
+        <div class="card-title">AI Coach Flags</div>
+        <div class="card-sub" style="font-size:12px;color:var(--gray-400);margin-bottom:0">Click any flag to expand transcript</div>
+        <div class="flag-entry" onclick="toggleFlag(this)">
+          <div class="flag-date">May 10, 2025</div>
+          <div class="flag-text">Paused 4 times on Dosage Conversion. Offered worked example, student accepted.</div>
+          <div class="flag-transcript"><strong>AI Coach:</strong> "I noticed you paused on the kg-to-mg conversion. Here's a step-by-step breakdown..." <br><strong>Student:</strong> "Oh that makes more sense, thank you." <br><strong>AI Coach:</strong> "Great! Let's try a practice problem together."</div>
+        </div>
+        <div class="flag-entry" onclick="toggleFlag(this)">
+          <div class="flag-date">May 8, 2025</div>
+          <div class="flag-text">Missed 2 scheduled study sessions this week. No response to in-app reminder.</div>
+          <div class="flag-transcript"><strong>AI Coach:</strong> "Hey! You had a session scheduled for Tuesday at 7PM — no worries, life happens. Want to reschedule for this week?" <br><em>No response logged.</em></div>
+        </div>
+        <div class="flag-entry" onclick="toggleFlag(this)">
+          <div class="flag-date">May 5, 2025</div>
+          <div class="flag-text">Quiz score dropped from 88% to 61% on Module 3. Offered additional practice resources.</div>
+          <div class="flag-transcript"><strong>AI Coach:</strong> "Your Module 3 quiz score was 61% — that's lower than your usual range. I've added three extra practice sets to your dashboard. Want to try one now?" <br><strong>Student:</strong> "Maybe tomorrow." <br><em>Resources opened but not completed.</em></div>
+        </div>
+        <div class="flag-entry" onclick="toggleFlag(this)">
+          <div class="flag-date">Apr 29, 2025</div>
+          <div class="flag-text">No login for 5 consecutive days. Auto-check-in message sent.</div>
+          <div class="flag-transcript"><strong>AI Coach (automated):</strong> "We miss you! It's been a few days since your last session. Your progress is saved — jump back in whenever you're ready." <br><em>Email opened, no click-through.</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn primary" onclick="openEmailModal()">✉️ Send Encouragement Email</button>
+    <button class="action-btn" onclick="alert('Scheduling interface would open here.')">📞 Schedule a Call</button>
+    <button class="action-btn" onclick="alert('Mentor assignment panel would open here.')">🤝 Assign Mentor</button>
+    <button class="action-btn" onclick="goTo(4)">🚩 Flag for Review</button>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(3)">Health Score Explainer →</button>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="screen" id="screen-3">
+  <div class="s3-wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <span style="font-size:13px;color:var(--gray-400)">Triggered from student profile · Destiny Okafor</span>
+    </div>
+    <div class="explainer-panel">
+      <div class="explainer-title">How is the Health Score calculated?</div>
+      <div class="explainer-sub">Each student receives a 0–100 composite score based on 5 weighted behavioral signals, updated every 24 hours.</div>
+
+      <div class="factor-row">
+        <div class="factor-name">Login Frequency</div>
+        <div class="factor-weight">25%</div>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar-bg"><div class="factor-bar-fill" id="fb1" style="width:0%;background:var(--red)"></div></div>
+        </div>
+        <div class="factor-score" style="color:var(--red)">6/25</div>
+      </div>
+      <div class="factor-row">
+        <div class="factor-name">Session Length Consistency</div>
+        <div class="factor-weight">20%</div>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar-bg"><div class="factor-bar-fill" id="fb2" style="width:0%;background:var(--amber)"></div></div>
+        </div>
+        <div class="factor-score" style="color:var(--amber)">10/20</div>
+      </div>
+      <div class="factor-row">
+        <div class="factor-name">Quiz Performance Trend</div>
+        <div class="factor-weight">25%</div>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar-bg"><div class="factor-bar-fill" id="fb3" style="width:0%;background:var(--amber)"></div></div>
+        </div>
+        <div class="factor-score" style="color:var(--amber)">12/25</div>
+      </div>
+      <div class="factor-row">
+        <div class="factor-name">AI Coach Interactions</div>
+        <div class="factor-weight">15%</div>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar-bg"><div class="factor-bar-fill" id="fb4" style="width:0%;background:var(--green)"></div></div>
+        </div>
+        <div class="factor-score" style="color:var(--green)">11/15</div>
+      </div>
+      <div class="factor-row">
+        <div class="factor-name">Community Engagement</div>
+        <div class="factor-weight">15%</div>
+        <div class="factor-bar-wrap">
+          <div class="factor-bar-bg"><div class="factor-bar-fill" id="fb5" style="width:0%;background:var(--red)"></div></div>
+        </div>
+        <div class="factor-score" style="color:var(--red)">5/15</div>
+      </div>
+
+      <div class="total-row">
+        <div class="total-label">Composite Health Score</div>
+        <div class="total-score">34 / 100</div>
+      </div>
+
+      <div style="background:var(--blue-light);border-radius:8px;padding:14px;margin-top:16px;font-size:13px;color:#1e40af;line-height:1.55;">
+        <strong>Advisor note:</strong> This student's main vulnerability is login frequency. A single personal outreach from an advisor (vs. automated) increases next-week login probability by 68% based on historical data.
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(2)">← Back to Profile</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Bulk Action Panel →</button>
+  </div>
+</div>
+
+<!-- S4 -->
+<div class="screen" id="screen-4">
+  <div class="s4-wrap">
+    <div class="s4-header">
+      <div>
+        <h2>Take Action on At-Risk Students</h2>
+        <p style="font-size:13px;color:var(--gray-400);margin-top:2px;">9 students flagged this week · Select to send group communications</p>
+      </div>
+    </div>
+    <div class="s4-layout">
+      <div>
+        <div class="risk-list">
+          <div class="risk-list-header">
+            <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)">
+            <label for="select-all" class="select-all-label">Select All</label>
+            <span class="selected-badge" id="sel-count">0 selected</span>
+          </div>
+          <div id="risk-rows"></div>
+        </div>
+      </div>
+      <div class="email-panel">
+        <div class="email-panel-title">Group Email Template</div>
+        <textarea class="email-template" id="bulk-email">Hi [Student Name],
+
+We noticed you haven't logged in recently and wanted to check in. Your progress is saved and your program is waiting for you.
+
+If you're facing any challenges — personal, technical, or academic — we're here to help. Your success is our priority.
+
+Ready to jump back in? Click below to resume where you left off.
+
+[Resume My Program]
+
+Warmly,
+Your Penn Foster Advisor Team</textarea>
+        <div class="action-btns">
+          <button class="action-btn-full abf-blue" onclick="alert('Group email sent to ' + document.getElementById('sel-count').textContent.replace(' selected','') + ' students!')">📧 Send Group Email</button>
+          <button class="action-btn-full" style="background:#fff;color:var(--gray-700);border:1.5px solid var(--gray-200);border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;" onclick="alert('Advisor assignment panel opens here.')">👤 Assign to Advisor</button>
+          <button class="action-btn-full abf-green" onclick="alert('CSV export downloading...')">📥 Export CSV</button>
+          <button class="action-btn-full" style="background:#f5f3ff;color:#6d28d9;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;border:none;" onclick="alert('AI check-in sequence triggered for selected students.')">🤖 Trigger AI Check-in</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+  </div>
+</div>
+
+<!-- Email Modal -->
+<div class="modal-overlay" id="email-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Send Encouragement Email</div>
+    <div class="modal-sub">To: Destiny Okafor · destiny.okafor@email.com</div>
+    <textarea class="modal-textarea">Hi Destiny,
+
+I wanted to personally reach out and let you know that we're here for you. Your progress through Modules 1 and 2 showed real dedication, and we'd love to see you continue.
+
+If there's anything getting in the way — whether it's time, understanding the material, or anything else — please don't hesitate to reach out. We can schedule a call, connect you with a peer mentor, or adjust your study plan.
+
+You've got this. 💙
+
+Warmly,
+Jordan Patel
+Student Success Advisor · Penn Foster</textarea>
+    <div class="modal-btns">
+      <button class="modal-send" onclick="alert('Email sent to Destiny Okafor!');closeModal()">Send Now</button>
+      <button class="modal-schedule" onclick="alert('Email scheduled for tomorrow 9AM.');closeModal()">Schedule for Tomorrow</button>
+      <button class="modal-schedule" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const colors = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#92400e','#065f46'];
+const riskStudents = [
+  {name:'Destiny Okafor',prog:'Medical Assistant',score:34},
+  {name:'Priya Nair',prog:'Veterinary Assistant',score:27},
+  {name:'Jordan Ellis',prog:'Medical Assistant',score:41},
+  {name:'Marcus Webb',prog:'Business Admin',score:38},
+  {name:'Talia Simmons',prog:'Robotics & Auto.',score:29},
+  {name:'Chris Adeyemi',prog:'Electrical Tech.',score:33},
+  {name:'Fatima Hassan',prog:'Veterinary Assistant',score:22},
+  {name:'Ray Donovan',prog:'Business Admin',score:37},
+  {name:'Yuki Tanaka',prog:'Medical Assistant',score:44},
+];
+
+let selected = new Set();
+
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => s.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step-tab').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1===n) t.classList.add('active');
+    else if (i+1<n) t.classList.add('done');
+  });
+  current = n;
+  if (n === 3) setTimeout(animateFactors, 300);
+  if (n === 4) buildRiskList();
+  if (n === 2) setTimeout(buildChart, 100);
+}
+
+function buildChart() {
+  const vals = [45,30,0,60,50,20,0,0,40,55,60,0,35,50,40,0,55,60,45,30,0,0,20,30,0,0,0,0,0,0];
+  const el = document.getElementById('activity-chart');
+  el.innerHTML = '';
+  vals.forEach(v => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.style.height = (v/60*80) + 'px';
+    col.style.background = v === 0 ? '#e5e7eb' : v < 25 ? '#fca5a5' : '#60a5fa';
+    col.title = v + ' min';
+    el.appendChild(col);
+  });
+  // Animate gauge
+  const score = 34;
+  const arc = score / 100 * 142;
+  setTimeout(() => { document.getElementById('gauge-arc').style.strokeDasharray = arc + ' 142'; }, 300);
+}
+
+function animateFactors() {
+  const fills = [{id:'fb1',pct:24},{id:'fb2',pct:50},{id:'fb3',pct:48},{id:'fb4',pct:73},{id:'fb5',pct:33}];
+  fills.forEach(f => { document.getElementById(f.id).style.width = f.pct + '%'; });
+}
+
+function toggleFlag(el) { el.classList.toggle('open'); }
+
+function openEmailModal() { document.getElementById('email-modal').classList.add('open'); }
+function closeModal() { document.getElementById('email-modal').classList.remove('open'); }
+
+function openStudentProfile(name, prog, score, level) { goTo(2); }
+
+function buildRiskList() {
+  const container = document.getElementById('risk-rows');
+  container.innerHTML = '';
+  riskStudents.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'risk-row' + (selected.has(i) ? ' checked' : '');
+    row.innerHTML = `<input type="checkbox" ${selected.has(i)?'checked':''} onchange="toggleRow(${i},this)">
+      <div class="risk-avatar" style="background:${colors[i%colors.length]}">${s.name.split(' ').map(x=>x[0]).join('')}</div>
+      <div><div class="risk-name">${s.name}</div><div class="risk-prog">${s.prog}</div></div>
+      <div class="risk-score">${s.score}</div>`;
+    container.appendChild(row);
+  });
+  updateCount();
+}
+
+function toggleRow(i, cb) {
+  if (cb.checked) selected.add(i); else selected.delete(i);
+  buildRiskList();
+}
+
+function toggleSelectAll(cb) {
+  if (cb.checked) riskStudents.forEach((_,i) => selected.add(i));
+  else selected.clear();
+  buildRiskList();
+  document.getElementById('select-all').checked = cb.checked;
+}
+
+function updateCount() {
+  document.getElementById('sel-count').textContent = selected.size + ' selected';
+}
+</script>
+</body>
+</html>
