@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    html{scroll-behavior:smooth;}
+    body{margin:0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,sans-serif;background:#fff;color:#1d1d1f;-webkit-font-smoothing:antialiased;}
+    a{color:#ff6b00;text-decoration:none;}
+    a:hover{color:#e05a00;text-decoration:underline;}
+    ::selection{background:#ffd9bd;}
+    @keyframes wordIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,0,.4)}50%{box-shadow:0 0 0 14px rgba(255,107,0,0)}}
+    @keyframes spinSlow{to{transform:rotate(360deg)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    @keyframes riseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes dotRun{0%{left:-8px;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:100%;opacity:0}}
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-24px,0) scale(1.06)}}
+    @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}}
+    #rail::-webkit-scrollbar{display:none;}
+  </style>
+</helmet>
+
+<div style="overflow-x:clip;">
+
+  <nav id="nav" style="position:sticky;top:0;z-index:60;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08);">
+    <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;height:52px;padding:0 22px;">
+      <a href="#top" style="color:#1d1d1f;font-size:21px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ff6b00;display:block;animation:ringPulse 3s ease-in-out infinite;"></span>
+        Precision Learning
+      </a>
+      <div style="display:flex;align-items:center;gap:26px;">
+        <a href="#highlights" style="color:#1d1d1f;font-size:12px;font-weight:400;opacity:.82;transition:opacity .2s ease;text-decoration:none;" style-hover="opacity:1;color:#1d1d1f;text-decoration:none;">Highlights</a>
+        <a href="#closer" style="color:#1d1d1f;font-size:12px;font-weight:400;opacity:.82;transition:opacity .2s ease;text-decoration:none;" style-hover="opacity:1;color:#1d1d1f;text-decoration:none;">Closer look</a>
+        <a href="#architecture" style="color:#1d1d1f;font-size:12px;font-weight:400;opacity:.82;transition:opacity .2s ease;text-decoration:none;" style-hover="opacity:1;color:#1d1d1f;text-decoration:none;">Architecture</a>
+        <a href="#compare" style="color:#1d1d1f;font-size:12px;font-weight:400;opacity:.82;transition:opacity .2s ease;text-decoration:none;" style-hover="opacity:1;color:#1d1d1f;text-decoration:none;">Compare</a>
+        <a href="#roadmap" style="background:#ff6b00;color:#fff;font-size:12px;font-weight:500;padding:7px 15px;border-radius:999px;transition:background .2s ease,transform .2s ease;text-decoration:none;" style-hover="background:#e05a00;transform:scale(1.04);color:#fff;text-decoration:none;">Get the roadmap</a>
+      </div>
+    </div>
+    <div id="scrollbar" style="height:2px;width:0%;background:#ff6b00;"></div>
+  </nav>
+
+  <header id="top" style="text-align:center;padding:74px 22px 0;">
+    <p data-reveal style="margin:0;font-size:17px;font-weight:600;color:#ff6b00;letter-spacing:-.01em;">New</p>
+    <h1 style="margin:6px 0 0;font-size:clamp(48px,8vw,104px);line-height:1.03;letter-spacing:-.028em;font-weight:600;">
+      <span data-word style="display:inline-block;">Precision</span> <span data-word style="display:inline-block;">learning.</span><br>
+      <span data-word style="display:inline-block;color:#ff6b00;">One</span> <span data-word style="display:inline-block;color:#ff6b00;">learner</span> <span data-word style="display:inline-block;color:#ff6b00;">at</span> <span data-word style="display:inline-block;color:#ff6b00;">a</span> <span data-word style="display:inline-block;color:#ff6b00;">time.</span>
+    </h1>
+    <p data-reveal style="margin:26px auto 0;max-width:34ch;font-size:clamp(19px,2vw,25px);line-height:1.35;letter-spacing:-.012em;color:#1d1d1f;text-wrap:pretty;">Each learner gets the content, pace, and support they need. The system works that out again every time they click.</p>
+    <div data-reveal style="display:flex;gap:18px;justify-content:center;align-items:center;margin-top:26px;flex-wrap:wrap;">
+      <a href="#highlights" style="background:#ff6b00;color:#fff;font-size:17px;font-weight:400;padding:12px 23px;border-radius:999px;transition:background .2s ease,transform .25s cubic-bezier(.34,1.4,.64,1);text-decoration:none;" style-hover="background:#e05a00;transform:translateY(-2px);color:#fff;text-decoration:none;">See the highlights</a>
+      <a href="#architecture" style="color:#ff6b00;font-size:17px;font-weight:400;text-decoration:none;" style-hover="text-decoration:underline;color:#ff6b00;">How it works ›</a>
+    </div>
+
+    <div data-scale style="position:relative;max-width:1100px;margin:44px auto 0;height:min(62vh,560px);border-radius:28px;overflow:hidden;background:#0b0b0d;">
+      <div data-parallax="0.08" style="position:absolute;top:-10%;left:12%;width:52%;height:90%;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(255,107,0,.85),rgba(255,107,0,0) 68%);filter:blur(10px);animation:drift 14s ease-in-out infinite;"></div>
+      <div data-parallax="-0.06" style="position:absolute;bottom:-25%;right:6%;width:46%;height:85%;border-radius:50%;background:radial-gradient(circle at 55% 45%,rgba(255,176,102,.55),rgba(255,176,102,0) 70%);filter:blur(14px);animation:drift 19s ease-in-out infinite reverse;"></div>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);">Live model · learner 8842</span>
+        <p style="margin:0;font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.025em;color:#fff;">{{ decision }}</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span style="width:7px;height:7px;border-radius:50%;background:#ff6b00;animation:blink 1.5s ease-in-out infinite;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(255,255,255,.7);">recalculated {{ ago }}</span>
+        </div>
+      </div>
+    </div>
+    <p data-reveal style="margin:16px 0 0;font-size:12px;color:#6e6e73;">A vision document. Figures shown are illustrative.<a href="#footnotes" style="color:#ff6b00;text-decoration:none;">1</a></p>
+  </header>
+
+  <section id="highlights" style="padding:110px 0 100px;">
+    <h2 data-reveal style="margin:0 auto;max-width:1100px;padding:0 22px;font-size:clamp(32px,4vw,54px);letter-spacing:-.025em;font-weight:600;">Get the highlights.</h2>
+    <div style="max-width:1100px;margin:0 auto;padding:0 22px;display:flex;justify-content:flex-end;gap:10px;margin-top:-40px;">
+      <button onClick="{{ railLeft }}" style="width:36px;height:36px;border-radius:50%;border:none;background:#f5f5f7;color:#1d1d1f;font-size:16px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e8e8ed;">‹</button>
+      <button onClick="{{ railRight }}" style="width:36px;height:36px;border-radius:50%;border:none;background:#f5f5f7;color:#1d1d1f;font-size:16px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e8e8ed;">›</button>
+    </div>
+    <div id="rail" style="display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:34px 22px 10px;scroll-behavior:smooth;">
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#0b0b0d;color:#fff;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">Learners spend up to <span style="color:#ff6b00;">1.5x</span> more time on the content they haven't got yet.<a href="#footnotes" style="color:#ff6b00;">1</a></p>
+        <div style="display:flex;gap:6px;align-items:flex-end;height:110px;">
+          <span style="flex:1;background:#26262a;border-radius:5px;height:38%;"></span>
+          <span style="flex:1;background:#26262a;border-radius:5px;height:56%;"></span>
+          <span style="flex:1;background:#ff6b00;border-radius:5px;height:100%;"></span>
+          <span style="flex:1;background:#26262a;border-radius:5px;height:44%;"></span>
+          <span style="flex:1;background:#26262a;border-radius:5px;height:62%;"></span>
+        </div>
+      </div>
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#f5f5f7;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">One knowledge map under every course, so a competency means the same thing everywhere.</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <span style="height:34px;border-radius:8px;background:#ff6b00;"></span>
+          <span style="height:34px;border-radius:8px;background:#dedee3;"></span>
+          <span style="height:34px;border-radius:8px;background:#dedee3;"></span>
+          <span style="height:34px;border-radius:8px;background:#ffc59c;"></span>
+          <span style="height:34px;border-radius:8px;background:#dedee3;"></span>
+          <span style="height:34px;border-radius:8px;background:#ffc59c;"></span>
+          <span style="height:34px;border-radius:8px;background:#dedee3;"></span>
+          <span style="height:34px;border-radius:8px;background:#dedee3;"></span>
+        </div>
+      </div>
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#0b0b0d;color:#fff;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">Every answer updates the learner's model, not only the gradebook.</p>
+        <span style="width:78px;height:78px;border-radius:50%;border:4px solid #ff6b00;border-right-color:transparent;display:block;animation:spinSlow 3s linear infinite;"></span>
+      </div>
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#f5f5f7;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">Learners and coaches can see why a path changed.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="height:10px;border-radius:99px;background:#dedee3;width:100%;"></span>
+          <span style="height:10px;border-radius:99px;background:#ff6b00;width:72%;"></span>
+          <span style="height:10px;border-radius:99px;background:#dedee3;width:48%;"></span>
+        </div>
+      </div>
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#ff6b00;color:#fff;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">When a learner proves they know something, the system moves them on.</p>
+        <p style="margin:0;font-size:74px;font-weight:600;letter-spacing:-.04em;">92%</p>
+      </div>
+      <div data-card style="flex:0 0 clamp(280px,30vw,380px);scroll-snap-align:center;border-radius:26px;background:#0b0b0d;color:#fff;padding:34px;min-height:440px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-8px);">
+        <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;line-height:1.25;">People still make the high-stakes calls, like whether someone is ready to sit an exam.</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span style="width:44px;height:44px;border-radius:50%;background:#26262a;"></span>
+          <span style="width:44px;height:44px;border-radius:50%;background:#26262a;"></span>
+          <span style="width:44px;height:44px;border-radius:50%;background:#ff6b00;"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="closer" style="padding:0 22px 110px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <h2 data-reveal style="margin:0 0 34px;font-size:clamp(32px,4vw,54px);letter-spacing:-.025em;font-weight:600;">Take a closer look.</h2>
+      <div data-stagger style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;">
+        <div style="grid-column:span 4;background:#f5f5f7;border-radius:24px;padding:32px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:scale(1.012);">
+          <div style="display:flex;gap:6px;align-items:flex-end;height:96px;">
+            <span style="flex:1;background:#ff6b00;border-radius:6px;height:52%;"></span>
+            <span style="flex:1;background:#ffc59c;border-radius:6px;height:78%;"></span>
+            <span style="flex:1;background:#dedee3;border-radius:6px;height:34%;"></span>
+            <span style="flex:1;background:#ff6b00;border-radius:6px;height:96%;"></span>
+            <span style="flex:1;background:#dedee3;border-radius:6px;height:44%;"></span>
+            <span style="flex:1;background:#ffc59c;border-radius:6px;height:66%;"></span>
+            <span style="flex:1;background:#dedee3;border-radius:6px;height:28%;"></span>
+          </div>
+          <p style="margin:0;font-size:19px;line-height:1.4;letter-spacing:-.01em;">Mastery per skill, pace and rhythm, and the <strong style="font-weight:600;">kind</strong> of error they make, not only how many.</p>
+        </div>
+        <div style="grid-column:span 2;background:#0b0b0d;color:#fff;border-radius:24px;padding:32px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:scale(1.012);">
+          <span style="width:46px;height:46px;border-radius:14px;background:#ff6b00;display:block;"></span>
+          <p style="margin:0;font-size:19px;line-height:1.4;letter-spacing:-.01em;">Every event gets tagged to a competency before it lands.</p>
+        </div>
+        <div style="grid-column:span 2;background:#f5f5f7;border-radius:24px;padding:32px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:scale(1.012);">
+          <span style="width:46px;height:46px;border-radius:50%;border:5px solid #ff6b00;display:block;animation:spinSlow 9s linear infinite;"></span>
+          <p style="margin:0;font-size:19px;line-height:1.4;letter-spacing:-.01em;">Rules and models pick what to serve next.</p>
+        </div>
+        <div style="grid-column:span 4;background:#ff6b00;color:#fff;border-radius:24px;padding:32px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:scale(1.012);">
+          <p style="margin:0;font-size:clamp(34px,4vw,52px);font-weight:600;letter-spacing:-.03em;">Assessment that guides instead of grading.</p>
+          <p style="margin:0;font-size:17px;line-height:1.45;opacity:.92;">Results come back early enough to change the path that produced them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#f5f5f7;padding:110px 22px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <p data-reveal style="margin:0;font-size:19px;font-weight:600;color:#ff6b00;letter-spacing:-.01em;">The loop</p>
+      <h2 data-reveal style="margin:8px 0 0;max-width:22ch;font-size:clamp(34px,5.4vw,76px);line-height:1.05;letter-spacing:-.028em;font-weight:600;">Every click goes back into the model.</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:62px;align-items:start;">
+        <div style="position:sticky;top:110px;">
+          <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6e6e73;">
+            <span style="width:13px;height:13px;border:2px solid #ff6b00;border-top-color:transparent;border-radius:50%;display:block;animation:spinSlow 1.5s linear infinite;"></span>
+            Step {{ stepNo }} of 5 · auto-advancing
+          </div>
+          <div style="height:3px;border-radius:99px;background:#dedee3;margin-top:16px;overflow:hidden;">
+            <div style="height:100%;background:#ff6b00;border-radius:99px;transition:width .6s cubic-bezier(.3,.7,.2,1);width:{{ progressW }};"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:26px;">
+            <div onMouseEnter="{{ pick0 }}" style="border-radius:18px;padding:22px 24px;background:{{ bg0 }};color:{{ fg0 }};transition:background .4s ease,color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);transform:{{ tr0 }};">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6;">01</span>
+              <p style="margin:6px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;">Activity</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.45;opacity:.72;">Logins, submissions, quiz attempts, time in a module, where people click.</p>
+            </div>
+            <div onMouseEnter="{{ pick1 }}" style="border-radius:18px;padding:22px 24px;background:{{ bg1 }};color:{{ fg1 }};transition:background .4s ease,color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);transform:{{ tr1 }};">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6;">02</span>
+              <p style="margin:6px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;">Knowledge map</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.45;opacity:.72;">Each event maps to a competency and the skills it depends on.</p>
+            </div>
+            <div onMouseEnter="{{ pick2 }}" style="border-radius:18px;padding:22px 24px;background:{{ bg2 }};color:{{ fg2 }};transition:background .4s ease,color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);transform:{{ tr2 }};">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6;">03</span>
+              <p style="margin:6px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;">Learner model</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.45;opacity:.72;">Mastery, pace, and error type, kept per learner and updated live.</p>
+            </div>
+            <div onMouseEnter="{{ pick3 }}" style="border-radius:18px;padding:22px 24px;background:{{ bg3 }};color:{{ fg3 }};transition:background .4s ease,color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);transform:{{ tr3 }};">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6;">04</span>
+              <p style="margin:6px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;">Decision engine</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.45;opacity:.72;">Rules and models pick what this learner should do next.</p>
+            </div>
+            <div onMouseEnter="{{ pick4 }}" style="border-radius:18px;padding:22px 24px;background:{{ bg4 }};color:{{ fg4 }};transition:background .4s ease,color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);transform:{{ tr4 }};">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;opacity:.6;">05</span>
+              <p style="margin:6px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;">Generated interface</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.45;opacity:.72;">The screen gets built for this learner, and what they do there starts the loop again.</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-scale style="background:#fff;border-radius:26px;padding:26px;box-shadow:0 40px 90px -50px rgba(0,0,0,.35);">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:9px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:#ff6b00;animation:blink 1.4s ease-in-out infinite;"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6e6e73;">Event stream</span>
+            </div>
+            <button onClick="{{ toggleLoop }}" style="border:none;background:#f5f5f7;color:#1d1d1f;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e8e8ed;">{{ loopLabel }}</button>
+          </div>
+
+          <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px;min-height:172px;">
+            <sc-for list="{{ events }}" as="ev" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px;background:#f5f5f7;border-radius:12px;padding:12px 14px;animation:riseIn .4s ease both;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#ff6b00;flex-shrink:0;"></span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;">{{ ev.kind }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#86868b;margin-left:auto;">{{ ev.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:24px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;"><span>Medical terminology</span><span style="font-family:'IBM Plex Mono',monospace;color:#86868b;">{{ m1 }}%</span></div>
+              <div style="height:7px;border-radius:99px;background:#f0f0f3;margin-top:7px;overflow:hidden;"><div style="height:100%;border-radius:99px;background:#1d1d1f;transition:width 1s cubic-bezier(.3,.7,.2,1);width:{{ m1w }};"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;"><span>Code assignment</span><span style="font-family:'IBM Plex Mono',monospace;color:#86868b;">{{ m2 }}%</span></div>
+              <div style="height:7px;border-radius:99px;background:#f0f0f3;margin-top:7px;overflow:hidden;"><div style="height:100%;border-radius:99px;background:#ff6b00;transition:width 1s cubic-bezier(.3,.7,.2,1);width:{{ m2w }};"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;"><span>Claims processing</span><span style="font-family:'IBM Plex Mono',monospace;color:#86868b;">{{ m3 }}%</span></div>
+              <div style="height:7px;border-radius:99px;background:#f0f0f3;margin-top:7px;overflow:hidden;"><div style="height:100%;border-radius:99px;background:#1d1d1f;transition:width 1s cubic-bezier(.3,.7,.2,1);width:{{ m3w }};"></div></div>
+            </div>
+          </div>
+
+          <div style="margin-top:22px;background:#0b0b0d;border-radius:18px;padding:18px 20px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ff8c3d;">Next best action</span>
+            <p style="margin:8px 0 0;font-size:18px;font-weight:500;color:#fff;line-height:1.4;letter-spacing:-.01em;">{{ decision }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture" style="background:#0b0b0d;color:#fff;padding:110px 22px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <p data-reveal style="margin:0;font-size:19px;font-weight:600;color:#ff6b00;letter-spacing:-.01em;">Architecture</p>
+      <h2 data-reveal style="margin:8px 0 0;max-width:24ch;font-size:clamp(34px,5.4vw,76px);line-height:1.05;letter-spacing:-.028em;font-weight:600;">The LMS stays the front door.</h2>
+      <p data-reveal style="margin:22px 0 0;max-width:52ch;font-size:19px;line-height:1.5;color:#a1a1a6;text-wrap:pretty;">Learners still log in, enroll, and check their gradebook where they always did. A layer underneath reads what they do and writes the next step back in.</p>
+
+      <div data-scale style="margin-top:56px;border-radius:26px;overflow:hidden;border:1px solid #26262a;">
+        <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid #26262a;">
+          <div style="padding:24px;display:flex;align-items:center;font-size:15px;font-weight:600;letter-spacing:-.01em;background:#14141a;">Experience</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);">
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Learner app</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Path, practice, feedback</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Coach console</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Traces, alerts, overrides</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">LMS UI</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Login, enrollment, grades</p></div>
+          </div>
+        </div>
+        <div style="position:relative;padding:12px 24px;border-bottom:1px solid #26262a;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#86868b;overflow:hidden;">
+          API layer · recommendation, profile, content, event
+          <span style="position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff6b00;animation:dotRun 3.2s linear infinite;"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid #26262a;">
+          <div style="padding:24px;display:flex;align-items:center;font-size:15px;font-weight:600;letter-spacing:-.01em;background:#ff6b00;color:#fff;">Precision engine</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);">
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Decision engine</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Rules + adaptive models</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Learner model</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Reads and writes profile</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Knowledge graph</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Competency, prereqs</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Interface generator</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Assembles UI per learner</p></div>
+          </div>
+        </div>
+        <div style="position:relative;padding:12px 24px;border-bottom:1px solid #26262a;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#86868b;overflow:hidden;">
+          Event pipeline · streams interaction signal in real time
+          <span style="position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#fff;animation:dotRun 4.2s linear infinite .7s;"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:180px 1fr;">
+          <div style="padding:24px;display:flex;align-items:center;font-size:15px;font-weight:600;letter-spacing:-.01em;background:#14141a;">Data platform</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);">
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Event store</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Raw behavior log</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Learner store</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Mastery, pace, errors</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Content repository</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Tags, difficulty, prereqs</p></div>
+            <div style="padding:22px 24px;border-left:1px solid #26262a;transition:background .3s ease;" style-hover="background:#14141a;"><p style="margin:0;font-size:15px;font-weight:600;">Warehouse</p><p style="margin:6px 0 0;font-size:13px;color:#86868b;line-height:1.45;">Reporting, cohort trends</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div data-stagger style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;">
+        <div style="background:#14141a;border-radius:20px;padding:26px;">
+          <p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ff8c3d;">LMS → precision layer</p>
+          <p style="margin:10px 0 0;font-size:17px;color:#a1a1a6;line-height:1.5;">Logins, submissions, quiz attempts, time in a module, where people click.</p>
+        </div>
+        <div style="background:#14141a;border-radius:20px;padding:26px;">
+          <p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ff8c3d;">Precision layer → LMS</p>
+          <p style="margin:10px 0 0;font-size:17px;color:#a1a1a6;line-height:1.5;">The next assignment, a remediation module, a coach alert, an updated mastery record.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="compare" style="padding:110px 22px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <h2 data-reveal style="margin:0;max-width:20ch;font-size:clamp(34px,5vw,64px);line-height:1.06;letter-spacing:-.028em;font-weight:600;">Precision isn't only <span style="color:#ff6b00;">remediation</span>.</h2>
+      <div data-stagger style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:52px;">
+        <div style="background:#f5f5f7;border-radius:26px;padding:38px;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="width:42px;height:42px;border-radius:50%;background:#ff6b00;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:17px;">M</span>
+            <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;">Falls short twice</p>
+          </div>
+          <div style="margin-top:26px;">
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Activity</span><p style="margin:0;font-size:15px;line-height:1.5;">Submits the claims-processing quiz below passing, twice.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Signal</span><p style="margin:0;font-size:15px;line-height:1.5;">Both attempts, the exact items missed, and time per question.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Model</span><p style="margin:0;font-size:15px;line-height:1.5;">Traces the misses back to one skill two levels down.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Decision</span><p style="margin:0;font-size:15px;line-height:1.5;">A terminology refresher and a low-stakes practice set instead of a third attempt.</p></div>
+          </div>
+          <div style="margin-top:22px;background:#0b0b0d;border-radius:18px;padding:18px 20px;">
+            <p style="margin:0;font-size:16px;color:#fff;line-height:1.45;">“Let's shore up terminology first. It's what's tripping up your coding accuracy.”</p>
+          </div>
+        </div>
+        <div style="background:#f5f5f7;border-radius:26px;padding:38px;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="width:42px;height:42px;border-radius:50%;background:#1d1d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:17px;">J</span>
+            <p style="margin:0;font-size:25px;font-weight:600;letter-spacing:-.018em;">Already ahead of pace</p>
+          </div>
+          <div style="margin-top:26px;">
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Activity</span><p style="margin:0;font-size:15px;line-height:1.5;">Scores near-perfect on the first two practice sets in the module.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Signal</span><p style="margin:0;font-size:15px;line-height:1.5;">High accuracy, fast answers, no hints, which looks nothing like guessing.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Model</span><p style="margin:0;font-size:15px;line-height:1.5;">Confidence on the underlying skills passes the mastery threshold.</p></div>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:16px;padding:15px 0;border-top:1px solid #dedee3;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#86868b;">Decision</span><p style="margin:0;font-size:15px;line-height:1.5;">A short check for the rest of the module, skipping practice he doesn't need.</p></div>
+          </div>
+          <div style="margin-top:22px;background:#ff6b00;border-radius:18px;padding:18px 20px;">
+            <p style="margin:0;font-size:16px;color:#fff;line-height:1.45;">“You've shown you know this, so take a short check and move on.”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#f5f5f7;padding:110px 22px;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <h2 data-reveal style="margin:0;max-width:20ch;font-size:clamp(34px,5vw,64px);line-height:1.06;letter-spacing:-.028em;font-weight:600;">What precision buys.</h2>
+      <div data-stagger style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:52px;">
+        <div style="background:#fff;border-radius:22px;padding:30px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;">
+          <span style="width:38px;height:38px;border-radius:12px;background:#ff6b00;display:block;"></span>
+          <div><p style="margin:0;font-size:19px;font-weight:600;letter-spacing:-.012em;">Higher completion</p><p style="margin:8px 0 0;font-size:15px;color:#6e6e73;line-height:1.45;">Effort goes where it's needed instead of being wasted.</p></div>
+        </div>
+        <div style="background:#fff;border-radius:22px;padding:30px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;">
+          <span style="width:38px;height:38px;border-radius:50%;background:#ffc59c;display:block;"></span>
+          <div><p style="margin:0;font-size:19px;font-weight:600;letter-spacing:-.012em;">Lower cost to serve</p><p style="margin:8px 0 0;font-size:15px;color:#6e6e73;line-height:1.45;">Coaches stop answering the same question over and over.</p></div>
+        </div>
+        <div style="background:#fff;border-radius:22px;padding:30px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;">
+          <span style="width:38px;height:38px;border-radius:12px;border:4px solid #ff6b00;display:block;"></span>
+          <div><p style="margin:0;font-size:19px;font-weight:600;letter-spacing:-.012em;">Credential trust</p><p style="margin:8px 0 0;font-size:15px;color:#6e6e73;line-height:1.45;">Employers and accreditors get mastery that was actually checked.</p></div>
+        </div>
+        <div style="background:#0b0b0d;border-radius:22px;padding:30px;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;">
+          <span style="width:38px;height:38px;border-radius:50%;border:4px solid #ff6b00;display:block;animation:spinSlow 7s linear infinite;"></span>
+          <div><p style="margin:0;font-size:19px;font-weight:600;letter-spacing:-.012em;">A durable advantage</p><p style="margin:8px 0 0;font-size:15px;color:#86868b;line-height:1.45;">Delivering the right thing is harder to copy than making more content.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap" style="padding:110px 22px;text-align:center;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <p data-reveal style="margin:0;font-size:19px;font-weight:600;color:#ff6b00;letter-spacing:-.01em;">Roadmap</p>
+      <h2 data-reveal style="margin:8px auto 0;max-width:18ch;font-size:clamp(34px,5.4vw,72px);line-height:1.05;letter-spacing:-.028em;font-weight:600;">Three phases to precision.</h2>
+      <div data-stagger style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:56px;text-align:left;">
+        <div style="border-radius:24px;background:#f5f5f7;padding:34px;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px);">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#86868b;">Phase 1</span><span style="width:10px;height:10px;border-radius:50%;background:#ff6b00;animation:ringPulse 2.6s ease-in-out infinite;"></span></div>
+          <p style="margin:18px 0 0;font-size:29px;font-weight:600;letter-spacing:-.022em;">Foundation</p>
+          <p style="margin:10px 0 0;font-size:16px;color:#6e6e73;line-height:1.5;">Tag content by competency, track the interactions that matter, stand up the learner model store.</p>
+        </div>
+        <div style="border-radius:24px;background:#f5f5f7;padding:34px;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px);">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#86868b;">Phase 2</span><span style="width:10px;height:10px;border-radius:50%;border:2px solid #ff6b00;"></span></div>
+          <p style="margin:18px 0 0;font-size:29px;font-weight:600;letter-spacing:-.022em;">Adaptive pilots</p>
+          <p style="margin:10px 0 0;font-size:16px;color:#6e6e73;line-height:1.5;">Ship recommendations in a few programs and compare them against how those programs do today.</p>
+        </div>
+        <div style="border-radius:24px;background:#0b0b0d;color:#fff;padding:34px;transition:transform .5s cubic-bezier(.2,.8,.2,1);" style-hover="transform:translateY(-6px);">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ff8c3d;">Phase 3</span><span style="width:10px;height:10px;border-radius:50%;border:2px solid #ff8c3d;"></span></div>
+          <p style="margin:18px 0 0;font-size:29px;font-weight:600;letter-spacing:-.022em;">Precision at scale</p>
+          <p style="margin:10px 0 0;font-size:16px;color:#86868b;line-height:1.5;">The full decision engine and coach dashboards, across every program.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:0 22px 120px;text-align:center;">
+    <div data-reveal style="max-width:900px;margin:0 auto;">
+      <h2 style="margin:0;font-size:clamp(34px,5.6vw,80px);line-height:1.04;letter-spacing:-.03em;font-weight:600;">This is the <span style="color:#ff6b00;">operating model</span>, not a feature.</h2>
+      <p style="margin:24px auto 0;max-width:44ch;font-size:21px;line-height:1.45;color:#6e6e73;">Every learner gets the content, pace, and support they need, all the way through.</p>
+      <div style="display:flex;gap:18px;justify-content:center;margin-top:30px;flex-wrap:wrap;">
+        <a href="#top" style="background:#ff6b00;color:#fff;font-size:17px;padding:12px 23px;border-radius:999px;transition:background .2s ease,transform .25s cubic-bezier(.34,1.4,.64,1);text-decoration:none;" style-hover="background:#e05a00;transform:translateY(-2px);color:#fff;text-decoration:none;">Back to top</a>
+        <a href="#highlights" style="color:#ff6b00;font-size:17px;text-decoration:none;" style-hover="text-decoration:underline;color:#ff6b00;">Replay the highlights ›</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footnotes" style="background:#f5f5f7;padding:34px 22px;">
+    <div style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+      <p style="margin:0;font-size:12px;color:#6e6e73;line-height:1.5;">1. Figures here are made up for an internal vision document. The live loop, mastery values, and event stream are simulated and are not measured results.</p>
+      <div style="height:1px;background:#dedee3;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:12px;color:#6e6e73;">Precision Learning · vision overview</span>
+        <div style="display:flex;gap:20px;">
+          <a href="#highlights" style="font-size:12px;color:#6e6e73;text-decoration:none;" style-hover="color:#1d1d1f;text-decoration:underline;">Highlights</a>
+          <a href="#architecture" style="font-size:12px;color:#6e6e73;text-decoration:none;" style-hover="color:#1d1d1f;text-decoration:underline;">Architecture</a>
+          <a href="#roadmap" style="font-size:12px;color:#6e6e73;text-decoration:none;" style-hover="color:#1d1d1f;text-decoration:underline;">Roadmap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const EVENTS = [
+  {kind:'quiz.attempt', tag:'coding · incorrect'},
+  {kind:'nav.revisit', tag:'claims module'},
+  {kind:'response.time', tag:'42s · slow'},
+  {kind:'hint.used', tag:'terminology'},
+  {kind:'session.start', tag:'21:14 · mobile'},
+  {kind:'practice.correct', tag:'anatomy basics'},
+  {kind:'quiz.attempt', tag:'coding · partial'},
+  {kind:'outcome.mastery', tag:'terminology ↑'}
+];
+const DECISIONS = [
+  'Route to the terminology refresher',
+  'Queue an 8-item practice set',
+  'Hold the retake until confidence ≥ 70%',
+  'Alert the coach: stall risk on claims'
+];
+
+class Component extends DCLogic {
+  state = {i:0, step:0, running:true, m:[62,41,58], dec:0, ago:1};
+
+  componentDidMount(){
+    this.tick = setInterval(() => {
+      if(!this.state.running) return;
+      this.setState(s => {
+        const m = [
+          Math.min(96, s.m[0] + 3 + Math.round(Math.random()*4)),
+          Math.min(88, s.m[1] + 2 + Math.round(Math.random()*5)),
+          Math.min(92, s.m[2] + 1 + Math.round(Math.random()*4))
+        ];
+        const reset = m[0] > 92;
+        return {
+          i: s.i + 1,
+          ago: 1,
+          m: reset ? [58,38,54] : m,
+          dec: (s.dec + (reset ? 1 : 0)) % DECISIONS.length
+        };
+      });
+    }, 1900);
+    this.decTick = setInterval(() => {
+      if(!this.state.running) return;
+      this.setState(s => ({dec:(s.dec + 1) % DECISIONS.length}));
+    }, 5200);
+    this.agoTick = setInterval(() => this.setState(s => ({ago: s.ago + 1})), 1000);
+    this.stepTick = setInterval(() => this.setState(s => ({step:(s.step + 1) % 5})), 3400);
+    this.words();
+    this.reveal();
+    this.scrollFx();
+  }
+  componentWillUnmount(){
+    [this.tick,this.decTick,this.agoTick,this.stepTick].forEach(clearInterval);
+    if(this.io) this.io.disconnect();
+    if(this.onScroll){ window.removeEventListener('scroll', this.onScroll); window.removeEventListener('resize', this.onScroll); }
+  }
+
+  get reduced(){ return window.matchMedia('(prefers-reduced-motion:reduce)').matches; }
+
+  words(){
+    if(this.reduced) return;
+    Array.from(document.querySelectorAll('[data-word]')).forEach((w, i) => {
+      w.style.opacity = '0';
+      w.style.animation = 'wordIn .85s cubic-bezier(.2,.8,.2,1) ' + (120 + i * 70) + 'ms forwards';
+    });
+  }
+
+  reveal(){
+    if(this.reduced || !('IntersectionObserver' in window)) return;
+    const vh = window.innerHeight;
+    const targets = [];
+
+    Array.from(document.querySelectorAll('[data-stagger]')).forEach(g => {
+      Array.from(g.children).forEach((c, i) => { c.setAttribute('data-reveal',''); c.dataset.delay = String(i * 90); });
+    });
+    Array.from(document.querySelectorAll('#rail [data-card]')).forEach((c, i) => {
+      c.setAttribute('data-reveal',''); c.dataset.delay = String(i * 70);
+    });
+
+    const prep = (el, kind) => {
+      if(el.getBoundingClientRect().top < vh * 0.9) return;
+      const d = el.dataset.delay ? parseInt(el.dataset.delay,10) : 0;
+      el.style.opacity = '0';
+      el.style.transform = kind === 'scale' ? 'scale(.93)' : 'translateY(30px)';
+      el.style.transition = 'opacity .9s cubic-bezier(.2,.8,.2,1) ' + d + 'ms, transform 1.05s cubic-bezier(.16,.84,.16,1) ' + d + 'ms';
+      el.style.willChange = 'opacity, transform';
+      targets.push(el);
+    };
+    Array.from(document.querySelectorAll('[data-scale]')).forEach(el => prep(el,'scale'));
+    Array.from(document.querySelectorAll('[data-reveal]')).forEach(el => prep(el,'rise'));
+
+    this.io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(!e.isIntersecting) return;
+        const el = e.target;
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        setTimeout(() => { el.style.willChange = 'auto'; }, 1400);
+        this.io.unobserve(el);
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -8% 0px'});
+    targets.forEach(el => this.io.observe(el));
+  }
+
+  scrollFx(){
+    const bar = document.getElementById('scrollbar');
+    const nav = document.getElementById('nav');
+    const par = Array.from(document.querySelectorAll('[data-parallax]'));
+    let queued = false;
+    const frame = () => {
+      queued = false;
+      const y = window.scrollY || document.documentElement.scrollTop;
+      const max = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      if(bar) bar.style.width = Math.min(100, (y / max) * 100) + '%';
+      if(nav) nav.style.boxShadow = y > 8 ? '0 1px 16px -8px rgba(0,0,0,.45)' : 'none';
+      if(!this.reduced){
+        const vh = window.innerHeight;
+        par.forEach(el => {
+          const rate = parseFloat(el.dataset.parallax) || 0;
+          const r = el.getBoundingClientRect();
+          if(r.bottom < -200 || r.top > vh + 200) return;
+          const mid = r.top + r.height / 2 - vh / 2;
+          el.style.translate = '0 ' + (-mid * rate).toFixed(1) + 'px';
+        });
+      }
+    };
+    this.onScroll = () => { if(queued) return; queued = true; requestAnimationFrame(frame); };
+    window.addEventListener('scroll', this.onScroll, {passive:true});
+    window.addEventListener('resize', this.onScroll);
+    frame();
+  }
+
+  nudgeRail(dir){
+    const rail = document.getElementById('rail');
+    if(!rail) return;
+    const card = rail.querySelector('[data-card]');
+    const step = card ? card.getBoundingClientRect().width + 20 : 360;
+    rail.scrollBy({left: dir * step, behavior:'smooth'});
+  }
+
+  renderVals(){
+    const s = this.state;
+    const events = [];
+    for(let k = 0; k < 4; k++){
+      const e = EVENTS[(s.i + k) % EVENTS.length];
+      events.push({kind:e.kind, tag:e.tag});
+    }
+    const on = i => i === s.step;
+    return {
+      events,
+      loopLabel: s.running ? 'Pause' : 'Play',
+      toggleLoop: () => this.setState(p => ({running: !p.running})),
+      m1:s.m[0], m2:s.m[1], m3:s.m[2],
+      m1w:s.m[0] + '%', m2w:s.m[1] + '%', m3w:s.m[2] + '%',
+      decision: DECISIONS[s.dec],
+      ago: s.ago === 1 ? 'just now' : s.ago + 's ago',
+      stepNo: s.step + 1,
+      progressW: ((s.step + 1) / 5 * 100) + '%',
+      bg0:on(0)?'#0b0b0d':'#fff', bg1:on(1)?'#0b0b0d':'#fff', bg2:on(2)?'#0b0b0d':'#fff', bg3:on(3)?'#0b0b0d':'#fff', bg4:on(4)?'#0b0b0d':'#fff',
+      fg0:on(0)?'#fff':'#1d1d1f', fg1:on(1)?'#fff':'#1d1d1f', fg2:on(2)?'#fff':'#1d1d1f', fg3:on(3)?'#fff':'#1d1d1f', fg4:on(4)?'#fff':'#1d1d1f',
+      tr0:on(0)?'scale(1.02)':'scale(1)', tr1:on(1)?'scale(1.02)':'scale(1)', tr2:on(2)?'scale(1.02)':'scale(1)', tr3:on(3)?'scale(1.02)':'scale(1)', tr4:on(4)?'scale(1.02)':'scale(1)',
+      pick0:() => this.setState({step:0}), pick1:() => this.setState({step:1}), pick2:() => this.setState({step:2}), pick3:() => this.setState({step:3}), pick4:() => this.setState({step:4}),
+      railLeft:() => this.nudgeRail(-1),
+      railRight:() => this.nudgeRail(1)
+    };
+  }
+}
+</script>
+</body>
+</html>
