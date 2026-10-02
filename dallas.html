@@ -1,0 +1,1230 @@
+<title>Dallas College Global Insight Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: product-grade app shell — light rail, blurred top bar with term progress, gradient hero with floating product cards, quiet cards elsewhere */
+:root{
+  --bg:#F6F8FB; --surface:#FFFFFF; --sunk:#EEF2F7; --ink:#0E1A2B; --ink-2:#4A5A73; --ink-3:#66758C;
+  --line:#E3E8EF; --accent:#003385; --accent-ink:#003385; --accent-soft:rgba(0,51,133,.08); --teal:#2E7BE6; --deadline:#E52626;
+  --muted-mark:#9AA8BD; --muted-mark-2:#E1E6EE;
+  --good:#12A150; --warn:#C98500; --serious:#E8794F; --critical:#D33F4C;
+  --g1:#003385; --g2:#1F5FD1; --g3:#4FA3FF; --g4:#0B4FB8; --g0:#001A47;
+  --viz:#1F5FD1; --viz-ink:#1F5FD1; --on-accent:#FFFFFF; --on-viz:#FFFFFF; --good-ink:#0B7A3B; --warn-ink:#8A5A00; --serious-ink:#B4461F; --critical-ink:#B3283A; --tag-public:#9AA8BD; --tag-directory:#4FA3FF; --tag-ferpa:#1F5FD1; --tag-glba:#B07A00; --tag-prestudent:#7FB5F5; --tag-sensitive:#5A6F95; --tag-deid:#C6CFDD;
+  --shadow-1:0 1px 1px rgba(11,31,58,.04),0 2px 6px rgba(11,31,58,.05);
+  --shadow-2:0 13px 27px -5px rgba(50,50,93,.18),0 8px 16px -8px rgba(0,0,0,.16);
+  --shadow-3:0 30px 60px -12px rgba(50,50,93,.25),0 18px 36px -18px rgba(0,0,0,.3);
+  --f-ui:"Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --f-data:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --ease:cubic-bezier(.23,1,.32,1); --ease-io:cubic-bezier(.77,0,.175,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1628; --surface:#0F2038; --sunk:#14294A; --ink:#F1F5FB; --ink-2:#B6C2D6; --ink-3:#8697B0;
+  --line:#1F355A; --accent:#6F9BFF; --accent-ink:#9DBBFF; --accent-soft:rgba(111,155,255,.16); --teal:#4FA3FF; --deadline:#FF5A5A;
+  --muted-mark:#5A6F95; --muted-mark-2:#263D63;
+  --good:#3CC877; --warn:#F5B532; --serious:#FF9670; --critical:#FF6B78;
+  --viz:#6F9BFF; --viz-ink:#9DBBFF; --on-accent:#0A1628; --on-viz:#0A1628; --good-ink:#3CC877; --warn-ink:#F5B532; --serious-ink:#FF9670; --critical-ink:#FF6B78; --tag-public:#8697B0; --tag-directory:#7FC1FF; --tag-ferpa:#6F9BFF; --tag-glba:#F5B532; --tag-prestudent:#A9CCF7; --tag-sensitive:#8DA2C4; --tag-deid:#5A6F95;
+  --shadow-1:0 1px 1px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.25);
+  --shadow-2:0 13px 27px -5px rgba(0,0,0,.5),0 8px 16px -8px rgba(0,0,0,.5);
+  --shadow-3:0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1628; --surface:#0F2038; --sunk:#14294A; --ink:#F1F5FB; --ink-2:#B6C2D6; --ink-3:#8697B0;
+  --line:#1F355A; --accent:#6F9BFF; --accent-ink:#9DBBFF; --accent-soft:rgba(111,155,255,.16); --teal:#4FA3FF; --deadline:#FF5A5A;
+  --muted-mark:#5A6F95; --muted-mark-2:#263D63;
+  --good:#3CC877; --warn:#F5B532; --serious:#FF9670; --critical:#FF6B78;
+  --viz:#6F9BFF; --viz-ink:#9DBBFF; --on-accent:#0A1628; --on-viz:#0A1628; --good-ink:#3CC877; --warn-ink:#F5B532; --serious-ink:#FF9670; --critical-ink:#FF6B78; --tag-public:#8697B0; --tag-directory:#7FC1FF; --tag-ferpa:#6F9BFF; --tag-glba:#F5B532; --tag-prestudent:#A9CCF7; --tag-sensitive:#8DA2C4; --tag-deid:#5A6F95;
+  --shadow-1:0 1px 1px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.25);
+  --shadow-2:0 13px 27px -5px rgba(0,0,0,.5),0 8px 16px -8px rgba(0,0,0,.5);
+  --shadow-3:0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased;font-feature-settings:"ss01"}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.mono{font-family:var(--f-data)}
+h1,h2,h3{font-family:var(--f-ui);text-wrap:balance;margin:0;letter-spacing:-.022em;font-weight:600}
+
+.app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100%}
+/* rail */
+.rail{background:var(--surface);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 6px}
+.logo-slot{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,var(--g1),var(--g2) 45%,var(--g3));box-shadow:var(--shadow-1)}
+.logo-slot img{max-width:100%;max-height:100%;display:block}
+.brand.has-logo .logo-slot{width:38px;height:40px;background:#FFFFFF;box-shadow:var(--shadow-1);border-radius:9px;padding:3px}
+.brand.has-logo .logo-slot img{height:34px;width:auto}
+.brand b{font-size:15.5px;display:block;line-height:1.15;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--ink-3);line-height:1.3;display:block}
+.navgroup{display:flex;flex-direction:column;gap:1px;position:relative}
+.navgroup h4{margin:0 0 4px;padding:0 10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.navwrap{position:relative;display:flex;flex-direction:column;gap:16px}
+.navpill{position:absolute;left:0;right:0;top:0;height:34px;border-radius:8px;background:var(--accent-soft);transition:transform 280ms var(--ease-io),height 280ms var(--ease-io),opacity 150ms ease;pointer-events:none;opacity:0}
+.navbtn{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;border:0;background:transparent;padding:7px 10px;min-height:34px;border-radius:8px;color:var(--ink-2);font-size:14px;transition:color 150ms ease,transform 160ms var(--ease)}
+.navbtn:hover{color:var(--ink)}
+.navbtn[aria-current="page"]{color:var(--accent-ink);font-weight:600}
+.navbtn .dot{width:7px;height:7px;border-radius:50%;background:var(--critical);flex:none;opacity:0;transform:scale(.6);transition:transform 200ms var(--ease),opacity 200ms ease}
+.navbtn .dot.on{opacity:1;transform:none}
+.rail-foot{margin-top:auto;font-size:12px;color:var(--ink-3);padding:0 8px}
+
+/* top */
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line);padding:12px 28px;display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform-origin:left;background:linear-gradient(90deg,var(--g1),var(--g2),var(--g3));transition:transform 400ms var(--ease-io)}
+.clock{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 380px}
+.clock-label{font-size:12px;color:var(--ink-3);line-height:1.25;white-space:nowrap}
+.clock-label b{display:block;font-size:15px;color:var(--ink);font-weight:600}
+.weeks{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;flex:1;min-width:180px}
+.wk{position:relative;height:30px;border:1px solid var(--line);border-radius:7px;background:var(--surface);font-size:12px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums;transition:background 150ms ease,color 150ms ease,border-color 150ms ease,transform 160ms var(--ease)}
+.wk:hover{color:var(--ink);border-color:var(--ink-3)}
+.wk.past{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
+.wk.now{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 4px 12px -4px var(--accent)}
+.wk::after{content:"";position:absolute;right:-4px;bottom:-5px;width:7px;height:7px;background:var(--surface);border:1.5px solid var(--accent);box-sizing:border-box;transform:rotate(45deg);border-radius:1px}
+.iconbtn{border:1px solid var(--line);background:var(--surface);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;box-shadow:var(--shadow-1);transition:transform 160ms var(--ease),border-color 150ms ease,box-shadow 200ms ease}
+.iconbtn:hover{border-color:var(--ink-3);box-shadow:var(--shadow-2)}
+.iconbtn:active{transform:scale(.95)}
+.seg{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:10px;padding:3px}
+.seg button{position:relative;z-index:1;border:0;background:transparent;padding:6px 14px;font-size:13px;border-radius:8px;color:var(--ink-2);transition:color 150ms ease}
+.seg button[aria-pressed="true"]{color:var(--ink);font-weight:600}
+.seg .slider{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);background:var(--surface);border-radius:8px;box-shadow:var(--shadow-1);transition:transform 250ms var(--ease-io)}
+.seg.right .slider{transform:translateX(100%)}
+.ask{position:relative;flex:1 1 260px;max-width:420px}
+.ask input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px 8px 34px;font-size:14px;box-shadow:var(--shadow-1);transition:border-color 150ms ease,box-shadow 200ms ease}
+.ask input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.ask svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
+.answer{position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-3);padding:16px 18px;font-size:14px;transform-origin:top left;animation:pop 180ms var(--ease)}
+.answer .big{font-size:26px;font-weight:600;letter-spacing:-.02em}
+.answer code{display:block;margin-top:10px;font-family:var(--f-data);font-size:12px;background:var(--sunk);padding:10px 12px;border-radius:8px;white-space:pre-wrap;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--ink-2);transition:background 150ms ease,border-color 150ms ease,color 150ms ease,transform 160ms var(--ease)}
+button.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+button.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.bell{position:relative}
+.bell .count{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--critical);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center;padding:0 4px;opacity:0;transform:scale(.6);transition:transform 200ms var(--ease),opacity 200ms ease}
+.bell .count.on{opacity:1;transform:none}
+.bell.ring svg{animation:ring .7s var(--ease)}
+.alerts{position:absolute;right:28px;top:calc(100% + 6px);width:min(380px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-3);padding:8px;transform-origin:top right;animation:pop 180ms var(--ease)}
+.alert{display:flex;gap:10px;padding:10px;border-radius:8px;font-size:13.5px;align-items:flex-start;transition:background 150ms ease}
+.alert:hover{background:var(--sunk)}
+
+/* page */
+.page{padding:28px 32px 64px;display:flex;flex-direction:column;gap:22px;max-width:1380px;width:100%}
+.rise{animation:rise 360ms var(--ease) both;animation-delay:calc(var(--i,0) * 40ms)}
+.head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.head h1{font-size:clamp(28px,3.1vw,40px);line-height:1.08}
+.eyebrow{font-size:12.5px;letter-spacing:.02em;color:var(--accent-ink);font-weight:600;margin:0 0 6px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;background:var(--sunk);color:var(--ink-2)}
+.tag i{width:7px;height:7px;border-radius:2px;display:inline-block}
+.decides{font-size:15px;color:var(--ink-2);max-width:68ch;margin:8px 0 0}
+.banner{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--ink-2)}
+
+.insight{position:relative;overflow:hidden;display:flex;gap:16px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px 18px 24px;box-shadow:var(--shadow-1)}
+.insight::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--g3))}
+.insight.warn::before{background:var(--warn)}
+.insight.good::before{background:linear-gradient(180deg,var(--g3),var(--good))}
+.insight .lbl{font-size:12px;color:var(--ink-3);font-weight:600;margin:0}
+.insight h2{font-size:21px;line-height:1.25;margin-top:2px}
+.insight p{margin:4px 0 0;color:var(--ink-2);font-size:14.5px}
+.swap{animation:swap 240ms var(--ease)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px}
+.kpi{position:relative;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 16px 13px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow-1);transition:transform 160ms var(--ease),box-shadow 200ms ease,border-color 150ms ease;min-width:0}
+.kpi .k-label{font-size:13px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;font-weight:500}
+.kpi .k-label .def{font-size:12px;color:var(--accent-ink);opacity:0;transition:opacity 150ms ease;white-space:nowrap}
+.kpi:focus-visible .k-label .def{opacity:1}
+.kpi .k-val{font-size:30px;line-height:1.1;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.kpi .k-row{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.delta{font-size:12px;font-weight:600;display:inline-flex;gap:4px;align-items:center;padding:1px 7px;border-radius:999px;font-variant-numeric:tabular-nums}
+.delta.good{color:var(--good-ink);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.delta.bad{color:var(--critical-ink);background:color-mix(in srgb,var(--critical) 12%,transparent)}
+.delta.flat{color:var(--ink-3);background:var(--sunk)}
+.kpi .k-note{font-size:12px;color:var(--ink-3)}
+.k-note{font-size:12px;color:var(--ink-3)}
+.spark{width:96px;height:34px;flex:none;overflow:visible}
+.spark .end{display:none}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-1)}
+.card.span2{grid-column:1/-1}
+.card-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.card h3{font-size:16.5px;line-height:1.3}
+.card .sub{font-size:13px;color:var(--ink-3);margin:3px 0 0}
+.tbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:12px;font-weight:500;padding:4px 10px;color:var(--ink-2);flex:none;transition:background 150ms ease,border-color 150ms ease,transform 160ms var(--ease)}
+.tbtn:hover{background:var(--sunk);border-color:var(--ink-3)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:4px;border-radius:2px;display:inline-block}
+.chart{width:100%;min-height:120px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{fill:var(--ink-2);font-family:var(--f-ui);font-size:12px}
+.chart .t-ink{fill:var(--ink)}
+.chart .t-q{fill:var(--ink-3)}
+.chart .t-acc{fill:var(--viz-ink);font-weight:600}
+.chart .val{font-size:12px;font-variant-numeric:tabular-nums;font-weight:500}
+.chart .halo{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.chart .grid-l{stroke:var(--line);stroke-width:1}
+.chart .axis-l{stroke:var(--muted-mark);stroke-width:1}
+.m-acc{fill:var(--viz)} .m-mut{fill:var(--muted-mark)} .m-mut2{fill:var(--muted-mark-2)}
+.s-acc{stroke:var(--viz)} .s-mut{stroke:var(--muted-mark)}
+.anim{transition:transform 550ms var(--ease-io),opacity 200ms ease;transform-box:fill-box}
+.ox-l{transform-origin:left center}
+.ox-c{transform-origin:center center}
+.ox-b{transform-origin:center bottom}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 800ms var(--ease-io) forwards}
+.areafade{animation:fadein 500ms ease both;animation-delay:300ms}
+.hov .guide{opacity:0;transition:opacity .15s}
+.hov:hover .guide{opacity:1}
+.hit{fill:transparent}
+.cell{transition:fill-opacity 300ms ease}
+table.tv{width:100%;border-collapse:collapse;font-size:13px}
+.tv th,.tv td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+.tv td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tv th{color:var(--ink-3);font-weight:600;font-size:12px}
+.twrap{overflow-x:auto}
+
+.work{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.wi{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--surface);transition:transform 220ms var(--ease),opacity 180ms ease,max-height 260ms var(--ease-io) 120ms,padding 260ms var(--ease-io) 120ms,margin 260ms var(--ease-io) 120ms,border-color 150ms ease,box-shadow 200ms ease;max-height:160px;overflow:hidden}
+.wi.gone{opacity:0;transform:translateX(16px);max-height:0;padding-top:0;padding-bottom:0;margin-top:-8px;border-color:transparent}
+.sev{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.sev.critical{color:var(--critical-ink);background:color-mix(in srgb,var(--critical) 12%,transparent)}
+.sev.serious{color:var(--serious-ink);background:color-mix(in srgb,var(--serious) 14%,transparent)}
+.sev.warn{color:var(--warn-ink);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.sev.good{color:var(--good-ink);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.sev.info{color:var(--ink-2);background:var(--sunk)}
+.wi .who{font-weight:600;font-size:14px}
+.wi .why{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:4px}
+.wi .why span{font-size:12px;color:var(--ink-2);background:var(--sunk);border-radius:6px;padding:1px 8px}
+.act,.btn-primary,.btn-ghost{display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-weight:600;white-space:nowrap;transition:background 150ms ease,color 150ms ease,box-shadow 200ms ease,transform 160ms var(--ease)}
+.act{border:0;background:var(--accent);color:var(--on-accent);padding:6px 12px 6px 14px;font-size:13px;box-shadow:0 4px 10px -4px var(--accent)}
+.act:hover{background:var(--accent-ink);box-shadow:0 8px 18px -6px var(--accent)}
+.act:active,.btn-primary:active,.btn-ghost:active{transform:scale(.97)}
+.arw{width:10px;height:10px;overflow:visible}
+.arw path{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.arw .stem{opacity:0;transition:opacity 150ms ease}
+.arw .chev{transition:transform 200ms var(--ease)}
+
+.empty{font-size:13.5px;color:var(--ink-3);padding:10px 2px}
+
+/* hero */
+.hero2{position:relative;border-radius:20px;overflow:hidden;background:var(--g0);color:#fff;min-height:0;isolation:isolate}
+.mesh{position:absolute;inset:0;width:100%;height:100%;z-index:-1;display:block}
+.hero2::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,31,58,0) 30%,rgba(11,31,58,.55) 100%)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:28px;padding:34px 34px 34px;align-items:center}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.02em;opacity:.9;margin:0 0 10px;display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.14);padding:4px 10px 4px 6px;border-radius:999px;backdrop-filter:blur(6px)}
+.kicker b{background:#fff;color:var(--g0);border-radius:999px;padding:1px 8px;font-size:12px}
+.hero2 h1{font-size:clamp(30px,3.6vw,48px);line-height:1.04;letter-spacing:-.03em;color:#fff;font-weight:700}
+.hero2 p.lead{font-size:16px;line-height:1.55;color:rgba(255,255,255,.86);margin:14px 0 0;max-width:52ch}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn-primary{border:0;background:#fff;color:var(--g0);padding:9px 16px;font-size:14px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.btn-primary:hover{background:#EAF1FF}
+.btn-ghost{border:0;background:rgba(255,255,255,.14);color:#fff;padding:9px 16px;font-size:14px;backdrop-filter:blur(6px)}
+.btn-ghost:hover{background:rgba(255,255,255,.24)}
+.term-ring{display:flex;gap:6px;margin-top:22px;max-width:420px}
+.term-ring span{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.22);transition:background 200ms ease}
+.term-ring span.on{background:rgba(255,255,255,.85)}
+.term-ring span.cur{background:var(--g3)}
+.float{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;color:var(--ink)}
+.float .kpi{box-shadow:var(--shadow-3);border-color:transparent}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.dcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-1);transition:transform 160ms var(--ease),box-shadow 200ms ease,border-color 150ms ease;min-width:0}
+.dcard .g{font-size:12px;color:var(--ink-3);font-weight:500}
+.dcard b{font-size:17px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.dcard .hl{font-size:13.5px;color:var(--ink-2);min-height:2.8em}
+.dcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.sect-t{font-size:20px;margin-top:8px}
+
+/* catalog */
+.ont{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.lane{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-1)}
+.lane h4{margin:0;font-size:15px;font-weight:600}
+.lane small{color:var(--ink-3);font-size:12px;margin-top:-4px}
+.ent{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;font-size:13px;text-align:left;display:flex;justify-content:space-between;transition:background 150ms ease,border-color 150ms ease,color 150ms ease,transform 160ms var(--ease)}
+.ent[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ent .c{font-size:12px;opacity:.75;font-variant-numeric:tabular-nums}
+.person{border-radius:12px;padding:11px 14px;font-weight:600;text-align:center;font-size:14px;color:#fff;background:linear-gradient(90deg,#003385,#1F5FD1);box-shadow:var(--shadow-2)}
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mrow{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:14px;align-items:start;animation:rise 300ms var(--ease) both;box-shadow:var(--shadow-1)}
+.mrow h4{margin:0;font-size:14.5px;font-weight:600}
+.mrow p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.mrow code{font-family:var(--f-data);font-size:11.5px;color:var(--ink-2);display:block;margin-top:6px;white-space:pre-wrap}
+.linkbtn{border:0;background:none;color:var(--accent-ink);padding:0;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.search{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:14px;width:min(360px,100%);box-shadow:var(--shadow-1)}
+.search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+
+/* drawer, toast, tooltip */
+.scrim{position:fixed;inset:0;background:rgba(10,22,40,.38);z-index:40;animation:fade 200ms ease;transition:opacity 180ms ease}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(470px,100vw);background:var(--surface);z-index:41;padding:calc(24px + env(safe-area-inset-top,0px)) 24px 24px;overflow:auto;box-shadow:var(--shadow-3);animation:slidein 320ms var(--ease-drawer);transition:transform 200ms var(--ease),opacity 200ms ease;display:flex;flex-direction:column;gap:14px}
+.closing .drawer{transform:translateX(100%);opacity:.6}
+.closing .scrim{opacity:0}
+.drawer h2{font-size:26px}
+.drawer dl{display:grid;grid-template-columns:124px minmax(0,1fr);gap:10px 12px;margin:0;font-size:14px}
+.drawer dt{color:var(--ink-3);font-size:12.5px;padding-top:2px}
+.drawer dd{margin:0}
+.drawer code{font-family:var(--f-data);font-size:12.5px;background:var(--sunk);padding:10px 12px;border-radius:8px;display:block;white-space:pre-wrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--g0);color:#fff;border-radius:12px;padding:10px 12px 10px 16px;display:flex;gap:14px;align-items:center;font-size:14px;z-index:50;box-shadow:var(--shadow-3);animation:toastin 300ms var(--ease);transition:transform 200ms var(--ease),opacity 200ms ease}
+.toast.out{transform:translate(-50%,100%);opacity:0}
+.toast button{border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:8px;padding:4px 10px;font-weight:600;font-size:13px}
+.tip{position:fixed;pointer-events:none;z-index:60;background:var(--g0);color:#fff;font-size:12.5px;line-height:1.4;padding:8px 11px;border-radius:9px;max-width:260px;opacity:0;transform:scale(.97);transform-origin:top left;transition:opacity 125ms ease,transform 125ms var(--ease);white-space:pre-line;box-shadow:var(--shadow-2)}
+.tip.on{opacity:1;transform:none}
+.tip.instant{transition-duration:0ms}
+.foot{font-size:12px;color:var(--ink-3);padding:0 32px 28px;max-width:1100px}
+
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes swap{from{opacity:.25;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes slidein{from{transform:translateX(100%)}to{transform:none}}
+@keyframes toastin{from{transform:translate(-50%,100%);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}60%{transform:scale(2.3);opacity:0}100%{transform:scale(1);opacity:0}}
+@keyframes ring{0%,100%{transform:rotate(0)}25%{transform:rotate(14deg)}50%{transform:rotate(-12deg)}75%{transform:rotate(6deg)}}
+
+
+/* press feedback on everything pressable */
+.kpi:active,.dcard:active,.navbtn:active,.wk:active,.chip:active,.tbtn:active,.ent:active,.seg button:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){
+  .kpi:hover{box-shadow:var(--shadow-2);border-color:transparent}
+  .kpi:hover .k-label .def{opacity:1}
+  .dcard:hover{box-shadow:var(--shadow-2);border-color:transparent}
+  .wi:hover{border-color:transparent;box-shadow:var(--shadow-2)}
+  .card:hover .tbtn{border-color:var(--ink-3)}
+  a:hover .arw .stem,button:hover .arw .stem{opacity:1}
+  a:hover .arw .chev,button:hover .arw .chev{transform:translateX(3px)}
+}
+@media (max-width:1100px){.hero-in{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:980px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px 16px;gap:14px;border-right:0;border-bottom:1px solid var(--line);align-items:center}
+  .navwrap{flex-direction:row;gap:4px}
+  .navgroup{flex-direction:row;align-items:center;gap:2px;flex:none}
+  .navgroup h4,.navpill{display:none}
+  .navbtn{white-space:nowrap;flex:none}
+  .navbtn[aria-current="page"]{background:var(--accent-soft)}
+  .rail-foot,.brand span{display:none}
+  .top{padding:10px 16px}
+  .page{padding:20px 16px 48px}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .hero-in{padding:24px 20px}
+  .ont{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mrow{grid-template-columns:minmax(0,1fr)}
+  .foot{padding:0 16px 24px}
+  .alerts{right:16px}
+}
+@media (max-width:520px){.ont,.float{grid-template-columns:minmax(0,1fr)}.clock-label{display:none}.kpi .k-val{font-size:26px}}
+@media (prefers-reduced-motion:reduce){
+  .rise,.mrow{animation:fadein 200ms ease both!important}
+  .swap{animation:none}
+  .anim,.navpill,.seg .slider,.progress,.wi{transition:opacity 150ms ease!important}
+  .draw{animation:none;stroke-dashoffset:0}
+  .drawer{animation:fade 200ms ease}
+  .toast{animation:fade 200ms ease}
+  .bell.ring svg{animation:none}
+  .kpi:active,.dcard:active,.navbtn:active,.wk:active,.chip:active,.tbtn:active,.ent:active,.act:active,.iconbtn:active,.btn-primary:active{transform:none}
+}
+</style>
+
+<div class="app">
+  <nav class="rail" id="rail" aria-label="Dashboards"></nav>
+  <div class="main">
+    <header class="top" id="top">
+      <div class="clock">
+        <button class="iconbtn" id="play" aria-label="Play the term week by week" title="Play the term"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path id="playicon" d="M3 2l9 5-9 5z" fill="currentColor"/></svg></button>
+        <div class="clock-label" id="clocklabel"><b>Week 5 of 8</b>Sunday deadlines ◆</div>
+        <div class="weeks" id="weeks" role="group" aria-label="Week of the 8-week term"></div>
+      </div>
+      <div class="seg" id="cohort" role="group" aria-label="Student group">
+        <span class="slider"></span>
+        <button id="c-pilot" aria-pressed="true">Pilot</button>
+        <button id="c-comp" aria-pressed="false">Comparison</button>
+      </div>
+      <div class="ask">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <input id="askq" type="text" placeholder="Ask a question, e.g. median speed-to-lead" autocomplete="off" aria-label="Ask a question about a governed metric">
+        <div id="answer" hidden></div>
+      </div>
+      <button class="iconbtn bell" id="bell" aria-label="Alerts"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a4 4 0 0 0-4 4v3l-1.5 2h11L12 9V6a4 4 0 0 0-4-4zM6.5 13a1.5 1.5 0 0 0 3 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="count" id="bellcount">0</span></button>
+      <button class="iconbtn" id="theme" aria-label="Switch light or dark theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+      <div id="alerts" hidden></div>
+      <span class="progress" id="progress" aria-hidden="true"></span>
+    </header>
+    <main class="page" id="page"></main>
+    <p class="foot">Dallas College Global Insight Hub, built by LearningMate from the ontology research. Every number shown is illustrative sample data for a pilot of about 450 students and a comparison group of about 4,000. Metric definitions come from the shared ontology, so the same number appears on every dashboard.</p>
+  </div>
+</div>
+<div class="tip" id="tip" role="tooltip"></div>
+<script>
+// ---------- helpers ----------
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+function rnd(i, s) { const x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); }
+function trend(a, b, amp = 0, seed = 1, n = 8) {
+  return Array.from({ length: n }, (_, i) => { const t = n === 1 ? 1 : i / (n - 1); return a + (b - a) * t + (rnd(i, seed) - .5) * 2 * amp; });
+}
+const WEEKS = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+const FMT = {
+  int: v => Math.round(v).toLocaleString('en-US'),
+  pct: v => `${Math.round(v)}%`,
+  pct1: v => `${v.toFixed(1)}%`,
+  pct2: v => `${v.toFixed(2)}%`,
+  money: v => `$${Math.round(v).toLocaleString('en-US')}`,
+  min: v => `${Math.round(v)} min`,
+  hrs: v => `${Math.round(v)} h`,
+  days: v => `${v.toFixed(1)} days`,
+  dec1: v => v.toFixed(1),
+  sec: v => `${v.toFixed(1)} s`,
+};
+const fmt = (v, f) => (v == null || Number.isNaN(v)) ? '—' : (FMT[f] || FMT.int)(v);
+function niceMax(v) { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v / p; const m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10; return m * p; }
+function ticksTo(max, count = 4) { const step = max / count; return Array.from({ length: count + 1 }, (_, i) => +(i * step).toFixed(6)); }
+function trunc(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+// ---------- state ----------
+const state = { view: 'overview', week: 5, cohort: 'pilot', resolved: new Set(), seen: new Set(), alertsSeen: new Set() };
+try { const s = JSON.parse(localStorage.getItem('mih-prefs') || '{}'); if (s.week) state.week = clamp(s.week, 1, 8); if (s.cohort) state.cohort = s.cohort; } catch (e) {}
+function savePrefs() { try { localStorage.setItem('mih-prefs', JSON.stringify({ week: state.week, cohort: state.cohort })); } catch (e) {} }
+const ctx = () => ({ w: state.week, i: state.week - 1, c: state.cohort, pilot: state.cohort === 'pilot' });
+
+// ---------- tooltip ----------
+const tip = $('#tip'); let tipOpen = false;
+document.addEventListener('pointermove', e => {
+  const t = e.target.closest && e.target.closest('[data-tip]');
+  if (!t) { tip.classList.remove('on'); tipOpen = false; return; }
+  if (tipOpen) tip.classList.add('instant'); else tip.classList.remove('instant');
+  tipOpen = true;
+  tip.textContent = t.getAttribute('data-tip');
+  const x = clamp(e.clientX + 14, 8, innerWidth - tip.offsetWidth - 8);
+  const y = e.clientY + 18 + tip.offsetHeight > innerHeight ? e.clientY - tip.offsetHeight - 12 : e.clientY + 18;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.classList.add('on');
+});
+document.addEventListener('pointerleave', () => tip.classList.remove('on'));
+
+// ---------- count-up ----------
+const lastNums = new Map();
+function countUp(el) {
+  const key = el.dataset.key, to = parseFloat(el.dataset.to), f = el.dataset.fmt;
+  if (Number.isNaN(to)) return;
+  const from = lastNums.has(key) ? lastNums.get(key) : (f === 'pct2' ? to * .98 : 0);
+  lastNums.set(key, to);
+  if (reduceMotion || from === to) { el.textContent = fmt(to, f); return; }
+  const t0 = performance.now(), d = 550;
+  const step = now => { const p = clamp((now - t0) / d, 0, 1); const e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(from + (to - from) * e, f); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+// ---------- animated transforms between renders ----------
+const prevT = new Map();
+function mountSVG(container, html, chartKey) {
+  container.innerHTML = html;
+  const els = $$('[data-k]', container);
+  els.forEach(el => {
+    const k = chartKey + '|' + el.dataset.k, target = el.dataset.t || '';
+    const from = prevT.has(k) ? prevT.get(k) : (el.dataset.t0 || target);
+    el.style.transform = from;
+    prevT.set(k, target);
+  });
+  if (!els.length) return;
+  container.getBoundingClientRect();
+  requestAnimationFrame(() => requestAnimationFrame(() => els.forEach(el => { el.style.transform = el.dataset.t || ''; })));
+}
+
+// ---------- sparkline ----------
+function spark(vals, i, accent = true) {
+  const v = vals.slice(0, i + 1); if (v.length < 2) v.unshift(v[0]);
+  const W = 96, H = 30, mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn || 1;
+  const x = j => 2 + j * (W - 6) / (vals.length - 1), y = val => 3 + (H - 6) * (1 - (val - mn) / r);
+  const pts = v.map((val, j) => `${x(j).toFixed(1)},${y(val).toFixed(1)}`);
+  const lx = x(v.length - 1), ly = y(v.at(-1));
+  return `<svg class="spark" viewBox="0 0 ${W} 34" aria-hidden="true"><path d="M${pts[0]} L${pts.join(' L')} L${lx.toFixed(1)},${H + 2} L2,${H + 2}Z" fill="var(--viz)" fill-opacity=".1"/><polyline points="${pts.join(' ')}" fill="none" stroke="${accent ? 'var(--viz)' : 'var(--muted-mark)'}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle class="end" cx="${lx}" cy="${ly}" r="3" fill="var(--viz)" opacity=".5"/><circle cx="${lx}" cy="${ly}" r="3" fill="var(--viz)"/></svg>`;
+}
+
+// ---------- chart renderers: each returns {svg, table} ----------
+const R = {};
+function tableOf(cols, rows) { return { cols, rows }; }
+
+R.hbar = (d, W) => {
+  const items = d.items, n = items.length, lw = Math.min(190, W * .34), x0 = lw + 12, right = 92;
+  const bw = Math.max(80, W - x0 - right), rh = 26, gap = 12, top = d.ref ? 26 : 6;
+  const max = d.max || niceMax(Math.max(...items.map(r => r.v), d.ref ? d.ref.v : 0));
+  const H = top + n * (rh + gap) + 4;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  s += `<line class="axis-l" x1="${x0}" x2="${x0}" y1="${top - 4}" y2="${H - 4}"/>`;
+  if (d.ref) {
+    const rx = x0 + bw * clamp(d.ref.v / max, 0, 1);
+    s += `<line x1="${rx}" x2="${rx}" y1="${top - 6}" y2="${H - 4}" stroke="var(--ink-3)" stroke-dasharray="4 4"/><text x="${rx + 5}" y="${top - 10}" class="t-q" font-size="11.5">${esc(d.ref.label)}</text>`;
+  }
+  items.forEach((r, i) => {
+    const y = top + i * (rh + gap), f = clamp(r.v / max, 0, 1), cls = r.hi ? 'm-acc' : 'm-mut';
+    const tipTxt = `${r.label}: ${fmt(r.v, d.fmt)}${r.note ? '\n' + r.note : ''}`;
+    s += `<text x="${x0 - 10}" y="${y + rh / 2 + 4}" text-anchor="end" class="t-ink">${esc(trunc(r.label, Math.floor(lw / 6.6)))}</text>`;
+    s += `<rect class="anim ox-l ${cls}" data-k="${esc(r.k || r.label)}" data-t0="scaleX(0)" data-t="scaleX(${f.toFixed(4)})" x="${x0}" y="${y}" width="${bw}" height="${rh}" rx="4" data-tip="${esc(tipTxt)}"/>`;
+    s += `<text class="anim val halo ${r.hi ? 't-acc' : 't-ink'}" data-k="${esc((r.k || r.label) + '-v')}" data-t0="translateX(0px)" data-t="translateX(${(bw * f).toFixed(1)}px)" x="${x0 + 8}" y="${y + rh / 2 + 4}">${esc(r.text || fmt(r.v, d.fmt))}</text>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.cat || 'Item', d.valName || 'Value'], items.map(r => [r.label, fmt(r.v, d.fmt)])) };
+};
+
+R.cols = (d, W) => {
+  const items = d.items, n = items.length, left = 44, right = 12, top = 22, H = d.h || 210, bot = 26;
+  const ph = H - top - bot, max = d.max || niceMax(Math.max(...items.map(r => r.v ?? 0)) * 1.08);
+  const slot = (W - left - right) / n, bw = Math.min(46, slot * .62);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  ticksTo(max, 3).forEach(t => { const y = top + ph * (1 - t / max); s += `<line class="grid-l" x1="${left}" x2="${W - right}" y1="${y}" y2="${y}"/><text x="${left - 8}" y="${y + 4}" text-anchor="end" class="t-q val">${esc(d.tick ? d.tick(t) : fmt(t, d.fmt === 'pct' ? 'pct' : 'int'))}</text>`; });
+  items.forEach((r, i) => {
+    const cx = left + slot * i + slot / 2, x = cx - bw / 2;
+    const future = r.v == null;
+    const f = future ? 0 : clamp(r.v / max, 0, 1);
+    if (future) s += `<rect x="${x}" y="${top + ph - 18}" width="${bw}" height="18" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="3 3" data-tip="${esc(r.label)}: not yet"/>`;
+    else s += `<rect class="anim ox-b ${r.hi ? 'm-acc' : 'm-mut'}" data-k="${esc(r.k || r.label)}" data-t0="scaleY(0)" data-t="scaleY(${f.toFixed(4)})" x="${x}" y="${top}" width="${bw}" height="${ph}" rx="4" data-tip="${esc(r.label + ': ' + fmt(r.v, d.fmt) + (r.note ? '\n' + r.note : ''))}"/>`;
+    if (!future && (r.hi || r.showv)) s += `<text x="${cx}" y="${top + ph * (1 - f) - 7}" text-anchor="middle" class="val ${r.hi ? 't-acc' : 't-ink'}">${esc(fmt(r.v, d.fmt))}</text>`;
+    s += `<text x="${cx}" y="${H - 8}" text-anchor="middle" class="${r.hi ? 't-ink' : 't-q'}" font-size="11.5" ${r.hi ? 'font-weight="700"' : ''}>${esc(r.label)}</text>`;
+    if (r.deadline) s += `<rect x="${cx - 3}" y="${H - 27}" width="6" height="6" transform="rotate(45 ${cx} ${H - 24})" fill="var(--surface)" stroke="var(--viz)" stroke-width="1.5"><title>Sunday deadline</title></rect>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.cat || 'Period', d.valName || 'Value'], items.map(r => [r.label, r.v == null ? 'not yet' : fmt(r.v, d.fmt)])) };
+};
+
+R.gcols = (d, W) => {
+  const g = d.groups, ns = d.series.length, left = 44, right = 12, top = 18, H = d.h || 220, bot = 26;
+  const ph = H - top - bot, all = d.series.flatMap(s => s.vals.filter(v => v != null));
+  const max = d.max || niceMax(Math.max(...all) * 1.08), slot = (W - left - right) / g.length;
+  const bw = Math.min(26, slot * .7 / ns);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  ticksTo(max, 3).forEach(t => { const y = top + ph * (1 - t / max); s += `<line class="grid-l" x1="${left}" x2="${W - right}" y1="${y}" y2="${y}"/><text x="${left - 8}" y="${y + 4}" text-anchor="end" class="t-q val">${esc(fmt(t, d.tickFmt || (d.fmt === 'pct' ? 'pct' : 'int')))}</text>`; });
+  g.forEach((lab, gi) => {
+    const cx = left + slot * gi + slot / 2;
+    d.series.forEach((se, si) => {
+      const v = se.vals[gi]; const x = cx - (ns * bw + (ns - 1) * 3) / 2 + si * (bw + 3);
+      if (v == null) { s += `<rect x="${x}" y="${top + ph - 14}" width="${bw}" height="14" rx="3" fill="none" stroke="var(--line)" stroke-dasharray="3 3"/>`; return; }
+      const f = clamp(v / max, 0, 1);
+      s += `<rect class="anim ox-b ${se.cls || (si === 0 ? 'm-acc' : 'm-mut')}" data-k="${esc(se.name + lab)}" data-t0="scaleY(0)" data-t="scaleY(${f.toFixed(4)})" x="${x}" y="${top}" width="${bw}" height="${ph}" rx="3" data-tip="${esc(lab + ' · ' + se.name + ': ' + fmt(v, d.fmt))}"/>`;
+    });
+    s += `<text x="${cx}" y="${H - 8}" text-anchor="middle" class="t-q" font-size="11.5">${esc(lab)}</text>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.cat || 'Group', ...d.series.map(x => x.name)], g.map((lab, gi) => [lab, ...d.series.map(x => x.vals[gi] == null ? 'not yet' : fmt(x.vals[gi], d.fmt))])) };
+};
+
+R.line = (d, W, key, first) => {
+  const xs = d.x, n = xs.length, left = 46, right = 118, top = 16, H = d.h || 230, bot = 26;
+  const ph = H - top - bot, pw = W - left - right;
+  const vals = d.series.flatMap(s => s.vals.filter(v => v != null));
+  const yMin = d.yMin ?? 0, yMax = d.yMax ?? niceMax(Math.max(...vals) * 1.05);
+  const x = i => left + (n === 1 ? pw / 2 : i * pw / (n - 1)), y = v => top + ph * (1 - (v - yMin) / (yMax - yMin));
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  ticksTo(yMax - yMin, 4).map(t => t + yMin).forEach(t => { s += `<line class="grid-l" x1="${left}" x2="${left + pw}" y1="${y(t)}" y2="${y(t)}"/><text x="${left - 8}" y="${y(t) + 4}" text-anchor="end" class="t-q val">${esc(fmt(t, d.tickFmt || d.fmt))}</text>`; });
+  xs.forEach((lab, i) => { if (n <= 10 || i % 2 === 0) s += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" class="t-q" font-size="11.5">${esc(lab)}</text>`; });
+  if (d.cur != null) s += `<line x1="${x(d.cur)}" x2="${x(d.cur)}" y1="${top}" y2="${top + ph}" stroke="var(--ink-3)" stroke-dasharray="3 4" opacity=".7"/>`;
+  const labels = [];
+  d.series.forEach((se, si) => {
+    const pts = se.vals.map((v, i) => v == null ? null : [x(i), y(v)]).filter(Boolean);
+    if (!pts.length) return;
+    const dstr = 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L');
+    let len = 0; for (let j = 1; j < pts.length; j++) len += Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]);
+    const acc = se.accent !== false && si === 0;
+    if (acc) { const gid = 'ag-' + String(key || 'c').replace(/[^a-z0-9]/gi, ''); s += `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--viz);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--viz);stop-opacity:0"/></linearGradient></defs><path class="${first ? 'areafade' : ''}" d="${dstr} L${pts.at(-1)[0].toFixed(1)},${top + ph} L${pts[0][0].toFixed(1)},${top + ph} Z" fill="url(#${gid})"/>`; }
+    s += `<path d="${dstr}" fill="none" class="${acc ? 's-acc' : 's-mut'} ${first ? 'draw' : ''}" style="--len:${Math.ceil(len) + 2}" stroke-width="${acc ? 2.5 : 2}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const lp = pts.at(-1), lv = se.vals[se.vals.map((v, i) => v != null ? i : -1).filter(i => i >= 0).at(-1)];
+    s += `<circle cx="${lp[0]}" cy="${lp[1]}" r="4" class="${acc ? 'm-acc' : 'm-mut'}"/>`;
+    labels.push({ y: lp[1], x: lp[0], text: `${se.name} ${fmt(lv, d.fmt)}`, acc });
+  });
+  labels.sort((a, b) => a.y - b.y); for (let j = 1; j < labels.length; j++) if (labels[j].y - labels[j - 1].y < 16) labels[j].y = labels[j - 1].y + 16;
+  labels.forEach(l => { s += `<text x="${l.x + 9}" y="${l.y + 4}" class="${l.acc ? 't-acc' : 't-q'}" font-size="12">${esc(l.text)}</text>`; });
+  if (d.gap && d.series.length > 1) {
+    const li = d.gap.at; const a = d.series[0].vals[li], b = d.series[1].vals[li];
+    if (a != null && b != null) { const gx = x(li) - 14; s += `<line x1="${gx}" x2="${gx}" y1="${y(a)}" y2="${y(b)}" stroke="var(--ink)" stroke-width="1.4"/><text x="${gx - 6}" y="${(y(a) + y(b)) / 2 + 4}" text-anchor="end" class="t-ink" font-weight="700">${esc(d.gap.text(a, b))}</text>`; }
+  }
+  xs.forEach((lab, i) => {
+    const tipTxt = lab + '\n' + d.series.map(se => `${se.name}: ${fmt(se.vals[i], d.fmt)}`).join('\n');
+    const cw = n === 1 ? pw : pw / (n - 1);
+    s += `<g class="hov"><line class="guide" x1="${x(i)}" x2="${x(i)}" y1="${top}" y2="${top + ph}" stroke="var(--ink-3)"/>${d.series.map((se, si) => se.vals[i] == null ? '' : `<circle class="guide" cx="${x(i)}" cy="${y(se.vals[i])}" r="4" fill="var(--surface)" stroke="${si === 0 && se.accent !== false ? 'var(--viz)' : 'var(--muted-mark)'}" stroke-width="2"/>`).join('')}<rect class="hit" x="${x(i) - cw / 2}" y="${top}" width="${cw}" height="${ph}" data-tip="${esc(tipTxt)}"/></g>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.cat || 'Period', ...d.series.map(x => x.name)], xs.map((lab, i) => [lab, ...d.series.map(x => fmt(x.vals[i], d.fmt))])) };
+};
+
+R.funnel = (d, W) => {
+  const items = d.items, n = items.length, lw = Math.min(170, W * .3), cx = lw + 14 + (W - lw - 14 - 96) / 2, bwMax = W - lw - 14 - 96;
+  const rh = 24, step = 40, top = 6, H = top + n * step;
+  const first = items[0].v; const rates = items.map((r, i) => i ? r.v / items[i - 1].v : 1); const worst = Math.min(...rates.slice(1));
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  items.forEach((r, i) => {
+    const y = top + i * step, f = r.v / first, hot = i > 0 && rates[i] === worst;
+    s += `<text x="${lw}" y="${y + rh / 2 + 4}" text-anchor="end" class="t-ink">${esc(r.label)}</text>`;
+    s += `<rect class="anim ox-c ${hot ? 'm-acc' : 'm-mut'}" data-k="${esc(r.label)}" data-t0="scaleX(0)" data-t="scaleX(${f.toFixed(4)})" x="${cx - bwMax / 2}" y="${y}" width="${bwMax}" height="${rh}" rx="4" data-tip="${esc(r.label + ': ' + fmt(r.v, 'int') + (i ? `\n${Math.round(rates[i] * 100)}% of the stage before` : ''))}"/>`;
+    s += `<text x="${cx}" y="${y + rh / 2 + 4}" text-anchor="middle" class="val ${hot ? 't-ink' : 't-ink'}">${fmt(r.v, 'int')}</text>`;
+    if (i) s += `<text x="${W - 4}" y="${y + rh / 2 + 4}" text-anchor="end" class="val ${hot ? 't-acc' : 't-q'}">${Math.round(rates[i] * 100)}% kept</text>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf(['Stage', 'Count', 'Kept from previous'], items.map((r, i) => [r.label, fmt(r.v, 'int'), i ? `${Math.round(rates[i] * 100)}%` : '—'])) };
+};
+
+R.stack = (d, W) => {
+  const items = d.items, n = items.length, lw = Math.min(190, W * .33), x0 = lw + 12, bw = W - x0 - 52, rh = 24, gap = 12, H = n * (rh + gap) + 2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  items.forEach((r, i) => {
+    const y = i * (rh + gap), tot = r.parts.reduce((a, b) => a + b, 0) || 1; let acc = 0;
+    s += `<text x="${x0 - 10}" y="${y + rh / 2 + 4}" text-anchor="end" class="t-ink">${esc(trunc(r.label, Math.floor(lw / 6.6)))}</text>`;
+    r.parts.forEach((p, pi) => {
+      const f = p / tot, off = acc / tot * bw; acc += p;
+      const fill = d.colors[pi];
+      s += `<rect class="anim ox-l" style="fill:${fill}" data-k="${esc(r.label + pi)}" data-t0="translateX(${off.toFixed(1)}px) scaleX(0)" data-t="translateX(${off.toFixed(1)}px) scaleX(${Math.max(0, f - .004).toFixed(4)})" x="${x0}" y="${y}" width="${bw}" height="${rh}" data-tip="${esc(r.label + ' · ' + d.names[pi] + ': ' + Math.round(f * 100) + '%' + (d.unit ? ` (${fmt(p, 'int')} ${d.unit})` : ''))}"/>`;
+      if (f >= .12 && pi === 0) s += `<text x="${x0 + 8}" y="${y + rh / 2 + 4}" class="val t-ink" style="fill:${d.labelInk0 || 'var(--ink)'}">${Math.round(f * 100)}%</text>`;
+    });
+    const lastF = r.parts.at(-1) / tot;
+    s += `<text x="${x0 + bw + 8}" y="${y + rh / 2 + 4}" class="val t-q">${Math.round(lastF * 100)}%</text>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.cat || 'Item', ...d.names], items.map(r => { const tot = r.parts.reduce((a, b) => a + b, 0) || 1; return [r.label, ...r.parts.map(p => Math.round(p / tot * 100) + '%')]; })) };
+};
+
+R.bullet = (d, W) => {
+  const items = d.items, lw = Math.min(220, W * .38), x0 = lw + 14, bw = W - x0 - 86, rh = 24, step = 42, H = items.length * step;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  items.forEach((r, i) => {
+    const y = i * step + 4, px = v => bw * clamp(v / r.max, 0, 1), miss = r.down ? r.actual > r.target : r.actual < r.target;
+    s += `<text x="${x0 - 12}" y="${y + rh / 2 + 4}" text-anchor="end" class="t-ink" font-size="12">${esc(trunc(r.label, Math.floor(lw / 6.4)))}</text>`;
+    s += `<rect x="${x0}" y="${y}" width="${px(r.poor)}" height="${rh}" fill="var(--muted-mark)" fill-opacity=".55"/><rect x="${x0 + px(r.poor)}" y="${y}" width="${px(r.ok) - px(r.poor)}" height="${rh}" fill="var(--muted-mark)" fill-opacity=".32"/><rect x="${x0 + px(r.ok)}" y="${y}" width="${bw - px(r.ok)}" height="${rh}" fill="var(--muted-mark)" fill-opacity=".14"/>`;
+    s += `<rect class="anim ox-l" data-k="${esc(r.label)}" data-t0="scaleX(0)" data-t="scaleX(${clamp(r.actual / r.max, 0, 1).toFixed(4)})" x="${x0}" y="${y + 8}" width="${bw}" height="8" style="fill:${miss ? 'var(--viz)' : 'var(--ink-2)'}" data-tip="${esc(`${r.label}\nActual ${fmt(r.actual, r.fmt)} · target ${fmt(r.target, r.fmt)}`)}"/>`;
+    s += `<rect class="anim" data-k="${esc(r.label + 't')}" data-t="translateX(${px(r.target).toFixed(1)}px)" x="${x0 - 1}" y="${y + 2}" width="2.5" height="${rh - 4}" fill="var(--ink)"/>`;
+    s += `<text x="${x0 + bw + 10}" y="${y + rh / 2 + 4}" class="val ${miss ? 't-acc' : 't-ink'}">${esc(fmt(r.actual, r.fmt))} / ${esc(fmt(r.target, r.fmt))}</text>`;
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf(['Measure', 'Actual', 'Target'], items.map(r => [r.label, fmt(r.actual, r.fmt), fmt(r.target, r.fmt)])) };
+};
+
+R.heat = (d, W) => {
+  const rows = d.rows, cols = d.cols, lw = Math.min(120, W * .26), x0 = lw + 10, cw = (W - x0 - 4) / cols.length, ch = 30, top = 22, H = top + rows.length * (ch + 4);
+  const all = d.vals.flat().filter(v => v != null), mn = d.min ?? Math.min(...all), mx = d.max ?? Math.max(...all);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.label || '')}">`;
+  cols.forEach((c, j) => { s += `<text x="${x0 + j * cw + cw / 2}" y="14" text-anchor="middle" class="t-q" font-size="11.5">${esc(c)}</text>`; });
+  rows.forEach((r, i) => {
+    const y = top + i * (ch + 4);
+    s += `<text x="${x0 - 10}" y="${y + ch / 2 + 4}" text-anchor="end" class="t-ink" font-size="12">${esc(r)}</text>`;
+    cols.forEach((c, j) => {
+      const v = d.vals[i][j]; const x = x0 + j * cw + 2;
+      if (v == null) { s += `<rect x="${x}" y="${y}" width="${cw - 4}" height="${ch}" rx="4" fill="none" stroke="var(--line)" stroke-dasharray="3 3"/>`; return; }
+      const t = (v - mn) / ((mx - mn) || 1), op = (.14 + .86 * t).toFixed(3);
+      s += `<rect class="cell" x="${x}" y="${y}" width="${cw - 4}" height="${ch}" rx="4" fill="var(--viz)" fill-opacity="${op}" data-tip="${esc(`${r} · ${c}: ${fmt(v, d.fmt)}`)}"/>`;
+      s += `<text x="${x + (cw - 4) / 2}" y="${y + ch / 2 + 4}" text-anchor="middle" class="val" style="fill:${t > .55 ? 'var(--on-viz)' : 'var(--ink)'}">${esc(fmt(v, d.fmt))}</text>`;
+    });
+  });
+  s += '</svg>';
+  return { svg: s, table: tableOf([d.rowName || 'Row', ...cols], rows.map((r, i) => [r, ...d.vals[i].map(v => v == null ? '—' : fmt(v, d.fmt))])) };
+};
+// ---------- dashboards (all data illustrative) ----------
+const pc = (k, p, c) => k.pilot ? p : c;
+const cut = (arr, i) => arr.map((v, j) => j <= i ? v : null);
+const wkItems = (arr, k, f) => arr.map((v, j) => ({ k: 'w' + j, label: WEEKS[j], v: j <= k.i ? v : null, hi: j === k.i, deadline: true, note: f ? f(j) : '' }));
+const scaleW = k => .45 + .55 * k.w / 8;
+const TAGS = { 'Public': 'var(--tag-public)', 'Directory': 'var(--tag-directory)', 'FERPA record': 'var(--tag-ferpa)', 'GLBA': 'var(--tag-glba)', 'Pre-student': 'var(--tag-prestudent)', 'Sensitive': 'var(--tag-sensitive)', 'De-identified': 'var(--tag-deid)' };
+function K(id, name, fmtk, good, p, c, m) { return Object.assign({ id, name, fmt: fmtk, good, p, c }, m); }
+
+const FLAGS = { new: [38, 61, 44, 35, 52, 40, 29, 18], res: [22, 49, 47, 38, 41, 45, 36, 31], open: [16, 28, 25, 22, 33, 28, 21, 8] };
+const FLAGS_C = { new: [41, 70, 58, 49, 66, 57, 44, 30], res: [9, 22, 25, 24, 27, 29, 28, 26], open: [32, 80, 113, 138, 177, 205, 221, 225] };
+
+const DASH = [
+// ===== Leadership
+{ id: 'exec', name: 'Executive', group: 'Leadership', who: 'Chancellor and Executive Vice Chancellor', decides: 'Scale or stop the pilot, budget and staffing, targets for next year.', cadence: 'Weekly digest', tag: 'De-identified', owner: "Chancellor's office", reports: 'IPEDS, SACSCOC, THECB, HB 8 funding',
+  kpis: [
+    K('active_students', 'Active students', 'int', 'up', trend(452, 431, 2, 1), trend(4180, 4020, 12, 2), { def: 'Students with an active enrollment in the current 8-week session.', f: 'count(distinct Enrollment.person_id where status = "active" and session = current)', src: ['Student records'], ent: ['Enrollment', 'Student', 'Term'], rep: 'CBM001, IPEDS Fall Enrollment' }),
+    K('persistence_proj', 'Projected next-term persistence', 'pct', 'up', trend(83, 86, 1, 3), trend(77, 79, 1, 4), { def: 'Share of current students expected to enroll in the next 8-week session or complete, from registrations and holds to date.', f: 'count(Student registered next session or completed) / count(Student active this session)', src: ['Student records', 'Warehouse'], ent: ['Student', 'Enrollment', 'Hold'], rep: 'PDP, Achieving the Dream' }),
+    K('cost_per_enrolled', 'Cost per enrolled student', 'money', 'down', trend(612, 548, 8, 5), trend(905, 890, 8, 6), { def: 'Recruitment and onboarding cost divided by students active at census.', f: 'sum(Spend) / count(Enrollment at census_date)', src: ['Finance system', 'EspoCRM', 'Student records'], ent: ['Enrollment', 'Lead'], rep: 'Board, HB 8' }),
+    K('flagged_reached', 'Flagged students reached in 48 hours', 'pct', 'up', trend(71, 88, 2, 7), trend(38, 46, 2, 8), { def: 'Share of risk flags with a two-way contact within 48 hours.', f: 'count(RiskSignal with Touch within 48h) / count(RiskSignal)', src: ['Warehouse', 'Escalation service'], ent: ['RiskSignal', 'Touch', 'Case'], rep: 'Internal' }),
+  ],
+  insight: k => { const p = 86 - (8 - k.w) * .4, c = 79 - (8 - k.w) * .2; return { tone: 'good', h: `Pilot students are on track to persist ${Math.round(p - c)} points above comparison sections`, p: `Projected next-term persistence is ${Math.round(p)}% for the pilot and ${Math.round(c)}% for comparison sections at week ${k.w}. Treat it as provisional until the matched comparison is run.` }; },
+  charts: [
+    { id: 'persist', kind: 'line', span: 1, title: () => 'Persistence gap widens each term', sub: 'Share of each entering cohort still enrolled or completed, by 8-week term', legend: [['Pilot', 'acc'], ['Comparison', 'mut']],
+      data: () => ({ x: ['Term 1', 'Term 2', 'Term 3', 'Term 4', 'Term 5', 'Term 6'], series: [{ name: 'Pilot', vals: [100, 86, 79, 74, 69, 65] }, { name: 'Comparison', vals: [100, 79, 71, 65, 60, 56] }], yMin: 40, yMax: 100, fmt: 'pct', gap: { at: 5, text: (a, b) => `+${a - b} pts` }, cat: 'Term' }) },
+    { id: 'heart', kind: 'bullet', span: 1, title: k => { const a = 50 + k.w; return a >= 70 ? 'All five HEART measures meet target' : `Four of five HEART measures meet target; adoption is ${70 - a} points short`; }, sub: 'Bar: actual · tick: target · bands: poor, fair, good',
+      data: k => ({ items: [
+        { label: 'Happiness: CSAT, 1 to 5', actual: 4.2 + k.w * .025, target: 4.2, poor: 3.5, ok: 4, max: 5, fmt: 'dec1' },
+        { label: 'Engagement: % active weekly', actual: 58 + k.w * .5, target: 55, poor: 35, ok: 50, max: 100, fmt: 'pct' },
+        { label: 'Adoption: % using navigator', actual: 50 + k.w, target: 70, poor: 40, ok: 60, max: 100, fmt: 'pct' },
+        { label: 'Retention: % active in week 4', actual: 74, target: 70, poor: 50, ok: 65, max: 100, fmt: 'pct' },
+        { label: 'Task success: % resolved alone', actual: 72 + k.w * .75, target: 75, poor: 60, ok: 70, max: 100, fmt: 'pct' } ] }) },
+    { id: 'programs', kind: 'hbar', span: 2, title: k => 'Business Administration carries a third of pilot enrollment', sub: 'Active students by program this week', data: k => { const f = pc(k, 1, 9.3); const base = [['Business Administration', 148], ['Information Technology Support', 96], ['Health Information Technology', 81], ['Early Childhood Education', 62], ['Logistics and Supply Chain', 44]]; return { items: base.map(([l, v], j) => ({ label: l, v: v * f * (1 - (k.w - 1) * .006), hi: j === 0 })), fmt: 'int', cat: 'Program', valName: 'Active students' }; } },
+  ] },
+
+{ id: 'ir', name: 'Institutional research', group: 'Leadership', who: 'Director of institutional research', decides: 'A/B design and readouts, accreditation evidence, external reporting.', cadence: 'Per term and annual', tag: 'De-identified', owner: 'Director of institutional research', reports: 'IPEDS, CBM, Clearinghouse PDP, SACSCOC 8.1',
+  kpis: [
+    K('next_session_persist', 'Next 8-week session persistence', 'pct', 'up', trend(80, 86, 1, 11), trend(73, 77, 1, 12), { def: 'Students active this session who are registered for the next one, or completed.', f: 'count(Enrollment next_session) / count(Student active)', src: ['Student records'], ent: ['Enrollment', 'Term', 'Student'], rep: 'PDP' }),
+    K('momentum', 'Competencies earned so far (median)', 'dec1', 'up', trend(.2, 2.7, .05, 13), trend(.1, 2.1, .05, 14), { def: 'Median competencies attained per first-term student; the competency version of credit momentum.', f: 'median(count(CompetencyAttainment) per Student where first_term)', src: ['Student records', 'Feedback engine'], ent: ['Competency', 'Student', 'Grade'], rep: 'Achieving the Dream momentum' }),
+    K('equity_gap', 'Largest equity gap', 'dec1', 'down', trend(9.4, 5.1, .3, 15), trend(12.2, 11.4, .3, 16), { def: 'Largest persistence gap, in points, between any monitored student group and all students.', f: 'max(abs(persistence(group) - persistence(all)))', src: ['Warehouse'], ent: ['Student', 'Enrollment'], rep: 'SACSCOC 8.1 disaggregation', unit: 'pts' }),
+    K('reports_on_time', 'External reports on time', 'pct', 'up', [100, 100, 100, 100, 100, 100, 100, 100], [83, 83, 86, 86, 86, 88, 88, 88], { def: 'Share of external reporting deadlines met this year.', f: 'count(Report submitted <= due) / count(Report due)', src: ['Warehouse'], ent: ['Term'], rep: 'IPEDS, CBM, Clearinghouse' }),
+  ],
+  insight: k => ({ tone: 'info', h: k.pilot ? 'Every entry cohort keeps at least 65% by its sixth term' : 'Comparison cohorts fall below 60% by their sixth term', p: 'Age 25+ and part-time students carry the largest gaps; the pilot narrows both. Confirm with the matched comparison before the SACSCOC narrative cites it.' }),
+  charts: [
+    { id: 'cohorts', kind: 'heat', span: 2, title: k => k.pilot ? 'Pilot cohorts hold 65–70% by their sixth term' : 'Comparison cohorts slide to 55–60% by their sixth term', sub: 'Share of each entry cohort still enrolled or completed, by 8-week terms since entry',
+      data: k => { const base = k.pilot ? [100, 86, 79, 74, 69, 65] : [100, 79, 71, 65, 60, 56]; const rows = ['Fall 1 2025', 'Fall 2 2025', 'Spring 1 2026', 'Spring 2 2026', 'Summer 2026', 'Fall 1 2026']; return { rows, cols: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'], vals: rows.map((r, i) => base.map((v, j) => j < 6 - i ? Math.round(v + (rnd(i * 7 + j, k.pilot ? 3 : 4) - .5) * 4 + (j ? i * .6 : 0)) : null)), fmt: 'pct', min: 50, max: 100, rowName: 'Entry cohort' }; } },
+    { id: 'equity', kind: 'hbar', span: 1, title: k => k.pilot ? 'Part-time students trail by the most, 5 points' : 'Age 25+ students trail by 12 points', sub: 'Persistence gap against all students, points',
+      data: k => { const p = [['Part-time', 5.1], ['Age 25 and over', 4.6], ['First generation', 3.2], ['Pell recipients', 2.8], ['Working full time', 2.2]], c = [['Age 25 and over', 12.0], ['Part-time', 10.4], ['Pell recipients', 6.9], ['First generation', 6.1], ['Working full time', 5.3]]; const f = 1 + (8 - k.w) * .03; return { items: (k.pilot ? p : c).map(([l, v], j) => ({ label: l, v: v * f, hi: j === 0 })), fmt: 'dec1', max: 14, cat: 'Group', valName: 'Gap (points)' }; } },
+  ],
+  work: { title: 'Reporting calendar', sub: 'Due dates for external reports, from the ontology metric definitions', verb: 'Mark submitted', items: k => [
+    { id: 'ir1', who: 'IPEDS Fall Enrollment', why: ['Due in 9 days', 'Uses: Enrollment at census'], sev: 'warn', sl: 'Due soon' },
+    { id: 'ir2', who: 'CBM001 student report', why: ['Due after census', 'Contact hours must match CBM004'], sev: k.w >= 3 ? 'serious' : 'info', sl: k.w >= 3 ? 'Open' : 'Later' },
+    { id: 'ir3', who: 'Clearinghouse enrollment file', why: ['Every 60 days or less', 'Status, last date of attendance'], sev: 'warn', sl: 'Due soon' },
+    { id: 'ir4', who: 'Postsecondary Data Partnership', why: ['Replaces VFA', 'Due 1 September'], sev: 'info', sl: 'Later' } ] } },
+
+{ id: 'finance', name: 'Bursar and finance', group: 'Leadership', who: 'Bursar and finance office', decides: 'Payment plans and holds each week, tuition model each year.', cadence: 'Weekly', tag: 'GLBA', owner: 'Bursar', reports: 'IPEDS Finance, HB 8, 1098-T',
+  kpis: [
+    K('net_rev_student', 'Net revenue per student', 'money', 'up', trend(2310, 2385, 10, 21), trend(2290, 2302, 10, 22), { def: 'Tuition and fees billed, less institutional aid, per active student this session.', f: 'sum(Charge - InstitutionalAid) / count(Student active)', src: ['Student records', 'Finance system'], ent: ['Hold', 'Student', 'AidFile'] }),
+    K('ar_90', 'Receivables over 90 days', 'money', 'down', trend(18400, 12100, 300, 23), trend(164000, 171000, 2000, 24), { def: 'Student balances unpaid for more than 90 days.', f: 'sum(Charge.balance where age > 90 days)', src: ['Student records', 'Finance system'], ent: ['Hold', 'Student'] }),
+    K('r2t4_due', 'Aid to return for withdrawals', 'money', 'down', trend(0, 6400, 200, 25), trend(12000, 58000, 900, 26), { def: 'Federal aid that must be returned for students who withdrew, due within 45 days.', f: 'sum(R2T4.amount where status = "due")', src: ['Aid workflow', 'Student records'], ent: ['AidFile', 'Enrollment'], rep: 'Title IV return of funds' }),
+    K('cost_per_completion', 'Cost per completed competency', 'money', 'down', trend(940, 870, 6, 27), trend(1290, 1265, 6, 28), { def: 'Instruction and support cost per competency attained this session.', f: 'sum(Cost) / count(CompetencyAttainment)', src: ['Finance system', 'Student records'], ent: ['Competency'] }),
+  ],
+  insight: k => ({ tone: k.w > 5 ? 'warn' : 'info', h: `Collections are at ${Math.round(96 + k.w * .4 - (k.pilot ? 0 : 7))}% of plan by week ${k.w}`, p: k.pilot ? 'Payment plans set up through the navigator keep balances current; the 90-day bucket is shrinking.' : 'Balances older than 90 days keep growing in comparison sections.' }),
+  charts: [
+    { id: 'aging', kind: 'hbar', span: 1, title: k => k.pilot ? 'Most pilot balances are under 30 days old' : 'A third of comparison balances are over 90 days old', sub: 'Outstanding student balances by age',
+      data: k => { const v = k.pilot ? [61000, 21000, 9000, 18400 - k.w * 790] : [420000, 160000, 98000, 164000 + k.w * 880]; return { items: ['0–30 days', '31–60 days', '61–90 days', 'Over 90 days'].map((l, j) => ({ label: l, v: v[j], hi: j === 3 })), fmt: 'money', cat: 'Age', valName: 'Balance' }; } },
+    { id: 'collect', kind: 'line', span: 1, title: k => 'Collections track the plan through the term', sub: 'Cumulative tuition collected, $ thousands', legend: [['Collected', 'acc'], ['Plan', 'mut']],
+      data: k => { const f = pc(k, 1, 9.1); const plan = [140, 270, 390, 500, 600, 690, 770, 840].map(v => v * f), got = plan.map((v, j) => v * (pc(k, .99, .9) + j * .004)); return { x: WEEKS, series: [{ name: 'Collected', vals: cut(got, k.i) }, { name: 'Plan', vals: plan }], fmt: 'int', cur: k.i, cat: 'Week' }; } },
+  ] },
+
+// ===== Recruitment
+{ id: 'marketing', name: 'Enrollment marketing', group: 'Recruitment', who: 'Enrollment marketing lead', decides: 'Weekly channel budget and creative.', cadence: 'Daily', tag: 'Pre-student', owner: 'Enrollment marketing lead', reports: 'Texting consent records',
+  kpis: [
+    K('speed_to_lead', 'Median speed-to-lead', 'min', 'down', trend(6, 3, .4, 31), trend(190, 168, 8, 32), { def: 'Median minutes from a new Lead to its first two-way Touch.', f: 'median(first(Touch.two_way).at - Lead.created_at)', src: ['EspoCRM', 'Navigator'], ent: ['Lead', 'Touch'] }),
+    K('lead_to_enroll', 'Lead-to-enrollment rate', 'pct1', 'up', trend(8.5, 10.3, .2, 33), trend(5.1, 5.6, .2, 34), { def: 'Leads from this intake who are active at census.', f: 'count(Enrollment at census where Lead.intake = current) / count(Lead)', src: ['EspoCRM', 'Student records'], ent: ['Lead', 'Application', 'Enrollment'] }),
+    K('leads_week', 'New leads this week', 'int', 'up', trend(420, 610, 30, 35), trend(2900, 3300, 90, 36), { def: 'Leads created this week, after deduplication by person_id.', f: 'count(distinct Lead.person_id where created in week)', src: ['EspoCRM', 'Identity service'], ent: ['Lead', 'Person'] }),
+    K('cpe_paid', 'Cost per enrolled, paid channels', 'money', 'down', trend(1090, 940, 15, 37), trend(1480, 1450, 15, 38), { def: 'Paid search and social spend divided by census-active students first attributed to those channels.', f: 'sum(Spend where channel in paid) / count(Enrollment where first_touch in paid)', src: ['Ad platforms', 'EspoCRM', 'Student records'], ent: ['Lead', 'Touch', 'Enrollment'] }),
+  ],
+  insight: k => ({ tone: 'good', h: k.pilot ? 'The navigator answers 71% of new leads in under five minutes' : 'Staff answer 9% of new leads in under five minutes', p: 'Leads contacted within an hour are about seven times as likely to qualify (HBR, 2011). Employer referrals stay the cheapest source of enrolled students.' }),
+  charts: [
+    { id: 'stl', kind: 'gcols', span: 1, title: () => 'Pilot leads get an answer in minutes; comparison leads wait hours', sub: 'Share of new leads by time to first response', legend: [['Pilot', 'acc'], ['Comparison', 'mut']],
+      data: k => ({ groups: ['<5 min', '5–60 min', '1–4 h', '4–24 h', '>24 h'], series: [{ name: 'Pilot', vals: [71, 17, 7, 4, 1], cls: k.pilot ? 'm-acc' : 'm-mut2' }, { name: 'Comparison', vals: [9, 22, 24, 27, 18], cls: k.pilot ? 'm-mut' : 'm-acc' }], fmt: 'pct', cat: 'Time to first response' }) },
+    { id: 'cpe', kind: 'hbar', span: 1, title: () => 'Employer referrals cost $210 per enrolled student; paid social $1,350', sub: 'Cost per census-active student, by first-touch channel',
+      data: k => { const f = pc(k, 1, 1.35); return { items: [['Paid social', 1350], ['Paid search', 800], ['Community events', 609], ['Employer referral', 210], ['Dallas College referral', 125], ['Organic and web', 125]].map(([l, v]) => ({ label: l, v: v * f * (1 - k.w * .004), hi: l === 'Employer referral' })), fmt: 'money', cat: 'Channel', valName: 'Cost per enrolled' }; } },
+    { id: 'leads', kind: 'cols', span: 2, title: k => `New leads peak in week ${k.w >= 6 ? 6 : k.w} as the next intake opens`, sub: 'Leads per week · ◆ Sunday deadline',
+      data: k => ({ items: wkItems(pc(k, trend(420, 640, 40, 35), trend(2900, 3350, 120, 36)), k), fmt: 'int', cat: 'Week', valName: 'Leads' }) },
+  ] },
+
+{ id: 'admissions', name: 'Admissions', group: 'Recruitment', who: 'Director of admissions', decides: 'Who gets same-day outreach; staffing for the queues.', cadence: 'Near real time', tag: 'Pre-student', owner: 'Director of admissions', reports: 'CBM001 feed, IPEDS',
+  kpis: [
+    K('apps_week', 'Applications submitted this week', 'int', 'up', trend(70, 122, 6, 41), trend(510, 560, 15, 42), { def: 'Applications moved to submitted this week.', f: 'count(Application where status changed to "submitted" in week)', src: ['EspoCRM'], ent: ['Application'] }),
+    K('days_to_enroll', 'Median days, application to enrollment', 'days', 'down', trend(9, 5.5, .3, 43), trend(16, 15, .3, 44), { def: 'Median days from application submitted to first enrollment.', f: 'median(Enrollment.created_at - Application.submitted_at)', src: ['EspoCRM', 'Student records'], ent: ['Application', 'Enrollment'] }),
+    K('melt', 'Melt rate', 'pct1', 'down', trend(11, 7.5, .3, 45), trend(17, 16, .3, 46), { def: 'Admitted and registered students with no course activity by census.', f: 'count(Student registered and no Open edX activity by census) / count(Student registered)', src: ['Student records', 'Open edX'], ent: ['Enrollment', 'Student'] }),
+    K('docs_complete', 'Files with documents complete', 'pct', 'up', trend(62, 84, 1.5, 47), trend(48, 52, 1.5, 48), { def: 'Submitted applications with every required document received.', f: 'count(Application where documents_complete) / count(Application submitted)', src: ['EspoCRM'], ent: ['Application'] }),
+  ],
+  insight: k => ({ tone: 'warn', h: 'Half of engaged leads never start an application', p: 'That is the weakest step in the funnel. The navigator follow-up after a first conversation is the lever; transcripts are the most common stall after that.' }),
+  charts: [
+    { id: 'funnel', kind: 'funnel', span: 1, title: k => 'About 1 in 10 inquiries reaches census', sub: 'This intake, cumulative to the selected week',
+      data: k => { const f = scaleW(k) * pc(k, 1, 7.2), sh = pc(k, [1, .55, .5, .71, .94, .79, .77, .92], [1, .44, .41, .66, .9, .7, .7, .86]); const lab = ['Inquiry', 'Engaged lead', 'Application started', 'Application submitted', 'Admitted', 'Aid record received', 'Registered', 'Active at census']; let v = 4200 * f; return { items: lab.map((l, j) => { if (j) v *= sh[j]; return { label: l, v }; }) }; } },
+    { id: 'appsw', kind: 'cols', span: 1, title: k => `${fmt(pc(k, trend(70, 122, 6, 41), trend(510, 560, 15, 42))[k.i], 'int')} applications submitted in week ${k.w}`, sub: 'Applications submitted per week · ◆ Sunday deadline',
+      data: k => ({ items: wkItems(pc(k, trend(70, 122, 6, 41), trend(510, 560, 15, 42)), k), fmt: 'int', cat: 'Week', valName: 'Applications' }) },
+  ],
+  work: { title: 'Stalled applications', sub: 'Explained, not scored. The navigator has already nudged each one.', verb: 'Call', items: k => [
+    { id: 'ad1', who: 'Applicant 20817', why: ['Transcript missing 6 days', 'Opened 3 nudges', 'Prefers evenings'], sev: 'critical', sl: 'Stalled' },
+    { id: 'ad2', who: 'Applicant 21044', why: ['Started, not submitted', 'Asked about cost twice'], sev: 'serious', sl: 'At risk' },
+    { id: 'ad3', who: 'Applicant 19960', why: ['Admitted', 'No aid record yet', 'Census in 9 days'], sev: 'serious', sl: 'Melt risk' },
+    { id: 'ad4', who: 'Applicant 21302', why: ['ID check failed once', 'Retry link sent'], sev: 'warn', sl: 'Watch' },
+    { id: 'ad5', who: 'Applicant 20475', why: ['Spanish preferred', 'Asked for a person'], sev: 'warn', sl: 'Handoff' } ] } },
+
+// ===== Student services
+{ id: 'aid', name: 'Financial aid', group: 'Student services', who: 'Director of financial aid and the aid person', decides: 'Exceptions, verification and progress appeals each day; packaging rules each term.', cadence: 'Daily', tag: 'GLBA', owner: 'Director of financial aid', reports: 'COD (15 days), NSLDS, return of aid (45 days)',
+  kpis: [
+    K('isir_to_award', 'Median days, ISIR to award', 'days', 'down', trend(4, 1.5, .2, 51), trend(11, 10, .3, 52), { def: 'Median calendar days from receiving the ISIR to an award offered.', f: 'median(Award.offered_at - AidFile.isir_received_at)', src: ['Aid workflow'], ent: ['AidFile'], rep: 'COD' }),
+    K('straight_through', 'Awarded without a person', 'pct', 'up', trend(61, 79, 1.5, 53), trend(10, 12, 1, 54), { def: 'Clean files awarded straight through under Dallas College aid rules, with every step logged.', f: 'count(Award where path = "straight_through") / count(Award)', src: ['Aid workflow'], ent: ['AidFile'] }),
+    K('exception_rate', 'Files needing the aid person', 'pct', 'down', trend(32, 18, 1.2, 55), trend(90, 88, 1, 56), { def: 'Aid files routed to a person: exceptions, judgment calls and appeals.', f: 'count(AidFile routed to human) / count(AidFile)', src: ['Aid workflow', 'Escalation service'], ent: ['AidFile', 'Case'] }),
+    K('r2t4_open', 'Return-of-aid calculations open', 'int', 'down', trend(0, 6, .4, 57), trend(21, 64, 2, 58), { def: 'Withdrawals with a return-of-aid calculation not yet completed; due within 45 days.', f: 'count(R2T4 where status != "complete")', src: ['Aid workflow', 'Student records'], ent: ['AidFile', 'Enrollment'], rep: 'Title IV' }),
+  ],
+  insight: k => ({ tone: 'good', h: k.pilot ? 'Median time to award is under two days; the slow tail is the aid person\'s queue' : 'Comparison files still take about ten days to award', p: 'Straight-through awards follow written Dallas College rules. Professional judgment, appeals and anything a student asks a person about stay with the aid person.' }),
+  charts: [
+    { id: 'tta', kind: 'line', span: 1, title: k => k.pilot ? 'Median time to award falls from 9 days to under 2' : 'Comparison files take 10 days or more all term', sub: 'Days per aid file, weeks before term start · grey: slowest 10% of files', legend: [['Median', 'acc'], ['90th percentile', 'mut']],
+      data: k => { const m = k.pilot ? [9, 6.5, 4, 3, 2.5, 2, 2, 1.5] : [12, 11.5, 11, 11, 10.5, 10, 10, 10], p = k.pilot ? [21, 17, 12, 10, 9, 8, 7, 6] : [28, 27, 27, 26, 26, 25, 24, 24]; return { x: ['T-8', 'T-7', 'T-6', 'T-5', 'T-4', 'T-3', 'T-2', 'T-1'], series: [{ name: 'Median', vals: m }, { name: '90th pct', vals: p }], fmt: 'dec1', yMax: 30, cat: 'Week before term' }; } },
+    { id: 'reasons', kind: 'hbar', span: 1, title: () => 'Verification drives most exceptions', sub: 'Open files needing the aid person, by reason',
+      data: k => { const f = pc(k, 1, 6) * (1.1 - k.w * .05); return { items: [['Verification selected', 9], ['Conflicting information', 6], ['Progress appeal', 4], ['Dependency override', 3], ['Professional judgment', 2], ['Missing signature', 2]].map(([l, v], j) => ({ label: l, v: Math.max(0, v * f), hi: j === 0 })), fmt: 'int', cat: 'Reason', valName: 'Files' }; } },
+  ],
+  work: { title: 'Exception queue', sub: 'Sized for one aid person. Each file shows why the agent stopped.', verb: 'Review', items: k => [
+    { id: 'af1', who: 'File 3391 · progress appeal', why: ['Student statement uploaded', 'Waiting 2 days'], sev: 'critical', sl: 'Judgment' },
+    { id: 'af2', who: 'File 3407 · verification', why: ['Tax transcript mismatch', 'Agent asked for W-2'], sev: 'serious', sl: 'Exception' },
+    { id: 'af3', who: 'File 3415 · talk to a human', why: ['Asked via navigator', 'Spanish preferred'], sev: 'serious', sl: 'Request' },
+    { id: 'af4', who: 'File 3422 · dependency override', why: ['Documentation received', 'Policy check needed'], sev: 'warn', sl: 'Judgment' },
+    { id: 'af5', who: 'Quality sample · 3 awards', why: ['Weekly review of straight-through files'], sev: 'info', sl: 'Sample' } ] } },
+
+{ id: 'registrar', name: 'Registrar', group: 'Student services', who: 'Registrar', decides: 'Census certification, grade posting, withdrawal dates.', cadence: 'Daily in term', tag: 'FERPA record', owner: 'Registrar', reports: 'Clearinghouse (every 60 days), CBM, IPEDS',
+  kpis: [
+    K('census_accuracy', 'Census accuracy', 'pct1', 'up', trend(98.1, 99.6, .1, 61), trend(96.2, 96.8, .1, 62), { def: 'Census enrollments that match the learning platform and Clearinghouse status.', f: 'count(Enrollment matched across Records, Open edX, Clearinghouse) / count(Enrollment at census)', src: ['Student records', 'Open edX'], ent: ['Enrollment'], rep: 'CBM001, Clearinghouse' }),
+    K('grade_post_hrs', 'Median hours to post a signed grade', 'hrs', 'down', trend(30, 9, 1.5, 63), trend(96, 90, 3, 64), { def: 'Hours from a faculty signature to the official grade in student records.', f: 'median(Grade.posted_at - Feedback.signed_at)', src: ['Feedback engine', 'Student records'], ent: ['Grade', 'Feedback'] }),
+    K('lda_capture', 'Last date of attendance captured', 'pct', 'up', trend(88, 99, 1, 65), trend(61, 66, 1, 66), { def: 'Withdrawn or failing enrollments with a documented last academically related activity.', f: 'count(Enrollment where lda is not null and outcome in (W, F)) / count(Enrollment where outcome in (W, F))', src: ['Open edX', 'Student records'], ent: ['Enrollment', 'Submission'], rep: 'Return of aid' }),
+    K('mismatches', 'Record mismatches open', 'int', 'down', trend(14, 2, 1, 67), trend(120, 95, 4, 68), { def: 'Enrollment or grade records that disagree between systems.', f: 'count(Reconciliation.issue where status = "open")', src: ['Student records', 'Open edX', 'Warehouse'], ent: ['Enrollment', 'Grade'] }),
+  ],
+  insight: k => ({ tone: k.pilot ? 'good' : 'warn', h: k.pilot ? `Signed grades post in ${Math.round(trend(30, 9)[k.i])} hours on median` : 'Grades take four days to post after signing', p: 'Nightly reconciliation between student records and Open edX catches mismatches before census and Clearinghouse files go out.' }),
+  charts: [
+    { id: 'mis', kind: 'hbar', span: 1, title: () => 'Enrollment mismatches with Open edX lead the list', sub: 'Open reconciliation issues by type',
+      data: k => { const f = pc(k, 1, 8) * (1.15 - k.w * .1); return { items: [['Records vs Open edX enrollment', 5], ['Missing last attendance date', 4], ['Grade not posted after signing', 3], ['Withdrawal date conflict', 2], ['Records vs Clearinghouse status', 1]].map(([l, v], j) => ({ label: l, v: Math.max(0, v * f), hi: j === 0 })), fmt: 'int', cat: 'Issue', valName: 'Open' }; } },
+    { id: 'gp', kind: 'cols', span: 1, title: k => 'Signing waits spike after each Sunday deadline', sub: 'Signed grades waiting to post, end of week · ◆ Sunday deadline',
+      data: k => ({ items: wkItems(pc(k, [12, 31, 18, 14, 22, 11, 8, 4], [80, 140, 150, 160, 170, 160, 150, 140]), k), fmt: 'int', cat: 'Week', valName: 'Waiting' }) },
+  ],
+  work: { title: 'Mismatches to resolve', sub: 'Found by the nightly reconciliation', verb: 'Resolve', items: k => [
+    { id: 'rg1', who: 'Student 5520 · QR-2', why: ['Dropped in records', 'Still active in Open edX'], sev: 'critical', sl: 'Access' },
+    { id: 'rg2', who: 'Student 2296 · BCOM', why: ['No activity since week 1', 'Last attendance date missing'], sev: 'serious', sl: 'Aid impact' },
+    { id: 'rg3', who: 'Section QR-1-02', why: ['4 signed grades not posted', 'Signed 2 days ago'], sev: 'warn', sl: 'Delay' } ] } },
+
+{ id: 'coaching', name: 'Success coaching', group: 'Student services', who: 'Success coaches and the success lead', decides: 'Who to contact today; caseload balance each week.', cadence: 'Hourly', tag: 'FERPA record', owner: 'Student success lead', reports: 'Achieving the Dream, PDP (via research)',
+  kpis: [
+    K('open_flags', 'Open risk flags', 'int', 'down', FLAGS.open, FLAGS_C.open, { def: 'Risk signals without a resolved outcome.', f: 'count(RiskSignal where status = "open")', src: ['Warehouse', 'Escalation service'], ent: ['RiskSignal', 'Case'] }),
+    K('new_flags', 'New flags this week', 'int', 'down', FLAGS.new, FLAGS_C.new, { def: 'Risk signals raised this week, each with its reasons.', f: 'count(RiskSignal where raised in week)', src: ['Warehouse'], ent: ['RiskSignal'] }),
+    K('time_to_contact', 'Median hours to contact', 'hrs', 'down', trend(19, 6, 1, 71), trend(72, 66, 2, 72), { def: 'Hours from a risk flag to the first two-way contact.', f: 'median(first(Touch.two_way).at - RiskSignal.raised_at)', src: ['Warehouse', 'EspoCRM', 'Navigator'], ent: ['RiskSignal', 'Touch'] }),
+    K('flags_resolved', 'Flags resolved with an outcome', 'pct', 'up', trend(58, 79, 2, 73), trend(31, 35, 2, 74), { def: 'Flags closed with a documented outcome.', f: 'count(RiskSignal closed with outcome) / count(RiskSignal)', src: ['Escalation service'], ent: ['RiskSignal', 'Case'] }),
+  ],
+  insight: k => { const n = pc(k, FLAGS.new, FLAGS_C.new), cur = n[k.i], prev = n[Math.max(0, k.i - 1)], up = prev ? Math.round((cur - prev) / prev * 100) : 0; return { tone: up > 20 ? 'warn' : 'info', h: `${cur} new flags in week ${k.w}${k.i ? `, ${up >= 0 ? 'up' : 'down'} ${Math.abs(up)}% on the week before` : ''}`, p: 'Spikes follow Sunday deadlines. Prediction is never a determination: every flag shows its reasons, and the coach decides.' }; },
+  charts: [
+    { id: 'flags', kind: 'gcols', span: 1, title: k => k.pilot ? 'Coaches resolve flags about as fast as they arrive' : 'Comparison flags pile up faster than they are resolved', sub: 'Flags raised and resolved per week', legend: [['Raised', 'acc'], ['Resolved', 'mut']],
+      data: k => ({ groups: WEEKS, series: [{ name: 'Raised', vals: cut(pc(k, FLAGS.new, FLAGS_C.new), k.i) }, { name: 'Resolved', vals: cut(pc(k, FLAGS.res, FLAGS_C.res), k.i) }], fmt: 'int', cat: 'Week' }) },
+    { id: 'outcome', kind: 'hbar', span: 1, title: () => 'A call within 24 hours keeps the most students enrolled', sub: 'Share of flagged students active the following week, by first action',
+      data: k => ({ items: [['Call within 24 hours', 84], ['Aid hold cleared', 81], ['Tutor referral', 76], ['Text nudge only', 63], ['No contact', 41]].map(([l, v], j) => ({ label: l, v: v - (k.pilot ? 0 : 6), hi: j === 0 })), fmt: 'pct', max: 100, cat: 'First action', valName: 'Still active' }) },
+  ],
+  work: { title: "Today's worklist", sub: 'Each flag explained, not scored', verb: 'Contacted', items: k => [
+    { id: 'co1', who: 'Student 4471', why: ['No login 6 days', 'Missed Sunday deadline', 'Aid hold'], sev: 'critical', sl: 'Call today' },
+    { id: 'co2', who: 'Student 3108', why: ['Grades sliding two weeks', 'Stopped asking for help'], sev: 'serious', sl: 'Message' },
+    { id: 'co3', who: 'Student 5520', why: ['QR-2 slipping after a pass'], sev: 'warn', sl: 'Tutor' },
+    { id: 'co4', who: 'Student 2296', why: ['Registered, not active at census'], sev: 'critical', sl: 'Call today' },
+    { id: 'co5', who: 'Student 1187', why: ['Two Sundays missed', 'Works nights'], sev: 'serious', sl: 'Call' } ] } },
+
+{ id: 'navigator', name: 'Navigator and student services', group: 'Student services', who: 'Student services lead', decides: 'What the navigator handles, escalation staffing and coverage hours.', cadence: 'Hourly', tag: 'FERPA record', owner: 'Student services lead', reports: 'Internal', pilotOnly: true,
+  kpis: [
+    K('resolution_rate', 'Resolved without a person', 'pct', 'up', trend(71, 80, 1, 81), null, { def: 'Navigator conversations closed without a handoff, with the student confirming.', f: 'count(Conversation resolved and not escalated) / count(Conversation)', src: ['Navigator', 'Escalation service'], ent: ['Touch', 'Case'] }),
+    K('csat', 'Satisfaction after a resolved request', 'dec1', 'up', trend(4.1, 4.4, .03, 82), null, { def: 'Mean rating, 1 to 5, after a resolved navigator request.', f: 'avg(Survey.csat where Touch.channel = "navigator")', src: ['Navigator', 'Surveys'], ent: ['Touch'] }),
+    K('wait_person', 'Median wait for a person', 'min', 'down', trend(14, 6, .8, 83), null, { def: 'Minutes from a handoff to a person picking up the case.', f: 'median(Case.picked_up_at - Case.created_at)', src: ['Escalation service'], ent: ['Case'] }),
+    K('conversations', 'Conversations this week', 'int', 'up', trend(900, 1420, 40, 84), null, { def: 'Navigator conversations started this week.', f: 'count(Touch where channel = "navigator" and started in week)', src: ['Navigator'], ent: ['Touch', 'Person'] }),
+  ],
+  insight: k => ({ tone: 'info', h: 'Sunday evening is the busiest hour of the week', p: 'Deadline questions resolve on their own; aid appeals and wellbeing conversations go to people by design.' }),
+  charts: [
+    { id: 'topics', kind: 'stack', span: 2, title: () => 'The navigator resolves most routine questions; wellbeing chats all go to a person', sub: 'Conversations by topic · grey: resolved by the navigator · blue: handed to a person (right)', legend: [['Resolved', 'mut'], ['Handed to a person', 'acc']],
+      data: k => { const f = scaleW(k); return { items: [['Open edX tech help', 456, 74], ['Deadlines and schedule', 1054, 186], ['Registration and drops', 445, 165], ['Aid status', 616, 264], ['Billing and payment', 204, 96], ['Aid appeals', 21, 119], ['Wellbeing and personal', 0, 95]].map(([l, a, b]) => ({ label: l, parts: [a * f, b * f] })), names: ['Resolved', 'Handed to a person'], colors: ['var(--muted-mark)', 'var(--viz)'], unit: 'conversations' }; } },
+    { id: 'days', kind: 'cols', span: 2, title: () => 'Conversations triple on Sunday, the deadline day', sub: 'Conversations by day, selected week',
+      data: k => { const f = trend(900, 1420, 40, 84)[k.i] / 1400; return { items: [['Mon', 160], ['Tue', 150], ['Wed', 170], ['Thu', 140], ['Fri', 110], ['Sat', 190], ['Sun', 480]].map(([l, v]) => ({ k: l, label: l, v: v * f, hi: l === 'Sun', showv: l === 'Sun' })), fmt: 'int', cat: 'Day', valName: 'Conversations', h: 190 }; } },
+  ] },
+
+{ id: 'access', name: 'Accessibility services', group: 'Student services', who: 'Disability services director', decides: 'Accommodations each day; content remediation priority each term.', cadence: 'Weekly', tag: 'Sensitive', owner: 'Disability services director', reports: 'ADA Title II (WCAG 2.1 AA), Section 504',
+  kpis: [
+    K('days_to_accom', 'Days to an accommodation in place', 'days', 'down', trend(3.2, 1.4, .15, 91), trend(6.5, 6.1, .2, 92), { def: 'Business days from approval to the accommodation active in the course.', f: 'median(Accommodation.active_at - Accommodation.approved_at)', src: ['Accommodations', 'Open edX'], ent: ['Enrollment', 'Section'] }),
+    K('wcag_assets', 'Course assets meeting WCAG', 'pct', 'up', trend(91, 98, .5, 93), trend(64, 67, .5, 94), { def: 'Course assets passing automated and manual WCAG 2.1 AA checks.', f: 'count(Asset passing WCAG) / count(Asset)', src: ['Kadal', 'Open edX'], ent: ['Course'], rep: 'ADA Title II' }),
+    K('captions_sla', 'Videos captioned on time', 'pct', 'up', trend(88, 99, 1, 95), trend(55, 58, 1, 96), { def: 'Videos captioned and reviewed before the unit opens.', f: 'count(Video captioned before unit.open) / count(Video)', src: ['Kadal', 'Open edX'], ent: ['Course'] }),
+    K('open_requests', 'Open accommodation requests', 'int', 'down', trend(7, 2, .5, 97), trend(48, 44, 2, 98), { def: 'Approved accommodations not yet in place.', f: 'count(Accommodation where approved and not active)', src: ['Accommodations'], ent: ['Student'] }),
+  ],
+  insight: k => ({ tone: k.pilot ? 'good' : 'warn', h: k.pilot ? 'Accommodations are in place within two days' : 'Accommodations take over six days to arrive', p: 'Kadal generates captions and alt text with every course build; people review them before a unit opens. Accommodation requests never pass through the navigator.' }),
+  charts: [
+    { id: 'wcag', kind: 'hbar', span: 1, title: () => 'Quantitative Reasoning 2 has the most assets to fix', sub: 'Assets meeting WCAG 2.1 AA, by course',
+      data: k => { const b = pc(k, 0, -30); return { items: [['Quantitative Reasoning 2', 92], ['Business Communication', 96], ['Quantitative Reasoning 1', 97], ['Digital Literacy', 99], ['Written Communication 1', 100]].map(([l, v], j) => ({ label: l, v: clamp(v + b + k.w * .4, 0, 100), hi: j === 0 })), fmt: 'pct', max: 100, ref: { v: 100, label: 'Title II target' }, cat: 'Course', valName: 'Assets passing' }; } },
+    { id: 'reqs', kind: 'cols', span: 1, title: () => 'Requests arrive in the first two weeks', sub: 'New accommodation requests per week',
+      data: k => ({ items: wkItems(pc(k, [14, 9, 4, 3, 2, 2, 1, 1], [96, 70, 41, 30, 22, 18, 12, 9]), k), fmt: 'int', cat: 'Week', valName: 'Requests' }) },
+  ],
+  work: { title: 'Content to remediate', sub: 'Flagged by automated checks; a person confirms each fix', verb: 'Assign', items: k => [
+    { id: 'ac1', who: 'QR-2 · Unit 3 video', why: ['Captions not reviewed', 'Unit opens Monday'], sev: 'critical', sl: 'Blocking' },
+    { id: 'ac2', who: 'QR-2 · Graph activity', why: ['No text alternative for chart'], sev: 'serious', sl: 'Fix' },
+    { id: 'ac3', who: 'BCOM · Slide deck 4', why: ['Contrast below 4.5:1 on 3 slides'], sev: 'warn', sl: 'Fix' } ] } },
+
+{ id: 'career', name: 'Career and workforce', group: 'Student services', who: 'Workforce partnerships lead', decides: 'Employer partnerships each quarter; program mix each year.', cadence: 'Per term', tag: 'Directory', owner: 'Workforce partnerships lead', reports: 'HB 8 credentials of value, federal earnings test',
+  kpis: [
+    K('badges_issued', 'Skill badges issued this term', 'int', 'up', [38, 92, 150, 205, 268, 330, 384, 428], [0, 0, 0, 0, 0, 0, 0, 0], { def: 'Open Badges 3.0 credentials issued on competency attainment.', f: 'count(CredentialAward where type = "badge" and issued in term)', src: ['Student records', 'Badge issuer'], ent: ['Credential', 'Competency'], rep: 'HB 8' }),
+    K('badge_share', 'Students holding a skill badge', 'pct', 'up', [8, 19, 30, 39, 47, 53, 57, 60], [0, 0, 0, 0, 0, 0, 0, 0], { def: 'Active students with at least one verified skill badge.', f: 'count(distinct CredentialAward.person_id) / count(Student active)', src: ['Student records'], ent: ['Credential', 'Student'] }),
+    K('partners', 'Employer partners', 'int', 'up', trend(12, 19, .3, 101), trend(7, 7, 0, 102), { def: 'Employers with an active referral or hiring agreement.', f: 'count(Employer where agreement.active)', src: ['EspoCRM'], ent: ['Employer'] }),
+    K('career_outcomes', 'Career outcomes rate, last cohort', 'pct', 'up', [78, 78, 78, 78, 78, 78, 78, 78], [64, 64, 64, 64, 64, 64, 64, 64], { def: 'Graduates employed, serving or continuing their education, among those with a known outcome.', f: 'count(Outcome in (employed, service, continuing)) / count(Outcome known)', src: ['Surveys', 'Wage match'], ent: ['Student', 'Credential'], rep: 'NACE first destination' }),
+  ],
+  insight: k => ({ tone: 'info', h: k.pilot ? 'Data literacy badges lead, and employers ask for them by name' : 'Comparison sections issue no skill badges', p: 'Each badge carries job-skill tags from an open taxonomy, which is the workforce case for the Axim conversation.' }),
+  charts: [
+    { id: 'badges', kind: 'hbar', span: 1, title: () => 'Data literacy is the most-earned skill badge', sub: 'Skill badges issued this term, by skill',
+      data: k => { const f = pc(k, [38, 92, 150, 205, 268, 330, 384, 428][k.i] / 428, 0); return { items: [['Data literacy', 112], ['Customer service', 84], ['Spreadsheet modeling', 71], ['Project coordination', 63], ['Healthcare documentation', 55], ['Supply chain basics', 43]].map(([l, v], j) => ({ label: l, v: v * f, hi: j === 0 })), fmt: 'int', cat: 'Skill', valName: 'Badges' }; } },
+    { id: 'sectors', kind: 'cols', span: 1, title: () => 'Healthcare and logistics employers hire the most graduates', sub: 'Graduates hired by partner sector, last cohort',
+      data: k => ({ items: [['Health', 41], ['Logistics', 33], ['Finance', 24], ['Retail', 19], ['Public', 12]].map(([l, v], j) => ({ k: l, label: l, v: v * pc(k, 1, .6), hi: j === 0, showv: true })), fmt: 'int', cat: 'Sector', valName: 'Hires' }) },
+  ] },
+
+// ===== Teaching
+{ id: 'academic', name: 'Academic affairs', group: 'Teaching', who: 'Dean of online programs and program leads', decides: 'Course and competency revisions each term; section and program viability.', cadence: 'Weekly', tag: 'De-identified', owner: 'Dean of online programs', reports: 'SACSCOC distance-education comparability, CBM004',
+  kpis: [
+    K('course_success', 'Course success rate', 'pct', 'up', trend(74, 82, .8, 111), trend(68, 70, .8, 112), { def: 'Enrollments on track for a grade of C or better.', f: 'count(Enrollment where projected_grade >= C) / count(Enrollment)', src: ['Open edX', 'Student records'], ent: ['Enrollment', 'Grade'], rep: 'SACSCOC comparability' }),
+    K('first_attempt', 'Competencies met on first attempt', 'pct', 'up', trend(58, 69, 1, 113), trend(51, 56, 1, 114), { def: 'Competency assessments passed on the first submission.', f: 'count(CompetencyAttainment where attempt = 1) / count(CompetencyAttainment)', src: ['Feedback engine', 'Student records'], ent: ['Competency', 'Submission'] }),
+    K('ai_edit_rate', 'AI drafts edited by faculty', 'pct', 'down', trend(29, 21, 1, 115), null, { def: 'AI-drafted grades whose score or feedback changed before signing. High rates point at a rubric or prompt.', f: 'count(Feedback where signed != draft) / count(Feedback drafted)', src: ['Feedback engine'], ent: ['Feedback', 'Grade'] }),
+    K('section_spread', 'Spread between sections', 'dec1', 'down', trend(11, 6, .4, 116), trend(19, 18, .4, 117), { def: 'Points between the best and worst section success rate in the same course.', f: 'max(success(Section)) - min(success(Section)) per Course', src: ['Warehouse'], ent: ['Section', 'Course'], unit: 'pts' }),
+  ],
+  insight: k => ({ tone: 'warn', h: 'Quantitative Reasoning 2 needs a rubric review', p: 'It has the lowest first-attempt mastery and the highest AI-draft edit rate. Both point at the rubric, not at faculty.' }),
+  charts: [
+    { id: 'attain', kind: 'stack', span: 2, title: () => 'Quantitative Reasoning 2 has the lowest first-attempt mastery', sub: 'Students by competency outcome so far · dark: first attempt · mid: after revision · grey: not yet', legend: [['First attempt', 'acc'], ['After revision', 'acc2'], ['Not yet', 'mut']],
+      data: k => { const f = k.w / 8, d = pc(k, 0, -8); return { items: [['Written Communication 1', 78, 14], ['Digital Literacy', 85, 10], ['Business Communication', 71, 17], ['Quantitative Reasoning 1', 64, 20], ['Data Analysis Basics', 58, 22], ['Quantitative Reasoning 2', 52, 21]].map(([l, a, b]) => { const A = (a + d) * f, B = b * f; return { label: l, parts: [A, B, 100 - A - B] }; }), names: ['First attempt', 'After revision', 'Not yet'], colors: ['var(--viz)', 'color-mix(in srgb, var(--viz) 45%, var(--surface))', 'var(--muted-mark-2)'], labelInk0: 'var(--on-viz)' }; } },
+    { id: 'edit', kind: 'hbar', span: 1, title: () => 'Faculty edit QR-2 drafts 41% of the time', sub: 'AI-drafted grades changed before signing · label: median review minutes',
+      data: k => { if (!k.pilot) return { items: [{ label: 'No AI drafts in comparison sections', v: 0 }], fmt: 'pct', max: 50 }; const rows = [['QR-2', 41, 6.8], ['QR-1', 24, 4.2], ['BCOM', 22, 3.9], ['WCOM-1', 14, 3.1], ['DLIT', 9, 2.4]]; return { items: rows.map(([l, v, m], j) => ({ label: l, v: v - (8 - k.w) * -.3, hi: j === 0, text: `${Math.round(v - (8 - k.w) * -.3)}% · ${m} min` })), fmt: 'pct', max: 50, ref: { v: 21, label: 'All courses 21%' }, cat: 'Course', valName: 'Edited' }; } },
+    { id: 'succ', kind: 'gcols', span: 1, title: () => 'Pilot sections lead in every course', sub: 'Course success rate, pilot vs comparison', legend: [['Pilot', 'acc'], ['Comparison', 'mut']],
+      data: k => ({ groups: ['WCOM-1', 'DLIT', 'BCOM', 'QR-1', 'QR-2'], series: [{ name: 'Pilot', vals: [86, 89, 82, 77, 71].map(v => v - (8 - k.w) * .5) }, { name: 'Comparison', vals: [78, 84, 74, 69, 62] }], fmt: 'pct', max: 100 }) },
+  ] },
+
+{ id: 'faculty', name: 'Faculty', group: 'Teaching', who: 'Each instructor, for their own sections', decides: 'Grade sign-off each day; outreach to quiet students each week.', cadence: 'Near real time', tag: 'FERPA record', owner: 'Each instructor', reports: 'Grades and last attendance feed aid and CBM',
+  kpis: [
+    K('drafts_to_sign', 'Drafts waiting to sign', 'int', 'down', [12, 31, 18, 14, 22, 11, 8, 4], null, { def: 'AI-drafted feedback waiting for this instructor’s review and signature.', f: 'count(Feedback where status = "drafted" and Section.instructor = me)', src: ['Feedback engine'], ent: ['Feedback', 'Submission', 'Section'] }),
+    K('review_min', 'Median review time', 'dec1', 'down', trend(5.1, 3.6, .15, 121), null, { def: 'Minutes from opening a draft to signing it. Very short times trigger a rubber-stamp check.', f: 'median(Feedback.signed_at - Feedback.opened_at)', src: ['Feedback engine'], ent: ['Feedback'], unit: 'min' }),
+    K('on_time', 'Submissions on time', 'pct', 'up', trend(78, 84, 1.2, 122), trend(70, 72, 1.2, 123), { def: 'Submissions received by the Sunday deadline.', f: 'count(Submission where submitted_at <= due_at) / count(Submission due)', src: ['Open edX'], ent: ['Submission'] }),
+    K('quiet', 'Students gone quiet', 'int', 'down', trend(9, 5, .6, 124), trend(14, 13, .6, 125), { def: 'Students in my sections with no activity for 5 or more days.', f: 'count(Student where last_activity > 5 days and Section.instructor = me)', src: ['Open edX'], ent: ['Student', 'Section'] }),
+  ],
+  insight: k => ({ tone: 'info', h: `${[12, 31, 18, 14, 22, 11, 8, 4][k.i]} drafts to sign, most from Sunday's deadline`, p: 'Each draft quotes the passages it rests on. Edit anything; nothing reaches a student until you sign it.' }),
+  charts: [
+    { id: 'subm', kind: 'gcols', span: 1, title: () => 'Late work clusters in weeks 2 and 5', sub: 'Submissions per week in my sections', legend: [['On time', 'acc'], ['Late', 'mut']],
+      data: k => ({ groups: WEEKS, series: [{ name: 'On time', vals: cut([96, 88, 101, 99, 90, 104, 102, 98], k.i) }, { name: 'Late', vals: cut([12, 24, 15, 13, 22, 12, 10, 9], k.i) }], fmt: 'int' }) },
+    { id: 'comp', kind: 'hbar', span: 1, title: () => 'Applying probability is where my drafts need the most edits', sub: 'AI drafts I edited, by competency (QR-2)',
+      data: k => ({ items: [['Apply probability', 52], ['Estimate with rates', 44], ['Solve linear models', 38], ['Interpret graphs', 27]].map(([l, v], j) => ({ label: l, v: v - (k.w - 5) * .8, hi: j === 0 })), fmt: 'pct', max: 60, cat: 'Competency', valName: 'Edited' }) },
+  ],
+  work: { title: 'Drafts to sign', sub: 'Signing requires opening each draft; there is no bulk sign', verb: 'Open draft', items: k => [
+    { id: 'fa1', who: 'Student 4471 · Project 3', why: ['Two criteria disagree', 'Low confidence'], sev: 'serious', sl: 'Check closely' },
+    { id: 'fa2', who: 'Student 3108 · Quiz review', why: ['Integrity flag with evidence'], sev: 'critical', sl: 'Integrity' },
+    { id: 'fa3', who: 'Student 6612 · Project 3', why: ['Draft ready', 'Resubmission'], sev: 'info', sl: 'Ready' },
+    { id: 'fa4', who: 'Student 7025 · Project 3', why: ['Draft ready'], sev: 'info', sl: 'Ready' } ] } },
+
+// ===== Operations
+{ id: 'compliance', name: 'Compliance and privacy', group: 'Operations', who: 'Compliance officer and the GLBA qualified individual', decides: 'Policy exceptions as needed; audit readiness each quarter.', cadence: 'Monthly', tag: 'Sensitive', owner: 'Compliance officer', reports: 'NC-SARA, GLBA reviews, ADA Title II, SACSCOC distance-education policy',
+  kpis: [
+    K('access_exceptions', 'Access exceptions this month', 'int', 'down', trend(6, 1, .3, 131), trend(19, 17, .5, 132), { def: 'Record views outside a role’s legitimate educational interest, flagged for review.', f: 'count(AccessLog where outside role scope)', src: ['Access logs'], ent: ['Person'] }),
+    K('glba_controls', 'GLBA controls in place', 'pct', 'up', [83, 83, 89, 89, 94, 94, 100, 100], [67, 67, 67, 72, 72, 72, 78, 78], { def: 'Safeguards Rule controls implemented and evidenced.', f: 'count(Control where status = "in place") / count(Control required)', src: ['Compliance register'], ent: ['AidFile'], rep: 'GLBA, Title IV program review' }),
+    K('out_of_state', 'Out-of-state students', 'int', 'up', trend(31, 38, .5, 133), trend(290, 301, 2, 134), { def: 'Active students residing outside Texas, for state authorization.', f: 'count(Student where residence_state != "TX")', src: ['Student records'], ent: ['Student'], rep: 'NC-SARA' }),
+    K('audit_complete', 'AI steps with a full audit record', 'pct1', 'up', trend(99.8, 100, .05, 135), null, { def: 'AI actions logged with model, context, policy and approver.', f: 'count(AuditEntry complete) / count(AI action)', src: ['Audit log'], ent: ['Feedback', 'AidFile', 'Case'] }),
+  ],
+  insight: k => ({ tone: k.w >= 7 ? 'good' : 'warn', h: k.w >= 7 ? 'All GLBA safeguards are in place and evidenced' : 'Two GLBA safeguards still need evidence', p: 'Vendor oversight for the aid servicer and the incident response test are the open items. Every AI step is logged with its model, context, policy and approver.' }),
+  charts: [
+    { id: 'states', kind: 'hbar', span: 1, title: () => 'Oklahoma and Louisiana lead out-of-state enrollment', sub: 'Active students by state of residence, outside Texas',
+      data: k => { const f = pc(k, 1, 7.9); return { items: [['Oklahoma', 11], ['Louisiana', 9], ['Arkansas', 7], ['New Mexico', 5], ['Other states', 6]].map(([l, v], j) => ({ label: l, v: v * f * (1 + k.w * .01), hi: j === 0 })), fmt: 'int', cat: 'State', valName: 'Students' }; } },
+    { id: 'exc', kind: 'cols', span: 1, title: () => 'Access exceptions fall as role views settle', sub: 'Flagged record views per week',
+      data: k => ({ items: wkItems(pc(k, [3, 2, 2, 1, 1, 1, 0, 0], [6, 5, 5, 4, 5, 4, 4, 4]), k), fmt: 'int', cat: 'Week', valName: 'Exceptions' }) },
+  ],
+  work: { title: 'Controls and reviews', sub: 'GLBA Safeguards Rule and FERPA access reviews', verb: 'Mark done', items: k => [
+    { id: 'cp1', who: 'Vendor oversight · aid servicer', why: ['Contract review due', 'Security questionnaire returned'], sev: k.w >= 7 ? 'good' : 'serious', sl: k.w >= 7 ? 'In place' : 'Open' },
+    { id: 'cp2', who: 'Incident response plan test', why: ['Tabletop exercise scheduled'], sev: k.w >= 5 ? 'good' : 'warn', sl: k.w >= 5 ? 'In place' : 'Due' },
+    { id: 'cp3', who: 'Access review · success coaches', why: ['3 views outside caseload'], sev: 'warn', sl: 'Review' } ] } },
+
+{ id: 'platform', name: 'IT and data platform', group: 'Operations', who: 'Platform team lead', decides: 'Incidents in real time; capacity and change windows each week.', cadence: 'Real time', tag: 'De-identified', owner: 'Platform team lead', reports: 'GLBA incident reporting', pilotOnly: true,
+  kpis: [
+    K('uptime', 'Uptime this week', 'pct2', 'up', trend(99.82, 99.97, .02, 141), null, { def: 'Share of minutes with Open edX, the navigator and records all available.', f: '1 - downtime_minutes / total_minutes', src: ['Monitoring'], ent: [] }),
+    K('event_lag', 'Event lag, 95th percentile', 'sec', 'down', trend(4.2, 1.6, .2, 142), null, { def: 'Seconds from an event in a system of record to the warehouse.', f: 'p95(Warehouse.loaded_at - Event.emitted_at)', src: ['Monitoring', 'Warehouse'], ent: [] }),
+    K('freshness', 'Models fresh within target', 'pct1', 'up', trend(93, 99.4, .4, 143), null, { def: 'dbt models refreshed within their freshness target, checked hourly.', f: 'count(Model fresh) / count(Model)', src: ['Warehouse'], ent: [] }),
+    K('incidents', 'Incidents this week', 'int', 'down', [3, 2, 2, 1, 2, 1, 0, 1], null, { def: 'Customer-facing incidents opened this week.', f: 'count(Incident where opened in week)', src: ['Monitoring'], ent: [] }),
+  ],
+  insight: k => ({ tone: 'info', h: 'Sunday 10 pm is the load peak; it held with room to spare', p: 'Event lag is under two seconds at the 95th percentile, so dashboards reflect Sunday-night submissions within minutes.' }),
+  charts: [
+    { id: 'load', kind: 'cols', span: 1, title: () => 'Load peaks at 10 pm on Sunday', sub: 'Requests per minute, Sunday evening',
+      data: k => { const f = trend(900, 1420, 40, 84)[k.i] / 1400; return { items: [['4 pm', 310], ['5 pm', 340], ['6 pm', 420], ['7 pm', 510], ['8 pm', 640], ['9 pm', 820], ['10 pm', 960], ['11 pm', 880], ['12 am', 300]].map(([l, v]) => ({ k: l, label: l, v: v * f, hi: l === '10 pm', showv: l === '10 pm' })), fmt: 'int', cat: 'Hour', valName: 'Requests per minute' }; } },
+    { id: 'lag', kind: 'line', span: 1, title: () => 'Event lag fell under two seconds', sub: 'Event lag, 95th percentile, seconds', legend: [['p95 lag', 'acc']],
+      data: k => ({ x: WEEKS, series: [{ name: 'p95 lag', vals: cut(trend(4.2, 1.6, .2, 142), k.i) }], fmt: 'sec', tickFmt: 'dec1', yMax: 5, cur: k.i }) },
+  ],
+  work: { title: 'Pipelines and incidents', sub: 'From monitoring, newest first', verb: 'Acknowledge', items: k => [
+    { id: 'pl1', who: 'Aspects to warehouse sync', why: ['Lag 9 s at 10:12 pm Sunday', 'Recovered'], sev: 'warn', sl: 'Watch' },
+    { id: 'pl2', who: 'EspoCRM webhooks', why: ['Batch every 5 minutes', 'Navigator reads CRM live'], sev: 'info', sl: 'By design' },
+    { id: 'pl3', who: 'dbt model: persistence_next', why: ['Freshness target 1 h', 'Last run 52 min ago'], sev: 'good', sl: 'Healthy' } ] } },
+];
+DASH.forEach(d => d.kpis.forEach(m => { m.dash = d.id; m.own = m.own || d.owner; m.tag = m.tag || d.tag; m.cad = m.cad || d.cadence; m.rep = m.rep || d.reports; }));
+const METRICS = DASH.flatMap(d => d.kpis);
+const GROUPS = ['Leadership', 'Recruitment', 'Student services', 'Teaching', 'Operations'];
+const LANES = [
+  { name: 'Recruitment', sys: 'EspoCRM', ents: ['Lead', 'Application', 'Touch', 'Employer'] },
+  { name: 'Academic record', sys: 'Student records', ents: ['Student', 'Enrollment', 'Term', 'Section', 'Grade', 'Competency', 'Credential', 'Hold'] },
+  { name: 'Learning evidence', sys: 'Open edX and Kadal', ents: ['Course', 'Submission', 'Feedback'] },
+  { name: 'Services', sys: 'Aid, cases, warehouse', ents: ['AidFile', 'Case', 'RiskSignal'] },
+];
+// ---------- alerts ----------
+const ALERTS = [
+  { id: 'a-flags', dash: 'coaching', sev: 'serious', test: k => pc(k, FLAGS.new, FLAGS_C.new)[k.i] >= 50, text: k => `${pc(k, FLAGS.new, FLAGS_C.new)[k.i]} new risk flags this week, after the Sunday deadline` },
+  { id: 'a-aid', dash: 'aid', sev: 'warn', test: k => k.w <= 3, text: () => 'Exception queue is above 20 files; the aid person may need cover' },
+  { id: 'a-grades', dash: 'registrar', sev: 'warn', test: k => [12, 31, 18, 14, 22, 11, 8, 4][k.i] >= 20, text: k => `${[12, 31, 18, 14, 22, 11, 8, 4][k.i]} signed grades waiting to post` },
+  { id: 'a-glba', dash: 'compliance', sev: 'serious', test: k => k.w < 7, text: () => 'Two GLBA safeguards still need evidence' },
+  { id: 'a-load', dash: 'platform', sev: 'info', test: k => k.w >= 5, text: () => 'Sunday 10 pm load peak held under capacity' },
+  { id: 'a-qr2', dash: 'academic', sev: 'warn', test: k => k.w >= 3, text: () => 'Quantitative Reasoning 2: AI-draft edit rate above 35%' },
+];
+const activeAlerts = () => ALERTS.filter(a => a.test(ctx()));
+const SEVICON = { critical: '!', serious: '!', warn: '▲', good: '✓', info: 'i' };
+
+// ---------- rail ----------
+const ARW = '<svg class="arw" viewBox="0 0 10 10" aria-hidden="true"><path class="stem" d="M1 5h7"/><path class="chev" d="M4 1.5L7.5 5 4 8.5"/></svg>';
+// Brand logo (data URI).
+const LOGO_SRC = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJEAAACbCAYAAABiQ3lFAAAACXBIWXMAABcRAAAXEQHKJvM/AAAIeUlEQVR4nO2dT3LaSBSHX6bmAJ41G7LRNnZxgNgnCD5B8AnGWbOws2BtzwkgJzA5gckBqDBbbYZZsB5yg6mWnmQhJCGhbqlf9++rcsVxXERCH+/139fviIh2QfBERJcE8myI6Bf/bMtf+0EYbvBOvZFI9EpE15ZckxQSqZRQf6vvB2G48vGN+N2Ca5DKkL/SD98uCIilWrFYq0EYbl1/IyCRfi6zTYNdECiJlkT0YxCGS4fuMwXprHuUSN/Vn4Mw3LtwQ79ZcA2+MSaiORH9twuC+S4IxtLvH5HIDlTK+0ZEC4ltKEQiO1AN9Aci+oejk6jhFkhkHxMi+qmywy4IRGQHSGQvSqBXCTJBIvtJZFJpbmjj1UIiOUy4zfS4C4ILm64aEsnjgdtM1qQ4SCSTIae4FxuiEiSSzZhTXK9RCRLJ54Kj0lNfdwKJ3OF+FwQ/++jBQSK3uORGd6cj3pDIPS5YpElXdwaJ3GXeVTsJErmNaifNTd8hJHKfiWmRIJEfGBUJEvmDMZEgkV8YEQkS+cdEd68NEvnJvc5xJEjkL3NdE7eQyG9edMy1QSK/UVMkL23fAUgELts2tCERIG5on70TFxKBhPm5S20hEUi44BoBjYFEIMv4nLQGiUCep6ZpDRKBPElxidpAIlDEfZNBSEgEyqg9diS1ZuONode95F7KBw7rPpdlVo3s6zoVcUVKZLDU79Hr8iSlkukj7zj1iYei9ySPyHJ7gzB819f/zV3gzx4JdXPqQ4s2UUNUGeFBGN4S0R9E9JXrLbrMyZ4aJDoTVT54EIaPgzB8T0R36rgGkTdymutTPTVIpIFBGC6I6D1HJhepjEaQSBNJZCKiKz6awSUmVaPYkEgz6gSiQRheORiVStdkQyJDcFS6dait9GfZP0Aig/CBMDeOiDQsK1kDiQzDB+y5ItLnoh9Cog5wSKTCdhEk6oiMSJK5KNqrBok6hEW6E34bn/I/gEQdwwOTC8G3cDRnCIn64YvgObdhfhoEEp1iNNNe95CP7ZSc1g6iESSqYjQbV43UtoGXV0g9WPhj9i+QqJpP0UrHWCYTfLH0vk9xMOgIiapJ5DnqkeiAz3uV2Mg+aBdBojJGs2S9NRle9Sl1ojaNRpConOwQ/5Cl0g5HI4ltI0hUg3w7qHDeSBPfer7Xc0gb15CoiDjq5JeEGluYz7P90ubVEIlOUBR1jKU0RlpKS1c6QqJiyqKOyZT23eBrGyGZjIVEeYpTWYLplCaNKBpBomOqoo3plGZqZ68povcCEh1zKtqYTGk/DL62MSBRlupUlmBy+7S0rUZRNx8SHVJnZFqlNFOH9YpcHpIUdMgO8VtPaYGB0eyai3vbfC/xMtn1tHBcqO8z7huiNmxuequuYYzRLKkSb+PD+Err6aMF16EV9yRKGM0em9YeNMg2WoS2nkrrfdXCXYkobSi/1Ggsm2TJArlaNcRxiShNb/MeilLtOX09d/z/do77EiWMZhMuZtlFo3vD0ce16iCF+NPFX08XvHnQ9IN95t6XFwKRV5EoS7yD417zq+45+khdfH82fkpE6U6Ouab0tmKBXK/fWIi/ElHa6P7Zsve2pPX0VuNViQPTHv12/53Ad4l0dPvHHNG8xXeJdO0n863S/gHxsQyHe6wksGk9AhxHD10P/5O2TYjxJLIU9mooIznb40nSsQw83tN2Hkpn9IhTWnux1Yf5VdtVmUc9gxuf01mdVLZvEGF0SCmyke+nRPVS2SoqbL6e3tWst6ijfSXtaKxoVN7XSHRKIDVxepMOHsZLON6fSKE6emkfa/yOTfwijyUqe1hbnvc6Xjim2jtKrOpyMG1TmqR2KSESHbPk9FXdYI+XdlyVrIc+P5KYq4FkkijF+ydR/LCyaWcfRRc1dVG3dxXP0F8VNLrbiGCkBpJR+APnYyTKPqxk0XzzhWNxelON7uxZZ22qqkmLROkHzkeJkoelZ91PvE4pezxV84hyHB0lkL5vUk+jPo+3KHGrdd1P3Iu74nVKkzMqw5ae4GMx6W5dHyPRlbGFY+vpl0jQJvv1442Q0npl5G8k6mLVYfNtQbZsa2pKKpHvs/j9EkchI3WyDbPNruKERP0yF3rdB9EWEvVF3MiX2BaifAkcSNQH8Ryb9jNDOgSRyALmgtd2b/O7WiBR18Q7cSUvpz3q4UKiLonHj6Q2phOOCrdDoq6Qt/S1iG3RNBEk6oI3gaRvLSocrIVEpnFHICo7gwQSmSTe/uOKQJuyFQ+QyBRxuT9XBKKqk5D8moDtgng+bC54NLqIyq1TiEQ6Gc3uucqISwIRVz4pXTqMSKSDeADxweEKI5VHjEKiNrgvD3EUqizeBYmaEnfZP/M6IB9Kyvx16hcg0SniGfdr3lM29qwo1qrOSk1IlPBW0mXIXx94b7zPldRqHbcuVaJXGs0suAynWdRdL44uPiijVhQiSARK+NqknDIkAnm2vDu4NpAI5Gl8IhIkAlmW55zJBolAwv6MGgIRkAgk1K/PlAMSAYoa0i2OFoVEYMPVTM4GEvnNPkpjLYFEfnOj44w2SOQv2s6ohUR+8sy1JrUAifxj0bYhnQcS+cWCyyZrBRL5gxGBCBJ5gzGBCBJ5gVGBCBI5z7NpgQgL9Z3mTmc3vgpI5B57npFve0ZubZDO3GJT68w2zSASucOz7kHEukAi+ey5/WP+3JISkM5ks4wOOO5RIEIkEkvv0ScLIpE8nm2IPlkQieSw4gOPtawB0gkksp8Vb2vutNveBEhkL6uoYmtHo85tgET2YX3kyQOJ7GDP3fVG1ThsARL1y4qLjFeW+LUdSNQ9m4w44qJOEZCoG5Z8bqoz4mSBRPrZc7T5Ubf6qnQgUTtUVNmyMNuqk3hcBhKVk40gSpB/+ftVFG08lAUAMxDR/8HwXB42mee/AAAAAElFTkSuQmCC';
+const LOGO = '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15 L8 9 L12 12 L17 4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="4" r="2" fill="#fff"/></svg>';
+let railBuilt = false;
+function renderRail() {
+  const act = new Set(activeAlerts().map(a => a.dash)), rail = $('#rail');
+  if (!railBuilt) {
+    let h = `<div class="brand ${LOGO_SRC ? 'has-logo' : ''}"><div class="logo-slot" id="logoslot">${LOGO_SRC ? `<img src="${LOGO_SRC}" alt="Dallas College">` : LOGO}</div><div><b>Dallas College Global</b><span>Insight Hub</span></div></div><div class="navwrap"><span class="navpill" id="navpill"></span>`;
+    h += `<div class="navgroup"><h4>Hub</h4>${navBtn('overview', 'All dashboards')}${navBtn('catalog', 'Metric catalog')}</div>`;
+    GROUPS.forEach(g => { h += `<div class="navgroup"><h4>${g}</h4>${DASH.filter(d => d.group === g).map(d => navBtn(d.id, d.name)).join('')}</div>`; });
+    h += `</div><p class="rail-foot">${DASH.length} role dashboards · ${METRICS.length} governed metrics</p>`;
+    rail.innerHTML = h; railBuilt = true;
+  }
+  $$('.navbtn', rail).forEach(b => { const on = b.dataset.go === state.view; on ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'); const dot = b.querySelector('.dot'); if (dot) dot.classList.toggle('on', act.has(b.dataset.go)); });
+  const cur = $('.navbtn[aria-current="page"]', rail), pill = $('#navpill');
+  if (cur && pill) { const wrap = pill.parentElement.getBoundingClientRect(), r = cur.getBoundingClientRect(); pill.style.transform = `translateY(${r.top - wrap.top}px)`; pill.style.height = r.height + 'px'; pill.style.opacity = 1; }
+}
+function navBtn(id, label, dot) { return `<button class="navbtn" data-go="${id}" ${state.view === id ? 'aria-current="page"' : ''}><span>${esc(label)}</span><i class="dot ${dot ? 'on' : ''}" aria-hidden="true"></i></button>`; }
+
+// ---------- top bar ----------
+function renderTop() {
+  const k = ctx();
+  $('#weeks').innerHTML = WEEKS.map((w, j) => `<button class="wk ${j < k.i ? 'past' : ''} ${j === k.i ? 'now' : ''}" data-week="${j + 1}" aria-pressed="${j === k.i}" aria-label="Week ${j + 1}">${w}</button>`).join('');
+  $('#clocklabel').innerHTML = `<b>Week ${k.w} of 8</b>${k.w === 8 ? 'Final Sunday' : 'Sunday deadline ◆'}`;
+  $('#cohort').classList.toggle('right', !k.pilot);
+  $('#c-pilot').setAttribute('aria-pressed', k.pilot); $('#c-comp').setAttribute('aria-pressed', !k.pilot);
+  const al = activeAlerts(), cnt = $('#bellcount');
+  cnt.textContent = al.length; cnt.classList.toggle('on', al.length > 0);
+  $('#progress').style.transform = `scaleX(${k.w / 8})`;
+}
+
+// ---------- components ----------
+function kpiTile(m, k, opts = {}) {
+  const series = k.pilot ? m.p : (m.c || null);
+  const key = m.id;
+  if (!series) return `<button class="kpi" data-metric="${m.id}"><span class="k-label">${esc(m.name)}<span class="def">Definition</span></span><span class="k-val">—</span><span class="k-note">Not used in comparison sections</span></button>`;
+  const v = series[k.i], prev = k.i ? series[k.i - 1] : null;
+  let dl = '';
+  if (prev != null) {
+    const ch = v - prev, rel = prev ? ch / Math.abs(prev) : 0, flat = Math.abs(rel) < .005;
+    const good = flat ? 'flat' : ((ch > 0) === (m.good === 'up') ? 'good' : 'bad');
+    const isPct = ['pct', 'pct1', 'pct2'].includes(m.fmt), shown = isPct ? +ch.toFixed(m.fmt === 'pct' ? 0 : 1) : Math.round(rel * 100);
+    if (shown === 0) { dl = `<span class="delta flat" title="Change on week ${k.w - 1}">• no change</span>`; }
+    const txt = isPct ? `${ch >= 0 ? '+' : ''}${ch.toFixed(m.fmt === 'pct' ? 0 : 1)} pts` : `${ch >= 0 ? '+' : ''}${Math.round(rel * 100)}%`;
+    if (shown !== 0) dl = `<span class="delta ${good}" title="Change on week ${k.w - 1}">${flat ? '•' : ch > 0 ? '▲' : '▼'} ${txt}</span>`;
+  }
+  return `<button class="kpi" data-metric="${m.id}" aria-label="${esc(m.name)}: ${esc(fmt(v, m.fmt))}. Open definition">
+    <span class="k-label"><span>${esc(m.name)}</span><span class="def">Definition ›</span></span>
+    <span class="k-row"><span><span class="k-val num" data-key="${key}" data-to="${v}" data-fmt="${m.fmt}">${esc(fmt(v, m.fmt))}</span>${m.unit ? `<span class="k-note"> ${m.unit}</span>` : ''}</span>${spark(series, k.i)}</span>
+    <span class="k-row"><span class="k-note">${opts.note || (k.i ? 'vs last week' : 'first week')}</span>${dl}</span></button>`;
+}
+const tableOn = new Set();
+function legendHtml(lg) {
+  if (!lg) return '';
+  const col = { acc: 'var(--viz)', acc2: 'color-mix(in srgb, var(--viz) 45%, var(--surface))', mut: 'var(--muted-mark)' };
+  return `<div class="legend">${lg.map(([n, c]) => `<span><i style="background:${col[c]}"></i>${esc(n)}</span>`).join('')}</div>`;
+}
+function chartCard(dash, spec, k) {
+  const key = dash.id + '-' + spec.id, d = spec.data(k);
+  const t = typeof spec.title === 'function' ? spec.title(k, d) : spec.title;
+  return `<section class="card ${spec.span === 2 ? 'span2' : ''}" data-chart="${key}">
+    <div class="card-h"><div><h3 class="swapme">${esc(t)}</h3><p class="sub">${esc(spec.sub || '')}</p></div><button class="tbtn" data-table="${key}" aria-pressed="${tableOn.has(key)}">${tableOn.has(key) ? 'Chart' : 'Table'}</button></div>
+    ${legendHtml(spec.legend)}<div class="chart" data-kind="${spec.kind}" data-ck="${key}"></div></section>`;
+}
+function workList(dash, k) {
+  const w = dash.work; if (!w) return '';
+  const items = w.items(k).filter(it => !state.resolved.has(it.id));
+  return `<section class="card span2"><div class="card-h"><div><h3>${esc(w.title)}</h3><p class="sub">${esc(w.sub)}</p></div><span class="tag">${items.length} open</span></div>
+    <ul class="work">${items.map(it => `<li class="wi" data-wi="${it.id}"><span class="sev ${it.sev}"><span aria-hidden="true">${SEVICON[it.sev]}</span>${esc(it.sl)}</span><div style="min-width:0"><div class="who">${esc(it.who)}</div><div class="why">${it.why.map(x => `<span>${esc(x)}</span>`).join('')}</div></div><button class="act" data-act="${it.id}" data-label="${esc(it.who)}">${esc(w.verb)}${ARW}</button></li>`).join('')}</ul>
+    ${items.length ? '' : '<p class="empty">Nothing waiting. New items arrive as the term moves.</p>'}</section>`;
+}
+function tagChip(t) { return `<span class="tag"><i style="background:${TAGS[t] || 'var(--ink-3)'}"></i>${esc(t)}</span>`; }
+
+// ---------- views ----------
+function viewDash(d, k) {
+  const ins = d.insight(k);
+  const kp = d.kpis;
+  return `<div class="head"><div><p class="eyebrow">${esc(d.group)} · ${esc(d.who)}</p><h1>${esc(d.name)}</h1><p class="decides">Decides: ${esc(d.decides)}</p></div>
+    <div class="meta">${tagChip(d.tag)}<span class="tag">Refresh: ${esc(d.cadence)}</span><span class="tag">Reports: ${esc(d.reports)}</span></div></div>
+    ${d.pilotOnly && !k.pilot ? `<p class="banner">Comparison sections don't use this service, so pilot figures are shown where comparison data does not exist.</p>` : ''}
+    <div class="insight ${ins.tone}"><div><p class="lbl">This week</p><h2 class="swapme">${esc(ins.h)}</h2><p>${esc(ins.p)}</p></div></div>
+    <div class="kpis">${kp.map(m => kpiTile(m, d.pilotOnly && !k.pilot ? Object.assign({}, k, { pilot: true }) : k)).join('')}</div>
+    <div class="grid">${d.charts.map(c => chartCard(d, c, d.pilotOnly ? Object.assign({}, k, { pilot: true }) : k)).join('')}${workList(d, k)}</div>`;
+}
+function viewOverview(k) {
+  const pick = ['active_students', 'persistence_proj', 'open_flags', 'exception_rate'].map(id => METRICS.find(m => m.id === id));
+  const act = new Set(activeAlerts().map(a => a.dash));
+  let h = `<section class="hero2"><canvas class="mesh" id="mesh" aria-hidden="true"></canvas><div class="hero-in"><div>
+    <p class="kicker"><b>Week ${k.w} of 8</b>Fall 1 session · ${k.pilot ? 'pilot sections' : 'comparison sections'}</p>
+    <h1>Every office, one set of numbers.</h1>
+    <p class="lead">${DASH.length} role dashboards read from one ontology, so admissions, aid, faculty and the Chancellor see the same definitions. ${k.w === 8 ? 'Final grades are due after this Sunday.' : `The Sunday deadline closes week ${k.w}.`}</p>
+    <div class="hero-ctas"><button class="btn-primary" data-go="coaching">See today's worklist${ARW}</button><button class="btn-ghost" data-go="catalog">Browse ${METRICS.length} metrics${ARW}</button></div>
+    <div class="term-ring" aria-hidden="true">${WEEKS.map((w, j) => `<span class="${j < k.i ? 'on' : ''} ${j === k.i ? 'cur' : ''}"></span>`).join('')}</div></div>
+    <div class="float">${pick.map((m, j) => kpiTile(m, k).replace('class="kpi"', `class="kpi" style="--i:${j}"`)).join('')}</div></div></section>`;
+  GROUPS.forEach(g => {
+    h += `<h2 class="sect-t">${g}</h2><div class="dgrid">`;
+    DASH.filter(d => d.group === g).forEach(d => {
+      const kk = d.pilotOnly ? Object.assign({}, k, { pilot: true }) : k, m = d.kpis[0], s = kk.pilot ? m.p : m.c, ins = d.insight(kk);
+      h += `<button class="dcard" data-go="${d.id}"><span class="row"><span class="g">${esc(d.who)}</span>${act.has(d.id) ? '<span class="sev serious"><span aria-hidden="true">!</span>Alert</span>' : ''}</span><b>${esc(d.name)}${ARW}</b><span class="hl">${esc(ins.h)}</span>
+        <span class="k-note">${esc(m.name)}</span><span class="row"><span class="num" style="font-size:20px">${s ? esc(fmt(s[kk.i], m.fmt)) : '—'}</span>${s ? spark(s, kk.i) : ''}</span>
+        <span class="meta">${tagChip(d.tag)}<span class="tag">${esc(d.cadence)}</span></span></button>`;
+    });
+    h += `</div>`;
+  });
+  return h;
+}
+const cat = { q: '', tag: null, sys: null, ent: null, open: new Set() };
+function viewCatalog() {
+  const tags = Object.keys(TAGS), systems = [...new Set(METRICS.flatMap(m => m.src))].sort();
+  const entCount = e => METRICS.filter(m => (m.ent || []).includes(e)).length;
+  let h = `<div class="head"><div><p class="eyebrow">Hub · from the shared ontology</p><h1>Metric catalog</h1><p class="decides">Every number on every dashboard is defined once here, with its owner, source systems and privacy tag. Pick an entity to see the metrics built on it.</p></div><div class="meta"><span class="tag">${METRICS.length} metrics</span><span class="tag">One writer per entity</span></div></div>
+  <div class="person">Person · one person_id from first contact to alumni</div>
+  <div class="ont">${LANES.map(l => `<div class="lane"><h4>${l.name}</h4><small>${l.sys}</small>${l.ents.map(e => `<button class="ent" data-ent="${e}" aria-pressed="${cat.ent === e}"><span>${e}</span><span class="c">${entCount(e)}</span></button>`).join('')}</div>`).join('')}</div>
+  <div class="head" style="align-items:center"><input id="catq" class="search" type="search" placeholder="Search metrics, owners or definitions" value="${esc(cat.q)}" aria-label="Search metrics">
+  <div class="chips">${tags.map(t => `<button class="chip" data-tagf="${t}" aria-pressed="${cat.tag === t}">${t}</button>`).join('')}</div></div>
+  <div class="chips">${systems.map(s => `<button class="chip" data-sysf="${s}" aria-pressed="${cat.sys === s}">${s}</button>`).join('')}</div>
+  <div class="mlist" id="mlist"></div>`;
+  return h;
+}
+function renderMetricList() {
+  const q = cat.q.toLowerCase();
+  const list = METRICS.filter(m => (!cat.tag || m.tag === cat.tag) && (!cat.sys || m.src.includes(cat.sys)) && (!cat.ent || (m.ent || []).includes(cat.ent)) && (!q || (m.name + ' ' + m.def + ' ' + m.own + ' ' + m.id).toLowerCase().includes(q)));
+  const el = $('#mlist'); if (!el) return;
+  el.innerHTML = list.length ? list.map((m, i) => { const d = DASH.find(x => x.id === m.dash); return `<div class="mrow" style="animation-delay:${Math.min(i, 12) * 25}ms"><div><h4>${esc(m.name)}</h4><p>${esc(m.def)}</p><code>${esc(m.f)}</code></div><div><p><b>Owner</b> ${esc(m.own)}</p><p><b>Sources</b> ${esc(m.src.join(', '))}</p><p><b>Entities</b> ${esc((m.ent || []).join(', ') || 'Platform')}</p></div><div class="meta" style="flex-direction:column;align-items:flex-end">${tagChip(m.tag)}<button class="linkbtn" data-go="${d.id}">${esc(d.name)}${ARW}</button></div></div>`; }).join('')
+    : '<p class="empty">No metric matches. Clear a filter or try another word.</p>';
+}
+
+// ---------- render ----------
+let lastView = null;
+function render() {
+  const k = ctx(), page = $('#page'), changed = lastView !== state.view;
+  renderTop(); renderRail();
+  if (state.view === 'overview') page.innerHTML = viewOverview(k);
+  else if (state.view === 'catalog') { if (changed) { page.innerHTML = viewCatalog(); } renderMetricList(); }
+  else { const d = DASH.find(x => x.id === state.view); page.innerHTML = d ? viewDash(d, k) : viewOverview(k); }
+  if (changed) { stagger(page); window.scrollTo({ top: 0 }); }
+  else $$('.swapme', page).forEach(el => { el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); });
+  lastView = state.view;
+  $$('.k-val[data-to]', page).forEach(countUp);
+  drawCharts();
+  startMesh();
+  document.title = 'Dallas College Global Insight Hub';
+}
+function stagger(page) {
+  let i = 0;
+  const els = [...page.children, ...$$('.kpis:not(.float) > .kpi, .grid > .card, .dgrid > .dcard', page)];
+  els.forEach(el => { if (el.classList.contains('hero2')) return; el.classList.remove('rise'); el.style.setProperty('--i', Math.min(i++, 14)); void el.offsetWidth; el.classList.add('rise'); });
+}
+let meshRAF = null;
+function startMesh() {
+  const cv = $('#mesh'); if (meshRAF) cancelAnimationFrame(meshRAF); meshRAF = null; if (!cv) return;
+  const cs = getComputedStyle(document.documentElement), col = ['--g1', '--g2', '--g3', '--g4', '--g1'].map(v => cs.getPropertyValue(v).trim() || '#4F5DFF');
+  const base = cs.getPropertyValue('--g0').trim() || '#0B1F3A', ctx2 = cv.getContext('2d'); if (!ctx2) return;
+  const blobs = [[.15, .2, .9, 0], [.55, .1, .7, 1.7], [.85, .45, 1.1, 3.1], [.35, .9, .8, 4.4], [.95, .95, .6, 5.6]];
+  const t0 = performance.now();
+  const frame = now => {
+    if (!cv.isConnected) { meshRAF = null; return; }
+    const dpr = Math.min(2, devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const t = (now - t0) / 1000;
+    ctx2.setTransform(dpr, 0, 0, dpr, 0, 0); ctx2.globalCompositeOperation = 'source-over'; ctx2.fillStyle = base; ctx2.fillRect(0, 0, w, h);
+    ctx2.globalCompositeOperation = 'lighter';
+    blobs.forEach(([bx, by, sp, ph], j) => {
+      const x = w * (bx + .1 * Math.sin(t * .18 * sp + ph)), y = h * (by + .14 * Math.cos(t * .15 * sp + ph * 1.3)), r = Math.max(w, h) * .55;
+      const g = ctx2.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col[j] + 'B3'); g.addColorStop(1, col[j] + '00');
+      ctx2.fillStyle = g; ctx2.fillRect(0, 0, w, h);
+    });
+    if (!reduceMotion && !document.hidden) meshRAF = requestAnimationFrame(frame);
+  };
+  meshRAF = requestAnimationFrame(frame);
+}
+function drawCharts() {
+  const k = ctx();
+  $$('.chart[data-ck]').forEach(el => {
+    const key = el.dataset.ck, [did, cid] = [key.slice(0, key.indexOf('-')), key.slice(key.indexOf('-') + 1)];
+    const dash = DASH.find(x => x.id === did), spec = dash.charts.find(c => c.id === cid);
+    const kk = dash.pilotOnly ? Object.assign({}, k, { pilot: true }) : k;
+    const d = spec.data(kk), W = Math.max(280, Math.round(el.clientWidth || 560));
+    const first = !state.seen.has(key) && !reduceMotion; state.seen.add(key);
+    const out = R[spec.kind](d, W, key, first);
+    if (tableOn.has(key)) { el.innerHTML = `<div class="twrap"><table class="tv"><thead><tr>${out.table.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${out.table.rows.map(r => `<tr>${r.map((c, j) => `<td class="${j ? 'n' : ''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; return; }
+    mountSVG(el, out.svg, key);
+  });
+}
+
+// ---------- drawer, toast, ask, alerts ----------
+function openMetric(id) {
+  const m = METRICS.find(x => x.id === id); if (!m) return;
+  const k = ctx(), d = DASH.find(x => x.id === m.dash), s = k.pilot ? m.p : (m.c || m.p);
+  closeDrawer(true);
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `<div class="scrim" data-close></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="${esc(m.name)}">
+    <div style="display:flex;justify-content:space-between;gap:12px"><p class="eyebrow">Governed metric · ${esc(m.id)}</p><button class="iconbtn" data-close aria-label="Close">✕</button></div>
+    <h2>${esc(m.name)}</h2><p style="margin:0;color:var(--ink-2)">${esc(m.def)}</p>
+    <div style="display:flex;align-items:center;gap:14px"><span class="k-val num" style="font-family:var(--f-display);font-size:34px">${esc(fmt(s[k.i], m.fmt))}</span>${spark(s, k.i)}<span class="k-note">${k.pilot || !m.c ? 'Pilot' : 'Comparison'}, week ${k.w}</span></div>
+    <code>${esc(m.f)}</code>
+    <dl><dt>Owner</dt><dd>${esc(m.own)}</dd><dt>Source systems</dt><dd>${esc(m.src.join(', '))}</dd><dt>Ontology entities</dt><dd>${esc((m.ent || []).join(', ') || 'Platform telemetry')}</dd><dt>Privacy tag</dt><dd>${tagChip(m.tag)}</dd><dt>Refresh</dt><dd>${esc(m.cad)}</dd><dt>Reporting</dt><dd>${esc(m.rep)}</dd><dt>Better when</dt><dd>${m.good === 'up' ? 'Higher' : 'Lower'}</dd><dt>Shown on</dt><dd><button class="linkbtn" data-go="${d.id}" data-close>${esc(d.name)}${ARW}</button></dd></dl>
+    <p class="k-note">Defined once in the ontology. Dashboards, the plain-English question box and the navigator's tools all read this definition.</p></aside>`;
+  wrap.id = 'drawerwrap'; document.body.appendChild(wrap);
+  setTimeout(() => { const b = $('.drawer [data-close]'); b && b.focus(); }, 50);
+}
+function closeDrawer(instant) { const w = $('#drawerwrap'); if (!w) return; if (instant || reduceMotion) { w.remove(); return; } w.id = ''; w.classList.add('closing'); setTimeout(() => w.remove(), 200); }
+let toastT;
+function toast(msg, undo) {
+  const old = $('.toast'); if (old) old.remove();
+  const leave = el => { el.classList.add('out'); setTimeout(() => el.remove(), 200); };
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+  t.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button>Undo</button>' : ''}`;
+  if (undo) t.querySelector('button').onclick = () => { undo(); leave(t); };
+  document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => leave(t), 4200);
+}
+const SYN = { speed: 'speed_to_lead', lead: 'speed_to_lead', melt: 'melt', aid: 'isir_to_award', award: 'isir_to_award', exception: 'exception_rate', flag: 'open_flags', risk: 'open_flags', persist: 'persistence_proj', retention: 'next_session_persist', csat: 'csat', satisfaction: 'csat', badge: 'badges_issued', uptime: 'uptime', lag: 'event_lag', grade: 'grade_post_hrs', census: 'census_accuracy', enroll: 'active_students', cost: 'cost_per_enrolled', wcag: 'wcag_assets', caption: 'captions_sla', accommodation: 'days_to_accom', quiet: 'quiet', edit: 'ai_edit_rate', draft: 'drafts_to_sign', receivable: 'ar_90', revenue: 'net_rev_student', application: 'apps_week', equity: 'equity_gap', sunday: 'on_time', late: 'on_time', navigator: 'resolution_rate', wait: 'wait_person', state: 'out_of_state', glba: 'glba_controls' };
+function answer(q) {
+  const box = $('#answer'), k = ctx();
+  if (!q.trim()) { box.hidden = true; return; }
+  const words = q.toLowerCase().match(/[a-z0-9]+/g) || [];
+  let best = null, score = 0;
+  METRICS.forEach(m => { const hay = (m.name + ' ' + m.def + ' ' + m.id.replace(/_/g, ' ')).toLowerCase(); let s = 0; words.forEach(w => { if (w.length > 2 && hay.includes(w)) s += 1; Object.keys(SYN).forEach(sy => { if (w.startsWith(sy) && SYN[sy] === m.id) s += 3; }); }); if (s > score) { score = s; best = m; } });
+  if (!best || score < 1) { box.className = 'answer'; box.innerHTML = `<p style="margin:0 0 8px">No governed metric answers that yet. Try one of these:</p><div class="chips">${['median speed-to-lead', 'open risk flags', 'days to award aid', 'melt rate', 'uptime'].map(s => `<button class="chip" data-ask="${s}">${s}</button>`).join('')}</div>`; box.hidden = false; return; }
+  const usePilot = k.pilot || !best.c, s = usePilot ? best.p : best.c;
+  box.className = 'answer'; box.innerHTML = `<p class="k-note" style="margin:0">${esc(best.name)} · ${usePilot ? 'pilot' : 'comparison'} · week ${k.w}</p><p class="big num" style="margin:2px 0">${esc(fmt(s[k.i], best.fmt))}</p><p style="margin:0;color:var(--ink-2)">${esc(best.def)}</p>
+    <code>metrics.query(\n  metrics=["${best.id}"],\n  where={cohort: "${usePilot ? 'pilot' : 'comparison'}", week: ${k.w}},\n  grain="week")</code>
+    <div style="display:flex;gap:10px;margin-top:10px;align-items:center;flex-wrap:wrap">${tagChip(best.tag)}<span class="k-note">Owner: ${esc(best.own)}</span><button class="linkbtn" data-metric="${best.id}">Definition${ARW}</button><button class="linkbtn" data-go="${best.dash}">Open dashboard${ARW}</button></div>`;
+  box.hidden = false;
+}
+function showAlerts() {
+  const box = $('#alerts'), al = activeAlerts();
+  if (!box.hidden) { box.hidden = true; return; }
+  box.className = 'alerts';
+  box.innerHTML = al.length ? al.map(a => `<button class="alert" data-go="${a.dash}" style="border:0;background:none;width:100%;text-align:left"><span class="sev ${a.sev}"><span aria-hidden="true">${SEVICON[a.sev]}</span>${esc(DASH.find(d => d.id === a.dash).name)}</span><span>${esc(a.text(ctx()))}</span></button>`).join('') : '<p class="empty" style="padding:10px">No alerts this week.</p>';
+  box.hidden = false;
+}
+function checkNewAlerts() {
+  const k = ctx(); const fresh = activeAlerts().filter(a => !state.alertsSeen.has(a.id + k.w + k.c));
+  fresh.forEach(a => state.alertsSeen.add(a.id + k.w + k.c));
+  if (fresh.length) { const b = $('#bell'); b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring'); }
+}
+
+// ---------- events ----------
+function go(id) { state.view = id; try { history.replaceState(null, '', '#' + id); } catch (e) {} $('#alerts').hidden = true; $('#answer').hidden = true; closeDrawer(); render(); }
+function setWeek(w) { w = clamp(w, 1, 8); if (w === state.week) return; state.week = w; savePrefs(); render(); checkNewAlerts(); }
+function setCohort(c) { if (c === state.cohort) return; state.cohort = c; savePrefs(); render(); checkNewAlerts(); }
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, [data-close]'); if (!t) { if (!e.target.closest('.ask') && !e.target.closest('#alerts')) { $('#answer').hidden = true; $('#alerts').hidden = true; } return; }
+  if (t.dataset.close !== undefined && !t.dataset.go) { closeDrawer(); return; }
+  if (t.dataset.go) { go(t.dataset.go); return; }
+  if (t.dataset.week) { stopPlay(); setWeek(+t.dataset.week); return; }
+  if (t.dataset.metric) { $('#answer').hidden = true; openMetric(t.dataset.metric); return; }
+  if (t.dataset.table) { const k = t.dataset.table; tableOn.has(k) ? tableOn.delete(k) : tableOn.add(k); t.textContent = tableOn.has(k) ? 'Chart' : 'Table'; t.setAttribute('aria-pressed', tableOn.has(k)); state.seen.delete(k); drawCharts(); return; }
+  if (t.dataset.act) {
+    const id = t.dataset.act, li = t.closest('.wi'); li.classList.add('gone'); state.resolved.add(id);
+    setTimeout(() => render(), 400);
+    toast(`${t.dataset.label}: ${t.textContent.trim().toLowerCase()} logged`, () => { state.resolved.delete(id); render(); });
+    return;
+  }
+  if (t.dataset.ask) { $('#askq').value = t.dataset.ask; answer(t.dataset.ask); return; }
+  if (t.dataset.ent) { cat.ent = cat.ent === t.dataset.ent ? null : t.dataset.ent; $$('.ent').forEach(b => b.setAttribute('aria-pressed', b.dataset.ent === cat.ent)); renderMetricList(); return; }
+  if (t.dataset.tagf) { cat.tag = cat.tag === t.dataset.tagf ? null : t.dataset.tagf; $$('[data-tagf]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tagf === cat.tag)); renderMetricList(); return; }
+  if (t.dataset.sysf) { cat.sys = cat.sys === t.dataset.sysf ? null : t.dataset.sysf; $$('[data-sysf]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sysf === cat.sys)); renderMetricList(); return; }
+  if (t.id === 'c-pilot') return setCohort('pilot');
+  if (t.id === 'c-comp') return setCohort('comparison');
+  if (t.id === 'bell') return showAlerts();
+  if (t.id === 'play') return togglePlay();
+  if (t.id === 'theme') {
+    const root = document.documentElement, cur = root.getAttribute('data-theme');
+    const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme', dark ? 'light' : 'dark'); setTimeout(drawCharts, 30); return;
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'askq') answer(e.target.value);
+  if (e.target.id === 'catq') { cat.q = e.target.value; renderMetricList(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDrawer(); $('#answer').hidden = true; $('#alerts').hidden = true; return; }
+  if (e.target.matches('input')) return;
+  if (e.key === 'ArrowRight') { stopPlay(); setWeek(state.week + 1); }
+  if (e.key === 'ArrowLeft') { stopPlay(); setWeek(state.week - 1); }
+});
+let playT = null;
+function togglePlay() { if (playT) return stopPlay(); if (state.week >= 8) setWeek(1); $('#playicon').setAttribute('d', 'M3 2h3v10H3zM8 2h3v10H8z'); playT = setInterval(() => { if (state.week >= 8) return stopPlay(); setWeek(state.week + 1); }, 1700); }
+function stopPlay() { if (!playT) return; clearInterval(playT); playT = null; $('#playicon').setAttribute('d', 'M3 2l9 5-9 5z'); }
+let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(drawCharts, 160); });
+addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h && h !== state.view && (h === 'overview' || h === 'catalog' || DASH.some(d => d.id === h))) go(h); });
+
+// ---------- boot ----------
+(function boot() {
+  const h = location.hash.slice(1);
+  if (h && (h === 'catalog' || DASH.some(d => d.id === h))) state.view = h;
+  render(); checkNewAlerts();
+})();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)startMesh();});
+</script>
