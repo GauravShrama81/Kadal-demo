@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wayfinder, Maya's journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --accent:#1E5EFF;
+  --accent-ink:#1749C9;
+  --accent-soft:rgba(30,94,255,.10);
+  --accent-line:rgba(30,94,255,.28);
+  --paper:#F4F0EA;
+  --glass:rgba(255,252,247,.66);
+  --glass-strong:rgba(255,252,247,.86);
+  --glass-edge:rgba(255,255,255,.75);
+  --line:rgba(31,38,51,.09);
+  --line-2:rgba(31,38,51,.14);
+  --ink:#1F2633;
+  --ink-2:#555D6B;
+  --ink-3:#8A8F98;
+  --busy:#C9771E;
+  --busy-soft:rgba(201,119,30,.13);
+  --hot:#C93F33;
+  --hot-soft:rgba(201,63,51,.12);
+  --ok-soft:rgba(30,94,255,.09);
+  --shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 10px 30px -12px rgba(60,48,30,.28), 0 2px 6px -2px rgba(60,48,30,.12);
+  --font:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-io:cubic-bezier(.77,0,.175,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141A26; --glass:rgba(24,30,44,.62); --glass-strong:rgba(26,33,48,.88); --glass-edge:rgba(255,255,255,.08);
+    --line:rgba(226,232,244,.09); --line-2:rgba(226,232,244,.15); --ink:#EEF1F7; --ink-2:#AEB5C3; --ink-3:#7C8494;
+    --accent-soft:rgba(90,140,255,.16); --accent-line:rgba(110,155,255,.4); --accent-ink:#8FB0FF;
+    --busy:#F0A54A; --busy-soft:rgba(240,165,74,.16); --hot:#FF7A6B; --hot-soft:rgba(255,122,107,.15);
+    --shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 14px 34px -14px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141A26; --glass:rgba(24,30,44,.62); --glass-strong:rgba(26,33,48,.88); --glass-edge:rgba(255,255,255,.08);
+  --line:rgba(226,232,244,.09); --line-2:rgba(226,232,244,.15); --ink:#EEF1F7; --ink-2:#AEB5C3; --ink-3:#7C8494;
+  --accent-soft:rgba(90,140,255,.16); --accent-line:rgba(110,155,255,.4); --accent-ink:#8FB0FF;
+  --busy:#F0A54A; --busy-soft:rgba(240,165,74,.16); --hot:#FF7A6B; --hot-soft:rgba(255,122,107,.15);
+  --shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 14px 34px -14px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.35);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4;overflow:hidden;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;transition:background .8s}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+
+.ui{position:fixed;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top,0px) + 12px) calc(env(safe-area-inset-right,0px) + 12px) calc(env(safe-area-inset-bottom,0px) + 12px) calc(env(safe-area-inset-left,0px) + 12px)}
+.ui > *{pointer-events:auto}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--glass-edge);box-shadow:var(--shadow);transition:background .8s, border-color .8s}
+
+
+.topbar{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;right:12px;height:58px;border-radius:18px;display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;flex:none}
+.brand svg{width:30px;height:30px}
+.wordmark{font-weight:650;font-size:18px;letter-spacing:-.02em;line-height:1.1}
+.wordmark small{display:block;font-size:12px;font-weight:500;color:var(--ink-3);letter-spacing:0}
+.seg{position:relative;display:flex;padding:3px;border-radius:12px;background:var(--line);flex:none}
+.seg button{height:32px;padding:0 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--ink-2);white-space:nowrap;transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--glass-strong);color:var(--ink);box-shadow:0 1px 3px rgba(40,30,20,.14)}
+.ctl-label{font-size:11.5px;color:var(--ink-3);margin-right:-4px;white-space:nowrap}
+.role{position:relative;display:flex;padding:3px;border-radius:14px;background:var(--line);flex:none}
+.role button{position:relative;z-index:1;height:34px;padding:0 14px;border-radius:11px;font-size:14px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:7px;transition:color .3s}
+.role button svg{width:16px;height:16px}
+.role button[aria-pressed="true"]{color:#fff}
+.role::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:11px;background:var(--accent);transition:transform .45s var(--ease-out),background .4s}
+.role[data-role="staff"]::before{transform:translateX(100%);background:#2A3242}
+.spacer{flex:1}
+.icon-btn{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:15px;color:var(--ink-2);background:var(--line)}
+.icon-btn:hover{color:var(--ink)}
+.half{position:absolute;top:0;bottom:0;pointer-events:none}
+.half > *{pointer-events:auto}
+#halfT{left:0;width:50%}#halfA{left:50%;width:50%}
+.ui[data-view="T"] #halfT,.ui[data-view="A"] #halfA{left:0;width:100%}
+.ui[data-view="T"] #halfA,.ui[data-view="A"] #halfT{display:none}
+.ui[data-view="split"] .divider{display:block}
+.divider{display:none;position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:rgba(255,255,255,.85);box-shadow:0 0 0 1px rgba(31,38,51,.08);pointer-events:none;z-index:2}
+.hhead{position:absolute;top:calc(env(safe-area-inset-top,0px) + 82px);left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:6}
+#halfA .hhead{left:12px}
+.side-chip{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:15px;font-size:13px;font-weight:650;background:var(--glass-strong);box-shadow:var(--shadow);flex:none}
+.side-chip i{width:9px;height:9px;border-radius:50%;background:#8A8F98}
+#halfA .side-chip{background:var(--accent);color:#fff}
+#halfA .side-chip i{background:#fff}
+.counters{display:flex;gap:6px;flex-wrap:wrap}
+.ctr{display:flex;flex-direction:column;justify-content:center;height:40px;padding:0 10px;border-radius:12px;background:var(--glass-strong);box-shadow:var(--shadow);min-width:76px}
+.ctr span{font-size:10.5px;color:var(--ink-3);line-height:1.1}
+.ctr b{font-size:15px;font-weight:650;letter-spacing:-.01em;line-height:1.2;white-space:nowrap}
+.ctr[data-level="hot"] b{color:var(--hot)}.ctr[data-level="busy"] b{color:var(--busy)}.ctr[data-level="ok"] b{color:var(--accent-ink)}
+.caption{position:absolute;top:calc(env(safe-area-inset-top,0px) + 132px);left:12px;max-width:min(560px,calc(100% - 24px));padding:10px 14px;border-radius:14px;font-size:14.5px;font-weight:500;line-height:1.42;z-index:5}
+.caption small{display:block;font-size:11.5px;color:var(--ink-3);font-weight:500;margin-bottom:2px}
+.feed{position:absolute;left:12px;bottom:calc(var(--bottomH,160px) + 12px);z-index:5}
+.phone{width:262px;border-radius:30px;padding:10px 10px 12px;background:rgba(255,253,250,.92);border:6px solid #1F2633;box-shadow:0 18px 40px -16px rgba(20,24,40,.45);backdrop-filter:blur(16px)}
+.ph-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--ink-2);padding:2px 6px 8px}
+.ph-top i{width:38px;height:5px;border-radius:3px;background:#1F2633;opacity:.85}
+.msg{background:#fff;border-radius:14px;padding:8px 10px;margin-top:6px;font-size:12.5px;line-height:1.35;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.msg b{display:block;font-size:11.5px;color:var(--accent-ink);margin-bottom:1px}
+.msg.me{background:var(--accent);color:#fff;margin-left:30px}.msg.me b{color:rgba(255,255,255,.8)}
+.msg.new,.ci.new{animation:pop .45s var(--ease-out)}
+.console{width:320px;border-radius:18px;padding:10px;background:rgba(26,33,48,.9);color:#EEF1F7;box-shadow:0 18px 40px -16px rgba(10,14,24,.6);backdrop-filter:blur(16px)}
+.co-top{display:flex;gap:9px;align-items:center;padding:2px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.co-top .av{width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:#fff;flex:none}
+.co-top b{display:block;font-size:13px}.co-top small{display:block;font-size:11px;color:#9AA6BC}
+.ci{border-radius:12px;padding:8px 10px;margin-top:6px;background:rgba(255,255,255,.06);font-size:12.5px;line-height:1.35}
+.ci p{margin:3px 0 0}
+.ci .tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.12);color:#C9D2E4;letter-spacing:.02em}
+.ci.k-insight .tag,.ci.k-draft .tag,.ci.k-gate .tag{background:var(--accent);color:#fff}
+.ci.k-approval .tag{background:#2F4C8F;color:#fff}
+.ci.k-ticket .tag,.ci.k-wait .tag{background:rgba(240,165,74,.25);color:#F5C27F}
+.gate{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.gate button{height:32px;border-radius:10px;background:var(--accent);color:#fff;font-weight:650;font-size:12.5px}
+.gate button:active{transform:scale(.98)}
+.gate small{font-size:11px;color:#9AA6BC}
+.gate.done small{color:#8FB0FF;font-weight:600}
+.empty{font-size:12px;color:var(--ink-3);margin:6px}
+.console .empty{color:#7C8494}
+.ui[data-role="staff"] .caption{background:rgba(26,33,48,.86);color:#EEF1F7;border-color:rgba(255,255,255,.08)}
+.ui[data-role="staff"] .caption small{color:#9AA6BC}
+.bottom{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;gap:8px;z-index:10}
+.ribbon{display:flex;border-radius:18px;padding:10px 12px;gap:14px;min-height:84px}
+.rib{flex:1;min-width:0}
+.ui[data-view="T"] .rib-a,.ui[data-view="A"] .rib-t{display:none}
+.rib-a{border-left:1px solid var(--line-2);padding-left:14px}
+.ui[data-view="T"] .rib-a,.ui[data-view="A"] .rib-a{border:0;padding:0}
+.rb-h{display:flex;gap:8px;align-items:baseline;margin-bottom:6px}
+.rb-h b{font-size:13px;font-weight:650}.rb-h span{font-size:11.5px;color:var(--ink-3)}
+.cards{display:flex;flex-wrap:wrap;gap:5px}
+.card{font-size:11.5px;font-weight:500;padding:4px 9px;border-radius:9px;background:var(--accent-soft);color:var(--accent-ink);transition:background .3s,color .3s,transform .3s}
+.card.fresh{animation:pop .5s var(--ease-out)}
+.card.read{background:var(--accent);color:#fff;transform:translateY(-2px)}
+.silos{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:6px}
+.silo{border-radius:10px;background:var(--line);padding:5px 6px;min-height:46px;display:flex;flex-direction:column;gap:3px}
+.silo.none{opacity:.45}
+.silo i{font-style:normal;font-size:10px;font-weight:650;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc{font-size:10.5px;line-height:1.25;padding:2px 5px;border-radius:6px;background:var(--glass-strong);color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc.ask{background:var(--busy-soft);color:var(--busy);font-weight:600}
+.sc.lost{background:var(--hot-soft);color:var(--hot);text-decoration:line-through}
+.sc.fresh{animation:pop .5s var(--ease-out)}
+.silo em{font-style:normal;font-size:10px;color:var(--ink-3)}
+.player{display:flex;align-items:center;gap:10px;border-radius:18px;padding:8px 12px;height:62px}
+.pbtn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--line);flex:none}
+.pbtn svg{width:18px;height:18px}
+#playBtn{background:var(--accent);color:#fff;width:46px;height:46px;border-radius:14px}
+.ch-info{display:flex;flex-direction:column;min-width:150px;max-width:230px;flex:none}
+.ch-info b{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-info span{font-size:11.5px;color:var(--ink-3)}
+.ch-prog{height:3px;border-radius:2px;background:var(--line-2);margin-top:4px;overflow:hidden}
+.ch-prog i{display:block;height:100%;width:0;background:var(--accent)}
+.chapters{flex:1;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chd{flex:1;min-width:58px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 2px;border-radius:9px;font-size:11px;color:var(--ink-3)}
+.chd:hover{background:var(--line)}
+.chd i{width:12px;height:12px;border-radius:50%;border:2px solid var(--line-2);background:var(--glass-strong)}
+.chd.done i{background:var(--accent);border-color:var(--accent)}
+.chd.now{color:var(--ink);font-weight:650}.chd.now i{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.chd.pro i{border-radius:3px}
+.chd span{white-space:nowrap}
+.speed{display:flex;gap:2px;padding:2px;border-radius:10px;background:var(--line);flex:none}
+.speed button{height:28px;min-width:34px;border-radius:8px;font-size:12px;font-weight:650;color:var(--ink-2)}
+.speed button[aria-pressed="true"]{background:var(--glass-strong);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.bubbles,.labs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.bub{position:absolute;left:0;top:0;max-width:220px;padding:7px 11px;border-radius:12px;font-size:12.5px;font-weight:600;line-height:1.3;background:#fff;color:var(--ink);box-shadow:0 8px 20px -8px rgba(20,24,40,.35);animation:pop .35s var(--ease-out);display:flex;gap:6px;align-items:flex-start;white-space:normal}
+.bub::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;background:inherit;transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.bub i{font-style:normal;flex:none}
+.b-wait,.b-waitAt{background:#EDEBE6;color:#555D6B}
+.b-ask{background:#FCEBD5;color:#9A5A12}
+.b-lost{background:#F8DEDA;color:#A3352B}
+.b-flag{background:#FCEBD5;color:#9A5A12}
+.b-stamp{background:var(--accent);color:#fff}
+.b-note{background:#fff;font-weight:500;font-style:italic}
+.dlab{position:absolute;left:0;top:0;font-size:11px;font-weight:600;color:var(--ink-2);white-space:nowrap;padding:3px 8px 3px 4px;border-radius:9px;background:rgba(255,253,250,.82);display:flex;align-items:center;gap:5px;opacity:.85}
+.dlab i{font-style:normal;width:16px;height:16px;border-radius:5px;background:#8A8F98;color:#fff;font-size:9.5px;display:grid;place-items:center}
+.dlab.focus{opacity:1;color:var(--ink);font-size:12px}
+.dlab.focus i{background:var(--accent)}
+.overlay{position:fixed;inset:0;display:none;place-items:center;z-index:60;background:rgba(20,26,38,.28);backdrop-filter:blur(3px);padding:16px}
+.overlay.show{display:grid}
+.intro,.end{width:min(620px,100%);border-radius:24px;padding:24px 26px;background:var(--glass-strong)}
+.intro h2,.end h2{margin:0 0 6px;font-size:22px;letter-spacing:-.02em}
+.intro > p,.end > p{margin:0 0 14px;color:var(--ink-2);font-size:14px}
+.steps{display:flex;flex-direction:column;gap:10px;margin:14px 0 18px}
+.step{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;font-size:14px;line-height:1.45}
+.step i{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700}
+.step b{display:block}
+.step span{color:var(--ink-2)}
+.end table{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0 10px}
+.end th{text-align:left;font-size:12px;color:var(--ink-3);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line)}
+.end td{padding:9px 8px;border-bottom:1px solid var(--line);font-weight:600}
+.end td:first-child{font-weight:500;color:var(--ink-2)}
+.end .ai{color:var(--accent-ink)}
+.fine{font-size:12px !important;color:var(--ink-3) !important;margin:4px 0 !important}
+.end-btns,.intro-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 16px;border-radius:12px;font-weight:650;font-size:14px;background:var(--accent);color:#fff}
+.btn.ghost{background:var(--line);color:var(--ink)}
+.toast{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 82px);transform:translate(-50%,-10px);padding:9px 14px;border-radius:13px;font-size:13.5px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease-out);z-index:40;display:flex;gap:8px;align-items:center;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.loader{position:fixed;inset:0;display:grid;place-items:center;background:var(--paper);z-index:100;transition:opacity .7s;font-size:14px;color:var(--ink-2)}
+.loader.done{opacity:0;pointer-events:none}
+.loader div{display:flex;flex-direction:column;align-items:center;gap:14px}
+.loader svg{width:44px;height:44px}.loader .spin{animation:spin 1.4s linear infinite;transform-origin:50% 50%}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:1380px){ .wordmark small{display:none} .ctl-label{display:none} .seg button{padding:0 10px;font-size:13px} .ctr{min-width:66px;padding:0 8px} .ctr b{font-size:14px} .console{width:290px} .phone{width:240px} }
+@media (max-width:1180px){ .ui[data-view="split"] .feed{transform:scale(.86);transform-origin:bottom left} .caption{font-size:13.5px} .ch-info{min-width:120px} }
+@media (max-width:760px){
+  .topbar{height:auto;flex-wrap:wrap;gap:6px;padding:8px 8px 8px 12px;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px)}
+  .wordmark{font-size:16px}
+  #phaseSeg{order:5;flex:1 1 100%}#phaseSeg button{flex:1;font-size:12px;padding:0 6px}
+  .role button{padding:0 10px;font-size:13px}
+  #viewSeg button[data-view="split"]{display:none}
+  #viewSeg button{padding:0 8px;font-size:12px}
+  .hhead{top:calc(env(safe-area-inset-top,0px) + 158px);left:8px;right:8px}
+  .side-chip{display:none}
+  .ctr{min-width:0;flex:1;height:36px;padding:0 7px}.ctr span{font-size:9.5px}.ctr b{font-size:13px}
+  .counters{flex-wrap:nowrap;width:100%}
+  .caption{top:calc(env(safe-area-inset-top,0px) + 202px);left:8px;right:8px;max-width:none;font-size:13px;padding:8px 11px}
+  .feed{left:8px;transform:scale(.8);transform-origin:bottom left}
+  .bottom{left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);gap:6px}
+  .ribbon{min-height:0;padding:8px 10px}.rb-h span{display:none}.silos{grid-template-columns:repeat(4,1fr)}
+  .player{height:auto;flex-wrap:wrap;padding:8px}.ch-info{flex:1;min-width:0}.chapters{order:6;flex:1 1 100%}.chd{min-width:46px;font-size:10px}
+  .intro,.end{padding:18px}
+}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="Two views of the same college island: traditional on the left, AI-assisted on the right, following Maya through her journey."></canvas>
+<div class="loader" id="loader"><div><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="16" fill="none" stroke="#1E5EFF" stroke-width="3" opacity=".25"/><path class="spin" d="M22 6 a16 16 0 0 1 16 16" fill="none" stroke="#1E5EFF" stroke-width="3" stroke-linecap="round"/></svg><span id="loaderText">Building the island</span></div></div>
+<div class="ui" id="ui" data-view="split" data-role="student">
+  <div class="half" id="halfT"><div class="labs" id="labT"></div><div class="bubbles" id="bubT"></div>
+    <div class="hhead"><span class="side-chip"><i></i>Traditional</span><div class="counters" id="cntT"></div></div>
+    <div class="caption glass" id="capT"></div><div class="feed" id="feedT"></div></div>
+  <div class="half" id="halfA"><div class="labs" id="labA"></div><div class="bubbles" id="bubA"></div>
+    <div class="hhead"><span class="side-chip"><i></i>AI-assisted</span><div class="counters" id="cntA"></div></div>
+    <div class="caption glass" id="capA"></div><div class="feed" id="feedA"></div></div>
+  <div class="divider"></div>
+  <header class="topbar glass">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25c5 0 5-6 11-6s6-7 11-7" fill="none" stroke="#1E5EFF" stroke-width="2.8" stroke-linecap="round"/><circle cx="5" cy="25" r="2.6" fill="#1E5EFF"/><circle cx="27" cy="12" r="2.6" fill="none" stroke="#1E5EFF" stroke-width="2.2"/></svg><span class="wordmark">Wayfinder<small>Maya’s journey, two ways</small></span></div>
+    <span class="ctl-label">Phase</span>
+    <div class="seg" id="phaseSeg" role="group" aria-label="Phase"><button data-phase="1" aria-pressed="true">Discovery to admission</button><button data-phase="2" aria-pressed="false">Admission to graduation</button></div>
+    <span class="ctl-label">Role</span>
+    <div class="role" id="roleSwitch" role="group" aria-label="Role" data-role="student"><button data-role="student" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Student</button><button data-role="staff" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Staff</button></div>
+    <div class="spacer"></div>
+    <span class="ctl-label">View</span>
+    <div class="seg" id="viewSeg" role="group" aria-label="View"><button data-view="split" aria-pressed="true">Side by side</button><button data-view="T" aria-pressed="false">Traditional</button><button data-view="A" aria-pressed="false">AI-assisted</button></div>
+    <button class="icon-btn" id="helpBtn" aria-label="How to use">?</button>
+  </header>
+  <div class="bottom">
+    <div class="ribbon glass"><div class="rib rib-t" id="ribT"></div><div class="rib rib-a" id="ribA"></div></div>
+    <div class="player glass">
+      <button class="pbtn" id="prevBtn" aria-label="Previous chapter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="pbtn" id="playBtn" aria-label="Play"></button>
+      <button class="pbtn" id="nextBtn" aria-label="Next chapter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+      <div class="ch-info"><b id="chTitle"></b><span id="chSub"></span><div class="ch-prog"><i id="chProg"></i></div></div>
+      <div class="chapters" id="chapters"></div>
+      <div class="speed" role="group" aria-label="Speed"><button data-speed="1" aria-pressed="true">1×</button><button data-speed="2" aria-pressed="false">2×</button></div>
+    </div>
+  </div>
+  <div class="overlay" id="intro"><div class="intro glass">
+    <h2>Follow Maya through college, two ways</h2>
+    <p>Maya is 29, works evening shifts in a hospital lab and has 27 college credits. The same Maya, with the same life events, goes through a traditional college on the left and an AI-assisted college on the right.</p>
+    <div class="steps">
+      <div class="step"><i>1</i><div><b>Press play</b><span>Each chapter plays on both sides at once. Watch the counters at the top: days, waiting, and how often Maya is asked the same thing again.</span></div></div>
+      <div class="step"><i>2</i><div><b>Switch Role to Staff at any moment</b><span>You see the same moment from behind the scenes: who acted, what the AI drafted, and which person approved it. Staff also opens a prologue where the program itself is built.</span></div></div>
+      <div class="step"><i>3</i><div><b>Watch the ribbon at the bottom</b><span>On the right, Maya’s information lives in one record that each step reads. On the left, it scatters across office files.</span></div></div>
+      <div class="step"><i>4</i><div><b>Approve drafts yourself</b><span>In Staff view, AI drafts wait for a person. Press Approve and send, or let the named staff member approve it.</span></div></div>
+    </div>
+    <div class="intro-btns"><button class="btn" data-intro="play">Start Maya’s journey</button><button class="btn ghost" data-intro="close">Look around first</button></div>
+  </div></div>
+  <div class="overlay" id="endCard"></div>
+  <div class="toast glass" id="toast" role="status"><i></i><span id="toastText"></span></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="document.getElementById('loaderText').textContent='The 3D engine could not load. Check your connection and reload the page.'"></script>
+<script>
+(function(){
+if(!window.THREE){return;}
+try{
+'use strict';
+/* ============ utilities ============ */
+const $ = s => document.querySelector(s);
+const TAU = Math.PI * 2;
+const rand = (a, b) => a + Math.random() * (b - a);
+const randi = (a, b) => Math.floor(rand(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const damp = (a, b, k, dt) => lerp(a, b, 1 - Math.exp(-k * dt));
+const easeIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const angDiff = (a, b) => { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; };
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const pct = (v, d) => (v * 100).toFixed(d === undefined ? 1 : d) + '%';
+const IS_MOBILE = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse)').matches;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COL = {
+  accent: 0x1E5EFF, peri: 0x8FA8FF, paper: 0xF4F1EC, grass: 0xBCCDA6, grass2: 0xB2C59C, grass3: 0xC6D5B2, sand: 0xEBE0CA,
+  stone: 0xDCD5CA, stoneD: 0xCEC6B9, path: 0xDDD4C6, water: 0xC4D5E5, wall: 0xF8F5F0, wall2: 0xEEE8DF, roof: 0xE5DED3,
+  glass: 0xBFCCE0, ink: 0x2A3242, trunk: 0xC4A27F, tree: 0xA9BF92, tree2: 0x9DB687, amber: 0xE0A23A, red: 0xD9534A, white: 0xFBF9F5
+};
+const GY = 2;      // island ground height
+const DY = 3;      // district plinth top
+
+/* ============ renderer ============ */
+const canvas = $('#scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, IS_MOBILE ? 1.6 : 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xEEF2F3);
+scene.fog = new THREE.Fog(0xEEF2F3, 1500, 2600);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 5000);
+let W = innerWidth, H = innerHeight;
+
+/* ============ camera rig ============ */
+const cam = { target: new THREE.Vector3(0, GY, 0), zoom: 1, az: 0.55, el: 0.68 };
+let glide = null;
+function viewSize() { const a = W / H; return a < 1 ? 480 * Math.min(2.2, 0.85 / a) : 480; }
+function applyCamera() {
+  const D = 1400, ce = Math.cos(cam.el);
+  camera.position.set(cam.target.x + Math.sin(cam.az) * ce * D, cam.target.y + Math.sin(cam.el) * D, cam.target.z + Math.cos(cam.az) * ce * D);
+  camera.lookAt(cam.target);
+  const vs = viewSize(), a = W / H;
+  camera.left = -vs * a / 2; camera.right = vs * a / 2; camera.top = vs / 2; camera.bottom = -vs / 2;
+  camera.zoom = cam.zoom; camera.updateProjectionMatrix();
+}
+function flyTo(x, z, zoom, az, dur, el) {
+  const from = { x: cam.target.x, z: cam.target.z, zoom: cam.zoom, az: cam.az, el: cam.el };
+  const to = { x, z, zoom: zoom || cam.zoom, az: az === undefined ? cam.az : cam.az + angDiff(cam.az, az), el: el === undefined ? from.el : el };
+  glide = { from, to, t: 0, dur: REDUCED ? 0.01 : (dur || 1.3) };
+}
+function updateGlide(dt) {
+  if (!glide) return;
+  glide.t = Math.min(1, glide.t + dt / glide.dur);
+  const k = easeIO(glide.t), f = glide.from, t = glide.to;
+  const dist = Math.hypot(t.x - f.x, t.z - f.z), dip = Math.sin(Math.PI * k) * Math.min(0.3, dist / 900);
+  cam.target.x = lerp(f.x, t.x, k); cam.target.z = lerp(f.z, t.z, k);
+  cam.zoom = Math.exp(lerp(Math.log(f.zoom), Math.log(t.zoom), k)) * (1 - dip);
+  cam.az = lerp(f.az, t.az, k); cam.el = lerp(f.el, t.el, k);
+  if (glide.t >= 1) glide = null;
+}
+const raycaster = new THREE.Raycaster();
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -GY);
+function ndc(cx, cy) { const r = canvas.getBoundingClientRect(); return new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1); }
+function groundAt(cx, cy) { raycaster.setFromCamera(ndc(cx, cy), camera); const p = new THREE.Vector3(); return raycaster.ray.intersectPlane(groundPlane, p) ? p : null; }
+function clampTarget() { cam.target.x = clamp(cam.target.x, -360, 360); cam.target.z = clamp(cam.target.z, -300, 320); cam.zoom = clamp(cam.zoom, 0.6, 9); }
+function panBy(dx, dy) {
+  const u = (viewSize() / cam.zoom) / H;
+  const rx = Math.cos(cam.az), rz = -Math.sin(cam.az), fx = -Math.sin(cam.az), fz = -Math.cos(cam.az);
+  cam.target.x -= rx * dx * u; cam.target.z -= rz * dx * u;
+  cam.target.x += fx * dy * u / Math.sin(cam.el); cam.target.z += fz * dy * u / Math.sin(cam.el);
+  clampTarget();
+}
+function zoomAt(factor, cx, cy) {
+  const before = cx !== undefined ? groundAt(cx, cy) : null;
+  cam.zoom *= factor; clampTarget(); applyCamera();
+  if (before) { const after = groundAt(cx, cy); if (after) { cam.target.x += before.x - after.x; cam.target.z += before.z - after.z; clampTarget(); applyCamera(); } }
+}
+
+/* ============ geometry helpers ============ */
+const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _e = new THREE.Euler(), _v = new THREE.Vector3(), _s = new THREE.Vector3(), _c = new THREE.Color();
+function part(geo, color, x = 0, y = 0, z = 0, ry = 0, sx = 1, sy = 1, sz = 1, rx = 0, rz = 0) {
+  let g = geo.index ? geo.toNonIndexed() : geo.clone();
+  _e.set(rx, ry, rz); _q.setFromEuler(_e); _m.compose(_v.set(x, y, z), _q, _s.set(sx, sy, sz));
+  g.applyMatrix4(_m);
+  const n = g.attributes.position.count, c = new Float32Array(n * 3); _c.set(color);
+  for (let i = 0; i < n; i++) { c[i * 3] = _c.r; c[i * 3 + 1] = _c.g; c[i * 3 + 2] = _c.b; }
+  g.setAttribute('color', new THREE.BufferAttribute(c, 3));
+  if (g.attributes.uv) g.deleteAttribute('uv');
+  return g;
+}
+function mergeParts(parts) {
+  let total = 0; parts.forEach(p => total += p.attributes.position.count);
+  const pos = new Float32Array(total * 3), nor = new Float32Array(total * 3), col = new Float32Array(total * 3);
+  let o = 0;
+  for (const p of parts) {
+    pos.set(p.attributes.position.array, o * 3);
+    if (!p.attributes.normal) p.computeVertexNormals();
+    nor.set(p.attributes.normal.array, o * 3); col.set(p.attributes.color.array, o * 3);
+    o += p.attributes.position.count;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  return g;
+}
+const clay = (color, extra) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.92, metalness: 0, flatShading: true }, extra || {}));
+const vclay = extra => new THREE.MeshStandardMaterial(Object.assign({ vertexColors: true, roughness: 0.9, metalness: 0, flatShading: true }, extra || {}));
+const BOX = new THREE.BoxGeometry(1, 1, 1), CYL6 = new THREE.CylinderGeometry(1, 1, 1, 6), CYL12 = new THREE.CylinderGeometry(1, 1, 1, 14), ICO = new THREE.IcosahedronGeometry(1, 0), SPH = new THREE.SphereGeometry(1, 12, 8);
+function mesh(geo, mat, x, y, z, opts) { const m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0); m.castShadow = !(opts && opts.noCast); m.receiveShadow = true; return m; }
+const hitMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, transparent: true, opacity: 0 });
+const pickables = [];
+function addPick(obj3d, w, h, d, info, off) {
+  const hb = new THREE.Mesh(info.round ? CYL12 : BOX, hitMat); hb.scale.set(info.round ? w / 2 : w, h, info.round ? d / 2 : d);
+  hb.position.set(off ? off.x : 0, h / 2 + (off ? off.y || 0 : 0), off ? off.z : 0);
+  hb.userData.pick = info; obj3d.add(hb); pickables.push(hb); info.obj = obj3d; return hb;
+}
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h); const t = new THREE.CanvasTexture(c); t.anisotropy = renderer.capabilities.getMaxAnisotropy(); return { tex: t, canvas: c, ctx: g }; }
+const FONT = (s, wt) => (wt || 600) + ' ' + s + 'px "Instrument Sans", system-ui, -apple-system, sans-serif';
+function signTex(lines, opts) {
+  opts = opts || {}; const w = opts.w || 512, h = opts.h || 160;
+  return canvasTex(w, h, (g) => {
+    g.fillStyle = opts.bg || '#FBF9F5'; g.fillRect(0, 0, w, h);
+    if (opts.bar !== false) { g.fillStyle = opts.barColor || '#1E5EFF'; g.fillRect(0, 0, 14, h); }
+    g.textBaseline = 'middle'; g.textAlign = opts.align || 'left';
+    const x = opts.align === 'center' ? w / 2 : 40;
+    lines.forEach((l, i) => { g.fillStyle = l.c || (i ? '#6A7080' : '#1F2633'); g.font = FONT(l.s || (i ? h * 0.2 : h * 0.32), l.w || (i ? 500 : 650)); g.fillText(l.t, x, l.y !== undefined ? l.y * h : h * (lines.length === 1 ? .52 : (i ? .7 : .38))); });
+  });
+}
+function plane(tex, w, h, basic) { return new THREE.Mesh(new THREE.PlaneGeometry(w, h), basic ? new THREE.MeshBasicMaterial({ map: tex, fog: false }) : new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85 })); }
+
+/* ============ lights ============ */
+const hemi = new THREE.HemisphereLight(0xFFFCF7, 0xCFC6B9, 0.54); scene.add(hemi);
+const ambient = new THREE.AmbientLight(0xFFF7EE, 0.16); scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xFFF6EA, 0.66);
+sun.castShadow = true; sun.shadow.mapSize.set(IS_MOBILE ? 1024 : 2048, IS_MOBILE ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -340, right: 340, top: 340, bottom: -340, near: 10, far: 1400 });
+sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.4;
+scene.add(sun); scene.add(sun.target);
+const world = new THREE.Group(); scene.add(world);
+const W_ = {};
+
+/* ============ island ============ */
+const ISL = { rx: 296, rz: 221 };
+const wob = a => 1 + 0.025 * Math.sin(3 * a + 0.4) + 0.015 * Math.sin(7 * a + 1.3);
+function islandEdge(a, k) { return { x: Math.cos(a) * ISL.rx * wob(a) * k, z: Math.sin(a) * ISL.rz * wob(a) * k }; }
+function inIsland(x, z, m) { const a = Math.atan2(z / ISL.rz, x / ISL.rx), e = islandEdge(a, 1); const d = Math.hypot(x, z), de = Math.hypot(e.x, e.z); return d < de - (m || 0); }
+
+/* districts (data) */
+const DISTRICTS = [
+  { id: 'explore', n: 1, name: 'Explore Plaza', stage: 'Discover', x: -180, z: 110, shape: 'circle', r: 34, wp: 1 },
+  { id: 'admissions', n: 2, name: 'Admissions Pavilion', stage: 'Apply', x: -238, z: 12, shape: 'box', w: 40, d: 28, wp: 3 },
+  { id: 'aid', n: 3, name: 'Financial Aid Office', stage: 'Enroll', x: -201, z: -95, shape: 'box', w: 34, d: 28, wp: 5 },
+  { id: 'orient', n: 4, name: 'Orientation Hall', stage: 'Orient', x: -108, z: -166, shape: 'circle', r: 31, wp: 7 },
+  { id: 'courses', n: 5, name: 'Course Quarter', stage: 'Learn', x: -14, z: -28, shape: 'box', w: 120, d: 96, wp: 10 },
+  { id: 'commons', n: 6, name: 'Learning Commons', stage: 'Learn', x: 110, z: -152, shape: 'box', w: 84, d: 52, wp: 13 },
+  { id: 'faculty', n: 7, name: 'Faculty Studio', stage: 'Persist', x: 212, z: -96, shape: 'box', w: 42, d: 32, wp: 15 },
+  { id: 'helpdesk', n: 8, name: 'Help Desk Tower', stage: 'Persist', x: 245, z: -14, shape: 'circle', r: 22, wp: 17 },
+  { id: 'career', n: 9, name: 'Career Center', stage: 'Career', x: 196, z: 79, shape: 'box', w: 42, d: 30, wp: 19 },
+  { id: 'amph', n: 10, name: 'Commencement Amphitheater', stage: 'Graduate', x: 72, z: 166, shape: 'circle', r: 35, wp: 22 },
+  { id: 'harbor', n: 11, name: 'Alumni Harbor', stage: 'Alumni', x: 186, z: 140, shape: 'box', w: 40, d: 26, wp: 25 },
+  { id: 'studio', n: 'P', name: 'Program Studio', stage: 'Staff', x: -125, z: 52, shape: 'box', w: 44, d: 32, wp: 2 }
+];
+const DIST = {}; DISTRICTS.forEach(d => DIST[d.id] = d);
+function inDistrict(d, x, z, m) { m = m || 0; return d.shape === 'circle' ? Math.hypot(x - d.x, z - d.z) < d.r + m : Math.abs(x - d.x) < d.w / 2 + m && Math.abs(z - d.z) < d.d / 2 + m; }
+function anyDistrict(x, z, m) { return DISTRICTS.some(d => inDistrict(d, x, z, m)); }
+
+/* journey path */
+const WP = [[-224, 142], [-180, 110], [-212, 62], [-214, 14], [-196, -48], [-180, -94], [-148, -138], [-108, -133], [-86, -92], [-80, -28], [-14, -28], [40, -28], [58, -102], [96, -122], [150, -120], [196, -78], [226, -44], [224, -8], [212, 40], [194, 62], [140, 96], [98, 116], [74, 129], [100, 150], [142, 152], [165, 140]];
+const PATH = (() => {
+  const c = new THREE.CatmullRomCurve3(WP.map(p => new THREE.Vector3(p[0], 0, p[1])), false, 'centripetal');
+  const L = c.getLength(), n = Math.round(L / 1.5), pts = c.getSpacedPoints(n);
+  return { pts, L, seg: L / n, n };
+})();
+function pathIdx(s) { return clamp(s / PATH.seg, 0, PATH.n); }
+const _pp = { x: 0, z: 0, nx: 0, nz: 0, y: 0 };
+function pathAt(s) {
+  const f = pathIdx(s), i = Math.min(PATH.n - 1, Math.floor(f)), t = f - i, a = PATH.pts[i], b = PATH.pts[i + 1];
+  _pp.x = lerp(a.x, b.x, t); _pp.z = lerp(a.z, b.z, t);
+  const dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz) || 1; _pp.nx = -dz / l; _pp.nz = dx / l;
+  _pp.y = lerp(PATH_Y[i], PATH_Y[i + 1], t);
+  return _pp;
+}
+function nearestS(x, z) { let bi = 0, bd = 1e9; PATH.pts.forEach((p, i) => { const d = (p.x - x) ** 2 + (p.z - z) ** 2; if (d < bd) { bd = d; bi = i; } }); return bi * PATH.seg; }
+DISTRICTS.forEach(d => { d.s = nearestS(WP[d.wp][0], WP[d.wp][1]); });
+
+/* river */
+const RIVER_WP = [[35, -170], [41, -122], [54, -76], [68, -22], [86, 34], [104, 92], [121, 146], [137, 200], [150, 262]];
+const RIVER = (() => { const c = new THREE.CatmullRomCurve3(RIVER_WP.map(p => new THREE.Vector3(p[0], 0, p[1])), false, 'centripetal'); return c.getSpacedPoints(Math.round(c.getLength() / 2)); })();
+function riverDist(x, z) { let bd = 1e9; for (const p of RIVER) { const d = (p.x - x) ** 2 + (p.z - z) ** 2; if (d < bd) bd = d; } return Math.sqrt(bd); }
+const PATH_Y = new Float32Array(PATH.n + 1);
+const BRIDGES = [];
+(function computePathY() {
+  let inRiver = false, start = 0;
+  for (let i = 0; i <= PATH.n; i++) {
+    const p = PATH.pts[i], r = riverDist(p.x, p.z) < 6.5;
+    if (r && !inRiver) { inRiver = true; start = i; }
+    if (!r && inRiver) { inRiver = false; BRIDGES.push({ i: Math.round((start + i) / 2) }); }
+  }
+  for (let i = 0; i <= PATH.n; i++) {
+    const p = PATH.pts[i]; let y = GY + 0.22;
+    for (const d of DISTRICTS) if (inDistrict(d, p.x, p.z, -1)) y = DY + 0.02;
+    for (const b of BRIDGES) { const ds = Math.abs(i - b.i) * PATH.seg; if (ds < 11) y = Math.max(y, GY + 0.3 + 2.4 * Math.pow(Math.cos(ds / 11 * Math.PI / 2), 1.2)); }
+    PATH_Y[i] = y;
+  }
+})();
+
+/* ============ shared materials ============ */
+const WIN = new THREE.MeshStandardMaterial({ color: 0xC5D1E3, emissive: 0xFFD9A0, emissiveIntensity: 0, roughness: 0.45, flatShading: true });
+const GLASS = new THREE.MeshStandardMaterial({ color: 0xC9D6EA, transparent: true, opacity: 0.38, roughness: 0.2, depthWrite: false });
+const SPOTS = {};
+function spotList(dId, kind) { SPOTS[dId] = SPOTS[dId] || {}; SPOTS[dId][kind] = SPOTS[dId][kind] || []; return SPOTS[dId][kind]; }
+function addSpot(dId, kind, x, y, z) { spotList(dId, kind).push({ x, y, z, occ: null }); }
+function takeSpot(dId, kind, ent) { const L = spotList(dId, kind); const free = L.filter(s => !s.occ); if (!free.length) return null; const s = pick(free); s.occ = ent; return s; }
+function freeSpot(s) { if (s) s.occ = null; }
+const W2L = d => (x, z) => [d.x + x, d.z + z];
+
+/* ============ terrain ============ */
+function buildTerrain() {
+  const shapeOf = k => { const s = new THREE.Shape(); for (let i = 0; i <= 160; i++) { const a = i / 160 * TAU, p = islandEdge(a, k); i ? s.lineTo(p.x, -p.z) : s.moveTo(p.x, -p.z); } return s; };
+  const sg = new THREE.ExtrudeGeometry(shapeOf(1.045), { depth: 1.25, bevelEnabled: false }); sg.rotateX(-Math.PI / 2);
+  world.add(mesh(sg, clay(COL.sand, { flatShading: false }), 0, 0, 0, { noCast: true }));
+  const ig = new THREE.ExtrudeGeometry(shapeOf(1), { depth: GY, bevelEnabled: true, bevelSize: 1.2, bevelThickness: 0.6, bevelSegments: 2 }); ig.rotateX(-Math.PI / 2);
+  const isl = mesh(ig, clay(COL.grass, { flatShading: false }), 0, -0.6, 0, { noCast: true }); world.add(isl); W_.grassMat = isl.material;
+  // terraces
+  [[-62, 112, 32, 20], [150, -22, 30, 22], [-150, -28, 22, 30], [5, 122, 26, 18], [-245, -60, 20, 26]].forEach(([x, z, rx, rz], i) => {
+    const t = mesh(new THREE.CylinderGeometry(1, 1.04, 0.7, 40), clay(i % 2 ? COL.grass3 : COL.grass2, { flatShading: false }), x, GY + 0.3, z, { noCast: true }); t.scale.set(rx, 1, rz); world.add(t);
+  });
+  // spring hill
+  const hill = mesh(new THREE.CylinderGeometry(5, 27, 12, 9), clay(COL.grass2), 28, GY + 6, -198); world.add(hill);
+  const top = mesh(new THREE.CylinderGeometry(4.6, 4.6, 0.3, 12), clay(COL.water, { flatShading: false }), 28, GY + 12.1, -198, { noCast: true }); world.add(top);
+  const pool = mesh(new THREE.CylinderGeometry(6, 6, 0.2, 16), clay(COL.water, { flatShading: false }), 35, GY + 0.12, -171, { noCast: true }); world.add(pool);
+  [[29, -168], [41, -168], [38, -177], [30, -175]].forEach(([x, z]) => { const r = mesh(ICO, clay(COL.stoneD), x, GY + 0.6, z); r.scale.set(1.6, 1.1, 1.4); world.add(r); });
+  // river ribbon
+  const ribbon = (w, y, color) => {
+    const P = [];
+    for (let i = 0; i < RIVER.length - 1; i++) {
+      const a = RIVER[i], b = RIVER[i + 1], dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz), nx = -dz / l * w / 2, nz = dx / l * w / 2;
+      const c = RIVER[Math.min(RIVER.length - 1, i + 2)], dx2 = c.x - b.x, dz2 = c.z - b.z, l2 = Math.hypot(dx2, dz2) || 1, nx2 = -dz2 / l2 * w / 2, nz2 = dx2 / l2 * w / 2;
+      P.push(a.x + nx, y, a.z + nz, b.x + nx2, y, b.z + nz2, b.x - nx2, y, b.z - nz2, a.x + nx, y, a.z + nz, b.x - nx2, y, b.z - nz2, a.x - nx, y, a.z - nz);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.computeVertexNormals();
+    const m = mesh(g, new THREE.MeshStandardMaterial({ color, roughness: 0.5, side: THREE.DoubleSide }), 0, 0, 0, { noCast: true }); world.add(m); return m;
+  };
+  ribbon(13, GY + 0.04, COL.sand); W_.river = ribbon(9, GY + 0.09, COL.water);
+  // bridges
+  BRIDGES.forEach(b => {
+    const p = PATH.pts[b.i], q = PATH.pts[Math.min(PATH.n, b.i + 2)], ang = Math.atan2(q.x - p.x, q.z - p.z);
+    const g = new THREE.Group(); g.position.set(p.x, GY, p.z); g.rotation.y = ang; world.add(g);
+    const arch = mesh(new THREE.TorusGeometry(9.5, 0.9, 6, 18, Math.PI), clay(0xEFE9E0), 0, -6.4, 0); arch.rotation.y = Math.PI / 2; arch.scale.set(1, 0.95, 1); g.add(arch);
+    [-4.8, 4.8].forEach(x => { for (let k = -5; k <= 5; k++) { const s = k * 2, y = 0.3 + 2.4 * Math.pow(Math.cos(Math.min(1, Math.abs(s) / 11) * Math.PI / 2), 1.2); const r = mesh(BOX, clay(k % 5 === 0 ? COL.accent : 0xF4F0EA), x, y + 0.6, s, { noCast: true }); r.scale.set(0.35, k % 5 === 0 ? 1.6 : 0.9, 2.1); g.add(r); } });
+    for (let k = -5; k <= 5; k++) { const s = k * 2, y = 0.3 + 2.4 * Math.pow(Math.cos(Math.min(1, Math.abs(s) / 11) * Math.PI / 2), 1.2); const d = mesh(BOX, clay(0xE8E1D6), 0, y - 0.15, s); d.scale.set(9.4, 0.5, 2.15); g.add(d); }
+  });
+}
+
+/* ============ path tiles ============ */
+const TILES = { list: [], mesh: null, heat: null };
+function buildPath() {
+  for (let s = 0; s < PATH.L; s += 3) {
+    const p = pathAt(s); if (p.y > DY - 0.5 && p.y < DY + 0.5) continue;
+    const q = pathAt(s + 1), ang = Math.atan2(q.x - p.x, q.z - p.z);
+    [-2.35, 2.35].forEach(l => TILES.list.push({ x: p.x + p.nx * l, z: p.z + p.nz * l, y: p.y, ang, s }));
+  }
+  const m = new THREE.InstancedMesh(BOX, clay(0xffffff, { flatShading: false }), TILES.list.length);
+  TILES.list.forEach((t, i) => { _e.set(0, t.ang, 0); _q.setFromEuler(_e); _m.compose(_v.set(t.x, t.y - 0.12, t.z), _q, _s.set(4.4, 0.3, 2.85)); m.setMatrixAt(i, _m); m.setColorAt(i, _c.set(COL.path)); });
+  m.receiveShadow = true; world.add(m); TILES.mesh = m; TILES.heat = new Float32Array(Math.ceil(PATH.L / 3) + 2);
+}
+const _base = new THREE.Color(COL.path), _hot = new THREE.Color(0xFBF7EE), _blue = new THREE.Color(0xE4ECFF);
+function updateTiles(dt) {
+  const H = TILES.heat; for (let i = 0; i < H.length; i++) H[i] *= Math.exp(-dt * 0.6);
+  TILES.list.forEach((t, i) => { const h = Math.min(1, H[Math.floor(t.s / 3)] * 0.35); _c.copy(_base).lerp(_hot, h).lerp(_blue, h * h * 0.35); TILES.mesh.setColorAt(i, _c); });
+  TILES.mesh.instanceColor.needsUpdate = true;
+}
+
+/* ============ district builders ============ */
+const DM = {}; // dynamic refs per district
+function plinthFor(d) {
+  const g = d.shape === 'circle' ? new THREE.CylinderGeometry(d.r, d.r + 1.4, DY - GY + 0.4, 48) : new THREE.BoxGeometry(d.w, DY - GY + 0.4, d.d);
+  const m = mesh(g, clay(COL.stone, { flatShading: false }), d.x, (DY + GY - 0.4) / 2, d.z); world.add(m);
+  const lip = d.shape === 'circle' ? new THREE.CylinderGeometry(d.r + 0.25, d.r + 0.25, 0.3, 48) : new THREE.BoxGeometry(d.w + 0.5, 0.3, d.d + 0.5);
+  world.add(mesh(lip, clay(0xE9E3D9, { flatShading: false }), d.x, DY - 0.1, d.z, { noCast: true }));
+  // AI glow ring at plinth foot
+  const rg = d.shape === 'circle' ? new THREE.TorusGeometry(d.r + 1.6, 0.35, 6, 64) : null;
+  let ring;
+  if (rg) { ring = new THREE.Mesh(rg, new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0 })); ring.rotation.x = Math.PI / 2; ring.position.set(d.x, GY + 0.35, d.z); }
+  else { const sh = new THREE.Shape(), hw = d.w / 2 + 1.9, hd = d.d / 2 + 1.9; sh.moveTo(-hw, -hd); sh.lineTo(hw, -hd); sh.lineTo(hw, hd); sh.lineTo(-hw, hd); sh.lineTo(-hw, -hd); const ho = new THREE.Path(), iw = hw - 0.7, id = hd - 0.7; ho.moveTo(-iw, -id); ho.lineTo(-iw, id); ho.lineTo(iw, id); ho.lineTo(iw, -id); ho.lineTo(-iw, -id); sh.holes.push(ho); const gg = new THREE.ShapeGeometry(sh); gg.rotateX(-Math.PI / 2); ring = new THREE.Mesh(gg, new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0 })); ring.position.set(d.x, GY + 0.3, d.z); }
+  world.add(ring); d.aiRing = ring; d.ai = 0;
+  // numbered stone marker at entrance
+  const p = pathAt(d.s), ex = p.x + p.nx * 7.5, ez = p.z + p.nz * 7.5;
+  const st = mesh(new THREE.CylinderGeometry(1.4, 1.7, 2.2, 7), clay(COL.stoneD), ex, p.y + 1.1, ez); world.add(st);
+  const num = canvasTex(128, 128, (g) => { g.fillStyle = '#1E5EFF'; g.beginPath(); g.arc(64, 64, 60, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.font = FONT(68, 700); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(d.n), 64, 68); }).tex;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: num, fog: false })); sp.position.set(ex, p.y + 3.4, ez); sp.scale.set(2.6, 2.6, 1); world.add(sp);
+  d.marker = { x: ex, z: ez };
+}
+function districtMesh(d, P, Wp) {
+  const g = new THREE.Group(); g.position.set(d.x, DY, d.z); world.add(g);
+  if (P.length) g.add(mesh(mergeParts(P), vclay()));
+  if (Wp && Wp.length) g.add(mesh(mergeParts(Wp), WIN, 0, 0, 0, { noCast: true }));
+  d.group = g; return g;
+}
+function addSign(g, lines, x, y, z, w, h, ry, opts) { const t = signTex(lines, opts).tex; const p = plane(t, w, h, true); p.position.set(x, y, z); p.rotation.y = ry || 0; g.add(p); const b = p.clone(); b.rotation.y = (ry || 0) + Math.PI; b.position.x -= Math.sin(ry || 0) * 0.05; b.position.z -= Math.cos(ry || 0) * 0.05; g.add(b); return p; }
+function person(color, x, y, z, s) { return [part(new THREE.CylinderGeometry(0.22 * s, 0.32 * s, 0.9 * s, 6), color, x, y + 0.45 * s, z), part(new THREE.IcosahedronGeometry(0.26 * s, 1), color, x, y + 1.15 * s, z)]; }
+
+function buildExplore(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  // fountain
+  add(CYL12, COL.stoneD, 12, 0.45, 6, 0, 5.4, 0.9, 5.4); add(CYL12, COL.water, 12, 0.92, 6, 0, 4.8, 0.08, 4.8); add(CYL12, COL.stone, 12, 1.8, 6, 0, 0.7, 3, 0.7); add(CYL12, COL.stoneD, 12, 3.3, 6, 0, 1.9, 0.4, 1.9);
+  // info kiosks
+  [10, 45, 80, 300, 330].forEach(a => { const r = a * Math.PI / 180, x = Math.cos(r) * 26, z = Math.sin(r) * 26; add(BOX, COL.wall, x, 1.2, z, -r, 1.2, 2.4, 0.9); Wp.push(part(BOX, 0xffffff, x + Math.cos(r) * -0.46, 1.7, z + Math.sin(r) * -0.46, -r, 0.08, 0.9, 0.7)); addSpot('explore', 'browse', x - Math.cos(r) * 2, DY, z - Math.sin(r) * 2); addSpot('explore', 'browse', x - Math.cos(r) * 2.2 + 1, DY, z - Math.sin(r) * 2.2 - 1); });
+  // webinar stage + seats
+  add(BOX, COL.wall2, 14, 0.5, -22, 0, 14, 1, 7); [-6.5, 6.5].forEach(x => add(BOX, COL.wall, 14 + x, 4, -24.8, 0, 0.5, 7, 0.5)); add(BOX, COL.accent, 14, 7.6, -23, 0, 15.5, 0.5, 9);
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 8; c++) { const x = 6 + c * 2.2, z = -14 + r * 2.2; add(BOX, COL.stoneD, x, 0.35, z + 0.6, 0, 1.4, 0.7, 0.5); addSpot('explore', 'seat', x, DY + 0.3, z); }
+  const g = districtMesh(d, P, Wp);
+  const scr = plane(signTex([{ t: 'Live webinar' }, { t: 'Is online college right for you?' }], { w: 640, h: 300, bg: '#1F2633', barColor: '#1E5EFF' }).tex, 9, 4.2, true); scr.position.set(14, 4.6, -25.1); g.add(scr);
+  // billboards on the plaza edge
+  [['BS Data Science', 'Starts every 8 weeks'], ['RN to BSN Nursing', 'Fully online, accredited'], ['BS Business Admin', 'Transfer up to 90 credits'], ['BS Computer Science', 'Cohorts of 30']].forEach((t, i) => {
+    const pos = [[-31, -10, Math.PI / 2], [-31, 12, Math.PI / 2], [-4, 31, Math.PI], [16, 27, Math.PI + 0.5]][i];
+    const b = new THREE.Group(); b.position.set(pos[0], 0, pos[1]); b.rotation.y = pos[2]; g.add(b);
+    [-4, 4].forEach(x => b.add(mesh(BOX, clay(0xE6DFD4), x, 4, 0))); b.children.forEach(c => c.scale.set(0.5, 8, 0.5));
+    const pl = plane(signTex([{ t: t[0] }, { t: t[1] }], { w: 640, h: 300 }).tex, 11, 5.2, true); pl.position.set(0, 9.6, 0.3); b.add(pl);
+    const pb = mesh(BOX, clay(COL.accent), 0, 9.6, 0); pb.scale.set(11.4, 5.6, 0.4); b.add(pb);
+    for (let k = 0; k < 3; k++) addSpot('explore', 'browse', pos[0] + Math.sin(pos[2]) * 3 + rand(-3, 3), DY, pos[1] + Math.cos(pos[2]) * 3 + rand(-1, 1));
+  });
+  for (let k = 0; k < 10; k++) { const a = k / 10 * TAU; addSpot('explore', 'browse', 12 + Math.cos(a) * 7, DY, 6 + Math.sin(a) * 7); }
+  // arrival gate
+  const ga = new THREE.Group(); ga.position.set(-27, 0, 20); ga.rotation.y = Math.atan2(-44, 32) + Math.PI / 2; g.add(ga);
+  [-4.5, 4.5].forEach(x => { const p = mesh(BOX, clay(COL.wall), x, 3.4, 0); p.scale.set(1.2, 6.8, 1.2); ga.add(p); });
+  const beam = mesh(BOX, clay(COL.accent), 0, 7.2, 0); beam.scale.set(10.6, 1.2, 1.4); ga.add(beam);
+  // fountain spray
+  const spray = new THREE.InstancedMesh(new THREE.SphereGeometry(0.22, 6, 4), new THREE.MeshStandardMaterial({ color: 0xDDE7F3, roughness: 0.3 }), 18); spray.frustumCulled = false; g.add(spray); DM.spray = spray;
+  // ferry pier and causeway (world coords)
+  for (let k = 0; k < 7; k++) { const t = k / 6, x = lerp(-222, -247, t), z = lerp(146, 168, t); const pk = mesh(BOX, clay(0xE6DCCB), x, 1.5, z); pk.scale.set(4, 0.5, 4.2); pk.rotation.y = Math.atan2(-25, 22); world.add(pk); }
+  const cw = mesh(BOX, clay(0xD6CFC4), -378.5, 1.6, 81); cw.scale.set(335, 0.6, 10); cw.rotation.y = -0.1022; world.add(cw);
+  for (let x = -530; x < -290; x += 24) { const pl = mesh(BOX, clay(0xE2DBD0), x, 0.6, 81 + (x + 378.5) * 0.102); pl.scale.set(1.6, 2, 6); pl.rotation.y = -0.1022; world.add(pl); }
+}
+function buildAdmissions(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall, 0, 4, -8, 0, 32, 8, 8); add(BOX, COL.wall2, 0, 4, 0, 0, 32, 8, 0.3); // back wall + frame
+  add(BOX, COL.accent, 0, 8.3, -4, 0, 33, 0.6, 13); add(BOX, COL.wall, -15.7, 4, -4, 0, 0.6, 8, 8); add(BOX, COL.wall, 15.7, 4, -4, 0, 0.6, 8, 8);
+  for (let k = 0; k < 5; k++) { const x = -10 + k * 5; add(BOX, COL.roof, x, 0.55, -3.5, 0, 3, 1.1, 1.2); P.push(...person(0xffffff, x, 0, -5.2, 1.15)); add(BOX, COL.ink, x, 2.25, -5.2, 0, 0.6, 0.12, 0.6); addSpot('admissions', 'desk', x, DY, -1.6); }
+  // document drop
+  add(BOX, COL.wall2, 16, 1.1, 5, 0, 1.6, 2.2, 1.6);
+  for (let k = 0; k < 10; k++) add(BOX, 0xffffff, -6 + k * 1.8, 0.02, 6.2, 0, 1.0, 0.04, 0.18);
+  for (let r = 0; r < 2; r++) for (let k = 0; k < 10; k++) addSpot('admissions', 'queue', -6 + k * 1.8, DY, 5.4 + r * 1.6);
+  add(BOX, COL.roof, -14, 0.5, 10, 0, 6, 0.5, 1.6);
+  for (let k = 0; k < 6; k++) addSpot('admissions', 'bench', -16.5 + k * 1, DY + 0.5, 10);
+  const g = districtMesh(d, P, Wp);
+  const gl = mesh(BOX, GLASS, 0, 4, 0.2, { noCast: true }); gl.scale.set(31, 7.4, 0.2); g.add(gl);
+  const slot = mesh(BOX, new THREE.MeshStandardMaterial({ color: 0xC9D6F5, emissive: COL.accent, emissiveIntensity: 0 }), 16, 2.25, 5.85, { noCast: true }); slot.scale.set(1, 0.14, 0.1); g.add(slot); DM.slot = slot;
+  [-17, -11].forEach(x => { const p = mesh(BOX, clay(0xE2DBD0), x, 2.4, 12.2); p.scale.set(0.3, 4.8, 0.3); g.add(p); });
+  DM.missing = canvasTex(512, 220, () => { }); const mb = plane(DM.missing.tex, 6.4, 2.75, true); mb.position.set(-14, 3.8, 12.35); g.add(mb);
+}
+function buildAid(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall, 3, 3.6, -5, 0, 20, 7.2, 12); add(BOX, COL.roof, 3, 7.5, -5, 0, 21, 0.6, 13);
+  [-1, 7].forEach(x => { add(BOX, COL.accent, x, 2.6, 1.05, 0, 3.4, 3.4, 0.3); Wp.push(part(BOX, 0xffffff, x, 2.6, 1.25, 0, 2.6, 2.6, 0.1)); for (let k = 0; k < 7; k++) addSpot('aid', 'queue', x, DY, 3 + k * 1.1); });
+  add(BOX, COL.wall2, -10.5, 8, -6, 0, 4.6, 16, 4.6); add(new THREE.ConeGeometry(3.6, 3.4, 4), COL.accent, -10.5, 17.7, -6, Math.PI / 4);
+  add(CYL12, COL.stoneD, 7, 2.2, -13.5, 0, 2.3, 9, 2.3, 0, Math.PI / 2);
+  add(BOX, COL.roof, 3, 0.5, 10.5, 0, 12, 0.5, 1.6);
+  for (let k = 0; k < 10; k++) addSpot('aid', 'wait', -2 + k * 1.1, DY + 0.5, 10.5);
+  for (let k = 0; k < 6; k++) Wp.push(part(BOX, 0xffffff, -4 + k * 2.8, 5.3, 1.05, 0, 1.6, 1.5, 0.1));
+  const g = districtMesh(d, P, Wp);
+  DM.clock = canvasTex(256, 256, () => { });
+  [[0, -3.65, 0], [Math.PI / 2, -10.5 + 2.35, 1]].forEach(([ry, xx, side]) => { const c = plane(DM.clock.tex, 3.6, 3.6, true); if (side) { c.position.set(-8.15, 12.5, -6); c.rotation.y = Math.PI / 2; } else { c.position.set(-10.5, 12.5, -3.65); } g.add(c); });
+}
+function buildOrient(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(CYL12, COL.wall, -4, 3.5, -8, 0, 11, 7, 11); add(CYL12, COL.accent, -4, 7.2, -8, 0, 11.3, 0.5, 11.3);
+  add(new THREE.SphereGeometry(1, 16, 8, 0, TAU, 0, Math.PI / 2), 0xF2EFE9, -4, 7.4, -8, 0, 10.8, 7, 10.8);
+  for (let k = 0; k < 12; k++) { const a = k / 12 * TAU; Wp.push(part(BOX, 0xffffff, -4 + Math.cos(a) * 11.05, 3.6, -8 + Math.sin(a) * 11.05, -a, 0.1, 3.2, 2)); }
+  // diagnostic annex (open top)
+  add(BOX, COL.wall2, 16, 0.9, -10, 0, 14, 1.8, 0.4); add(BOX, COL.wall2, 16, 0.9, -2, 0, 14, 1.8, 0.4); add(BOX, COL.wall2, 23, 0.9, -6, 0, 0.4, 1.8, 8);
+  const pods = [];
+  for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) { const x = 11 + c * 2.6, z = -8.2 + r * 4.2; add(CYL12, COL.wall, x, 0.7, z, 0, 0.75, 1.4, 0.75); pods.push([x, z]); addSpot('orient', 'pod', x, DY, z + (r ? -1.3 : 1.3)); }
+  // doors to courtyard
+  ['Foundations', 'Core', 'Accelerated'].forEach((t, i) => { const x = -10 + i * 10; add(BOX, COL.accent, x - 2, 2, 5, 0, 0.5, 4, 0.5); add(BOX, COL.accent, x + 2, 2, 5, 0, 0.5, 4, 0.5); add(BOX, COL.accent, x, 4.2, 5, 0, 4.5, 0.5, 0.5); addSpot('orient', 'door' + i, x, DY, 5); });
+  add(BOX, COL.wall2, 0, 1.2, 4.6, 0, 34, 2.4, 0.3);
+  for (let x = -24; x <= 24; x += 1.55) for (let z = 8; z <= 28; z += 1.55) if (Math.hypot(x, z) < 29.5) addSpot('orient', 'court', x + rand(-.15, .15), DY, z);
+  const g = districtMesh(d, P, Wp);
+  ['Foundations', 'Core', 'Accelerated'].forEach((t, i) => { const p = plane(signTex([{ t }], { w: 384, h: 96, align: 'center', bar: false }).tex, 4.4, 1.1, true); p.position.set(-10 + i * 10, 5.1, 5.3); g.add(p); });
+  const pm = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.62, 0.62, 0.25, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }), pods.length);
+  pods.forEach(([x, z], i) => { _m.makeTranslation(x, 1.5, z); pm.setMatrixAt(i, _m); pm.setColorAt(i, _c.set(0xD9DEE8)); }); g.add(pm); DM.pods = pm; DM.podLevel = new Float32Array(pods.length);
+}
+const COURSES = [
+  { code: 'STAT 101', title: 'Introductory Statistics', instr: 'Dr. A. Okafor', skills: ['Descriptive stats', 'Probability', 'Distributions', 'Sampling', 'Hypothesis tests', 'Regression'], prereq: 'Algebra fluency', mis: 'Treats correlation as causation' },
+  { code: 'COMP 110', title: 'Programming I', instr: 'Prof. L. Brennan', skills: ['Variables', 'Control flow', 'Functions', 'Data structures', 'Debugging', 'Testing'], prereq: 'Logical reasoning', mis: 'Off-by-one loop bounds' },
+  { code: 'ENGL 102', title: 'Composition II', instr: 'Dr. R. Castillo', skills: ['Thesis', 'Evidence', 'Citation', 'Structure', 'Revision', 'Style'], prereq: 'Paragraph structure', mis: 'Summary instead of argument' },
+  { code: 'MATH 115', title: 'College Algebra', instr: 'Dr. K. Nwosu', skills: ['Expressions', 'Equations', 'Functions', 'Graphs', 'Exponents', 'Logarithms'], prereq: 'Fractions and ratios', mis: 'Distributes exponents over sums' },
+  { code: 'BIOL 120', title: 'Human Biology', instr: 'Dr. M. Haddad', skills: ['Cells', 'Tissues', 'Systems', 'Homeostasis', 'Genetics', 'Disease'], prereq: 'Basic chemistry', mis: 'Confuses diffusion and osmosis' },
+  { code: 'BUS 210', title: 'Principles of Management', instr: 'Prof. J. Whitaker', skills: ['Planning', 'Organizing', 'Leading', 'Controlling', 'Ethics', 'Strategy'], prereq: 'Business vocabulary', mis: 'Mixes up goals and tactics' },
+  { code: 'PSYC 101', title: 'Introduction to Psychology', instr: 'Dr. S. Lindqvist', skills: ['Research methods', 'Biopsychology', 'Learning', 'Memory', 'Development', 'Disorders'], prereq: 'Reading research', mis: 'Overgeneralizes from one study' },
+  { code: 'DATA 200', title: 'Data Analysis with Python', instr: 'Dr. P. Raman', skills: ['DataFrames', 'Cleaning', 'Grouping', 'Visualization', 'Joins', 'Reporting'], prereq: 'Programming basics', mis: 'Chained indexing on copies' }
+];
+const FH = 2.6, BLD = [];
+function buildCourses(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  const xs = [-42, -14, 14, 42], zs = [-30, 30];
+  COURSES.forEach((c, i) => {
+    const bx = xs[i % 4], bz = zs[Math.floor(i / 4)], face = bz < 0 ? 1 : -1;
+    const b = { i, c, x: bx, z: bz, face, spots: [] };
+    for (let f = 0; f < 8; f++) {
+      const y = f * FH;
+      add(BOX, f % 2 ? COL.wall : 0xF2EEE7, bx, y + FH / 2, bz, 0, 18, FH - 0.02, 12);
+      add(BOX, 0xEDE7DE, bx, y + 0.12, bz, 0, 22, 0.24, 16);
+      [[0, 8, 22, 0.12], [0, -8, 22, 0.12], [11, 0, 0.12, 16], [-11, 0, 0.12, 16]].forEach(([ox, oz, sx, sz]) => add(BOX, 0xE2DBD0, bx + ox, y + 0.75, bz + oz, 0, sx, 0.08, sz));
+      [[0, 6.02, 15, 0.08], [0, -6.02, 15, 0.08], [9.02, 0, 0.08, 9], [-9.02, 0, 0.08, 9]].forEach(([ox, oz, sx, sz]) => Wp.push(part(BOX, 0xffffff, bx + ox, y + FH * 0.55, bz + oz, 0, sx, FH * 0.45, sz)));
+      const ring = []; [0.6, 1.5].forEach(off => { const hw = 9 + off, hd = 6 + off, per = 2 * (2 * hw + 2 * hd), n = Math.floor(per / 0.95); for (let k = 0; k < n; k++) { let t = k / n * per, x, z; if (t < 2 * hw) { x = -hw + t; z = hd; } else if ((t -= 2 * hw) < 2 * hd) { x = hw; z = hd - t; } else if ((t -= 2 * hd) < 2 * hw) { x = hw - t; z = -hd; } else { t -= 2 * hw; x = -hw; z = -hd + t; } ring.push({ x: d.x + bx + x, y: DY + y + 0.25, z: d.z + bz + z, occ: null }); } });
+      b.spots.push(ring);
+    }
+    add(BOX, COL.roof, bx, 8 * FH + 0.3, bz, 0, 18.6, 0.6, 12.6);
+    add(CYL12, COL.accent, bx + 10.2, 4 * FH, bz - face * 7, 0, 0.45, 8 * FH, 0.45); add(BOX, COL.accent, bx + 10.2, 8 * FH + 0.6, bz - face * 7, 0, 1.6, 1.2, 1.6);
+    add(BOX, COL.accent, bx, 1.4, bz + face * 6.1, 0, 3.2, 2.8, 0.3);
+    b.door = { x: d.x + bx, z: d.z + bz + face * 9.5 }; b.chute = { x: d.x + bx + 10.2, y: DY + 8 * FH + 1.4, z: d.z + bz - face * 7 };
+    BLD.push(b);
+  });
+  add(BOX, COL.wall2, 0, 7, -12, 0, 3.4, 14, 3.4); add(new THREE.ConeGeometry(2.8, 3, 4), COL.accent, 0, 15.5, -12, Math.PI / 4); add(CYL12, 0xE7C35A, 0, 13, -12, 0, 0.8, 1, 0.8);
+  // alternative path corridors: a glowing strip behind each building row edge
+  const g = districtMesh(d, P, Wp);
+  BLD.forEach(b => {
+    const s = plane(signTex([{ t: b.c.code }], { w: 384, h: 110, align: 'center', bar: false, bg: '#FBF9F5' }).tex, 8, 2.3, true);
+    s.position.set(b.x, 8 * FH + 2.2, b.z + b.face * 5.8); s.rotation.y = b.face > 0 ? 0 : Math.PI; g.add(s);
+    const s2 = s.clone(); s2.rotation.y += Math.PI; s2.position.z -= b.face * 0.05; g.add(s2);
+    const post = mesh(BOX, clay(COL.accent), b.x, 8 * FH + 1.0, b.z + b.face * 5.9); post.scale.set(8.4, 0.4, 0.3); g.add(post);
+    const sky = mesh(BOX, new THREE.MeshStandardMaterial({ color: 0xDCE5F5, emissive: 0xFFE3B0, emissiveIntensity: 0, roughness: .4 }), b.x - 3, 8 * FH + 0.9, b.z, { noCast: true }); sky.scale.set(6, 0.6, 4); g.add(sky); b.sky = sky;
+    // corridor (side route) along the outer edge of the building
+    const cz = b.z - b.face * 11.5, pts = []; for (let k = 0; k <= 10; k++) pts.push({ x: d.x + b.x - 12 + k * 2.4, y: DY + 0.05, z: d.z + cz + Math.sin(k / 10 * Math.PI) * -b.face * 1.5 });
+    b.corridor = pts;
+    const cm = new THREE.Mesh(new THREE.BoxGeometry(27, 0.08, 2.6), new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0 })); cm.position.set(b.x, 0.06, cz); g.add(cm); b.corrMesh = cm; b.corr = 0;
+  });
+  DM.bell = canvasTex(256, 128, () => { }); const bp = plane(DM.bell.tex, 3, 1.5, true); bp.position.set(0, 10, -10.28); g.add(bp);
+}
+const LTOOLS = [
+  { g: 'Study and comprehension', n: 'Explain This', d: 'Summarize or re-explain content at any depth.', ic: 'Ex', base: 1180, lift: 3.1 },
+  { g: 'Study and comprehension', n: 'Ask the Content', d: 'Q&A grounded in module materials, with citations back to the reading.', ic: 'Q&A', base: 1640, lift: 4.2 },
+  { g: 'Study and comprehension', n: 'Key Concepts Map', d: 'A visual concept map of the module\u2019s topics.', ic: 'Map', base: 610, lift: 2.6 },
+  { g: 'Create and generate', n: 'Flashcard Forge', d: 'Flashcards generated from module content.', ic: 'Fc', base: 940, lift: 4.8 },
+  { g: 'Create and generate', n: 'Quiz Me', d: 'Adaptive practice quiz aligned to the module.', ic: 'Qz', base: 1420, lift: 6.1 },
+  { g: 'Create and generate', n: 'Generate Infographic', d: 'A visual summary of the key concepts.', ic: 'Ig', base: 380, lift: 1.9 },
+  { g: 'Create and generate', n: 'Build a Deck', d: 'Presentation slides from module content.', ic: 'Dk', base: 290, lift: 1.4 },
+  { g: 'Assignment support', n: 'Prep Coach', d: 'Coaching through assignment preparation.', ic: 'Pc', base: 820, lift: 5.2 },
+  { g: 'Assignment support', n: 'Assignment Reviewer', d: 'Rubric-aligned feedback on a draft, never a grade.', ic: 'Rv', base: 760, lift: 5.6 },
+  { g: 'Assignment support', n: 'Research Assistant', d: 'Finds evidence and sources, cited.', ic: 'Rs', base: 450, lift: 2.3 },
+  { g: 'Progress and path', n: 'Progress Pulse', d: 'Course standing at a glance.', ic: 'Pp', base: 1050, lift: 1.2 },
+  { g: 'Progress and path', n: 'My Learning Path', d: 'A seven-day personalized study plan.', ic: 'Lp', base: 690, lift: 3.8 },
+  { g: 'Progress and path', n: 'Deadline Watch', d: 'Upcoming deadlines and prerequisites.', ic: 'Dw', base: 980, lift: 2.0 }
+];
+const FTOOLS = [
+  { g: 'Class awareness', n: 'Class Pulse', d: 'Performance and engagement summary for the section.', base: 210 },
+  { g: 'Class awareness', n: 'At-Risk Radar', d: 'Identifies learners with at-risk patterns and says why.', base: 160 },
+  { g: 'Class awareness', n: 'Engagement Map', d: 'Engagement across the whole class, so a cohort problem reads as one.', base: 120 },
+  { g: 'Content generation', n: 'Quiz Builder', d: 'Generates aligned assessments.', base: 44, draft: true },
+  { g: 'Content generation', n: 'Rubric Builder', d: 'Scoring rubric generation.', base: 26, draft: true },
+  { g: 'Content generation', n: 'Lesson Variants', d: 'Two or three versions for different learner profiles.', base: 31, draft: true },
+  { g: 'Content generation', n: 'Standards Quiz Builder', d: 'Standards-aligned quiz with scope flags on untaught material.', base: 19, draft: true },
+  { g: 'Content generation', n: 'Discussion Prompts', d: 'Prompts tiered by Bloom\u2019s taxonomy.', base: 38, draft: true },
+  { g: 'Content generation', n: 'Message Learners', d: 'Drafts targeted learner communication.', base: 92, draft: true },
+  { g: 'Content generation', n: 'Alternative Path', d: 'A module-level route for a group stuck on the same prerequisite.', base: 7, draft: true }
+];
+function buildCommons(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall, -6, 5, -14, 0, 58, 10, 16); add(BOX, COL.roof, -6, 10.3, -14, 0, 59, 0.6, 17);
+  for (let k = 0; k < 10; k++) { const x = -31 + k * 5.6; Wp.push(part(BOX, 0xffffff, x, 4.8, -5.95, 0, 3.6, 7.4, 0.1)); for (let s = 0; s < 4; s++) add(BOX, [0xD9C9A8, 0xBFCBDD, 0xE1D5C2, 0xC8D2BE][s], x, 2 + s * 1.7, -5.85, 0, 3.4, 0.16, 0.12); }
+  // AI tutor tower
+  add(BOX, COL.wall2, 32, 1.5, -10, 0, 5, 3, 5); add(new THREE.CylinderGeometry(0.5, 1.7, 26, 8), COL.wall, 32, 16, -10);
+  // tutoring pergola
+  [[-30, 6], [-18, 6], [-30, 16], [-18, 16]].forEach(([x, z]) => add(BOX, COL.wall2, x, 2.2, z, 0, 0.5, 4.4, 0.5));
+  for (let k = 0; k < 7; k++) add(BOX, COL.roof, -24, 4.5, 5.5 + k * 1.7, 0, 13.5, 0.3, 0.6);
+  [[-27, 9], [-21, 9], [-24, 14]].forEach(([x, z]) => { add(CYL12, COL.wall, x, 0.8, z, 0, 1.3, 0.1, 1.3); add(CYL12, COL.stoneD, x, 0.4, z, 0, 0.25, 0.8, 0.25); for (let k = 0; k < 4; k++) { const a = k / 4 * TAU + 0.4; addSpot('commons', 'tutor', x + Math.cos(a) * 2, DY, z + Math.sin(a) * 2); } });
+  // writing center
+  add(BOX, COL.wall2, 25, 2.6, 4, 0, 12, 5.2, 8); add(BOX, COL.accent, 25, 5.4, 4, 0, 12.6, 0.4, 8.6); Wp.push(part(BOX, 0xffffff, 25, 2.8, 8.05, 0, 9, 2.6, 0.1));
+  for (let k = 0; k < 6; k++) addSpot('commons', 'writing', 20 + k * 2, DY, 10);
+  const g = districtMesh(d, P, Wp);
+  const sm = new THREE.MeshStandardMaterial({ color: 0xDCE6FF, emissive: COL.accent, emissiveIntensity: 0.3, roughness: .3 });
+  const orb = mesh(new THREE.SphereGeometry(1.8, 16, 12), sm, 32, 30, -10, { noCast: true }); g.add(orb); DM.spire = orb;
+  // kiosks
+  const kg = new THREE.Group(); g.add(kg); DM.kiosks = kg; DM.kioskPos = [];
+  let x = -23.4; const groupStart = [0, 3, 7, 10];
+  LTOOLS.forEach((t, i) => {
+    if (i && groupStart.includes(i)) x += 6; const z = 13 + 0.006 * x * x;
+    const k = new THREE.Group(); k.position.set(x, 0, z); kg.add(k);
+    const pil = mesh(BOX, clay(COL.wall), 0, 1.2, 0); pil.scale.set(1.1, 2.4, 0.8); k.add(pil);
+    const top = mesh(BOX, clay(COL.accent), 0, 2.5, 0); top.scale.set(1.2, 0.2, 0.9); k.add(top);
+    const ic = canvasTex(128, 128, (c) => { c.fillStyle = '#1E5EFF'; c.beginPath(); c.roundRect ? c.roundRect(6, 6, 116, 116, 26) : c.rect(6, 6, 116, 116); c.fill(); c.fillStyle = '#fff'; c.font = FONT(t.ic.length > 2 ? 40 : 52, 700); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t.ic, 64, 68); }).tex;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: ic, fog: false })); sp.position.set(0, 3.9, 0); sp.scale.set(1.7, 1.7, 1); k.add(sp);
+    const wx = d.x + x, wz = d.z + z; DM.kioskPos.push({ x: wx, z: wz });
+    for (let s = 0; s < 3; s++) addSpot('commons', 'kiosk' + i, wx + (s - 1) * 1.1, DY, wz + 1.9 + (s % 2) * 0.6);
+    t.idx = i; t.local = { x, z };
+    addPick(k, 2.2, 4.6, 2, { type: 'ltool', id: 'tool-' + i, ref: t, name: t.n, zoom: 6 });
+    x += 3.2;
+  });
+  const ringM = new THREE.InstancedMesh(new THREE.TorusGeometry(1.05, 0.13, 6, 24), new THREE.MeshBasicMaterial({ color: 0xffffff }), LTOOLS.length);
+  LTOOLS.forEach((t, i) => { _e.set(Math.PI / 2, 0, 0); _q.setFromEuler(_e); _m.compose(_v.set(t.local.x, 0.15, t.local.z), _q, _s.set(1, 1, 1)); ringM.setMatrixAt(i, _m); ringM.setColorAt(i, _c.set(0xC9D6F5)); });
+  kg.add(ringM); DM.kioskRings = ringM; DM.kioskPulse = new Float32Array(LTOOLS.length);
+  ['Study and comprehension', 'Create and generate', 'Assignment support', 'Progress and path'].forEach((n, gi) => {
+    const first = LTOOLS.findIndex(t => t.g === n), last = LTOOLS.length - 1 - [...LTOOLS].reverse().findIndex(t => t.g === n);
+    const cx = (LTOOLS[first].local.x + LTOOLS[last].local.x) / 2, cz = 13 + 0.006 * cx * cx + 4.2;
+    const s = plane(signTex([{ t: n }], { w: 512, h: 96, align: 'center', bar: false }).tex, 6.4, 1.2, true); s.position.set(cx, 1.2, cz); kg.add(s);
+  });
+  for (let b = 0; b < 6; b++) { const bx = -14 + b * 6.2, bz = 22; addSpot('commons', 'bench', bx - 0.6, DY + 0.55, bz); addSpot('commons', 'bench', bx + 0.6, DY + 0.55, bz); BENCH_EXTRA.push([d.x + bx, DY, d.z + bz, 0]); }
+  for (let k = 0; k < 10; k++) addSpot('commons', 'mentor', d.x - 24 + rand(-6, 6), DY, d.z + 19 + rand(-1, 2));
+}
+const BENCH_EXTRA = [];
+function buildFaculty(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall2, -2, 2.4, -5, 0, 26, 4.8, 14); add(BOX, COL.wall, -2, 7.4, -5.5, 0, 27, 5, 15); add(BOX, COL.roof, -2, 10.2, -5.5, 0, 28, 0.6, 16);
+  Wp.push(part(BOX, 0xffffff, -2, 2.4, 2.05, 0, 24, 3.4, 0.1));
+  add(BOX, COL.wall2, -19, 5, -5.5, 0, 6, 0.4, 12); for (let k = 0; k < 6; k++) add(BOX, 0xE2DBD0, -21.8, 5.7, -10.5 + k * 2, 0, 0.12, 1, 0.12); add(BOX, 0xE2DBD0, -21.8, 6.2, -5.5, 0, 0.12, 0.1, 12);
+  add(BOX, COL.roof, 13, 0.55, 7, 0, 5, 1.1, 2.4);
+  for (let k = 0; k < 9; k++) addSpot('faculty', 'staff', -12 + k * 2.6, DY, 6.5 + (k % 2) * 1.4);
+  const g = districtMesh(d, P, Wp);
+  DM.wall = canvasTex(768, 300, () => { }); const wp = plane(DM.wall.tex, 17, 6.6, true); wp.position.set(-2, 7.4, 2.05); g.add(wp);
+  const tm = new THREE.InstancedMesh(BOX, clay(0xffffff), 26); tm.castShadow = true; g.add(tm); DM.trays = tm;
+}
+function buildHelpdesk(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(new THREE.CylinderGeometry(6.5, 6.5, 5, 18), COL.wall, 0, 2.5, 0); add(new THREE.CylinderGeometry(10, 7, 4, 18), COL.wall2, 0, 7, 0); add(new THREE.CylinderGeometry(13, 10, 4, 18), COL.wall, 0, 11, 0);
+  add(new THREE.CylinderGeometry(15, 13.5, 0.8, 24), COL.accent, 0, 13.4, 0);
+  [[6.6, 2.6, 2], [8.6, 7, 1.6], [11.6, 11, 1.6]].forEach(([r, y, h]) => Wp.push(part(new THREE.CylinderGeometry(r, r, h, 18, 1, true), 0xffffff, 0, y, 0)));
+  for (let k = 0; k < 16; k++) { const a = k / 16 * TAU; add(BOX, 0xE2DBD0, Math.cos(a) * 14.4, 14.4, Math.sin(a) * 14.4, -a, 0.15, 1.2, 0.15); }
+  for (let k = 0; k < 8; k++) { const a = k / 8 * TAU + 0.3; addSpot('helpdesk', 'staff', Math.cos(a) * 9, DY, Math.sin(a) * 9); }
+  const g = districtMesh(d, P, Wp);
+  const sh = mesh(new THREE.CylinderGeometry(2.6, 2.6, 15, 16, 1, true), GLASS, 0, 7.5, 0, { noCast: true }); g.add(sh);
+  ['Financial aid', 'Accessibility', 'Registrar'].forEach((t, i) => { const a = Math.PI / 2 + (i - 1) * 0.8; const p = plane(signTex([{ t }], { w: 320, h: 80, align: 'center', bar: false }).tex, 3.2, 0.8, true); p.position.set(Math.cos(a) * 6.6, 4.2, Math.sin(a) * 6.6); p.rotation.y = Math.PI / 2 - a; g.add(p); });
+  const orbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.55, 10, 8), new THREE.MeshBasicMaterial({ color: 0x8FB0FF }), 5); orbs.frustumCulled = false; g.add(orbs); DM.hdOrbs = orbs;
+}
+function buildCareer(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, 0xF4EADD, 5, 4, -7, 0, 22, 8, 12); add(BOX, COL.roof, 5, 8.3, -7, 0, 23, 0.6, 13); Wp.push(part(BOX, 0xffffff, 5, 3.6, -0.95, 0, 18, 3, 0.1));
+  add(BOX, COL.wall2, -12, 2.8, -2, 0, 12, 5.2, 0.6);
+  for (let k = 0; k < 4; k++) { const x = 9 + k * 3.4; add(BOX, COL.wall2, x - 1.5, 1.1, 5, 0, 0.2, 2.2, 3); add(BOX, COL.wall2, x, 1.1, 3.6, 0, 3, 2.2, 0.2); add(BOX, COL.roof, x, 0.5, 5, 0, 1.4, 1, 0.8); addSpot('career', 'booth', x, DY, 6); }
+  add(BOX, COL.wall, -2, 0.6, 6, 0, 2.4, 1.2, 1.4); add(BOX, 0xffffff, -2, 1.25, 6, 0, 1.4, 0.1, 1);
+  for (let k = 0; k < 8; k++) addSpot('career', 'board', -16 + k * 1.2, DY, 0.4 + (k % 2));
+  for (let k = 0; k < 3; k++) addSpot('career', 'resume', -3 + k, DY, 8);
+  const g = districtMesh(d, P, Wp);
+  DM.jobs = canvasTex(512, 220, (c, w, h) => { c.fillStyle = '#FBF9F5'; c.fillRect(0, 0, w, h); c.fillStyle = '#1F2633'; c.font = FONT(30, 650); c.fillText('Job board', 20, 38); for (let r = 0; r < 3; r++) for (let k = 0; k < 6; k++) { c.fillStyle = (r + k) % 3 ? '#E8EEFF' : '#1E5EFF'; c.fillRect(20 + k * 80, 60 + r * 52, 70, 42); } });
+  const jb = plane(DM.jobs.tex, 11.4, 4.9, true); jb.position.set(-12, 2.8, -1.68); g.add(jb);
+  const tg = new THREE.Group(); g.add(tg); DM.tents = tg;
+  [-17, -10, -3].forEach((x, i) => { const t = mesh(new THREE.ConeGeometry(3.4, 3.6, 4), clay(i % 2 ? 0xffffff : COL.accent), x, 1.8, 11.5); t.rotation.y = Math.PI / 4; tg.add(t); for (let k = 0; k < 3; k++) addSpot('career', 'tent', d.x + x + (k - 1) * 1.2, DY, d.z + 14.3); });
+  tg.scale.set(1, 0.001, 1);
+}
+function buildAmph(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  const cz = 13, Pt = [], C = [], q = (a, b, c2, e, col) => { Pt.push(...a, ...b, ...c2, ...a, ...c2, ...e); for (let i = 0; i < 6; i++) C.push(col.r, col.g, col.b); };
+  const cA = new THREE.Color(0xE7E0D5), cB = new THREE.Color(0xDCD4C7);
+  for (let t = 0; t < 6; t++) {
+    const r0 = 13 + t * 3, r1 = r0 + 3, h = 0.9 * (t + 1), hp = 0.9 * t, a0 = Math.PI * 1.08, a1 = Math.PI * 1.92, n = 24;
+    for (let k = 0; k < n; k++) {
+      const aA = lerp(a0, a1, k / n), aB = lerp(a0, a1, (k + 1) / n), iA = [Math.cos(aA) * r0, Math.sin(aA) * r0 + cz], iB = [Math.cos(aB) * r0, Math.sin(aB) * r0 + cz], oA = [Math.cos(aA) * r1, Math.sin(aA) * r1 + cz], oB = [Math.cos(aB) * r1, Math.sin(aB) * r1 + cz];
+      q([iA[0], h, iA[1]], [oA[0], h, oA[1]], [oB[0], h, oB[1]], [iB[0], h, iB[1]], t % 2 ? cA : cB);
+      q([iA[0], hp, iA[1]], [iA[0], h, iA[1]], [iB[0], h, iB[1]], [iB[0], hp, iB[1]], cB);
+    }
+    const rr = r0 + 1.5, nn = Math.floor((a1 - a0) * rr / 1.15);
+    for (let k = 0; k < nn; k++) { const a = lerp(a0 + 0.03, a1 - 0.03, (k + .5) / nn); addSpot('amph', t < 3 ? 'grad' : 'family', d.x + Math.cos(a) * rr, DY + h, d.z + Math.sin(a) * rr + cz); }
+  }
+  const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(Pt, 3)); tg.setAttribute('color', new THREE.Float32BufferAttribute(C, 3)); tg.computeVertexNormals();
+  add(BOX, COL.wall2, 0, 0.6, 15, 0, 20, 1.2, 8); add(BOX, COL.roof, 0, 1.9, 13.2, 0, 1.2, 1.4, 1); add(new THREE.ConeGeometry(4, 4.5, 4), 0xffffff, 15, 2.25, 23, Math.PI / 4);
+  add(BOX, 0xE2DBD0, -14, 2.2, 22, 0, 6, 0.15, 0.15); [-17, -11].forEach(x => add(BOX, 0xE2DBD0, x, 1.1, 22, 0, 0.15, 2.2, 0.15)); for (let k = 0; k < 6; k++) add(BOX, 0x23367A, -16.5 + k, 1.4, 22, 0, 0.6, 1.5, 0.3);
+  const g = districtMesh(d, P, Wp);
+  g.add(mesh(tg, vclay()));
+  const arch = mesh(new THREE.TorusGeometry(7.5, 0.55, 8, 28, Math.PI), clay(COL.accent), 0, 1.2, 18.5); g.add(arch);
+  DM.flags = [];
+  [-9, 9].forEach(x => { const pole = mesh(CYL12, clay(0xE2DBD0), x, 5, 18.5); pole.scale.set(0.15, 10, 0.15); g.add(pole); const f = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.5, 6, 1), new THREE.MeshStandardMaterial({ color: COL.accent, side: THREE.DoubleSide, roughness: .8 })); f.position.set(x + 1.3, 9.2, 18.5); g.add(f); DM.flags.push(f); });
+  DM.stage = { left: { x: d.x - 9, y: DY + 1.2, z: d.z + 15 }, mid: { x: d.x, y: DY + 1.2, z: d.z + 14.6 }, right: { x: d.x + 9, y: DY + 1.2, z: d.z + 15 }, exit: { x: d.x + 14, y: DY, z: d.z + 18 } };
+}
+function sailboat(color) {
+  return mergeParts([part(BOX, 0xFBF9F5, 0, 0.5, 0, 0, 6, 1.1, 2.2), part(BOX, color, 0, 0.75, 0, 0, 6.05, 0.3, 2.25), part(BOX, 0xD9D2C6, 0.2, 3.6, 0, 0, 0.18, 5.4, 0.18),
+    (() => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute([0.3, 1.4, 0, 0.3, 6.1, 0, 2.9, 1.4, 0, 0.3, 1.4, 0.02, 2.9, 1.4, 0.02, 0.3, 6.1, 0.02], 3)); return part(g, 0xffffff); })()]);
+}
+const BOATS = [];
+function buildHarbor(d) {
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall, -8, 3, -5, 0, 16, 6, 10); add(new THREE.CylinderGeometry(0.1, 9.5, 3, 4, 1), COL.roof, -8, 7.5, -5, Math.PI / 4, 1, 1, 0.75); Wp.push(part(BOX, 0xffffff, -8, 2.8, 0.05, 0, 12, 2.4, 0.1));
+  add(BOX, COL.roof, -8, 0.5, 4, 0, 5, 0.5, 1.4);
+  for (let k = 0; k < 4; k++) addSpot('harbor', 'mentor', -10 + k * 1.2, DY + 0.5, 4);
+  for (let x = -18; x <= 8; x += 1.5) for (let z = 7; z <= 12; z += 1.5) addSpot('harbor', 'crowd', x, DY, z);
+  districtMesh(d, P, Wp);
+  // pier into the sea
+  const p0 = { x: d.x + 14, z: d.z + 9 }, p1 = { x: 246, z: 186 };
+  for (let k = 0; k <= 10; k++) { const t = k / 10, pk = mesh(BOX, clay(0xE6DCCB), lerp(p0.x, p1.x, t), 1.6, lerp(p0.z, p1.z, t)); pk.scale.set(4.4, 0.5, 4.4); pk.rotation.y = Math.atan2(p1.x - p0.x, p1.z - p0.z); world.add(pk); }
+  W_.pierEnd = { x: p1.x - 3, y: 1.9, z: p1.z - 3 };
+  for (let k = 0; k < 4; k++) { const b = new THREE.Group(); b.add(mesh(sailboat(k % 2 ? COL.accent : COL.peri), vclay())); const t = 0.35 + k * 0.17; b.position.set(lerp(p0.x, p1.x, t) + 5, 0.9, lerp(p0.z, p1.z, t) - 4); b.rotation.y = 0.6; world.add(b); BOATS.push({ g: b, home: b.position.clone(), state: 'moored', t: rand(0, 6), ph: rand(0, 6), load: 0 }); }
+  // lighthouse
+  const lh = new THREE.Group(); lh.position.set(254, 0, 112); world.add(lh);
+  lh.add(mesh(new THREE.CylinderGeometry(6, 7, 3, 10), clay(COL.stoneD), 0, 1.5, 0));
+  lh.add(mesh(new THREE.CylinderGeometry(1.8, 2.8, 22, 12), clay(COL.white), 0, 14, 0));
+  lh.add(mesh(new THREE.CylinderGeometry(2.0, 2.0, 2.4, 12), clay(COL.accent), 0, 21, 0));
+  const lamp = mesh(new THREE.CylinderGeometry(1.4, 1.4, 2.2, 10), new THREE.MeshStandardMaterial({ color: 0xFFF6DD, emissive: 0xFFE7A8, emissiveIntensity: 0.2 }), 0, 26.3, 0, { noCast: true }); lh.add(lamp);
+  lh.add(mesh(new THREE.ConeGeometry(2.2, 1.8, 10), clay(COL.ink), 0, 28.3, 0));
+  const bg = new THREE.ConeGeometry(16, 90, 18, 1, true); bg.translate(0, -45, 0); bg.rotateZ(Math.PI / 2);
+  const beam = new THREE.Mesh(bg, new THREE.MeshBasicMaterial({ color: 0xFFF2CC, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+  beam.position.set(0, 26.3, 0); lh.add(beam); W_.beam = beam; W_.lhLamp = lamp.material; W_.lighthouse = lh;
+  addPick(lh, 8, 30, 8, { type: 'district', id: 'harbor', ref: d, name: d.name, zoom: 2.6, alias: true });
+}
+function buildDock() {
+  const x = 55, z = -40;
+  const g = new THREE.Group(); g.position.set(x, GY, z); world.add(g);
+  const dk = mesh(BOX, clay(0xE2D6C2), 3, 0.3, 0); dk.scale.set(7, 0.4, 5); g.add(dk);
+  [[6, -2], [6, 2]].forEach(([a, b]) => { const p = mesh(CYL12, clay(0xCBBEA8), a, 0.6, b); p.scale.set(0.3, 1.8, 0.3); g.add(p); });
+  const bn = mesh(BOX, clay(COL.roof), -2, 0.5, -5); bn.scale.set(5, 0.5, 1.3); g.add(bn);
+  for (let xx = -7; xx <= 1.5; xx += 1.1) for (let zz = -15; zz <= 13; zz += 1.1) addSpot('dock', 'wait', x + xx, GY + 0.05, z + zz);
+  W_.dock = { x: x + 6.5, z, g };
+  addPick(g, 16, 4, 24, { type: 'dock', id: 'dock', name: 'Stop-out dock', zoom: 4.5 }, { x: -2, y: 0, z: 0 });
+  const rb = new THREE.Group(); rb.add(mesh(sailboat(COL.peri), vclay())); rb.scale.set(0.8, 0.8, 0.8); rb.position.set(150, GY - 1.1, 262); world.add(rb); W_.riverBoat = { g: rb, state: 'away', t: 30, carry: [], dir: 0 };
+}
+
+/* ============ scattered props ============ */
+function nearPath(x, z, r) { const r2 = r * r; for (let i = 0; i <= PATH.n; i += 2) { const p = PATH.pts[i]; if ((p.x - x) ** 2 + (p.z - z) ** 2 < r2) return true; } return false; }
+const TREES = { list: [], mesh: null };
+function buildProps() {
+  const pos = [];
+  for (let i = 0; i < 5000 && pos.length < (IS_MOBILE ? 180 : 300); i++) {
+    const x = rand(-300, 300), z = rand(-225, 225);
+    if (!inIsland(x, z, 10) || anyDistrict(x, z, 7) || riverDist(x, z) < 10 || nearPath(x, z, 9)) continue;
+    if (Math.hypot(x - 28, z - 198 * -1) < 30 || Math.hypot(x - 254, z - 112) < 16 || (x < -205 && Math.abs(z - (81 + (x + 378.5) * 0.102)) < 12) || Math.hypot(x - 52, z + 40) < 14) continue;
+    if (pos.some(p => Math.hypot(p[0] - x, p[1] - z) < 7.5)) continue;
+    pos.push([x, z, rand(2.6, 4.4), rand(0, TAU)]);
+  }
+  const trunk = new THREE.InstancedMesh(CYL6, clay(COL.trunk), pos.length), crown = new THREE.InstancedMesh(ICO, clay(0xffffff), pos.length);
+  crown.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  pos.forEach(([x, z, s, r], i) => { _m.compose(_v.set(x, GY + s * 0.6, z), _q.identity(), _s.set(0.35, s * 1.2, 0.35)); trunk.setMatrixAt(i, _m); crown.setColorAt(i, _c.set(pick([COL.tree, COL.tree2, 0xB6C9A0, 0xA3BC8C]))); TREES.list.push({ x, z, s, r }); });
+  trunk.castShadow = crown.castShadow = true; crown.receiveShadow = true; world.add(trunk); world.add(crown); TREES.mesh = crown; swayTrees(0);
+  // lamps
+  const lamps = []; let side = 1;
+  for (let s = 10; s < PATH.L; s += 26) { const p = pathAt(s); if (p.y > DY - 0.5) continue; side = -side; lamps.push([p.x + p.nx * 6.6 * side, p.z + p.nz * 6.6 * side]); }
+  const post = new THREE.InstancedMesh(CYL6, clay(0xDAD3C8), lamps.length);
+  const headM = new THREE.MeshStandardMaterial({ color: 0xF6F1E6, emissive: 0xFFD9A0, emissiveIntensity: 0, roughness: .5 });
+  const head = new THREE.InstancedMesh(new THREE.SphereGeometry(0.7, 8, 6), headM, lamps.length);
+  lamps.forEach(([x, z], i) => { _m.compose(_v.set(x, GY + 3.4, z), _q.identity(), _s.set(0.17, 6.8, 0.17)); post.setMatrixAt(i, _m); _m.compose(_v.set(x, GY + 7, z), _q.identity(), _s.set(1, 1, 1)); head.setMatrixAt(i, _m); });
+  post.castShadow = true; world.add(post); world.add(head); W_.lampMat = headM;
+  // benches along the path
+  const benches = BENCH_EXTRA.slice();
+  for (let s = 40; s < PATH.L; s += 75) { const p = pathAt(s); if (p.y > DY - 0.5) continue; benches.push([p.x - p.nx * 7.4, GY, p.z - p.nz * 7.4, Math.atan2(p.nx, p.nz)]); }
+  const bm = new THREE.InstancedMesh(BOX, clay(COL.roof), benches.length);
+  benches.forEach(([x, y, z, r], i) => { _e.set(0, r, 0); _q.setFromEuler(_e); _m.compose(_v.set(x, y + 0.45, z), _q, _s.set(3.4, 0.4, 1.1)); bm.setMatrixAt(i, _m); });
+  bm.castShadow = true; world.add(bm);
+  // birds
+  W_.birds = [];
+  const bg = mergeParts([part(BOX, 0x8A93A3, -0.6, 0, 0, 0.35, 1.3, 0.08, 0.35), part(BOX, 0x8A93A3, 0.6, 0, 0, -0.35, 1.3, 0.08, 0.35)]);
+  for (let i = 0; i < 9; i++) { const b = new THREE.Mesh(bg, vclay()); world.add(b); W_.birds.push({ m: b, r: rand(14, 30), h: rand(30, 40), ph: rand(0, TAU), sp: rand(0.25, 0.45) }); }
+  // ripples
+  const rg = new THREE.RingGeometry(0.85, 1, 32); rg.rotateX(-Math.PI / 2);
+  W_.ripples = new THREE.InstancedMesh(rg, new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.35, depthWrite: false }), 30);
+  W_.ripples.frustumCulled = false; W_.ripData = [];
+  for (let i = 0; i < 30; i++) { const a = rand(0, TAU), e = islandEdge(a, rand(1.07, 1.25)); W_.ripData.push({ x: e.x, z: e.z, t: rand(0, 4) }); }
+  world.add(W_.ripples);
+  // ferry
+  const fg = new THREE.Group(); fg.add(mesh(mergeParts([part(BOX, 0xFBF9F5, 0, 1, 0, 0, 14, 2, 5.4), part(BOX, COL.accent, 0, 1.6, 0, 0, 14.1, 0.5, 5.5), part(BOX, 0xF1ECE4, -1.5, 3, 0, 0, 7, 2, 4.4), part(BOX, 0x8E9BB1, -1.5, 3.2, 0, 0, 7.1, 0.8, 4.5)]), vclay()));
+  fg.position.set(-420, 0.8, 230); world.add(fg); W_.ferry = { g: fg, state: 'away', t: 8 };
+}
+function swayTrees(t) {
+  const m = TREES.mesh; if (!m) return;
+  TREES.list.forEach((tr, i) => { const w = Math.sin(t * 1.3 + tr.x * 0.05) * 0.05; _e.set(w, tr.r, w * 0.6); _q.setFromEuler(_e); _m.compose(_v.set(tr.x, GY + tr.s * 1.55, tr.z), _q, _s.set(tr.s, tr.s * 1.12, tr.s)); m.setMatrixAt(i, _m); });
+  m.instanceMatrix.needsUpdate = true;
+}
+
+/* selection ring */
+const selRing = new THREE.Group(); scene.add(selRing); selRing.visible = false;
+(function () {
+  const r = new THREE.Mesh(new THREE.RingGeometry(0.86, 1, 64), new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.95, depthWrite: false, fog: false })); r.rotation.x = -Math.PI / 2; selRing.add(r);
+  const r2 = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.1, depthWrite: false, fog: false })); r2.rotation.x = -Math.PI / 2; r2.position.y = -0.02; selRing.add(r2);
+  const r3 = new THREE.Mesh(new THREE.RingGeometry(0.95, 1, 64), new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.5, depthWrite: false, fog: false })); r3.rotation.x = -Math.PI / 2; selRing.add(r3); selRing.userData.pulse = r3;
+})();
+
+const LOCAL_SPOTS = { explore: ['browse', 'seat'], admissions: ['desk', 'queue', 'bench'], aid: ['queue', 'wait'], orient: ['pod', 'door0', 'door1', 'door2', 'court'], commons: ['tutor', 'writing', 'bench'], faculty: ['staff'], helpdesk: ['staff'], career: ['booth', 'board', 'resume'], harbor: ['mentor', 'crowd'] };
+function spotsToWorld() { for (const id in LOCAL_SPOTS) LOCAL_SPOTS[id].forEach(k => spotList(id, k).forEach(s => { s.x += DIST[id].x; s.z += DIST[id].z; })); }
+function buildWorld() {
+  buildTerrain(); buildPath();
+  DISTRICTS.forEach(plinthFor);
+  buildExplore(DIST.explore); buildAdmissions(DIST.admissions); buildAid(DIST.aid); buildOrient(DIST.orient); buildCourses(DIST.courses);
+  buildCommons(DIST.commons); buildFaculty(DIST.faculty); buildHelpdesk(DIST.helpdesk); buildCareer(DIST.career); buildAmph(DIST.amph); buildHarbor(DIST.harbor); buildDock();
+  buildProps(); spotsToWorld();
+  DISTRICTS.forEach(d => {
+    const h = new THREE.Group(); h.position.set(d.x, DY, d.z); world.add(h);
+    if (d.id === 'courses') BLD.forEach(b => { const hb = new THREE.Group(); hb.position.set(d.x + b.x, DY, d.z + b.z); world.add(hb); addPick(hb, 22, 22, 16, { type: 'course', id: 'course-' + b.i, ref: b, name: b.c.code + ' ' + b.c.title, zoom: 3.4 }); });
+    const big = d.shape === 'circle' ? [d.r * 2, 6, d.r * 2] : [d.w, 6, d.d];
+    addPick(h, big[0], d.id === 'courses' ? 1.5 : big[1], big[2], { type: 'district', id: d.id, ref: d, name: d.name, zoom: d.id === 'courses' ? 1.9 : 3, round: d.shape === 'circle' });
+  });
+}
+
+/* ============ the story ============
+   Each chapter has a traditional side (T) and an AI-assisted side (A).
+   cap: narration per role. phone: what Maya receives. con: staff console. fx: scene effects.
+   mem: memory ops. appr: an approval gate (AI drafts, a named person decides). c: counter deltas. s: counter values. */
+const SILOS = { crm: 'Admissions CRM', admissions: 'Application file', aid: 'Financial aid', registrar: 'Registrar', lms: 'Learning platform', advising: 'Advising notes', career: 'Career services', minutes: 'Committee minutes', sheets: 'Spreadsheets', docs: 'Course documents', email: 'Email approvals' };
+const CHAPTERS = [
+  /* ---------- staff prologue: build the program ---------- */
+  { id: 'demand', ph: 0, title: 'Spot the demand', short: 'Demand', dur: 15, focus: 'studio', who: { name: 'Dr. P. Nair', role: 'Program director' },
+    T: { cap: { staff: 'A committee commissions a market study for a new BS in Health Informatics. The report arrives after a semester.' },
+      con: [[1.5, 'task', 'Program proposal: Health Informatics. Market study requested from a consultant.'], [7, 'wait', 'Consultant report due in 12 weeks'], [12.5, 'note', 'Report in: regional demand is strong']],
+      fx: [[2, 'paper', 'studio', 'faculty'], [6, 'waitAt', 'studio', 'Waiting 12 weeks']], mem: [[2, 'silo', 'minutes', 'Proposal memo'], [12.5, 'silo', 'docs', 'Market study PDF']], c: { day: 90 } },
+    A: { cap: { staff: 'Labor market data, competitor programs and searches on the program recommender come together in two days.' },
+      con: [[1.5, 'insight', 'Demand signal: health data roles up 18% in the region. Searches for \u201Chealth data\u201D up 3\u00D7 on the recommender.'], [4.5, 'draft', 'AI draft: program concept, target learners, delivery model (8-week evening cohorts)']],
+      appr: [7.5, 'Approve program concept', 'Dr. P. Nair', [['stamp', 'studio', 'Concept approved by Dr. P. Nair']]],
+      fx: [[1.5, 'orb', 'career', 'studio'], [2.2, 'orb', 'explore', 'studio']], mem: [[2, 'add', 'demand', 'Demand evidence'], [5, 'add', 'concept', 'Program concept']], c: { day: 2 } } },
+  { id: 'outcomes', ph: 0, title: 'Outcomes and accreditation alignment', short: 'Outcomes', dur: 16, focus: 'studio', who: { name: 'Dr. P. Nair', role: 'Program director' },
+    T: { cap: { staff: 'A faculty workgroup drafts outcomes over a semester, then builds a crosswalk to accreditor standards in a spreadsheet.' },
+      con: [[1.5, 'task', 'Workgroup meeting 3 of 9 on program outcomes'], [6.5, 'task', 'Crosswalk spreadsheet v4 emailed for comment'], [12, 'ticket', 'Four months in, a reviewer finds an outcome with no assessment']],
+      fx: [[2, 'paper', 'studio', 'faculty'], [8, 'paper', 'faculty', 'studio'], [12, 'flag', 'studio', '1 gap found, month 4']], mem: [[6.5, 'silo', 'sheets', 'Crosswalk v4.xlsx'], [9, 'silo', 'minutes', 'Outcomes draft']], c: { day: 120, gaps: 1 } },
+    A: { cap: { staff: 'AI drafts eight outcomes, maps each to accreditor standards and institutional outcomes, and flags gaps instantly. Faculty edit and decide.' },
+      con: [[1.5, 'draft', '8 program outcomes drafted and mapped to accreditor standards'], [4, 'insight', '3 gaps flagged: outcome 6 has no assessment, the capstone has a credit-hour mismatch, outcome 3 has no evidence plan']],
+      appr: [8, 'Approve edited outcomes', 'Faculty workgroup', [['stamp', 'studio', 'Outcomes approved by faculty']]],
+      fx: [[4, 'flag', 'studio', '3 gaps flagged instantly'], [5, 'orb', 'studio', 'faculty']], mem: [[2, 'add', 'outcomes', '8 outcomes'], [3, 'add', 'standards', 'Standards map'], [6, 'add', 'evidence', 'Evidence plan']], c: { day: 10, gaps: 3 } } },
+  { id: 'curriculum', ph: 0, title: 'Design the curriculum', short: 'Curriculum', dur: 16, focus: 'studio', who: { name: 'Dr. P. Nair', role: 'Program director' },
+    T: { cap: { staff: 'Course by course, each designer works in their own documents. The building rises slowly, with accessibility checks left until the end.' },
+      con: [[1.5, 'task', 'Course 1 of 8 in design'], [7, 'task', 'Course 3 waiting on a subject expert'], [12, 'note', 'Accessibility review scheduled after build']],
+      fx: [[1, 'build', 2], [5, 'waitAt', 'studio', 'Waiting 6 months']], mem: [[7, 'silo', 'docs', 'Course outlines, 8 files']], c: { day: 180, floors: 2 } },
+    A: { cap: { staff: 'The curriculum map, sequence, course shells, assessments and rubrics are drafted together. Accessibility and licensing are checked as each course is built.' },
+      con: [[1.5, 'draft', 'Curriculum map: 8 courses, prerequisites and 120 credits checked'], [5, 'draft', 'Assessments and rubrics aligned to every outcome'], [8.5, 'insight', '2 readings flagged for licensing, 1 video missing captions']],
+      appr: [11, 'Approve curriculum for committee', 'Dr. P. Nair', [['stamp', 'studio', 'Curriculum sent to committee']]],
+      fx: [[1, 'build', 8], [6, 'orb', 'studio', 'commons']], mem: [[2, 'add', 'curmap', 'Curriculum map'], [5, 'add', 'assess', 'Assessments and rubrics']], c: { day: 21, floors: 8 } } },
+  { id: 'launch', ph: 0, title: 'Approve and launch', short: 'Launch', dur: 16, focus: 'studio', who: { name: 'Dr. P. Nair', role: 'Program director' },
+    T: { cap: { staff: 'The curriculum committee, faculty review and provost sign-off happen in sequence. The program launches in month 14.' },
+      con: [[1.5, 'task', 'Curriculum committee: next meeting in 5 weeks'], [7, 'approval', 'Approved by the curriculum committee'], [11, 'approval', 'Provost sign-off'], [14, 'note', 'Program page goes live']],
+      fx: [[1, 'build', 8], [7, 'stamp', 'studio', 'Committee approved'], [11, 'stamp', 'faculty', 'Provost signed off'], [13, 'paper', 'studio', 'explore']], mem: [[7, 'silo', 'email', 'Approval emails']], c: { day: 40, floors: 6, appr: 2 } },
+    A: { cap: { staff: 'The same human gates, with a complete evidence pack. Launch in week 7. The program appears in the recommender and pathway generator.' },
+      con: [[1.5, 'approval', 'Curriculum committee approved with one edit'], [5, 'approval', 'Provost sign-off'], [8, 'note', 'Where accreditor approval is required, the accreditor sets that timeline. AI shortened the internal build, not the external review.'], [11.5, 'insight', 'Program live: added to the recommender and pathway generator']],
+      fx: [[1.5, 'stamp', 'studio', 'Committee approved'], [5, 'stamp', 'faculty', 'Provost signed off'], [10.5, 'orb', 'studio', 'explore']], mem: [[2, 'add', 'approvals', 'Approvals logged'], [11, 'add', 'live', 'Live in recommender']], c: { day: 15, appr: 2 } } },
+
+  /* ---------- phase 1: discovery to admission ---------- */
+  { id: 'discover', ph: 1, title: 'Discover', short: 'Discover', dur: 16, focus: 'explore', who: { name: 'L. Ortiz', role: 'Admissions counselor' },
+    T: { go: [0.4, 'explore', 'front'], cap: { student: 'At 11 pm after a lab shift, Maya browses the catalog and fills in an inquiry form.', staff: 'Her inquiry joins a lead list sorted by date. A counselor calls three days later, during Maya\u2019s shift.' },
+      phone: [[3, 'Harborview College', 'Thanks for your inquiry. A counselor will be in touch.'], [10, 'Missed call', 'Harborview Admissions, 2:14 pm'], [13, 'Voicemail', 'Please call us back during office hours.']],
+      con: [[2, 'queue', 'Lead list: 214 new inquiries, oldest first'], [9, 'task', 'Call M. Torres (no notes)'], [12, 'ticket', 'No answer. Left a voicemail.']],
+      fx: [[1, 'note', 'Which program fits my night shifts?'], [8, 'wait', 'Waiting 3 days'], [3, 'paper', 'explore', 'admissions']], mem: [[3, 'silo', 'crm', 'Inquiry form']], c: { day: 3, wait: 3 } },
+    A: { go: [0.4, 'explore', 'front'], cap: { student: 'At 11 pm, Maya asks the enquiry assistant about evening-friendly programs and gets answers straight away.', staff: 'The lead reaches counselor L. Ortiz with a summary: works evening shifts, wants a health data role, has college credits.' },
+      phone: [[2.5, 'Enquiry assistant', 'Yes. Every core course has recorded sessions and evening live sessions.'], [5.5, 'Enquiry assistant', 'Want a counselor to call on your day off, Thursday?']],
+      con: [[2, 'insight', 'New lead: M. Torres. Works evening shifts. Goal: health data analyst. 27 college credits.']],
+      appr: [6.5, 'Approve follow-up call for Thursday 10:00', 'L. Ortiz', [['stamp', 'explore', 'Follow-up approved by L. Ortiz'], ['phone', 'Harborview Admissions', 'Call booked: Thursday 10:00 with L. Ortiz.']]],
+      fx: [[1, 'note', 'Which program fits my night shifts?'], [3, 'orb', 'explore', 'admissions']], mem: [[3, 'add', 'shifts', 'Works evening shifts'], [3.6, 'add', 'goal', 'Goal: health data analyst'], [4.2, 'add', 'credits', '27 college credits']], c: { day: 0 } } },
+  { id: 'recommend', ph: 1, title: 'Program recommender', short: 'Recommend', dur: 16, focus: 'explore', who: { name: 'L. Ortiz', role: 'Admissions counselor' },
+    T: { cap: { student: 'Maya compares six program pages on her own. On the counselor call she explains her job and goals all over again.', staff: 'The counselor recommends programs from memory and types notes into the CRM.' },
+      phone: [[3, 'Harborview Admissions', 'Here are links to all our programs.'], [10, 'Note to self', 'Health Informatics or Data Science? Not sure.']],
+      con: [[2, 'task', 'Call with M. Torres: ask about her job and schedule'], [8, 'note', 'CRM note: interested in health, maybe data']],
+      fx: [[1, 'note', 'Six programs. Which one fits?'], [5, 'ask', 'Asked again: job and schedule']], mem: [[5, 'ask', 'crm', 'Job and schedule, again']], c: { day: 4, wait: 2, asks: 1 } },
+    A: { cap: { student: 'The program recommender suggests BS Health Informatics, with reasons drawn from what Maya already shared.', staff: 'The counselor sees the recommendation and its reasons, and adds one alternative before it goes out.' },
+      phone: [[3, 'Program recommender', 'Best fit: BS Health Informatics. Your lab experience counts, evening cohorts start every 8 weeks, and your credits likely transfer.'], [9, 'Program recommender', 'Also worth a look: BS Data Science, and a Healthcare Admin certificate.']],
+      con: [[2, 'insight', 'Recommender used: evening shifts, goal, 27 credits. Top match: Health Informatics.'], [8, 'note', 'Counselor added the Healthcare Admin certificate as a stepping stone']],
+      fx: [[1, 'note', 'Six programs. Which one fits?'], [2, 'orb', 'studio', 'explore']], mem: [[2, 'read', 'shifts'], [2.4, 'read', 'goal'], [2.8, 'read', 'credits'], [4, 'add', 'program', 'Program: Health Informatics']], c: { day: 0 } } },
+  { id: 'pathway', ph: 1, title: 'Pathway generation', short: 'Pathway', dur: 15, focus: 'explore', who: { name: 'J. Park', role: 'Advisor' },
+    T: { cap: { student: 'Maya asks how long it will take and what it will cost. The answer: an advisor builds a plan after admission.', staff: 'Degree plans are built by hand after admission, so prospects cannot see their time to degree.' },
+      phone: [[3, 'Harborview Admissions', 'An advisor will build your degree plan after you are admitted.'], [9, 'Note to self', 'How many years? Can I afford it?']],
+      con: [[3, 'task', 'Reply: degree plan after admission'], [10, 'note', 'Prospect unsure. Follow up next week.']],
+      fx: [[6, 'wait', 'Unsure for 2 days']], mem: [], c: { day: 2, wait: 2 } },
+    A: { cap: { student: 'A term-by-term pathway appears: transfer credits applied, an evening-friendly course order, time to degree and cost.', staff: 'The pathway generator builds the plan from the catalog and transfer rules. Advisor J. Park confirms one course equivalency.' },
+      phone: [[3, 'Pathway generator', 'Your plan: 8 terms part-time, about 2.7 years. Around 24 transfer credits. Evening-friendly order.'], [9, 'Pathway generator', 'Estimated cost after grants: $9,400 a year.']],
+      con: [[2, 'draft', 'Pathway drafted for M. Torres: 8 terms, 1 equivalency to confirm']],
+      appr: [5.5, 'Confirm BIO 140 equivalency', 'J. Park', [['stamp', 'explore', 'Equivalency confirmed by J. Park']]],
+      fx: [[2, 'orb', 'aid', 'explore']], mem: [[2, 'read', 'credits'], [2.5, 'read', 'shifts'], [4, 'add', 'pathway', 'Pathway: 8 terms']], c: { day: 0 } } },
+  { id: 'apply', ph: 1, title: 'Application with form assist', short: 'Apply', dur: 16, focus: 'admissions', who: { name: 'A. Bell', role: 'Admissions officer' },
+    T: { go: [0.5, 'admissions', 'desk'], cap: { student: 'The application takes 40 minutes. Maya retypes details she already gave and guesses at the residency question.', staff: 'Applications arrive with blanks and guesses. Staff chase them by email.' },
+      phone: [[4, 'Application portal', 'Session timed out. Unsaved changes lost.'], [11, 'Application portal', 'Application submitted.']],
+      con: [[4, 'queue', 'Incomplete applications: 61'], [11.5, 'task', 'Email M. Torres about her residency answer']],
+      fx: [[2, 'note', 'Didn\u2019t I already tell them this?'], [5, 'ask', 'Asked again: contact and education history'], [8, 'wait', 'Came back 4 days later']], mem: [[5, 'ask', 'admissions', 'Application, retyped']], c: { day: 5, wait: 4, asks: 1 } },
+    A: { go: [0.5, 'admissions', 'desk'], cap: { student: 'Form assist pre-fills what Maya already shared and explains the residency question in plain language. Done in 12 minutes.', staff: 'Applications arrive complete, so there is nothing to chase.' },
+      phone: [[3.5, 'Form assist', 'I filled 14 fields from your earlier answers. Please check them.'], [6.5, 'Form assist', 'Residency means where you have lived for the last 12 months, for tuition.'], [10.5, 'Application portal', 'Application submitted in 12 minutes.']],
+      con: [[11, 'insight', 'Application complete. No follow-up needed.']],
+      fx: [[3, 'orb', 'explore', 'admissions']], mem: [[3, 'read', 'goal'], [3.3, 'read', 'credits'], [3.6, 'read', 'program'], [10.5, 'add', 'app', 'Application submitted']], c: { day: 0 } } },
+  { id: 'docs', ph: 1, title: 'Document review and gap identification', short: 'Documents', dur: 17, focus: 'admissions', who: { name: 'A. Bell', role: 'Admissions officer' },
+    T: { go: [0.5, 'admissions', 'bench'], cap: { student: 'Maya uploads her transcript and ID. Two weeks later a staff review finds page 2 of the transcript missing.', staff: 'Documents are reviewed in arrival order. The backlog is 312 files.' },
+      phone: [[2, 'Application portal', 'Documents received.'], [12.5, 'Harborview Admissions', 'Your application is incomplete: transcript page 2 is missing.']],
+      con: [[2, 'queue', 'Document queue: 312 files, oldest 14 days'], [11.5, 'ticket', 'Manual review: transcript page 2 missing. Email sent.']],
+      fx: [[3, 'wait', '14 days in the queue'], [11.5, 'flag', 'admissions', 'Page 2 missing, found on day 14']], mem: [[2, 'silo', 'admissions', 'Transcript, page 2 missing']], c: { day: 16, wait: 15 } },
+    A: { go: [0.5, 'admissions', 'desk'], cap: { student: 'Each upload is checked in seconds. The missing page is flagged before Maya closes the tab, and she re-uploads in five minutes.', staff: 'The document reviewer pre-checks every file. Officers only see the items that need a person.' },
+      phone: [[3, 'Document reviewer', 'Your transcript is missing page 2. Upload the full file?'], [7.5, 'Document reviewer', 'All documents complete.']],
+      con: [[2.5, 'insight', 'Gap found in 4 seconds: transcript page 2 missing. Applicant told instantly.']],
+      appr: [9, 'Confirm application file complete', 'A. Bell', [['stamp', 'admissions', 'File complete, confirmed by A. Bell']]],
+      fx: [[2.5, 'flag', 'admissions', 'Page 2 missing, found in 4 seconds']], mem: [[7.5, 'add', 'docs', 'Documents complete']], c: { day: 0.2 } } },
+  { id: 'aid', ph: 1, title: 'Financial aid and transfer credits', short: 'Aid', dur: 17, focus: 'aid', who: { name: 'P. Duarte', role: 'Registrar' },
+    T: { go: [0.5, 'aid', 'bench'], cap: { student: 'The aid office asks for documents admissions already has. A verification hold appears. The registrar reviews her transcript separately, three weeks later.', staff: 'Admissions, aid and the registrar keep separate files. Each office starts from scratch.' },
+      phone: [[3, 'Financial Aid', 'Please send your transcript and ID for verification.'], [8, 'Financial Aid', 'Verification hold on your account.'], [13, 'Registrar', 'Transfer evaluation complete: 21 credits accepted.']],
+      con: [[2, 'task', 'Aid office: request documents from M. Torres'], [7.5, 'ticket', 'Verification hold placed'], [12, 'task', 'Registrar: transfer evaluation started from scratch']],
+      fx: [[3, 'ask', 'Asked again: transcript and ID'], [4, 'paper', 'admissions', 'aid'], [9, 'paper', 'aid', 'helpdesk'], [10, 'lost', 'Context lost at handoff'], [6, 'wait', 'Waiting 21 days']], mem: [[3, 'ask', 'aid', 'Transcript and ID, again'], [10, 'lost', 'registrar', 'Course syllabi, lost'], [13, 'silo', 'registrar', '21 credits accepted']], c: { day: 21, wait: 18, asks: 1, lost: 2 } },
+    A: { go: [0.5, 'aid', 'window'], cap: { student: 'Her aid package is explained in plain terms and the verification checklist is already filled in. A transfer map is drafted from her transcript.', staff: 'The registrar receives a drafted transfer map: 24 of 27 credits apply, two need a syllabus check. Approved in a day.' },
+      phone: [[3, 'Aid explainer', 'Your package: Pell Grant $3,700 and state grant $1,200. You don\u2019t repay these.'], [7, 'Financial Aid', 'Verification complete. Nothing else needed.']],
+      con: [[2, 'draft', 'Transfer map for M. Torres: 24 of 27 credits apply. 2 syllabi checked automatically.']],
+      appr: [6, 'Approve transfer map', 'P. Duarte', [['stamp', 'aid', 'Transfer map approved by P. Duarte'], ['phone', 'Registrar', '24 transfer credits applied to your pathway.']]],
+      fx: [[2, 'orb', 'admissions', 'aid'], [3, 'orb', 'aid', 'helpdesk']], mem: [[2, 'read', 'docs'], [2.5, 'read', 'credits'], [8, 'add', 'transfer', '24 credits apply'], [9, 'add', 'aidok', 'Aid verified']], c: { day: 3 } } },
+  { id: 'admit', ph: 1, title: 'Admitted', short: 'Admitted', dur: 16, focus: 'admissions', who: { name: 'L. Ortiz', role: 'Admissions counselor' },
+    T: { go: [5, 'orient', 'court'], cap: { student: 'An admission letter arrives, then nothing until orientation. Maya almost takes a job offer instead.', staff: 'Admitted students wait for the next orientation date. No one tracks who is wavering.' },
+      phone: [[2, 'Harborview Admissions', 'Congratulations, you are admitted.'], [10, 'Note to self', 'Is it worth waiting six weeks to start?']],
+      con: [[3, 'task', 'Admit letter sent'], [11, 'note', 'Orientation list: 254 admitted, 31% have not logged in']],
+      fx: [[8, 'wait', '10 days of silence'], [11, 'note', 'Should I just take the other job?']], mem: [[3, 'silo', 'admissions', 'Admit letter']], c: { day: 10, wait: 9 } },
+    A: { go: [5, 'orient', 'court'], cap: { student: 'The decision arrives with an onboarding plan, a pathway updated with her real credits, and orientation booked on her day off.', staff: 'Admitted students who go quiet are flagged. Counselor L. Ortiz approves a welcome check-in for Maya.' },
+      phone: [[2, 'Harborview Admissions', 'Congratulations, you are admitted. Your pathway now shows 24 credits.'], [5, 'Onboarding plan', 'Orientation booked for Thursday, your day off.']],
+      con: [[3, 'insight', 'Melt risk low: M. Torres opened her plan twice this week']],
+      appr: [7.5, 'Approve welcome check-in', 'L. Ortiz', [['stamp', 'admissions', 'Check-in approved by L. Ortiz'], ['phone', 'L. Ortiz', 'Welcome, Maya. See you Thursday.']]],
+      mem: [[2, 'read', 'pathway'], [2.5, 'read', 'transfer'], [5, 'read', 'shifts'], [6, 'add', 'admit', 'Admitted, onboarding plan']], c: { day: 1 } } },
+
+  /* ---------- phase 2: admission to graduation ---------- */
+  { id: 'orient', ph: 2, title: 'Orientation and diagnostic', short: 'Orient', dur: 16, focus: 'orient', who: { name: 'J. Park', role: 'Advisor' },
+    T: { go: [0.4, 'orient', 'pod'], cap: { student: 'Maya watches the orientation webinar recording and takes a placement test. Her algebra gap goes unnoticed.', staff: 'Placement scores go into the student system. The advisor intake form asks for her goals and schedule again.' },
+      phone: [[3, 'Orientation', 'Webinar recording is posted.'], [10, 'Placement', 'Score recorded.']],
+      con: [[3, 'queue', 'Advising caseload: 412 learners'], [7, 'task', 'Intake form sent to M. Torres'], [10, 'note', 'Placement scores uploaded']],
+      fx: [[6, 'ask', 'Asked again: goals and schedule']], mem: [[6, 'ask', 'advising', 'Goals and schedule, again'], [10, 'silo', 'lms', 'Placement score']], c: { asks: 1 }, s: { term: 'Term 1, week 0', risk: 30, help: '\u2013' } },
+    A: { go: [0.4, 'orient', 'pod'], cap: { student: 'The adaptive diagnostic finds an algebra gap. Her onboarding plan adds two short bridge modules before statistics.', staff: 'Advisor J. Park sees the diagnostic summary with Maya\u2019s record attached, and approves the bridge plan.' },
+      phone: [[3, 'Diagnostic', 'Strong in biology. Algebra needs a refresh: 2 short modules added.'], [8, 'Onboarding plan', 'Captions are on and read-aloud is available.']],
+      con: [[2, 'insight', 'Diagnostic: algebra gap. Record: evening shifts, 24 credits, goal health data analyst.']],
+      appr: [6, 'Approve bridge modules', 'J. Park', [['stamp', 'orient', 'Bridge plan approved by J. Park']]],
+      fx: [[2, 'orb', 'orient', 'faculty']], mem: [[2, 'read', 'shifts'], [2.4, 'read', 'goal'], [3, 'add', 'algebra', 'Algebra gap, bridge plan']], s: { term: 'Term 1, week 0', risk: 22, help: '\u2013' } } },
+  { id: 'week2', ph: 2, title: 'Week 2: a misconception', short: 'Week 2', dur: 16, focus: 'courses', who: { name: 'Dr. A. Okafor', role: 'Instructor, STAT 101' },
+    T: { go: [0.5, 'courses', 'quad'], cap: { student: 'In STAT 101, Maya treats correlation as causation on a quiz. Feedback comes a week later.', staff: 'The instructor grades 180 quizzes by hand. The same mistake across the class is not visible.' },
+      phone: [[3, 'STAT 101', 'Quiz 2 submitted.'], [12, 'STAT 101', 'Quiz 2 graded: 58%. See comments.']],
+      con: [[3, 'queue', 'Quiz 2: 180 to grade'], [11, 'task', 'Feedback returned, a week later']],
+      fx: [[7, 'wait', '7 days for feedback']], mem: [[12, 'silo', 'lms', 'Quiz 2: 58%']], s: { term: 'Term 1, week 2', risk: 41 } },
+    A: { go: [0.5, 'courses', 'quad'], cap: { student: 'Quiz Me spots the misconception straight away. Explain This re-explains it at her level, and a short practice set clears it.', staff: 'Class Pulse shows 14 learners with the same misconception. Dr. Okafor approves a lesson variant for the whole group.' },
+      phone: [[3, 'Quiz Me', 'Careful: a correlation alone doesn\u2019t show cause. Try 4 practice questions?'], [8.5, 'Quiz Me', 'Cleared. Mastery up 12 points.']],
+      con: [[2, 'insight', 'Class Pulse: 14 learners confuse correlation with causation']],
+      appr: [6, 'Approve lesson variant for 14 learners', 'Dr. A. Okafor', [['stamp', 'courses', 'Lesson variant approved by Dr. Okafor']]],
+      fx: [[3, 'orb', 'commons', 'courses']], mem: [[3, 'add', 'mis', 'Misconception: correlation vs causation'], [8.5, 'update', 'mis', 'Misconception cleared']], s: { term: 'Term 1, week 2', risk: 24 } } },
+  { id: 'week4', ph: 2, title: 'Week 4: a shift change', short: 'Week 4', dur: 17, focus: 'faculty', who: { name: 'J. Park', role: 'Advisor' },
+    T: { cap: { student: 'Maya\u2019s shifts change. She misses two live sessions and a submission, and stops logging in for six days.', staff: 'A faculty early alert goes out after the second missed assignment, on day 11. The advisor sends a generic email.' },
+      phone: [[6, 'STAT 101', 'Assignment 3 is overdue.'], [12.5, 'Advising', 'Checking in: please contact your advisor.']],
+      con: [[10, 'ticket', 'Faculty early alert: M. Torres, 2 missed assignments'], [12.5, 'task', 'Generic check-in email sent']],
+      fx: [[1, 'note', 'New shift pattern. I\u2019m falling behind.'], [5, 'wait', '11 days until anyone notices'], [10, 'paper', 'courses', 'faculty']], mem: [[10, 'silo', 'advising', 'Early alert, day 11']], s: { term: 'Term 1, week 4', risk: 72, help: '11 days' } },
+    A: { cap: { student: 'Within a day, Maya gets a message that mentions her shift change and offers recorded sessions and a 48-hour extension. She replies the same day.', staff: 'At-Risk Radar flags Maya with reasons. The drafted message uses her record: evening shifts, and the schedule change she mentioned in a help chat. J. Park approves it.' },
+      con: [[2, 'insight', 'At-Risk Radar: M. Torres. Why: 6-day login gap, missed submission, shift change mentioned in a help chat.']],
+      appr: [5.5, 'Approve outreach to M. Torres', 'J. Park', [['stamp', 'faculty', 'Outreach approved by J. Park'], ['phone', 'J. Park', 'Saw your shifts changed. Recordings are posted and you have 48 extra hours for assignment 3. 15 minutes on Thursday?'], ['phone', 'Maya', 'Yes please, thank you!']]],
+      fx: [[1, 'note', 'New shift pattern. I\u2019m falling behind.'], [2, 'orb', 'courses', 'faculty'], [2.5, 'flag', 'courses', 'At risk, reasons shown']], mem: [[2, 'read', 'shifts'], [2.6, 'add', 'shift2', 'Shift change, from help chat'], [3.2, 'read', 'algebra']], s: { term: 'Term 1, week 4', risk: 38, help: '1 day' } } },
+  { id: 'midterms', ph: 2, title: 'Midterms', short: 'Midterms', dur: 16, focus: 'commons', who: { name: 'Dr. A. Okafor', role: 'Instructor, STAT 101' },
+    T: { go: [0.5, 'commons', 'tutor'], cap: { student: 'The tutoring wait is three days, so Maya studies alone after her shifts.', staff: 'Tutoring is first come, first served. Learners stuck on the same topic are seen one at a time.' },
+      phone: [[3, 'Tutoring', 'Next available slot: Friday 2 pm.'], [11.5, 'STAT 101', 'Midterm: 64%.']],
+      con: [[3, 'queue', 'Tutoring requests: 96 waiting'], [10, 'task', 'Session with M. Torres booked for Friday']],
+      fx: [[5, 'wait', '3-day tutoring wait']], mem: [[11.5, 'silo', 'lms', 'Midterm: 64%']], s: { term: 'Term 1, midterms', risk: 66 } },
+    A: { go: [0.5, 'commons', 'kiosk'], cap: { student: 'Prep Coach and My Learning Path build a seven-day plan around her shifts. She and 11 others stuck on algebra take a short bridge module.', staff: 'Twelve learners are stuck on the same algebra prerequisite. Dr. Okafor approves an Alternative Path for the group.' },
+      phone: [[3, 'My Learning Path', 'Your 7-day plan fits your shifts: 40-minute sessions before work.'], [11.5, 'STAT 101', 'Midterm: 81%.']],
+      con: [[2, 'insight', '12 learners stuck on the same algebra prerequisite']],
+      appr: [5, 'Approve Alternative Path for 12 learners', 'Dr. A. Okafor', [['stamp', 'courses', 'Alternative Path approved by Dr. Okafor']]],
+      fx: [[3, 'orb', 'commons', 'faculty']], mem: [[3, 'read', 'shifts'], [3.5, 'read', 'algebra'], [7, 'add', 'alt', 'Alternative Path completed']], s: { term: 'Term 1, midterms', risk: 28 } } },
+  { id: 'decision', ph: 2, title: 'Term end: the decision', short: 'Decision', dur: 17, focus: 'courses', who: { name: 'J. Park', role: 'Advisor' },
+    T: { go: [9, 'dock', 'wait'], cap: { student: 'Maya passes, but a balance hold she doesn\u2019t understand blocks registration. A generic reminder goes unread. She stops out.', staff: 'The registration reminder goes to everyone. No one sees that Maya has a hold.' },
+      phone: [[3, 'Registrar', 'Reminder: registration for next term closes Friday.'], [7, 'Student account', 'Registration blocked: account hold.']],
+      con: [[3, 'task', 'Registration reminder sent to all learners'], [13, 'note', 'M. Torres did not register']],
+      fx: [[7.5, 'note', 'I can\u2019t sort this out right now.'], [12, 'lost', 'Stopped out']], mem: [[7, 'silo', 'registrar', 'Account hold'], [12, 'lost', 'advising', 'Advising notes, not shared']], s: { term: 'Term 1 ends', risk: 85 } },
+    A: { cap: { student: 'Her hold is spotted early. A message explains it in one click and offers a payment plan. Maya registers.', staff: 'Predicted stop-outs are flagged two weeks before registration closes. J. Park approves a hold explanation for Maya.' },
+      con: [[2, 'insight', 'Predicted stop-out: M. Torres. Why: $410 balance hold, registration not started.']],
+      appr: [5, 'Approve hold explanation', 'J. Park', [['stamp', 'courses', 'Message approved by J. Park'], ['phone', 'Student account', 'Your hold is a $410 balance. Split it into 3 payments and register today?'], ['phone', 'Registrar', 'Registered for Term 2.']]],
+      fx: [[2, 'orb', 'helpdesk', 'faculty']], mem: [[2, 'read', 'aidok'], [9, 'add', 'term2', 'Registered for Term 2']], s: { term: 'Term 1 ends', risk: 30 } } },
+  { id: 'return', ph: 2, title: 'Coming back, or carrying on', short: 'Terms 2 to 6', dur: 16, focus: 'courses', who: { name: 'J. Park', role: 'Advisor' },
+    T: { go: [5, 'courses', 'quad'], cap: { student: 'A term later, a re-enrollment call brings Maya back. A new advisor can\u2019t see her old notes, so she explains everything again.', staff: 'Re-enrollment calls work from a list. Advising notes from her first term sit in a different system.' },
+      phone: [[3, 'Re-enrollment', 'We miss you! Ready to come back?'], [10, 'Advising', 'Please complete the intake form.']],
+      con: [[3, 'task', 'Re-enrollment call list'], [9, 'ticket', 'New advisor intake: previous notes not visible']],
+      fx: [[9.5, 'ask', 'Asked again: goals, schedule, credits']], mem: [[9.5, 'ask', 'advising', 'Goals, schedule, credits, again']], c: { asks: 2 }, s: { term: 'Term 3, back after a break', risk: 45, help: '\u2013' } },
+    A: { cap: { student: 'Terms 2 to 6 pass with help arriving when it\u2019s needed. Her record carries every step, so no one asks twice.', staff: 'Each term, insights arrive the moment they appear: a missed deadline, a quiz pattern, a schedule change.' },
+      phone: [[3, 'Deadline Watch', 'Reminder: lab report due Sunday.'], [9, 'Progress Pulse', 'Term 6 complete: 72 credits done.']],
+      con: [[3, 'insight', 'No risk signals this week for M. Torres'], [9, 'note', 'Credits: 72 completed, including 24 transferred']],
+      mem: [[4, 'read', 'pathway'], [6, 'add', 'progress', '72 credits completed']], s: { term: 'Term 6', risk: 18, help: '\u2013' } } },
+  { id: 'career', ph: 2, title: 'Capstone and career', short: 'Career', dur: 16, focus: 'career', who: { name: 'O. Yamada', role: 'Career advisor' },
+    T: { go: [0.5, 'career', 'booth'], cap: { student: 'Maya attends one career fair between shifts and has her resume reviewed.', staff: 'Career services runs a fair each term. Learners who work shifts often miss it.' },
+      phone: [[4, 'Career Center', 'Career fair: Wednesday 1 to 4 pm.'], [11, 'Career Center', 'Resume review booked.']],
+      con: [[4, 'task', 'Fair attendance: 140'], [11, 'task', 'Resume review: M. Torres']],
+      mem: [[11, 'silo', 'career', 'Resume v1']], s: { term: 'Term 9', risk: 30 } },
+    A: { go: [0.5, 'career', 'booth'], cap: { student: 'Her mastered skills map to health data roles. She practises mock interviews and is matched with an internship on a hospital analytics team.', staff: 'Career advisor O. Yamada approves an internship match drawn from Maya\u2019s skills and her lab background.' },
+      phone: [[3, 'Career tools', 'Your skills match 3 roles: health data analyst, clinical data coordinator, quality analyst.']],
+      con: [[2, 'insight', 'Skill-to-job map: SQL, statistics, clinical lab background']],
+      appr: [6, 'Approve internship match', 'O. Yamada', [['stamp', 'career', 'Match approved by O. Yamada'], ['phone', 'Career Center', 'Internship interview: Lakeshore Hospital analytics team, Tuesday.']]],
+      mem: [[2, 'read', 'goal'], [2.5, 'read', 'progress'], [4, 'add', 'intern', 'Internship match']], s: { term: 'Term 7', risk: 12 } } },
+  { id: 'graduate', ph: 2, title: 'Graduation', short: 'Graduate', dur: 16, focus: 'amph', who: { name: 'P. Duarte', role: 'Registrar' },
+    T: { go: [0.5, 'amph', 'stage'], cap: { student: 'Maya graduates a term later than planned, after a stop-out and a repeated intake.', staff: 'The registrar completes the degree audit by hand.' },
+      phone: [[4, 'Registrar', 'Degree audit complete.'], [10, 'Harborview College', 'Congratulations, graduate!']],
+      con: [[4, 'task', 'Manual degree audit'], [10, 'note', 'Time to degree: 9 terms of study, plus 1 stopped out']],
+      fx: [[8, 'confetti', 'amph']], s: { term: 'Graduated after 10 terms', risk: 0 } },
+    A: { go: [0.5, 'amph', 'stage'], cap: { student: 'Maya graduates on schedule, and her internship turns into a job offer.', staff: 'The registrar confirms the degree audit flags. Cohort results flow back to Dr. Nair for program review and accreditation evidence.' },
+      phone: [[4, 'Credential wallet', 'Your diploma and badges are ready to share.'], [10, 'Harborview College', 'Congratulations, graduate!']],
+      con: [[3, 'approval', 'Degree audit confirmed by P. Duarte'], [9, 'insight', 'Program review: cohort met 7 of 8 outcomes. Outcome 6 evidence logged for accreditation.']],
+      fx: [[8, 'confetti', 'amph'], [9, 'orb', 'amph', 'studio']], mem: [[3, 'read', 'progress'], [5, 'add', 'grad', 'Graduated']], s: { term: 'Graduated after 8 terms', risk: 0 } } },
+  { id: 'alumni', ph: 2, title: 'Alumni', short: 'Alumni', dur: 14, focus: 'harbor', who: { name: 'Alumni office', role: 'Alumni relations' },
+    T: { go: [0.5, 'harbor', 'front'], cap: { student: 'Maya receives the quarterly alumni newsletter.', staff: 'Alumni outreach is a quarterly newsletter to everyone.' },
+      phone: [[4, 'Alumni office', 'Our quarterly newsletter is here.']], con: [[4, 'task', 'Newsletter sent to 4,180 alumni']], s: { term: 'Alumni' } },
+    A: { go: [0.5, 'harbor', 'front'], cap: { student: 'Maya is matched as a mentor for evening-shift learners in the next cohort.', staff: 'Mentor matching pairs Maya with three new learners who work shifts. Her journey feeds the next program review.' },
+      phone: [[4, 'Mentor match', 'Three new learners who work shifts would love your advice.']], con: [[3, 'insight', 'Mentor match: M. Torres with 3 shift-working learners']],
+      appr: [6, 'Approve mentor match', 'Alumni office', [['stamp', 'harbor', 'Mentor match approved']]],
+      mem: [[3, 'read', 'shifts'], [5, 'add', 'mentor', 'Mentor for new learners']], s: { term: 'Alumni and mentor' } } }
+];
+const COUNTER_DEFS = {
+  0: [['day', 'Elapsed'], ['floors', 'Courses built'], ['gaps', 'Gaps found'], ['appr', 'Approvals']],
+  1: [['day', 'Day'], ['wait', 'Days waiting'], ['asks', 'Asked again'], ['lost', 'Context lost']],
+  2: [['term', 'When'], ['risk', 'Risk'], ['help', 'Time to help'], ['asks', 'Asked again']]
+};
+
+/* ============ layers ============ */
+const LAYER = { T: 1, A: 2 };
+function setLayer(o, l) { o.traverse(c => c.layers.set(l)); }
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+
+/* ============ richer water and shore ============ */
+const AMB = {};
+function buildWater() {
+  const g = new THREE.RingGeometry(1, 2800, 180, 130); g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position, col = new Float32Array(pos.count * 3);
+  const shallow = new THREE.Color(0xA4D9E4), mid = new THREE.Color(0x63A7D3), deep = new THREE.Color(0x3E7AB8), far = new THREE.Color(0x7FA6C8), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i), r = Math.sqrt((x / ISL.rx) ** 2 + (z / ISL.rz) ** 2);
+    const f = smooth(1.0, 1.28, r), f2 = smooth(1.28, 2.1, r), f3 = smooth(2.6, 6, r);
+    c.copy(shallow).lerp(mid, f).lerp(deep, f2).lerp(far, f3);
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const water = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.12 }));
+  water.position.y = 0.9; water.receiveShadow = true; world.add(water);
+  const ringShape = (k0, k1) => { const s = new THREE.Shape(), h = new THREE.Path(); for (let i = 0; i <= 160; i++) { const a = i / 160 * TAU, p = islandEdge(a, k1); i ? s.lineTo(p.x, -p.z) : s.moveTo(p.x, -p.z); } for (let i = 0; i <= 160; i++) { const a = -i / 160 * TAU, p = islandEdge(a, k0); i ? h.lineTo(p.x, -p.z) : h.moveTo(p.x, -p.z); } s.holes.push(h); const gg = new THREE.ShapeGeometry(s); gg.rotateX(-Math.PI / 2); return gg; };
+  AMB.foam1 = new THREE.Mesh(ringShape(1.04, 1.062), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75, depthWrite: false }));
+  AMB.foam1.position.y = 0.96; world.add(AMB.foam1);
+  AMB.foam2 = new THREE.Mesh(ringShape(1.06, 1.072), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false }));
+  AMB.foam2.position.y = 0.94; world.add(AMB.foam2);
+  // sparkles on the water
+  const sg = new THREE.PlaneGeometry(1.6, 0.35); sg.rotateX(-Math.PI / 2);
+  AMB.spark = new THREE.InstancedMesh(sg, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7, depthWrite: false }), 160); AMB.spark.frustumCulled = false; AMB.sparkData = [];
+  for (let i = 0; i < 160; i++) { const a = rand(0, TAU), e = islandEdge(a, rand(1.1, 1.9)); AMB.sparkData.push({ x: e.x, z: e.z, ph: rand(0, TAU), r: rand(0, TAU) }); }
+  world.add(AMB.spark);
+  // shore rocks
+  const rocks = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), clay(0xD3CABC), 80);
+  for (let i = 0; i < 80; i++) { const a = rand(0, TAU), e = islandEdge(a, rand(1.0, 1.05)); const s = rand(1.2, 3.6); _e.set(rand(0, 3), rand(0, 3), rand(0, 3)); _q.setFromEuler(_e); _m.compose(_v.set(e.x, 1.1, e.z), _q, _s.set(s, s * 0.7, s * 1.1)); rocks.setMatrixAt(i, _m); }
+  rocks.castShadow = rocks.receiveShadow = true; world.add(rocks);
+  // islets
+  [[-372, -150, 20], [362, -196, 16], [-60, 318, 22], [330, 230, 13]].forEach(([x, z, r]) => {
+    world.add(mesh(new THREE.CylinderGeometry(r, r + 3, 1.6, 20), clay(COL.sand, { flatShading: false }), x, 0.6, z, { noCast: true }));
+    world.add(mesh(new THREE.CylinderGeometry(r * 0.72, r * 0.8, 1.4, 18), clay(COL.grass2), x, 1.6, z));
+    for (let k = 0; k < Math.round(r / 6); k++) { const a = rand(0, TAU), rr = rand(0, r * 0.45), s = rand(2.4, 3.6); const tr = mesh(CYL6, clay(COL.trunk), x + Math.cos(a) * rr, 2.3 + s * 0.6, z + Math.sin(a) * rr); tr.scale.set(0.35, s * 1.2, 0.35); world.add(tr); const t = mesh(ICO, clay(pick([COL.tree, COL.tree2])), x + Math.cos(a) * rr, 2.3 + s * 1.6, z + Math.sin(a) * rr); t.scale.set(s, s * 1.1, s); world.add(t); }
+    const rk = mesh(new THREE.DodecahedronGeometry(1, 0), clay(0xD3CABC), x + r * 0.6, 1.8, z - r * 0.3); rk.scale.set(2.5, 1.8, 2); world.add(rk);
+  });
+  // sailboats circling
+  AMB.boats = [];
+  for (let i = 0; i < 6; i++) { const b = new THREE.Group(); b.add(mesh(sailboat(i % 2 ? COL.accent : COL.peri), vclay())); world.add(b); AMB.boats.push({ g: b, a: rand(0, TAU), k: rand(1.25, 1.7), sp: rand(0.012, 0.022) * (i % 2 ? 1 : -1), ph: rand(0, 6) }); }
+}
+function buildFlora() {
+  // pines
+  const pines = [];
+  for (let i = 0; i < 4000 && pines.length < (IS_MOBILE ? 50 : 95); i++) {
+    const x = rand(-290, 290), z = rand(-215, 215);
+    if (!inIsland(x, z, 12) || anyDistrict(x, z, 8) || riverDist(x, z) < 11 || nearPath(x, z, 10)) continue;
+    if (Math.hypot(x - 28, z + 198) < 30 || Math.hypot(x - 254, z - 112) < 16) continue;
+    if (TREES.list.some(t => Math.hypot(t.x - x, t.z - z) < 6) || pines.some(p => Math.hypot(p[0] - x, p[1] - z) < 6)) continue;
+    pines.push([x, z, rand(2.4, 3.8)]);
+  }
+  const pg = mergeParts([part(new THREE.ConeGeometry(1, 1.6, 7), 0xffffff, 0, 1.9, 0), part(new THREE.ConeGeometry(0.78, 1.3, 7), 0xffffff, 0, 2.7, 0), part(new THREE.ConeGeometry(0.5, 1.0, 7), 0xffffff, 0, 3.4, 0), part(CYL6, 0xC4A27F, 0, 0.6, 0, 0, 0.18, 1.2, 0.18)]);
+  const pm = new THREE.InstancedMesh(pg, vclay(), pines.length);
+  pines.forEach(([x, z, s], i) => { _m.compose(_v.set(x, GY, z), _q.identity(), _s.set(s * 0.95, s * 1.15, s * 0.95)); pm.setMatrixAt(i, _m); pm.setColorAt(i, _c.set(pick([0x86A982, 0x7C9F7A, 0x92B28B]))); });
+  pm.castShadow = true; world.add(pm);
+  // flower beds
+  const flowers = [], cols = [0xD8C8EC, 0xF4E2A6, 0xFFFFFF, 0xF2C2B4, 0xC9D6F5];
+  const cluster = (x, z, n, sp) => { const c = pick(cols); for (let k = 0; k < n; k++) flowers.push([x + rand(-sp, sp), z + rand(-sp, sp), Math.random() < .75 ? c : pick(cols)]); };
+  DISTRICTS.forEach(d => { for (let k = 0; k < 10; k++) { const a = k / 10 * TAU + rand(-.2, .2); let x, z; if (d.shape === 'circle') { x = d.x + Math.cos(a) * (d.r + 4.5); z = d.z + Math.sin(a) * (d.r + 4.5); } else { x = d.x + Math.cos(a) * (d.w / 2 + 4.5); z = d.z + Math.sin(a) * (d.d / 2 + 4.5); x = clamp(x, d.x - d.w / 2 - 5, d.x + d.w / 2 + 5); z = clamp(z, d.z - d.d / 2 - 5, d.z + d.d / 2 + 5); } if (inIsland(x, z, 4) && !nearPath(x, z, 6.5) && riverDist(x, z) > 8) cluster(x, z, 9, 1.8); } });
+  for (let i = 0; i < 400 && flowers.length < (IS_MOBILE ? 500 : 900); i++) { const x = rand(-280, 280), z = rand(-210, 210); if (!inIsland(x, z, 8) || anyDistrict(x, z, 4) || nearPath(x, z, 7) || riverDist(x, z) < 8) continue; cluster(x, z, 8, 2.2); }
+  const fm = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.42, 0), clay(0xffffff), flowers.length);
+  flowers.forEach(([x, z, c], i) => { _m.compose(_v.set(x, GY + 0.35, z), _q.identity(), _s.setScalar(rand(0.8, 1.3))); fm.setMatrixAt(i, _m); fm.setColorAt(i, _c.set(c)); });
+  world.add(fm);
+  // grass tufts
+  const tufts = new THREE.InstancedMesh(new THREE.ConeGeometry(0.5, 1.4, 4), clay(0xA9C08F), 500);
+  let n = 0; for (let i = 0; i < 3000 && n < 500; i++) { const x = rand(-285, 285), z = rand(-215, 215); if (!inIsland(x, z, 6) || anyDistrict(x, z, 3) || nearPath(x, z, 6)) continue; _m.compose(_v.set(x, GY + 0.5, z), _q.identity(), _s.setScalar(rand(0.7, 1.3))); tufts.setMatrixAt(n++, _m); }
+  tufts.count = n; world.add(tufts);
+  // banners at each district marker
+  DISTRICTS.forEach(d => { if (!d.marker) return; const p = mesh(CYL6, clay(0xE2DBD0), d.marker.x + 2.2, DY + 4.2, d.marker.z); p.scale.set(0.16, 8.4, 0.16); world.add(p); const f = mesh(BOX, clay(COL.accent), d.marker.x + 2.95, DY + 6.4, d.marker.z); f.scale.set(1.4, 3.6, 0.08); world.add(f); });
+  // a spur path to the Program Studio
+  const st = DIST.studio; for (let k = 0; k < 14; k++) { const t = k / 13, x = lerp(st.x - st.w / 2 - 1, -206, t), z = lerp(st.z + 4, 62, t); const tl = mesh(BOX, clay(COL.path, { flatShading: false }), x, GY + 0.1, z, { noCast: true }); tl.scale.set(4.4, 0.3, 4.2); tl.rotation.y = Math.atan2(62 - st.z - 4, -206 - st.x + st.w / 2 + 1) * -1; world.add(tl); }
+}
+
+/* ============ Program Studio ============ */
+const STUDIO = { T: { v: 0, target: 0, floors: [] }, A: { v: 0, target: 0, floors: [] } };
+function buildStudio() {
+  const d = DIST.studio, g = new THREE.Group(); g.position.set(d.x, DY, d.z); world.add(g);
+  const P = [], Wp = [], add = (...a) => P.push(part(...a));
+  add(BOX, COL.wall, -14, 2.6, -7, 0, 12, 5.2, 9); add(BOX, COL.accent, -14, 5.4, -7, 0, 12.6, 0.4, 9.6); Wp.push(part(BOX, 0xffffff, -14, 2.6, -2.45, 0, 9, 2.4, 0.1));
+  [-5, 5].forEach(x => add(BOX, COL.wall2, x, 3.4, 13, 0, 1.2, 6.8, 1.2)); add(BOX, COL.accent, 0, 7, 13, 0, 11.6, 1, 1.4);
+  add(BOX, COL.wall2, 14, 15, -10, 0, 1.2, 30, 1.2); add(BOX, 0xE7C35A, 8, 30.5, -10, 0, 24, 0.8, 0.9); add(BOX, COL.wall2, 18.5, 29.6, -10, 0, 3, 1.8, 1.6);
+  g.add(mesh(mergeParts(P), vclay())); g.add(mesh(mergeParts(Wp), WIN, 0, 0, 0, { noCast: true }));
+  const sign = plane(signTex([{ t: 'Program Studio' }, { t: 'Accreditation alignment gate' }], { w: 640, h: 200, align: 'center', bar: false }).tex, 9.4, 2.9, true); sign.position.set(0, 9, 13.8); g.add(sign);
+  const sb = sign.clone(); sb.rotation.y = Math.PI; sb.position.z = 12.2; g.add(sb);
+  const ss = plane(signTex([{ t: 'BS Health Informatics' }], { w: 512, h: 110, align: 'center', bar: false }).tex, 7, 1.5, true); ss.position.set(-14, 6.6, -2.3); g.add(ss);
+  ['T', 'A'].forEach(side => {
+    const bg = new THREE.Group(); g.add(bg);
+    for (let f = 0; f < 8; f++) {
+      const fl = new THREE.Group(); fl.position.set(3, f * 2.6, -2); bg.add(fl);
+      const body = mesh(BOX, clay(f % 2 ? COL.wall : 0xF1ECE4), 0, 1.3, 0); body.scale.set(16, 2.5, 12); fl.add(body);
+      const win = mesh(BOX, WIN, 0, 1.4, 6.02, { noCast: true }); win.scale.set(13, 1.1, 0.08); fl.add(win);
+      const win2 = win.clone(); win2.position.z = -6.02; fl.add(win2);
+      const lip = mesh(BOX, clay(f === 7 ? COL.accent : 0xE4DCD0), 0, 2.55, 0); lip.scale.set(16.4, 0.12, 12.4); fl.add(lip);
+      fl.scale.y = 0.001; STUDIO[side].floors.push(fl);
+    }
+    if (side === 'T') {
+      const sc = new THREE.Group(); bg.add(sc); STUDIO.T.scaff = sc;
+      const m = clay(0xCDBFA8);
+      [[-8.6, -6.6], [8.6, -6.6], [-8.6, 6.6], [8.6, 6.6], [0, 6.6], [0, -6.6]].forEach(([x, z]) => { const p = mesh(BOX, m, 3 + x, 10.5, -2 + z); p.scale.set(0.2, 21, 0.2); sc.add(p); });
+      for (let k = 1; k < 8; k++) [[0, 6.6, 17.4, 0.15], [0, -6.6, 17.4, 0.15], [8.6, 0, 0.15, 13.4], [-8.6, 0, 0.15, 13.4]].forEach(([x, z, sx, sz]) => { const b = mesh(BOX, m, 3 + x, k * 2.6, -2 + z); b.scale.set(sx, 0.15, sz); sc.add(b); });
+    } else {
+      const eg = new THREE.EdgesGeometry(new THREE.BoxGeometry(16, 20.8, 12));
+      const out = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.55 })); out.position.set(3, 10.4, -2); bg.add(out); STUDIO.A.outline = out;
+    }
+    setLayer(bg, LAYER[side]);
+  });
+  // staff in the studio
+  STUDIO.staff = [{ x: d.x - 4, z: d.z + 9 }, { x: d.x + 2, z: d.z + 10 }, { x: d.x - 14, z: d.z + 1 }];
+}
+function updateStudio(dt) {
+  ['T', 'A'].forEach(side => {
+    const S = STUDIO[side]; S.v = damp(S.v, S.target, side === 'A' ? 1.6 : 0.8, dt);
+    S.floors.forEach((f, i) => { const k = clamp(S.v - i, 0, 1); f.scale.y = Math.max(0.001, easeOut(k)); f.visible = k > 0.01; });
+    if (S.scaff) S.scaff.visible = S.v < 7.95;
+    if (S.outline) S.outline.material.opacity = 0.55 * (1 - smooth(7.5, 8, S.v));
+  });
+}
+
+/* ============ Maya ============ */
+function makeMaya(side) {
+  const g = new THREE.Group();
+  const geo = mergeParts([
+    part(new THREE.CylinderGeometry(0.11, 0.12, 0.8, 6), 0x23367A, -0.13, 0.4, 0), part(new THREE.CylinderGeometry(0.11, 0.12, 0.8, 6), 0x23367A, 0.13, 0.4, 0),
+    part(new THREE.CylinderGeometry(0.27, 0.34, 0.85, 8), COL.accent, 0, 1.2, 0), part(new THREE.IcosahedronGeometry(0.26, 1), 0xC98E6A, 0, 1.86, 0),
+    part(new THREE.SphereGeometry(0.29, 10, 6, 0, TAU, 0, Math.PI / 2), 0x3A2A22, 0, 1.9, -0.02), part(new THREE.IcosahedronGeometry(0.14, 0), 0x3A2A22, 0, 1.78, -0.3),
+    part(BOX, 0x23367A, 0, 1.25, -0.34, 0, 0.42, 0.55, 0.22)]);
+  const body = new THREE.Mesh(geo, vclay({ flatShading: false })); body.castShadow = true; body.scale.setScalar(1.9); g.add(body);
+  const marker = new THREE.Mesh(new THREE.OctahedronGeometry(0.75, 0), new THREE.MeshBasicMaterial({ color: COL.accent })); marker.position.y = 5.6; g.add(marker);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.1, 1.55, 32), new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.85, depthWrite: false })); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.06; g.add(ring);
+  setLayer(g, LAYER[side]); world.add(g);
+  return { side, g, body, marker, ring, x: 0, y: DY, z: 0, s: 0, legs: [], at: 'explore', moving: false };
+}
+const DOCK_S = () => nearestS(40, -28);
+function stationS(id) { return id === 'dock' ? DOCK_S() : DIST[id].s; }
+function spotPos(id, spot) {
+  const d = DIST[id];
+  switch (id) {
+    case 'explore': return { x: d.x + 2, y: DY, z: d.z + 4 };
+    case 'admissions': return spot === 'bench' ? { x: d.x - 14, y: DY + 0.5, z: d.z + 10 } : { x: d.x + 6, y: DY, z: d.z + 6 };
+    case 'aid': return spot === 'bench' ? { x: d.x + 2, y: DY + 0.5, z: d.z + 10.5 } : { x: d.x - 1, y: DY, z: d.z + 3 };
+    case 'orient': return spot === 'pod' ? { x: d.x + 13.6, y: DY, z: d.z - 5 } : { x: d.x + 3, y: DY, z: d.z + 13 };
+    case 'courses': return { x: d.x - 4, y: DY, z: d.z + 4 };
+    case 'commons': return spot === 'kiosk' ? { x: d.x - 4, y: DY, z: d.z + 15.5 } : { x: d.x - 24, y: DY, z: d.z + 11.8 };
+    case 'career': return { x: d.x + 9, y: DY, z: d.z + 6.5 };
+    case 'amph': return { x: d.x, y: DY + 1.2, z: d.z + 14.4 };
+    case 'harbor': return { x: d.x - 6, y: DY + 0.5, z: d.z + 4.6 };
+    case 'faculty': return { x: d.x - 6, y: DY, z: d.z + 9 };
+    case 'dock': return { x: W_.dock.x - 4, y: GY + 0.06, z: W_.dock.z + 2 };
+  }
+  return { x: d.x, y: DY, z: d.z };
+}
+function entranceOf(id) { const p = pathAt(stationS(id)); return { t: 'pt', x: p.x, y: p.y, z: p.z, s: stationS(id) }; }
+function placeMaya(m, id, spot) { const p = spotPos(id, spot); m.x = p.x; m.y = p.y; m.z = p.z; m.at = id; m.legs = []; m.s = stationS(id); }
+function walkMaya(m, id, spot) {
+  const p = spotPos(id, spot), legs = [];
+  if (id !== m.at) { legs.push(entranceOf(m.at)); legs.push({ t: 'path', s: stationS(id) }); }
+  legs.push({ t: 'pt', x: p.x, y: p.y, z: p.z });
+  let dist = 0, px = m.x, pz = m.z; if (id !== m.at) { const a = entranceOf(m.at); dist += Math.hypot(a.x - px, a.z - pz) + Math.abs(stationS(id) - stationS(m.at)); const b = pathAt(stationS(id)); px = b.x; pz = b.z; } dist += Math.hypot(p.x - px, p.z - pz);
+  m.spd = clamp(dist / 6.5, 4, 60); m.legs = legs; m.at = id;
+}
+function stepMaya(m, dt) {
+  const leg = m.legs[0]; m.moving = false; if (!leg) return;
+  if (leg.t === 'path') { const step = m.spd * dt, d = leg.s - m.s; if (Math.abs(d) <= step) { m.s = leg.s; m.legs.shift(); } else m.s += Math.sign(d) * step; const p = pathAt(m.s); const nx = p.x - m.x, nz = p.z - m.z; if (nx || nz) m.g.rotation.y = Math.atan2(nx, nz); m.x = p.x; m.z = p.z; m.y = p.y; m.moving = true; }
+  else { const dx = leg.x - m.x, dz = leg.z - m.z, dist = Math.hypot(dx, dz), step = m.spd * dt; if (dist <= step) { m.x = leg.x; m.z = leg.z; m.y = leg.y; if (leg.s !== undefined) m.s = leg.s; m.legs.shift(); } else { m.x += dx / dist * step; m.z += dz / dist * step; m.y += (leg.y - m.y) * Math.min(1, step / dist); m.g.rotation.y = Math.atan2(dx, dz); } m.moving = true; }
+}
+function writeMaya(m, t, staffK) {
+  m.g.position.set(m.x, m.y, m.z);
+  m.body.position.y = m.moving ? Math.abs(Math.sin(t * 9)) * 0.22 : 0;
+  m.marker.rotation.y = t * 2; m.marker.position.y = 5.6 + Math.sin(t * 2.4) * 0.3; m.marker.scale.setScalar(1 - staffK * 0.35);
+  const p = 1 + (Math.sin(t * 3) * .5 + .5) * .25; m.ring.scale.set(p, p, 1);
+}
+
+/* ============ crowd, queues and staff ============ */
+const FIG = mergeParts([part(new THREE.CylinderGeometry(0.22, 0.32, 0.9, 7), 0xffffff, 0, 0.45, 0), part(new THREE.IcosahedronGeometry(0.27, 1), 0xffffff, 0, 1.25, 0)]);
+const CROWD = { walkers: [], mesh: null, stat: null, mat: null };
+function buildCrowd() {
+  CROWD.mat = vclay({ flatShading: false, transparent: true, opacity: 1 });
+  const N = IS_MOBILE ? 160 : 260;
+  const m = new THREE.InstancedMesh(FIG, CROWD.mat, N); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false;
+  for (let i = 0; i < N; i++) { CROWD.walkers.push({ s: rand(0, PATH.L), dir: Math.random() < .5 ? -1 : 1, sp: rand(2, 3.4), lat: rand(-3.4, 3.4), ph: rand(0, 6), pause: 0 }); m.setColorAt(i, _c.set(pick([0xA8B6D6, 0xB8C3DD, 0x9CADD3, 0xC4CCDF]))); }
+  world.add(m); CROWD.mesh = m;
+  // static learners on balconies and around districts
+  const pts = [];
+  BLD.forEach(b => b.spots.forEach((ring, f) => { const n = f < 3 ? 34 : f < 5 ? 10 : 3; for (let k = 0; k < n; k++) { const s = pick(ring); pts.push([s.x, s.y, s.z]); } }));
+  [['explore', 'browse'], ['explore', 'seat'], ['orient', 'court'], ['commons', 'bench'], ['harbor', 'crowd'], ['career', 'board']].forEach(([id, k]) => { const L = spotList(id, k); const n = k === 'court' ? 120 : k === 'crowd' ? 40 : Math.min(L.length, 14); for (let i = 0; i < n; i++) { const s = pick(L); pts.push([s.x + rand(-.2, .2), s.y, s.z + rand(-.2, .2)]); } });
+  const st = new THREE.InstancedMesh(FIG, CROWD.mat, pts.length);
+  pts.forEach(([x, y, z], i) => { _m.compose(_v.set(x, y, z), _q.identity(), _s.setScalar(rand(0.92, 1.05))); st.setMatrixAt(i, _m); st.setColorAt(i, _c.set(pick([0x8FA8FF, 0x7A96F0, 0xA9B9E6, 0xB9C4E2]))); });
+  world.add(st); CROWD.stat = st;
+  // queues differ by side: long lines in the traditional world, short ones with AI
+  const q = { T: [], A: [] };
+  const line = (side, id, kind, n) => { const L = spotList(id, kind); for (let i = 0; i < Math.min(n, L.length); i++) q[side].push(L[i]); };
+  line('T', 'admissions', 'queue', 18); line('T', 'admissions', 'bench', 6); line('T', 'aid', 'queue', 14); line('T', 'aid', 'wait', 9); line('T', 'commons', 'tutor', 12);
+  line('A', 'admissions', 'queue', 4); line('A', 'aid', 'queue', 3); line('A', 'commons', 'tutor', 3);
+  ['T', 'A'].forEach(side => { const qm = new THREE.InstancedMesh(FIG, CROWD.mat, Math.max(1, q[side].length)); q[side].forEach((s, i) => { _m.compose(_v.set(s.x, s.y, s.z), _q.identity(), _s.setScalar(rand(0.92, 1.05))); qm.setMatrixAt(i, _m); qm.setColorAt(i, _c.set(pick([0xB9C8F3, 0xA8B6D6]))); }); setLayer(qm, LAYER[side]); world.add(qm); });
+}
+function updateCrowd(dt, t) {
+  const arr = CROWD.mesh.instanceMatrix.array;
+  CROWD.walkers.forEach((w, i) => {
+    if (w.pause > 0) w.pause -= dt; else { w.s += w.dir * w.sp * dt; if (w.s < 0 || w.s > PATH.L) { w.dir *= -1; w.s = clamp(w.s, 0, PATH.L); } if (Math.random() < dt * 0.02) w.pause = rand(2, 6); }
+    const p = pathAt(w.s), o = i * 16, bob = w.pause > 0 ? 0 : Math.abs(Math.sin(t * 8 + w.ph)) * 0.12;
+    arr[o] = arr[o + 5] = arr[o + 10] = 1; arr[o + 15] = 1; arr[o + 12] = p.x + p.nx * w.lat; arr[o + 13] = p.y + bob; arr[o + 14] = p.z + p.nz * w.lat;
+  });
+  CROWD.mesh.instanceMatrix.needsUpdate = true;
+}
+const STAFF_POS = {};
+function staffGeo(prop) {
+  const base = [part(new THREE.CylinderGeometry(0.26, 0.36, 1.05, 7), 0xffffff, 0, 0.52, 0), part(new THREE.IcosahedronGeometry(0.29, 1), 0xF4EEE6, 0, 1.4, 0), part(new THREE.CylinderGeometry(0.31, 0.31, 0.1, 10), 0x2A3242, 0, 1.68, 0)];
+  if (prop === 'clipboard') base.push(part(BOX, 0x2A3242, 0, 0.85, 0.36, 0, 0.42, 0.55, 0.05));
+  if (prop === 'book') base.push(part(BOX, COL.accent, 0.3, 0.75, 0.2, 0, 0.18, 0.55, 0.42));
+  if (prop === 'headset') base.push(part(new THREE.TorusGeometry(0.3, 0.05, 4, 10, Math.PI), 0x2A3242, 0, 1.45, 0, Math.PI / 2));
+  return mergeParts(base);
+}
+function buildStaff() {
+  const D = DIST, list = [];
+  const add = (id, x, z, prop) => { list.push({ id, x, z, prop }); };
+  add('explore', D.explore.x - 4, D.explore.z + 3, 'clipboard'); add('explore', D.explore.x + 2, D.explore.z - 2, 'clipboard');
+  add('admissions', D.admissions.x + 10, D.admissions.z + 3, 'clipboard');
+  add('aid', D.aid.x - 1, D.aid.z - 0.2, 'clipboard'); add('aid', D.aid.x + 7, D.aid.z - 0.2, 'clipboard');
+  add('orient', D.orient.x - 8, D.orient.z + 8, 'clipboard');
+  spotList('faculty', 'staff').slice(0, 7).forEach((s, i) => add('faculty', s.x, s.z, i < 4 ? 'book' : 'clipboard'));
+  spotList('helpdesk', 'staff').slice(0, 5).forEach(s => add('helpdesk', s.x, s.z, 'headset'));
+  [0, 4, 8].forEach(k => { const s = spotList('commons', 'tutor')[k]; if (s) add('commons', s.x + 0.9, s.z, 'book'); });
+  add('career', D.career.x - 6, D.career.z + 4, 'clipboard'); add('courses', D.courses.x + 2, D.courses.z + 2, 'book');
+  add('amph', D.amph.x + 4, D.amph.z + 13, 'clipboard'); add('harbor', D.harbor.x - 2, D.harbor.z + 3, 'clipboard');
+  STUDIO.staff.forEach((s, i) => add('studio', s.x, s.z, i ? 'book' : 'clipboard'));
+  const byProp = {}; list.forEach(s => (byProp[s.prop] = byProp[s.prop] || []).push(s));
+  for (const p in byProp) { const im = new THREE.InstancedMesh(staffGeo(p), vclay({ flatShading: false }), byProp[p].length); byProp[p].forEach((s, i) => { _m.compose(_v.set(s.x, DY, s.z), _q.identity(), _s.setScalar(1.15)); im.setMatrixAt(i, _m); }); im.castShadow = true; world.add(im); }
+  list.forEach(s => (STAFF_POS[s.id] = STAFF_POS[s.id] || []).push(s));
+  const rg = new THREE.RingGeometry(0.9, 1.25, 24); rg.rotateX(-Math.PI / 2);
+  CROWD.staffRings = new THREE.InstancedMesh(rg, new THREE.MeshBasicMaterial({ color: COL.accent, transparent: true, opacity: 0.9, depthWrite: false }), 12); CROWD.staffRings.frustumCulled = false; world.add(CROWD.staffRings);
+}
+function updateStaffRings(focusIds, k, t) {
+  let n = 0; const p = 1 + Math.sin(t * 3) * 0.15;
+  if (k > 0.05) focusIds.forEach(id => (STAFF_POS[id] || []).forEach(s => { if (n < 12) { _m.compose(_v.set(s.x, DY + 0.08, s.z), _q.identity(), _s.setScalar(p * k)); CROWD.staffRings.setMatrixAt(n++, _m); } }));
+  for (let i = n; i < 12; i++) { _m.makeScale(0, 0, 0); CROWD.staffRings.setMatrixAt(i, _m); }
+  CROWD.staffRings.instanceMatrix.needsUpdate = true;
+}
+
+/* ============ scene effects ============ */
+const FX = [];
+function dpos(id) { if (id === 'dock') return { x: W_.dock.x, z: W_.dock.z }; const d = DIST[id]; return { x: d.x, z: d.z }; }
+function fxOrb(side, from, to) {
+  const a = dpos(from), b = dpos(to), g = new THREE.Group();
+  const o = new THREE.Mesh(new THREE.SphereGeometry(0.95, 14, 10), new THREE.MeshBasicMaterial({ color: 0x3F7BFF })); g.add(o);
+  const env = new THREE.Mesh(BOX, new THREE.MeshBasicMaterial({ color: 0xffffff })); env.scale.set(1, 0.6, 0.1); env.position.y = -1.3; g.add(env);
+  const trail = []; for (let k = 0; k < 4; k++) { const tm = new THREE.Mesh(new THREE.SphereGeometry(0.5 - k * 0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0x8FB0FF, transparent: true, opacity: 0.55 - k * 0.1 })); world.add(tm); trail.push(tm); setLayer(tm, LAYER[side]); }
+  setLayer(g, LAYER[side]); world.add(g);
+  const hist = [], dur = 2.6;
+  FX.push({ t: 0, update(dt) { this.t += dt; const k = easeIO(Math.min(1, this.t / dur)); const x = lerp(a.x, b.x, k), z = lerp(a.z, b.z, k), y = DY + 8 + Math.sin(k * Math.PI) * 20; g.position.set(x, y, z); env.rotation.y += dt * 2; hist.unshift([x, y, z]); if (hist.length > 12) hist.pop(); trail.forEach((tm, i) => { const h = hist[Math.min(hist.length - 1, (i + 1) * 3)]; tm.position.set(h[0], h[1], h[2]); }); if (this.t > dur + 0.6) { const s = Math.max(0, 1 - (this.t - dur - 0.6) * 2); g.scale.setScalar(s); trail.forEach(tm => tm.visible = false); } return this.t < dur + 1.2; }, dispose() { world.remove(g); trail.forEach(tm => world.remove(tm)); } });
+}
+function fxPaper(side, from, to) {
+  const a = dpos(from), b = dpos(to), g = new THREE.Group();
+  const env = new THREE.Mesh(BOX, new THREE.MeshBasicMaterial({ color: 0xFBF9F5 })); env.scale.set(1.6, 0.12, 1.1); g.add(env);
+  const st = new THREE.Mesh(BOX, new THREE.MeshBasicMaterial({ color: 0xB9AE9C })); st.scale.set(1.62, 0.14, 0.2); g.add(st);
+  setLayer(g, LAYER[side]); world.add(g); const dur = 6.5;
+  FX.push({ t: 0, update(dt) { this.t += dt; const k = Math.min(1, this.t / dur); g.position.set(lerp(a.x, b.x, k), DY + 3 + Math.sin(k * Math.PI) * 7 + Math.sin(this.t * 6) * 0.2, lerp(a.z, b.z, k)); g.rotation.y = Math.sin(this.t * 2) * 0.4; return this.t < dur + 0.5; }, dispose() { world.remove(g); } });
+}
+function fxFlow(side, from, to) {
+  const a = dpos(from), b = dpos(to);
+  const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(a.x, DY + 6, a.z), new THREE.Vector3((a.x + b.x) / 2, DY + 6 + Math.hypot(b.x - a.x, b.z - a.z) * 0.18 + 6, (a.z + b.z) / 2), new THREE.Vector3(b.x, DY + 6, b.z));
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, side === 'A' ? 0.22 : 0.18, 6, false), new THREE.MeshBasicMaterial({ color: side === 'A' ? COL.accent : 0xB9AE9C, transparent: true, opacity: side === 'A' ? 0.4 : 0.5, depthWrite: false }));
+  const dots = []; for (let k = 0; k < (side === 'A' ? 4 : 2); k++) { const dm = new THREE.Mesh(side === 'A' ? new THREE.SphereGeometry(0.6, 10, 8) : BOX, new THREE.MeshBasicMaterial({ color: side === 'A' ? 0x3F7BFF : 0xF4F0E8 })); if (side === 'T') dm.scale.set(1.3, 0.12, 0.9); dots.push({ m: dm, o: k / 4 }); world.add(dm); setLayer(dm, LAYER[side]); }
+  setLayer(tube, LAYER[side]); world.add(tube);
+  const speed = side === 'A' ? 0.45 : 0.06;
+  const f = { flow: true, t: 0, update(dt) { this.t += dt; dots.forEach(d => { const u = (this.t * speed + d.o) % 1; d.m.position.copy(curve.getPoint(u)); }); return true; }, dispose() { world.remove(tube); dots.forEach(d => world.remove(d.m)); } };
+  FX.push(f); return f;
+}
+function fxConfetti(side, id) {
+  const p = dpos(id), n = 140, im = new THREE.InstancedMesh(BOX, new THREE.MeshBasicMaterial({ color: 0xffffff }), n); im.frustumCulled = false;
+  const P2 = []; for (let i = 0; i < n; i++) { P2.push({ x: p.x + rand(-12, 12), y: DY + rand(2, 5), z: p.z + rand(-8, 10), vx: rand(-3, 3), vy: rand(9, 16), vz: rand(-3, 3), r: rand(0, 6), cap: i % 4 === 0 }); im.setColorAt(i, _c.set(i % 4 === 0 ? 0x23367A : pick([COL.accent, 0xffffff, COL.peri]))); }
+  setLayer(im, LAYER[side]); world.add(im);
+  FX.push({ t: 0, update(dt) { this.t += dt; P2.forEach((q, i) => { q.vy -= 12 * dt; q.x += q.vx * dt; q.y = Math.max(DY + 0.4, q.y + q.vy * dt); q.z += q.vz * dt; q.r += dt * 6; _e.set(q.r, q.r * .7, 0); _q.setFromEuler(_e); _m.compose(_v.set(q.x, q.y, q.z), _q, q.cap ? _s.set(0.9, 0.08, 0.9) : _s.set(0.35, 0.05, 0.2)); im.setMatrixAt(i, _m); }); im.instanceMatrix.needsUpdate = true; return this.t < 5; }, dispose() { world.remove(im); } });
+}
+function clearFX(all) { for (let i = FX.length - 1; i >= 0; i--) { if (all || FX[i].flow) { FX[i].dispose(); FX.splice(i, 1); } } }
+function updateFX(dt) { for (let i = FX.length - 1; i >= 0; i--) { if (!FX[i].update(dt)) { FX[i].dispose(); FX.splice(i, 1); } } }
+
+/* ============ static signs and ambient motion ============ */
+function drawStatic() {
+  let g = DM.clock.ctx; g.fillStyle = '#FBF9F5'; g.beginPath(); g.arc(128, 128, 124, 0, TAU); g.fill(); g.strokeStyle = '#1E5EFF'; g.lineWidth = 10; g.stroke(); g.fillStyle = '#6A7080'; g.font = FONT(30, 600); g.textAlign = 'center'; g.fillText('FAFSA', 128, 88); g.fillStyle = '#1F2633'; g.font = FONT(90, 700); g.fillText('12', 128, 170); g.fillStyle = '#6A7080'; g.font = FONT(26, 600); g.fillText('days left', 128, 210); DM.clock.tex.needsUpdate = true;
+  g = DM.bell.ctx; g.fillStyle = '#1E5EFF'; g.fillRect(0, 0, 256, 128); g.fillStyle = '#fff'; g.font = FONT(54, 700); g.textAlign = 'center'; g.fillText('Week 2', 128, 84); DM.bell.tex.needsUpdate = true;
+  g = DM.missing.ctx; g.fillStyle = '#FBF9F5'; g.fillRect(0, 0, 512, 220); g.fillStyle = '#1E5EFF'; g.fillRect(0, 0, 14, 220); g.textAlign = 'left'; g.fillStyle = '#1F2633'; g.font = FONT(42, 650); g.fillText('Missing documents', 40, 70); g.fillStyle = '#6A7080'; g.font = FONT(30, 500); g.fillText('Applicants waiting on files', 40, 130); DM.missing.tex.needsUpdate = true;
+  g = DM.wall.ctx; g.fillStyle = '#1A2130'; g.fillRect(0, 0, 768, 300); g.fillStyle = '#fff'; g.font = FONT(30, 650); g.fillText('Class Pulse', 26, 44); g.fillStyle = '#9AA6BC'; g.font = FONT(20, 500); g.fillText('Engagement by course, last 8 weeks', 26, 74);
+  BLD.forEach((b, i) => { g.fillStyle = '#C9D2E4'; g.font = FONT(17, 600); g.fillText(b.c.code, 26, 108 + i * 23); for (let w = 0; w < 8; w++) { const v = clamp(0.55 + 0.3 * Math.sin(i * 1.7 + w) * 0.6 - (w === 3 ? 0.12 : 0), 0, 1); g.fillStyle = w > 5 ? '#232C3E' : v < 0.45 ? '#C9771E' : `rgba(30,94,255,${0.35 + v * 0.65})`; g.fillRect(140 + w * 34, 93 + i * 23, 30, 18); } });
+  DM.wall.tex.needsUpdate = true;
+}
+function updateAmbient(dt, t) {
+  AMB.foam1.material.opacity = 0.55 + Math.sin(t * 1.3) * 0.2;
+  const k = (t * 0.25) % 1; AMB.foam2.scale.set(1 + k * 0.035, 1, 1 + k * 0.035); AMB.foam2.material.opacity = 0.5 * (1 - k);
+  AMB.sparkData.forEach((s, i) => { const v = Math.max(0, Math.sin(t * 1.7 + s.ph)); _e.set(0, s.r, 0); _q.setFromEuler(_e); _m.compose(_v.set(s.x, 0.97, s.z), _q, _s.setScalar(v)); AMB.spark.setMatrixAt(i, _m); });
+  AMB.spark.instanceMatrix.needsUpdate = true;
+  AMB.boats.forEach(b => { b.a += b.sp * dt; const e = islandEdge(b.a, b.k), e2 = islandEdge(b.a + Math.sign(b.sp) * 0.01, b.k); b.g.position.set(e.x, 0.9 + Math.sin(t * 1.2 + b.ph) * 0.15, e.z); b.g.rotation.y = Math.atan2(-(e2.z - e.z), e2.x - e.x); b.g.rotation.z = Math.sin(t * 0.9 + b.ph) * 0.05; });
+  BOATS.forEach(b => { b.g.position.y = 0.9 + Math.sin(t * 1.2 + b.ph) * 0.12; });
+  for (let i = 0; i < 18; i++) { const kk = ((t * 0.7 + i / 18) % 1), a = i / 18 * TAU; _m.makeTranslation(12 + Math.cos(a) * kk * 2.4, 3.6 + Math.sin(kk * Math.PI) * 2.2 - kk * 1.5, 6 + Math.sin(a) * kk * 2.4); DM.spray.setMatrixAt(i, _m); }
+  DM.spray.instanceMatrix.needsUpdate = true;
+  DM.flags.forEach((f, j) => { const pos = f.geometry.attributes.position; for (let i = 0; i < pos.count; i++) { const x = pos.getX(i); pos.setZ(i, Math.sin(t * 4 + x * 2 + j) * 0.25 * (x + 1.3) / 2.6); } pos.needsUpdate = true; });
+  W_.birds.forEach((b, i) => { const a = t * b.sp + b.ph; b.m.position.set(254 + Math.cos(a) * b.r, b.h + Math.sin(t * 0.7 + i) * 2, 112 + Math.sin(a) * b.r); b.m.rotation.set(0, -a, 0); b.m.scale.y = 1 + Math.sin(t * 9 + i) * 0.6; });
+  W_.ripData.forEach((r, i) => { r.t += dt; const kk = (r.t % 4) / 4; _m.compose(_v.set(r.x, 0.98, r.z), _q.identity(), _s.set(1 + kk * 6, 1, 1 + kk * 6)); W_.ripples.setMatrixAt(i, _m); });
+  W_.ripples.instanceMatrix.needsUpdate = true;
+  DM.spire.material.emissiveIntensity = 0.3 + 0.35 * (0.5 + 0.5 * Math.sin(t * 2.2));
+  for (let i = 0; i < 5; i++) { const a = t * 0.8 + i / 5 * TAU; _m.makeTranslation(Math.cos(a) * 11.4, 11 + Math.sin(t * 2 + i) * 0.4, Math.sin(a) * 11.4); DM.hdOrbs.setMatrixAt(i, _m); }
+  DM.hdOrbs.instanceMatrix.needsUpdate = true;
+  for (let i = 0; i < LTOOLS.length; i++) { _c.set(0xC9D6F5).lerp(new THREE.Color(COL.accent), 0.4 + 0.4 * Math.sin(t * 2 + i)); DM.kioskRings.setColorAt(i, _c); }
+  DM.kioskRings.instanceColor.needsUpdate = true;
+  const fr = W_.ferry; fr.t = (fr.t || 0) + dt; const fk = (fr.t % 60) / 60, fx = fk < 0.4 ? lerp(-430, -252, easeOut(fk / 0.4)) : fk < 0.55 ? -252 : lerp(-252, -430, (fk - 0.55) / 0.45); fr.g.position.set(fx, 0.8 + Math.sin(t) * 0.1, lerp(240, 172, clamp((fx + 430) / 178, 0, 1))); fr.g.rotation.y = 0.35;
+}
+function buildRich() {
+  buildWater(); buildFlora(); buildStudio(); buildCrowd(); buildStaff(); drawStatic();
+  setLayer(DM.kiosks, LAYER.A); setLayer(DM.spire, LAYER.A); setLayer(DM.hdOrbs, LAYER.A);
+}
+
+/* ============ state ============ */
+const SIDES = ['T', 'A'];
+const st = { phase: 1, role: 'student', view: IS_MOBILE ? 'A' : 'split', idx: 0, t: 0, playing: false, speed: 1, roleK: 0 };
+const MAYA = {};
+function chapterList(phase, role) { phase = phase || st.phase; role = role || st.role; return CHAPTERS.filter(c => phase === 1 ? (c.ph === 1 || (c.ph === 0 && role === 'staff')) : c.ph === 2); }
+function cur() { return chapterList()[st.idx]; }
+
+/* ============ cameras ============ */
+const RIG = {};
+SIDES.forEach(s => { const c = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 5000); c.layers.enable(LAYER[s]); RIG[s] = { cam: c, target: new THREE.Vector3(0, DY, 0), zoom: 1, az: 0.55, el: 0.66 }; });
+const USER = { az: 0, el: 0, zoom: 1 };
+function bars() { const tb = $('.topbar').getBoundingClientRect(), bb = $('.bottom').getBoundingClientRect(); return { top: tb.bottom, bottom: H - bb.top }; }
+function sideRects() {
+  const b = bars();
+  if (st.view === 'split' && !IS_MOBILE) return { T: { x: 0, w: Math.floor(W / 2) }, A: { x: Math.floor(W / 2), w: W - Math.floor(W / 2) }, b };
+  return st.view === 'T' ? { T: { x: 0, w: W }, b } : { A: { x: 0, w: W }, b };
+}
+function desired(side) {
+  const c = cur(), m = MAYA[side], staff = st.roleK, single = st.view !== 'split' || IS_MOBILE;
+  let tx = m.x, tz = m.z, zoom = single ? 2.2 : 2.6, el = 0.74;
+  if (c.ph === 0) { const d = DIST.studio; tx = d.x; tz = d.z - 2; zoom = single ? 2.6 : 3.1; el = 0.7; }
+  else if (staff > 0.01) { const f = c.focus === 'dock' ? dpos('dock') : DIST[c.focus]; tx = lerp(tx, lerp(f.x, m.x, 0.25), staff); tz = lerp(tz, lerp(f.z, m.z, 0.25), staff); zoom = lerp(zoom, single ? 1.7 : 2.0, staff); el = lerp(el, 0.82, staff); }
+  return { tx, tz, zoom: zoom * USER.zoom, el: clamp(el + USER.el, 0.35, 1.2) };
+}
+function updateCams(dt, t, snap) {
+  const R = sideRects();
+  SIDES.forEach(s => {
+    if (!MAYA[s]) return;
+    const rig = RIG[s], d = desired(s), k = snap ? 1 : 1 - Math.exp(-dt * 2.4);
+    rig.target.x = lerp(rig.target.x, d.tx, k); rig.target.z = lerp(rig.target.z, d.tz, k); rig.target.y = DY;
+    rig.zoom = Math.exp(lerp(Math.log(rig.zoom), Math.log(d.zoom), snap ? 1 : 1 - Math.exp(-dt * 1.8))); rig.el = lerp(rig.el, d.el, k);
+    rig.az = 0.55 + Math.sin(t * 0.05) * 0.18 + USER.az;
+    const r = R[s]; if (!r) return;
+    const vh = H, aspect = r.w / vh, vs = 300, off = ((R.b.bottom - R.b.top) / 2) / vh * vs;
+    const cam = rig.cam, D = 1400, ce = Math.cos(rig.el);
+    cam.position.set(rig.target.x + Math.sin(rig.az) * ce * D, rig.target.y + Math.sin(rig.el) * D, rig.target.z + Math.cos(rig.az) * ce * D); cam.lookAt(rig.target);
+    const o = off / rig.zoom; cam.left = -vs * aspect / 2; cam.right = vs * aspect / 2; cam.top = vs / 2 - o; cam.bottom = -vs / 2 - o; cam.zoom = rig.zoom; cam.updateProjectionMatrix();
+  });
+}
+
+/* ============ memory, counters, feeds ============ */
+const MEM = { T: null, A: null };
+function freshMem() { return { T: { silos: {} }, A: { cards: [] } }; }
+function applyMem(memState, side, op, instant) {
+  const M = memState[side];
+  if (side === 'A') {
+    if (op[1] === 'add') { if (!M.cards.find(c => c.key === op[2])) M.cards.push({ key: op[2], label: op[3], fresh: !instant }); }
+    else if (op[1] === 'read') { const c = M.cards.find(c => c.key === op[2]); if (c && !instant) c.readAt = performance.now(); }
+    else if (op[1] === 'update') { const c = M.cards.find(c => c.key === op[2]); if (c) { c.label = op[3]; if (!instant) c.readAt = performance.now(); } }
+  } else {
+    const silo = op[2], L = (M.silos[silo] = M.silos[silo] || []);
+    L.push({ label: op[3], kind: op[1], fresh: !instant });
+  }
+}
+function trackOf(c) { return c.ph; }
+function baseState(list, idx) {
+  const c = list[idx], mem = freshMem(), cnt = { T: {}, A: {} }, phone = { T: [], A: [] };
+  let prior = [];
+  if (c.ph === 0) prior = list.slice(0, idx);
+  else if (c.ph === 1) prior = CHAPTERS.filter(x => x.ph === 1 && CHAPTERS.indexOf(x) < CHAPTERS.indexOf(c));
+  else prior = CHAPTERS.filter(x => x.ph === 1).concat(CHAPTERS.filter(x => x.ph === 2 && CHAPTERS.indexOf(x) < CHAPTERS.indexOf(c)));
+  prior.forEach(p => SIDES.forEach(s => {
+    const S = p[s];
+    (S.mem || []).forEach(op => applyMem(mem, s, op, true));
+    if (p.ph === c.ph || (c.ph === 2 && p.ph === 1)) {
+      for (const k in (S.c || {})) { if (c.ph === 2 && p.ph === 1 && k !== 'asks') continue; cnt[s][k] = (cnt[s][k] || 0) + S.c[k]; }
+      if (p.ph === c.ph) for (const k in (S.s || {})) cnt[s][k] = S.s[k];
+    }
+    if (p.ph !== 0 && c.ph !== 0) { (S.phone || []).forEach(m => phone[s].push({ from: m[1], text: m[2] })); if (S.appr) S.appr[3].forEach(x => { if (x[0] === 'phone') phone[s].push({ from: x[1], text: x[2] }); }); }
+  }));
+  if (c.ph === 0) { mem.T = { silos: {} }; mem.A = { cards: [] }; prior.forEach(p => SIDES.forEach(s => (p[s].mem || []).forEach(op => applyMem(mem, s, op, true)))); }
+  return { mem, cnt, phone };
+}
+const CNT = { T: {}, A: {} }, BASE = { T: {}, A: {} }, PHONE = { T: [], A: [] }, CON = { T: [], A: [] };
+function counterValues(side) {
+  const c = cur(), S = c[side], b = BASE[side], p = st.t / c.dur, out = Object.assign({}, b);
+  for (const k in (S.c || {})) out[k] = (b[k] || 0) + S.c[k] * easeOut(clamp(p / 0.8, 0, 1));
+  for (const k in (S.s || {})) { const v = S.s[k]; if (typeof v === 'number') out[k] = lerp(typeof b[k] === 'number' ? b[k] : v, v, smooth(0.2, 0.7, p)); else out[k] = p > 0.12 ? v : (b[k] !== undefined ? b[k] : v); }
+  return out;
+}
+function fmtCounter(ph, key, v) {
+  if (v === undefined) v = key === 'term' ? '\u2013' : key === 'help' ? '\u2013' : 0;
+  if (key === 'day') { if (ph === 0) return v < 56 ? 'Week ' + Math.max(1, Math.ceil(v / 7)) : 'Month ' + Math.round(v / 30.4); return 'Day ' + Math.max(1, Math.ceil(v)); }
+  if (key === 'wait') return Math.round(v) + (Math.round(v) === 1 ? ' day' : ' days');
+  if (key === 'floors') return Math.round(v) + ' of 8';
+  if (key === 'risk') return String(Math.round(v));
+  if (typeof v === 'number') return String(Math.round(v));
+  return v;
+}
+
+/* ============ DOM helpers ============ */
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; };
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function renderCounters() {
+  const c = cur();
+  SIDES.forEach(s => {
+    const v = counterValues(s), defs = COUNTER_DEFS[c.ph], box = $('#cnt' + s);
+    if (box._ph !== c.ph) { box.innerHTML = defs.map(d => `<div class="ctr" data-k="${d[0]}"><span>${d[1]}</span><b>\u2013</b></div>`).join(''); box._ph = c.ph; }
+    defs.forEach(d => { const n = box.querySelector(`[data-k="${d[0]}"] b`), txt = fmtCounter(c.ph, d[0], v[d[0]]); if (n.textContent !== txt) n.textContent = txt; if (d[0] === 'risk') n.parentElement.dataset.level = v.risk >= 60 ? 'hot' : v.risk >= 40 ? 'busy' : 'ok'; });
+  });
+}
+const KIND_LABEL = { task: 'Task', wait: 'Waiting', note: 'Note', ticket: 'Ticket', queue: 'Queue', insight: 'Insight', draft: 'AI draft', approval: 'Approved', gate: 'Needs approval' };
+function renderFeed(side) {
+  const box = $('#feed' + side), c = cur();
+  if (st.role === 'student' && c.ph !== 0) {
+    const items = PHONE[side].slice(-4);
+    box.className = 'feed phone';
+    box.innerHTML = `<div class="ph-top"><span>Maya\u2019s phone</span><i></i></div>` + (items.length ? items.map((m, i) => `<div class="msg ${m.from === 'Maya' ? 'me' : ''} ${m.fresh && i === items.length - 1 ? 'new' : ''}"><b>${esc(m.from)}</b><span>${esc(m.text)}</span></div>`).join('') : '<p class="empty">Nothing yet</p>');
+    items.forEach(m => m.fresh = false);
+  } else {
+    const items = CON[side].slice(-4), who = c.who;
+    box.className = 'feed console';
+    box.innerHTML = `<div class="co-top"><span class="av">${who.name.replace(/[^A-Z]/g, '').slice(0, 2)}</span><div><b>${esc(who.name)}</b><small>${esc(who.role)}, ${side === 'A' ? 'AI-assisted' : 'traditional'} console</small></div></div>` +
+      (items.length ? items.map(it => `<div class="ci k-${it.kind}${it.fresh ? ' new' : ''}" ${it.gate ? `data-gate="${it.gate}"` : ''}><span class="tag">${KIND_LABEL[it.kind] || it.kind}</span><p>${esc(it.text)}</p>${it.gate && !it.done ? `<div class="gate"><button class="ok" data-approve="${it.gate}">Approve and send</button><small>Waiting for ${esc(it.by)}. Auto-approves in ${Math.max(0, Math.ceil(it.left))}s</small></div>` : it.gate ? `<div class="gate done"><small>Approved by ${esc(it.doneBy)}</small></div>` : ''}</div>`).join('') : '<p class="empty">Queue is clear</p>');
+    items.forEach(m => m.fresh = false);
+  }
+}
+function renderRibbon() {
+  const c = cur(), program = c.ph === 0;
+  const A = MEM.A, T = MEM.T;
+  $('#ribA').innerHTML = `<div class="rb-h"><b>${program ? 'One program record' : 'One learner record'}</b><span>${program ? 'Every approval and piece of evidence in one place' : 'Every step reads it, so no one asks twice'}</span></div><div class="cards">${A.cards.map(k => `<span class="card${k.fresh ? ' fresh' : ''}" data-key="${k.key}">${esc(k.label)}</span>`).join('') || '<span class="empty">Empty so far</span>'}</div>`;
+  A.cards.forEach(k => k.fresh = false);
+  const silos = program ? ['minutes', 'sheets', 'docs', 'email'] : ['crm', 'admissions', 'aid', 'registrar', 'lms', 'advising', 'career'];
+  $('#ribT').innerHTML = `<div class="rb-h"><b>${program ? 'Separate folders' : 'Separate office files'}</b><span>${program ? 'Minutes, spreadsheets and email threads' : 'Each office keeps its own copy'}</span></div><div class="silos">${silos.map(s => { const L = T.silos[s] || []; return `<div class="silo${L.length ? '' : ' none'}"><i>${SILOS[s]}</i>${L.slice(-2).map(x => `<span class="sc ${x.kind}${x.fresh ? ' fresh' : ''}">${x.kind === 'ask' ? '\u21BB ' : ''}${esc(x.label)}</span>`).join('')}${L.length > 2 ? `<em>+${L.length - 2}</em>` : ''}</div>`; }).join('')}</div>`;
+  Object.values(T.silos).forEach(L => L.forEach(x => x.fresh = false));
+}
+function flashRead() { const now = performance.now(); MEM.A.cards.forEach(k => { if (k.readAt && now - k.readAt < 1600) { const n = document.querySelector(`#ribA [data-key="${k.key}"]`); if (n && !n.classList.contains('read')) { n.classList.add('read'); setTimeout(() => n.classList.remove('read'), 1500); } k.readAt = 0; } }); }
+
+/* ============ bubbles ============ */
+const BUB = [];
+function bubble(side, kind, text, anchor, life) {
+  const host = $('#bub' + side), b = el('div', 'bub b-' + kind, `${kind === 'stamp' ? '<i>\u2713</i>' : kind === 'wait' || kind === 'waitAt' ? '<i>\u23F1</i>' : kind === 'ask' ? '<i>\u21BB</i>' : kind === 'flag' ? '<i>!</i>' : ''}${esc(text)}`);
+  host.appendChild(b); BUB.push({ side, b, anchor, until: st.t + (life || 5), born: performance.now() });
+}
+const _bp = new THREE.Vector3();
+function updateBubbles() {
+  const R = sideRects();
+  for (let i = BUB.length - 1; i >= 0; i--) {
+    const B = BUB[i];
+    if (st.t > B.until || st.t < 0) { B.b.remove(); BUB.splice(i, 1); continue; }
+    const r = R[B.side]; if (!r) { B.b.style.display = 'none'; continue; }
+    if (B.anchor.maya) { const m = MAYA[B.side]; _bp.set(m.x, m.y + 7.5, m.z); } else { const p = dpos(B.anchor.dist); _bp.set(p.x, DY + (B.anchor.h || 16), p.z); }
+    _bp.project(RIG[B.side].cam);
+    if (_bp.z > 1 || Math.abs(_bp.x) > 1.05 || Math.abs(_bp.y) > 1.05) { B.b.style.display = 'none'; continue; }
+    B.b.style.display = ''; B.b.style.transform = `translate(${(_bp.x * .5 + .5) * r.w}px, ${(-_bp.y * .5 + .5) * H}px) translate(-50%,-100%)`;
+  }
+}
+function clearBubbles() { BUB.forEach(B => B.b.remove()); BUB.length = 0; }
+// district labels per side
+const LABELS = { T: [], A: [] };
+function buildLabels() { SIDES.forEach(s => DISTRICTS.forEach(d => { const e = el('div', 'dlab', `<i>${d.n}</i>${d.name}`); $('#lab' + s).appendChild(e); LABELS[s].push({ d, e }); })); }
+function updateLabels() {
+  const R = sideRects(), c = cur();
+  SIDES.forEach(s => { const r = R[s]; LABELS[s].forEach(L => { if (!r) { L.e.style.display = 'none'; return; } const d = L.d; _bp.set(d.x, DY + (d.id === 'courses' ? 30 : d.id === 'commons' ? 34 : d.id === 'studio' ? 26 : 15), d.z).project(RIG[s].cam); if (_bp.z > 1 || Math.abs(_bp.x) > 1.1 || Math.abs(_bp.y) > 1.1) { L.e.style.display = 'none'; return; } L.e.style.display = ''; L.e.classList.toggle('focus', d.id === c.focus || d.id === MAYA[s].at); L.e.style.transform = `translate(${(_bp.x * .5 + .5) * r.w}px, ${(-_bp.y * .5 + .5) * H}px) translate(-50%,-100%)`; }); });
+}
+
+/* ============ timeline ============ */
+let TL = { T: [], A: [] }, GATES = [], gateId = 0;
+function buildTimeline(c) {
+  const T = { T: [], A: [] };
+  SIDES.forEach(s => {
+    const S = c[s];
+    if (S.go) T[s].push({ t: S.go[0], k: 'go', d: S.go });
+    (S.phone || []).forEach(m => T[s].push({ t: m[0], k: 'phone', d: m }));
+    (S.con || []).forEach(m => T[s].push({ t: m[0], k: 'con', d: m }));
+    (S.fx || []).forEach(m => T[s].push({ t: m[0], k: 'fx', d: m }));
+    (S.mem || []).forEach(m => T[s].push({ t: m[0], k: 'mem', d: m }));
+    if (S.appr) T[s].push({ t: S.appr[0], k: 'appr', d: S.appr });
+    T[s].sort((a, b) => a.t - b.t);
+  });
+  return T;
+}
+function runThen(side, list, by) {
+  list.forEach(x => {
+    if (x[0] === 'stamp') { bubble(side, 'stamp', x[2].replace(/by .*$/, 'by ' + by), { dist: x[1], h: 12 }, 4.5); }
+    if (x[0] === 'phone') { PHONE[side].push({ from: x[1], text: x[2], fresh: true }); }
+  });
+  renderFeed(side);
+}
+function fire(side, it, quiet) {
+  const c = cur();
+  if (it.k === 'go') { if (quiet) placeMaya(MAYA[side], it.d[1], it.d[2]); else walkMaya(MAYA[side], it.d[1], it.d[2]); }
+  else if (it.k === 'phone') { PHONE[side].push({ from: it.d[1], text: it.d[2], fresh: !quiet }); renderFeed(side); }
+  else if (it.k === 'con') { CON[side].push({ kind: it.d[1], text: it.d[2], fresh: !quiet }); renderFeed(side); }
+  else if (it.k === 'mem') { applyMem(MEM, side, it.d, quiet); renderRibbon(); }
+  else if (it.k === 'appr') {
+    const g = { id: ++gateId, side, by: it.d[2], then: it.d[3], left: 4.2, done: false, item: null };
+    g.item = { kind: 'gate', text: it.d[1], gate: g.id, by: it.d[2], left: 4.2, fresh: !quiet };
+    CON[side].push(g.item); GATES.push(g);
+    if (quiet) approve(g, it.d[2], true); else renderFeed(side);
+  } else if (it.k === 'fx' && !quiet) {
+    const f = it.d;
+    if (f[1] === 'orb') fxOrb(side, f[2], f[3]);
+    else if (f[1] === 'paper') fxPaper(side, f[2], f[3]);
+    else if (f[1] === 'note' || f[1] === 'wait' || f[1] === 'ask' || f[1] === 'lost') bubble(side, f[1], f[2], { maya: true }, f[1] === 'wait' ? 6 : 4.5);
+    else if (f[1] === 'waitAt') bubble(side, 'waitAt', f[3], { dist: f[2], h: 26 }, 8);
+    else if (f[1] === 'flag') bubble(side, 'flag', f[3], { dist: f[2], h: 14 }, 5);
+    else if (f[1] === 'stamp') bubble(side, 'stamp', f[3], { dist: f[2], h: 12 }, 4.5);
+    else if (f[1] === 'confetti') fxConfetti(side, f[2]);
+    else if (f[1] === 'build') STUDIO[side].target = f[2];
+  } else if (it.k === 'fx' && quiet && it.d[1] === 'build') { STUDIO[side].target = it.d[2]; STUDIO[side].v = it.d[2]; }
+}
+function approve(g, by, quiet) {
+  if (g.done) return; g.done = true; g.item.done = true; g.item.doneBy = by; g.item.kind = 'approval';
+  if (quiet) { g.then.forEach(x => { if (x[0] === 'phone') PHONE[g.side].push({ from: x[1], text: x[2] }); }); }
+  else { runThen(g.side, g.then, by); if (by === 'you') toast('Approved by you. ' + (g.then.some(x => x[0] === 'phone') ? 'Maya receives it now.' : 'It goes ahead now.')); }
+  renderFeed(g.side);
+}
+function tickTimeline(dt) {
+  SIDES.forEach(s => TL[s].forEach(it => { if (!it.fired && st.t >= it.t) { it.fired = true; fire(s, it, false); } }));
+  GATES.forEach(g => { if (!g.done) { g.left -= dt; g.item.left = g.left; if (g.left <= 0) approve(g, g.by, false); } });
+  if (Math.floor(st.t * 2) !== Math.floor((st.t - dt) * 2)) SIDES.forEach(s => { if (GATES.some(g => !g.done && g.side === s)) renderFeed(s); });
+}
+
+/* ============ chapters ============ */
+function lastLocation(list, idx, side) {
+  const c = list[idx]; let loc = c.ph === 2 ? ['orient', 'pod'] : ['explore', 'front'];
+  const pool = c.ph === 2 ? CHAPTERS.filter(x => x.ph === 2) : CHAPTERS.filter(x => x.ph === 1);
+  for (const p of pool) { if (p === c) break; if (p[side].go) loc = [p[side].go[1], p[side].go[2]]; }
+  return loc;
+}
+function enterChapter(i, opts) {
+  opts = opts || {};
+  const list = chapterList(); i = clamp(i, 0, list.length - 1); st.idx = i; st.t = 0;
+  const c = list[i];
+  clearBubbles(); clearFX(true); GATES = []; CON.T = []; CON.A = [];
+  const base = baseState(list, i); MEM.T = base.mem.T; MEM.A = base.mem.A; BASE.T = base.cnt.T; BASE.A = base.cnt.A; PHONE.T = base.phone.T; PHONE.A = base.phone.A;
+  if (c.ph === 0) SIDES.forEach(s => { const floors = (BASE[s].floors || 0); STUDIO[s].target = floors; if (!opts.continuous) STUDIO[s].v = floors; });
+  else SIDES.forEach(s => { STUDIO[s].target = 8; if (!opts.continuous) STUDIO[s].v = 8; });
+  if (!opts.continuous) SIDES.forEach(s => { const L = lastLocation(list, i, s); placeMaya(MAYA[s], L[0], L[1]); });
+  TL = buildTimeline(c);
+  if (st.role === 'staff') SIDES.forEach(s => (c[s].fx || []).forEach(f => { if (f[1] === 'orb' && s === 'A') fxFlow('A', f[2], f[3]); if (f[1] === 'paper' && s === 'T') fxFlow('T', f[2], f[3]); }));
+  if (opts.keepT) { st.t = Math.min(opts.keepT, c.dur - 0.5); SIDES.forEach(s => TL[s].forEach(it => { if (it.t <= st.t) { it.fired = true; fire(s, it, true); } })); }
+  SIDES.forEach(s => { $('#cap' + s).innerHTML = `<small>${c.ph === 0 ? 'Staff prologue' : st.phase === 1 ? 'Discovery to admission' : 'Admission to graduation'}, chapter ${i + 1}</small>${esc(c[s].cap[st.role] || c[s].cap.staff || c[s].cap.student)}`; renderFeed(s); });
+  renderRibbon(); renderChapters(); renderCounters();
+  $('#ui').dataset.role = st.role; $('#ui').dataset.prologue = c.ph === 0 ? '1' : '0';
+}
+function nextChapter() { const list = chapterList(); if (st.idx < list.length - 1) enterChapter(st.idx + 1, { continuous: true }); else showEnd(); }
+function renderChapters() {
+  const list = chapterList(), box = $('#chapters');
+  box.innerHTML = list.map((c, i) => `<button class="chd ${i < st.idx ? 'done' : i === st.idx ? 'now' : ''} ${c.ph === 0 ? 'pro' : ''}" data-i="${i}" title="${esc(c.title)}"><i></i><span>${esc(c.short)}</span></button>`).join('');
+  $('#chTitle').textContent = cur().title; $('#chSub').textContent = (cur().ph === 0 ? 'Staff prologue, ' : '') + 'Chapter ' + (st.idx + 1) + ' of ' + list.length;
+}
+function setPlaying(p) { st.playing = p; $('#playBtn').innerHTML = p ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'; $('#playBtn').setAttribute('aria-label', p ? 'Pause' : 'Play'); }
+function setRole(role) {
+  if (role === st.role) return;
+  const c = cur(), t = st.t; st.role = role;
+  const list = chapterList(), i = list.indexOf(c);
+  syncSegs();
+  if (i >= 0) enterChapter(i, { continuous: true, keepT: t }); else enterChapter(0);
+  toast(role === 'staff' ? 'Staff view: behind the scenes of the same moment' : 'Student view: what Maya experiences');
+}
+function setPhase(p) { if (p === st.phase) return; st.phase = p; syncSegs(); enterChapter(0); hideEnd(); }
+function setView(v) { st.view = v; syncSegs(); resize(); }
+function syncSegs() {
+  document.querySelectorAll('#phaseSeg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.phase === st.phase)));
+  document.querySelectorAll('#roleSwitch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.role === st.role)));
+  $('#roleSwitch').dataset.role = st.role;
+  document.querySelectorAll('#viewSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === st.view)));
+  $('#ui').dataset.view = st.view;
+}
+
+/* ============ end card ============ */
+function finalCounters(ph) {
+  const out = { T: {}, A: {} };
+  CHAPTERS.forEach(c => { if (c.ph !== ph && !(ph === 2 && c.ph === 1)) return; SIDES.forEach(s => { for (const k in (c[s].c || {})) { if (ph === 2 && c.ph === 1 && k !== 'asks') continue; out[s][k] = (out[s][k] || 0) + c[s].c[k]; } if (c.ph === ph) for (const k in (c[s].s || {})) out[s][k] = c[s].s[k]; }); });
+  return out;
+}
+function showEnd() {
+  setPlaying(false);
+  const ph = st.phase === 1 ? 1 : 2, F = finalCounters(ph), P0 = finalCounters(0);
+  let rows;
+  if (ph === 1) rows = [['Days from first visit to admission', Math.round(F.T.day), Math.ceil(F.A.day)], ['Days spent waiting', Math.round(F.T.wait), Math.round(F.A.wait || 0)], ['Times Maya was asked again', F.T.asks || 0, F.A.asks || 0], ['Handoffs that lost context', F.T.lost || 0, F.A.lost || 0]];
+  else rows = [['Time to degree', '10 terms, one stopped out', '8 terms, on schedule'], ['Help after the shift change', '11 days', '1 day'], ['Times asked again, whole journey', F.T.asks || 0, F.A.asks || 0], ['After graduation', 'Newsletter', 'Mentoring new learners']];
+  if (st.role === 'staff' && ph === 1) rows.unshift(['Program build, internal', 'About 14 months', 'About 7 weeks']);
+  $('#endCard').innerHTML = `<div class="end glass"><h2>${ph === 1 ? 'Discovery to admission, compared' : 'Admission to graduation, compared'}</h2><p>Same learner, same life events. The difference is how the college works behind the scenes, and whether it remembers.</p>
+    <table><thead><tr><th></th><th>Traditional</th><th class="ai">AI-assisted</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="ai">${r[2]}</td></tr>`).join('')}</tbody></table>
+    ${st.role === 'staff' && ph === 1 ? '<p class="fine">Where accreditor approval is required, the accreditor sets that timeline. AI shortens the internal build, not the external review.</p>' : ''}
+    <p class="fine">Every AI draft in this story waited for a named person to approve it.</p>
+    <div class="end-btns">${ph === 1 ? '<button class="btn" data-end="next">Continue: admission to graduation</button>' : '<button class="btn" data-end="first">Back to discovery</button>'}<button class="btn ghost" data-end="role">${st.role === 'student' ? 'Watch it again as staff' : 'Watch it again as Maya'}</button><button class="btn ghost" data-end="replay">Replay this phase</button></div></div>`;
+  $('#endCard').classList.add('show');
+}
+function hideEnd() { $('#endCard').classList.remove('show'); }
+$('#endCard').addEventListener('click', e => {
+  const b = e.target.closest('[data-end]'); if (!b) return; const a = b.dataset.end; hideEnd();
+  if (a === 'next') { st.phase = 2; syncSegs(); enterChapter(0); setPlaying(true); }
+  if (a === 'first') { st.phase = 1; syncSegs(); enterChapter(0); setPlaying(true); }
+  if (a === 'role') { st.role = st.role === 'student' ? 'staff' : 'student'; syncSegs(); enterChapter(0); setPlaying(true); }
+  if (a === 'replay') { enterChapter(0); setPlaying(true); }
+});
+
+/* ============ controls ============ */
+let toastT = 0;
+function toast(m) { $('#toastText').textContent = m; $('#toast').classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => $('#toast').classList.remove('show'), 2600); }
+$('#playBtn').addEventListener('click', () => { hideEnd(); setPlaying(!st.playing); });
+$('#prevBtn').addEventListener('click', () => { hideEnd(); enterChapter(st.idx - 1); });
+$('#nextBtn').addEventListener('click', () => { hideEnd(); if (st.idx >= chapterList().length - 1) showEnd(); else enterChapter(st.idx + 1); });
+$('#chapters').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { hideEnd(); enterChapter(+b.dataset.i); } });
+document.querySelectorAll('#phaseSeg button').forEach(b => b.addEventListener('click', () => setPhase(+b.dataset.phase)));
+document.querySelectorAll('#roleSwitch button').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
+document.querySelectorAll('#viewSeg button').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+document.querySelectorAll('.speed button').forEach(b => b.addEventListener('click', () => { st.speed = +b.dataset.speed; document.querySelectorAll('.speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); }));
+document.addEventListener('click', e => { const b = e.target.closest('[data-approve]'); if (!b) return; const g = GATES.find(x => x.id === +b.dataset.approve); if (g) approve(g, 'you', false); });
+$('#helpBtn').addEventListener('click', () => { setPlaying(false); $('#intro').classList.add('show'); });
+$('#intro').addEventListener('click', e => { const b = e.target.closest('[data-intro]'); if (!b) return; $('#intro').classList.remove('show'); if (b.dataset.intro === 'play') setPlaying(true); });
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === ' ') { e.preventDefault(); setPlaying(!st.playing); }
+  else if (e.key === 'ArrowRight') nextChapter(); else if (e.key === 'ArrowLeft') enterChapter(st.idx - 1);
+  else if (e.key === 's' || e.key === 'S') setRole(st.role === 'student' ? 'staff' : 'student');
+  else if (e.key === 'Escape') { $('#intro').classList.remove('show'); hideEnd(); }
+});
+// camera drag and zoom (both sides together)
+let drag = null;
+canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove', e => { if (!drag) return; USER.az -= (e.clientX - drag.x) * 0.005; USER.el = clamp(USER.el + (e.clientY - drag.y) * 0.003, -0.25, 0.45); drag.x = e.clientX; drag.y = e.clientY; });
+canvas.addEventListener('pointerup', () => drag = null);
+canvas.addEventListener('dblclick', () => { USER.az = 0; USER.el = 0; USER.zoom = 1; });
+canvas.addEventListener('wheel', e => { e.preventDefault(); USER.zoom = clamp(USER.zoom * Math.exp(-e.deltaY * 0.0012), 0.45, 2.6); }, { passive: false });
+
+/* ============ loop ============ */
+let last = performance.now(), simT = 0, frameN = 0, uiT = 0;
+function resize() { W = innerWidth; H = innerHeight; renderer.setSize(W, H, false); const bb = document.querySelector('.bottom'); if (bb) document.documentElement.style.setProperty('--bottomH', (H - bb.getBoundingClientRect().top) + 'px'); updateCams(0, simT, true); }
+window.addEventListener('resize', resize);
+function tick(dt, t) {
+  frameN++;
+  if (st.playing) { const c = cur(); st.t += dt * st.speed; if (st.t >= c.dur) nextChapter(); }
+  const sdt = dt * (st.playing ? st.speed : 1);
+  if (st.playing) tickTimeline(dt * st.speed); else GATES.forEach(g => { if (!g.done) { /* paused: hold the countdown */ } });
+  st.roleK = damp(st.roleK, st.role === 'staff' ? 1 : 0, 3, dt);
+  SIDES.forEach(s => { stepMaya(MAYA[s], st.playing ? dt * st.speed : 0); writeMaya(MAYA[s], t, st.roleK); });
+  updateStudio(dt); updateFX(st.playing ? dt * st.speed : dt * 0.3); updateCrowd(dt, t); updateAmbient(dt, t);
+  const c = cur(); updateStaffRings([c.focus === 'dock' ? 'courses' : c.focus], st.roleK, t);
+  // staff view tints the scene and softens the crowd
+  const k = st.roleK; scene.background.setRGB(lerp(0.933, 0.902, k), lerp(0.949, 0.929, k), lerp(0.953, 0.965, k)); scene.fog.color.copy(scene.background);
+  hemi.color.setRGB(1, lerp(0.988, 0.95, k), lerp(0.969, 1, k)); CROWD.mat.opacity = lerp(1, 0.35, k);
+  updateCams(dt, t, false); updateBubbles(); updateLabels();
+  uiT += dt; if (uiT > 0.1) { uiT = 0; const bb = document.querySelector('.bottom'); document.documentElement.style.setProperty('--bottomH', (H - bb.getBoundingClientRect().top) + 'px'); renderCounters(); flashRead(); $('#chProg').style.width = (st.t / c.dur * 100).toFixed(1) + '%'; }
+}
+function render() {
+  const R = sideRects();
+  renderer.shadowMap.needsUpdate = frameN % 20 === 1;
+  renderer.setScissorTest(true);
+  SIDES.forEach(s => { const r = R[s]; if (!r) return; renderer.setViewport(r.x, 0, r.w, H); renderer.setScissor(r.x, 0, r.w, H); renderer.render(scene, RIG[s].cam); renderer.shadowMap.needsUpdate = false; });
+  renderer.setScissorTest(false);
+}
+function frame(now) { requestAnimationFrame(frame); const dt = Math.min(0.05, (now - last) / 1000); last = now; simT += dt; tick(dt, simT); render(); }
+function advance(sec) { const n = Math.round(sec / 0.05); for (let i = 0; i < n; i++) { simT += 0.05; tick(0.05, simT); } }
+function boot() {
+  renderer.shadowMap.autoUpdate = false;
+  sun.position.set(270, 500, 220); sun.target.position.set(0, 0, 0);
+  resize(); buildWorld(); buildRich(); buildLabels();
+  SIDES.forEach(s => { MAYA[s] = makeMaya(s); });
+  syncSegs(); enterChapter(0); setPlaying(false); updateCams(0, 0, true);
+  setTimeout(() => { $('#loader').classList.add('done'); $('#intro').classList.add('show'); }, 200);
+  requestAnimationFrame(frame);
+}
+
+boot();
+}catch(err){console.error(err);var t=document.getElementById('loaderText');if(t)t.textContent='Something went wrong building the island: '+err.message;}
+})();
+</script>
+</body>
+</html>
