@@ -1,0 +1,1334 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kadal OS Map</title>
+<style>
+/* Layout: verticals sit on top as columns of solutions; the shared horizontals run full-width beneath them as a layer stack (06 → 01), with a detail panel on the right. */
+:root{
+  /* Precision Program "enterprise look" tokens (program-precision/app/globals.css) */
+  --bg:#F7F8F9; --surface:#FFFFFF; --sunk:#F1F2F4; --ink:#172B4D; --muted:#44546F; --line:#DCDFE4;
+  --accent:#0C66E4; --accent-ink:#FFFFFF; --accent-tint:#E9F2FF; --accent-deep:#0055CC; --night:#172B4D; --night-ink:#FFFFFF;
+  --k12:#A54800; --he:#0C66E4; --wf:#1A7550;
+  --gap:#C9372C;
+  --ai-wash:#F7F5FF; --ai-line:#DFD8FD; --ai-ink:#5E4DB2; --btn:#091E420F; --btn-hover:#091E4224;
+  --f-display:ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
+  --f-body:ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
+  --f-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1D2125; --surface:#22272B; --sunk:#1A1E21; --ink:#DEE4EA; --muted:#9FADBC; --line:#38414A;
+  --accent:#579DFF; --accent-ink:#1D2125; --accent-tint:#1C2B41; --accent-deep:#85B8FF; --night:#161A1D; --night-ink:#DEE4EA;
+  --k12:#F5CD47; --he:#579DFF; --wf:#4BCE97; --gap:#F87168;
+  --ai-wash:#231F33; --ai-line:#3D3566; --ai-ink:#B8ACF6; --btn:#A1BDD914; --btn-hover:#A6C5E229; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#1D2125; --surface:#22272B; --sunk:#1A1E21; --ink:#DEE4EA; --muted:#9FADBC; --line:#38414A;
+  --accent:#579DFF; --accent-ink:#1D2125; --accent-tint:#1C2B41; --accent-deep:#85B8FF; --night:#161A1D; --night-ink:#DEE4EA;
+  --k12:#F5CD47; --he:#579DFF; --wf:#4BCE97; --gap:#F87168;
+  --ai-wash:#231F33; --ai-line:#3D3566; --ai-ink:#B8ACF6; --btn:#A1BDD914; --btn-hover:#A6C5E229; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:600;letter-spacing:-0.025em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding-inline:clamp(16px,3vw,40px);padding-block:28px 72px}
+.mono{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+
+/* Header */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.top h1{font-size:clamp(36px,5vw,60px);font-weight:600;letter-spacing:-.045em;line-height:1;display:flex;align-items:center;gap:14px}
+.top h1 svg{width:.82em;height:.82em;flex:none}
+.top .eyebrow{color:var(--accent)}
+.top h1 span{color:var(--accent)}
+.thesis{max-width:62ch;margin:12px 0 0;color:var(--muted);font-size:16px}
+.thesis b{color:var(--ink);font-weight:600}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--f-display);font-size:34px;font-weight:600;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+@media (max-width:820px){.top{grid-template-columns:1fr}}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;margin:18px 0 0;overflow-x:auto;scrollbar-width:none;background:var(--sunk);border-radius:999px;padding:4px;width:fit-content;max-width:100%}
+.tab{appearance:none;border:0;background:none;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(14 20 36 / .08),0 2px 8px -2px rgb(14 20 36 / .12)}
+.tab:hover:not([aria-selected="true"]){color:var(--ink)}
+
+/* Filters */
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:22px}
+.fgroup{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fgroup .eyebrow{margin-right:4px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip .sw{width:9px;height:9px;border-radius:2px;display:inline-block}
+.clear{appearance:none;border:0;background:none;color:var(--accent);cursor:pointer;font-size:13px;padding:5px 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* Map layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;align-items:start}
+@media (max-width:1180px){.layout{grid-template-columns:minmax(0,1fr)}}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 12px}
+.section-head h2{font-size:20px;font-weight:600}
+.section-head p{margin:0;color:var(--muted);font-size:13px}
+
+.verticals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.verticals{grid-template-columns:minmax(0,1fr)}}
+.vcol{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0 0 10px;min-width:0;border-top:4px solid var(--vc)}
+.vhead{appearance:none;display:block;width:100%;text-align:left;border:0;background:none;padding:14px 14px 10px;cursor:pointer;border-bottom:1px solid var(--line)}
+.vhead:hover h3{color:var(--vc)}
+.vhead h3{font-size:22px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vhead h3 small{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:400}
+.vhead .unit{font-size:12.5px;color:var(--muted);margin-top:2px}
+.vhead .unit b{color:var(--vc);font-weight:600}
+.lgroup{padding:10px 10px 0}
+.lgroup h4{margin:0 4px 6px;font-size:11px;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:6px}
+.cards{display:grid;gap:6px}
+.card{appearance:none;text-align:left;width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:9px 10px;cursor:pointer;display:grid;gap:4px;transition:opacity .15s,border-color .15s,box-shadow .15s}
+.card:hover{border-color:var(--vc)}
+.card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card .nm{font-weight:600;font-size:14px;line-height:1.3}
+.card .src{font-size:11.5px;color:var(--muted);line-height:1.35}
+.card.is-sel{border-color:var(--vc);box-shadow:0 0 0 2px var(--vc) inset;background:var(--surface)}
+.card.is-hit{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:var(--surface)}
+.is-dim{opacity:.3}
+.empty{font-size:12.5px;color:var(--muted);padding:6px 4px 2px;font-style:italic}
+
+/* Status pills */
+.st{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 7px;white-space:nowrap;border:1px solid currentColor;flex:none;line-height:1.5}
+.st-built{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.st-pursuit{color:var(--accent)}
+.st-roadmap{color:var(--muted)}
+.st-idea{color:var(--accent);border-style:dashed}
+
+/* Lens marks */
+.lens{display:inline-block;width:9px;height:9px;flex:none;background:currentColor}
+.lens-cc{border-radius:1px}
+.lens-lo{border-radius:50%}
+.lens-io{clip-path:polygon(50% 0,100% 100%,0 100%)}
+
+/* Spine between verticals and horizontals */
+.spine{display:flex;align-items:center;gap:12px;margin:22px 0 12px;color:var(--muted);font-size:13px}
+.spine::before,.spine::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Layers */
+.layers{display:grid;gap:8px}
+.layer{display:grid;grid-template-columns:200px minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.layer.conn{background:var(--sunk)}
+.lname{padding:12px 14px;border-right:1px solid var(--line)}
+.lname .num{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+.lname b{display:block;font-family:var(--f-display);font-size:16px;font-weight:600;line-height:1.2}
+.lname span{font-size:12px;color:var(--muted)}
+.caps{display:flex;flex-wrap:wrap;gap:6px;padding:10px;align-content:flex-start;min-width:0}
+@media (max-width:700px){.layer{grid-template-columns:minmax(0,1fr)}.lname{border-right:0;border-bottom:1px solid var(--line)}}
+.cap{appearance:none;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:13px;max-width:100%;text-align:left;transition:opacity .15s,border-color .15s,box-shadow .15s}
+.cap:hover{border-color:var(--accent)}
+.cap .id{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.cap .cn{font-weight:500;line-height:1.25}
+.cap .ct{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted);min-width:1.4em;text-align:right}
+.vdots{display:inline-flex;gap:2px}
+.vdots i{width:6px;height:6px;border-radius:50%;border:1px solid var(--vc);display:block}
+.vdots i.on{background:var(--vc)}
+.mat{width:10px;height:10px;border-radius:50%;flex:none;border:1.5px solid var(--ink)}
+.mat-have{background:var(--ink)}
+.mat-building{background:linear-gradient(90deg,var(--ink) 50%,transparent 50%)}
+.mat-gap{border-color:var(--gap);border-style:dashed}
+.cap.is-hit{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;background:var(--surface)}
+.cap.is-sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset;background:var(--surface)}
+.cap.is-zero{opacity:.38}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-size:12px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+
+/* Panel */
+.panel{position:sticky;top:76px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;max-height:calc(100vh - 96px);overflow:auto;min-width:0}
+.panel h3{font-size:22px;font-weight:600;line-height:1.15;margin:4px 0 8px}
+.panel p{margin:0 0 12px}
+.panel .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.panel h5{margin:16px 0 6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.plist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.plist li{font-size:13.5px}
+.plist button{appearance:none;border:0;background:none;padding:2px 0;cursor:pointer;text-align:left;display:flex;gap:8px;align-items:baseline}
+.plist button:hover .t{text-decoration:underline;text-underline-offset:3px}
+.plist .id{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);min-width:2.6em}
+.nuance{display:grid;gap:8px}
+.nuance div{border-left:3px solid var(--vc);padding:2px 0 2px 10px;font-size:13.5px}
+.nuance b{display:block;font-size:11px;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--vc);font-weight:500}
+.epics{font-size:13px;color:var(--muted);margin:0;padding-left:16px}
+.close{appearance:none;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;float:right}
+.howto ol{padding-left:18px;margin:0 0 12px;display:grid;gap:6px;font-size:13.5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+@media (max-width:1180px){
+  .panel{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:62vh;border-radius:14px 14px 0 0;z-index:20;box-shadow:0 -10px 40px rgba(0,0,0,.18);padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));border-bottom:0}
+  .panel.rest{display:none}
+}
+
+/* Reuse view */
+.heat-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table.heat{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+.heat th,.heat td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:left}
+.heat thead th{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--surface)}
+.heat td.n{text-align:center;font-family:var(--f-mono);font-variant-numeric:tabular-nums;width:92px}
+.heat tr.lrow th{background:var(--sunk);font-family:var(--f-display);font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:600}
+.heat .h0{color:var(--muted)}
+.heat .verdict{font-size:12px;color:var(--muted)}
+.heat .verdict b{color:var(--ink);font-weight:600}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 18px}
+@media (max-width:860px){.callouts{grid-template-columns:minmax(0,1fr)}}
+.callout{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.callout b{font-family:var(--f-display);font-size:30px;font-weight:600;letter-spacing:-.035em;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.callout p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+
+/* Backlog view */
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:980px){.two{grid-template-columns:minmax(0,1fr)}}
+.panelbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.bars{display:grid;gap:10px;margin-top:8px}
+.bar{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:13.5px}
+.bar .track{height:14px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;border-radius:3px}
+.bar .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;font-size:12px}
+.bar .lbl small{display:block;font-size:11.5px;color:var(--muted)}
+@media (max-width:560px){.bar{grid-template-columns:minmax(0,1fr) 34px}.bar .track{grid-column:1 / -1;grid-row:2}}
+.note{font-size:12.5px;color:var(--muted);margin-top:12px}
+table.plain{border-collapse:collapse;width:100%;font-size:13.5px}
+.plain th,.plain td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.plain th{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.tw{overflow-x:auto}
+.horizons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:10px}
+@media (max-width:980px){.horizons{grid-template-columns:minmax(0,1fr)}}
+.hz{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.hz .when{font-family:var(--f-mono);font-size:11px;color:var(--accent)}
+.hz h3{font-size:18px;font-weight:600;margin:4px 0 8px}
+.hz ul{margin:0;padding-left:16px;display:grid;gap:5px;font-size:13.5px}
+.gaplist{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.gaplist li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px}
+.gaplist .mat{margin-top:5px}
+
+/* Connections 3D */
+.net-stage{position:relative;height:clamp(520px,76vh,900px);border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden;
+  background-image:radial-gradient(var(--line) 1px,transparent 1.2px);background-size:22px 22px}
+.net-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.net-canvas:active{cursor:grabbing}
+.net-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.nl{position:absolute;left:0;top:0;white-space:nowrap;font-size:11.5px;font-weight:500;color:var(--ink);background:color-mix(in srgb,var(--surface) 86%,transparent);padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+.nl-v{font-size:14px;font-weight:600;letter-spacing:-.02em;padding:3px 10px}
+.nl-l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border-color:transparent;background:transparent;transform-origin:left}
+.nl-sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.net-tip{position:absolute;left:0;top:0;pointer-events:none;font-size:12.5px;font-weight:500;background:var(--ink);color:var(--bg);padding:5px 10px;border-radius:8px;z-index:3;white-space:nowrap}
+.net-card{position:absolute;top:14px;right:14px;width:320px;max-height:calc(100% - 28px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;z-index:2;box-shadow:0 18px 40px -26px rgb(14 20 36 / .45)}
+.net-card h3{font-size:19px;margin:4px 0 8px;line-height:1.2}
+.net-card p{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+.net-card h5{margin:12px 0 6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.net-card .st{display:inline-block;margin-bottom:8px}
+.net-card .nc-hint{font-size:12.5px}
+.nc-open{appearance:none;margin-top:12px;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:13px;padding:8px 14px;cursor:pointer}
+.net-legend{position:absolute;left:14px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);z-index:2;background:color-mix(in srgb,var(--surface) 88%,transparent);padding:6px 10px;border-radius:12px;max-width:calc(100% - 28px)}
+.net-legend span{display:inline-flex;align-items:center;gap:6px}
+.ls{display:inline-block;width:10px;height:10px;background:var(--muted)}
+.ls-ball{border-radius:50%}.ls-tri{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.ls-idea{background:transparent;border:1.5px solid var(--muted)}
+.ls-cap{width:14px;height:7px;border-radius:50%;background:var(--accent)}
+.ls-gap{width:14px;height:7px;border-radius:50%;background:var(--gap)}
+.net-find{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 10px;max-width:220px}
+.net-err{padding:24px;color:var(--muted)}
+@media (max-width:760px){.net-stage{height:72vh}.net-card{left:10px;right:10px;top:auto;bottom:10px;width:auto;max-height:46%}.net-card:not(.on){display:none}.net-legend{display:none}}
+
+/* K-12 journey */
+.st-add{color:var(--accent);border-style:dashed}
+.spinecard{border:0;border-radius:var(--r);padding:18px 20px;margin-bottom:14px;background:var(--night);color:var(--night-ink);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:start}
+.spinecard h3{font-size:17px;font-weight:600}
+.spinecard p{margin:4px 0 0;font-size:13.5px;color:color-mix(in srgb,var(--night-ink) 72%,transparent);max-width:90ch}
+.spinecard .eyebrow{color:#9AB0FF!important}
+.spinecard .jcaps button{background:transparent;border-color:color-mix(in srgb,var(--night-ink) 30%,transparent);color:var(--night-ink)}
+.jstages{display:grid;gap:10px}
+.jstage{display:grid;grid-template-columns:200px minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.jstage.newstage{border-style:dashed;border-color:var(--accent)}
+.jstage .lname .num{color:var(--k12)}
+.jnodes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;padding:10px;min-width:0}
+.jn{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:var(--bg);display:grid;gap:5px;align-content:start}
+.jn.add{border:1.5px dashed var(--accent);background:var(--surface)}
+.jn .row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.jn .nm{font-weight:600;font-size:13.5px;line-height:1.3}
+.jn .nm small{font-family:var(--f-mono);font-weight:400;color:var(--muted);font-size:10.5px;margin-right:4px}
+.jn p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.4}
+.jcaps{display:flex;flex-wrap:wrap;gap:4px}
+.jcaps button{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:4px;font-family:var(--f-mono);font-size:10.5px;padding:1px 5px;cursor:pointer;color:var(--muted)}
+.jcaps button:hover{border-color:var(--accent);color:var(--accent)}
+.jn .onmap{appearance:none;border:0;background:none;padding:0;font-size:12px;color:var(--accent);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px}
+.jdeliver{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 10px}
+.jdeliver span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted)}
+@media (max-width:700px){.jstage{grid-template-columns:minmax(0,1fr)}.jstage .lname{border-right:0;border-bottom:1px solid var(--line)}.spinecard{grid-template-columns:minmax(0,1fr)}}
+
+.lede{max-width:72ch;color:var(--muted);margin:18px 0 16px}
+.view[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- Precision Program enterprise look ---------- */
+body{font-size:14px}
+h1,h2,h3{letter-spacing:-0.01em}
+.top h1{font-size:clamp(28px,3.4vw,34px);font-weight:600;letter-spacing:-.02em;gap:12px}
+.top h1 .mark{color:var(--accent-ink)}
+.mark{display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:var(--accent);color:var(--accent-ink);font-size:19px;font-weight:600;letter-spacing:0;flex:none}
+.thesis{font-size:14.5px}
+.stat b{font-size:28px;letter-spacing:-.02em}
+.tabs{border-radius:4px;padding:3px;gap:2px}
+.tab{border-radius:3px;font-size:13.5px;padding:6px 12px}
+.chip{border-radius:3px;border-color:transparent;background:var(--btn);font-size:13px}
+.chip:hover{background:var(--btn-hover);border-color:transparent}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.vcol,.layer,.panel,.callout,.panelbox,.hz,.heat-wrap,.jstage,.spinecard,.net-stage,.net-card,.readout{border-radius:4px}
+.card,.jn{border-radius:3px}
+.cap{border-radius:3px}
+.st{border-radius:3px;font-family:var(--f-body);font-size:10.5px;font-weight:700;letter-spacing:.01em;padding:1px 5px}
+.st-idea{color:var(--ai-ink);background:var(--ai-wash);border:1px solid var(--ai-line);border-style:solid}
+.st-add{color:var(--ai-ink);background:var(--ai-wash);border:1px solid var(--ai-line);border-style:solid}
+.jn.add{border:1px solid var(--ai-line);background:var(--ai-wash)}
+.st-pursuit{color:var(--accent);background:var(--accent-tint);border-color:transparent}
+.st-roadmap{color:var(--muted);background:var(--sunk);border-color:transparent}
+.st-built{border-color:transparent}
+.theme-btn,.clear{border-radius:3px}
+.close{border-radius:3px;border-color:transparent;background:var(--btn)}
+.nc-open{border-radius:3px}
+.nl{border-radius:3px}
+.net-find{border-radius:3px}
+.eyebrow{letter-spacing:.06em}
+.top .eyebrow{color:var(--muted)}
+.vcol{border-top-width:3px}
+
+.top h1 .klogo{height:52px;width:172px;color:var(--ink);flex:none;display:block}
+.top h1 .os{color:var(--accent);font-size:clamp(30px,3.6vw,38px);font-weight:600;letter-spacing:-.02em;line-height:1;padding-left:14px;margin-left:4px;border-left:1px solid var(--line)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Kadal · roadmap reframe · October 2026</div>
+      <h1><svg class="klogo" xmlns="http://www.w3.org/2000/svg" viewBox="18 21 129 39" role="img" aria-label="Kadal, Learning Mate"> <path d="M46.247,67.167a5.639,5.639,0,0,1,3.336-4.256c1.5-.633,3.336-.633,4.6-1.668a3.557,3.557,0,0,0-3.048-6.211c-3.106.633-2.761,3.968-3.853,6.154a5.456,5.456,0,0,1-2.473,2.358c-1.438.748-3.278.69-4.6,1.553a3.541,3.541,0,0,0-1.61,2.991,3.432,3.432,0,0,0,1.38,2.761c1.323,1.035,3.278.978,4.774,1.725a5.752,5.752,0,0,1,2.358,2.185c1.323,2.358.805,5.694,4.2,6.269a3.558,3.558,0,0,0,2.646-6.384c-1.323-.92-3.048-.92-4.486-1.553a5.639,5.639,0,0,1-3.278-5.924Z" transform="translate(-16.398 -23.342)" fill="#7dbd42"/> <path d="M65.37,52.225a5.639,5.639,0,0,1-3.336,4.256c-1.5.633-3.336.633-4.6,1.668a3.557,3.557,0,0,0,3.048,6.211c3.106-.633,2.761-3.968,3.853-6.154a5.456,5.456,0,0,1,2.473-2.358c1.438-.748,3.278-.69,4.6-1.553a3.541,3.541,0,0,0,1.61-2.991,3.432,3.432,0,0,0-1.38-2.761c-1.323-1.035-3.278-.978-4.774-1.725a5.753,5.753,0,0,1-2.358-2.185c-1.323-2.358-.805-5.694-4.2-6.269a3.558,3.558,0,0,0-2.646,6.384c1.265.863,2.991.863,4.428,1.5a5.639,5.639,0,0,1,3.278,5.924Z" transform="translate(-23.846 -16.28)" fill="#014d7d"/> <g transform="translate(53.429 32.84)"> <path d="M107.336,81.543l-6.441-9.2-1.668,2.07v7.132H92.9V57.1h6.326V67.165L106.761,57.1h7.764l-9.432,11.445,10.007,13Z" transform="translate(-92.9 -57.1)" fill="currentColor"/> <path d="M143.318,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,140.787,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-109.385 -61.731)" fill="currentColor"/> <path d="M179.855,81.543v-2.07a6.778,6.778,0,0,1-5.234,2.473c-4.371,0-7.822-3.278-7.822-9.317,0-5.809,3.393-9.26,7.822-9.26a6.489,6.489,0,0,1,5.234,2.531V57.1h5.636V81.543Zm0-11.56a4.5,4.5,0,0,0-3.393-1.553c-2.243,0-3.911,1.668-3.911,4.313s1.668,4.313,3.911,4.313a4.462,4.462,0,0,0,3.393-1.61Z" transform="translate(-124.298 -57.1)" fill="currentColor"/> <path d="M216.118,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,213.587,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-140.316 -61.731)" fill="currentColor"/> <path d="M241.6,81.543V57.1h5.636V81.543Z" transform="translate(-156.079 -57.1)" fill="currentColor"/> </g> <g transform="translate(61.021 23.523)"> <path d="M106.1,41.1h1.035v3.911h2.07v.92h-3.048V41.1Z" transform="translate(-106.1 -40.985)" fill="#b1b3b6"/> <path d="M116.2,41.1h3.393v.863h-2.358V43h2.358v.92h-2.358v1.15h2.416v.863h-3.393V41.1Z" transform="translate(-110.391 -40.985)" fill="#b1b3b6"/> <path d="M129.823,45.026h-2.185l-.288.805H126.2L128.04,41h1.265l1.84,4.831H130Zm-1.9-.863h1.61l-.805-2.243Z" transform="translate(-114.64 -40.942)" fill="#b1b3b6"/> <path d="M141.04,44.206h-.805v1.725H139.2V41.1h2.243a1.466,1.466,0,0,1,1.61,1.553,1.366,1.366,0,0,1-1.035,1.438l1.093,1.84h-1.15Zm.288-2.243h-1.093v1.323h1.093a.666.666,0,1,0,0-1.323Z" transform="translate(-120.163 -40.985)" fill="#b1b3b6"/> <path d="M151.935,42.61v3.221H150.9V41h1.035l2.243,3.106V41h1.035v4.831h-.978Z" transform="translate(-125.134 -40.942)" fill="#b1b3b6"/> <path d="M163.6,41.1h1.035v4.831H163.6Z" transform="translate(-130.53 -40.985)" fill="#b1b3b6"/> <path d="M171.635,42.61v3.221H170.6V41h1.035l2.243,3.106V41h1.035v4.831h-.978Z" transform="translate(-133.504 -40.942)" fill="#b1b3b6"/> <path d="M185.488,40.9a2.337,2.337,0,0,1,2.013,1.035l-.863.46a1.383,1.383,0,0,0-1.15-.633,1.615,1.615,0,0,0,0,3.221,1.7,1.7,0,0,0,1.035-.345v-.575h-1.265V43.2h2.3v1.84a2.694,2.694,0,0,1-2.07.92,2.531,2.531,0,1,1,0-5.061Z" transform="translate(-138.73 -40.9)" fill="#b1b3b6"/> <path d="M200.056,42.38l-1.38,3.451h-.46l-1.38-3.451v3.451H195.8V41h1.438l1.15,2.991L199.538,41h1.438v4.831h-1.035V42.38Z" transform="translate(-144.211 -40.942)" fill="#b1b3b6"/> <path d="M212.923,45.026h-2.185l-.288.805H209.3L211.14,41h1.265l1.84,4.831H213.1Zm-1.9-.863h1.61l-.805-2.243Z" transform="translate(-149.947 -40.942)" fill="#b1b3b6"/> <path d="M222.438,42.02H221V41.1h3.853v.92h-1.38v3.911h-1.035Z" transform="translate(-154.918 -40.985)" fill="#b1b3b6"/> <path d="M232.4,41.1h3.393v.863h-2.416V43h2.358v.92h-2.358v1.15h2.416v.863H232.4Z" transform="translate(-159.762 -40.985)" fill="#b1b3b6"/> </g> </svg><span class="os">OS</span><span class="sr">Kadal OS</span></h1>
+      <p class="thesis"><b>The operating system for education.</b> Three verticals on top, one shared kernel underneath. Each solution is the same machinery configured with a vertical's frameworks, rules and vocabulary: state standards in K-12, outcomes and accreditation in higher ed, jobs and skills in workforce.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab" role="tab" id="tab-map" aria-selected="true" data-view="map">Map</button>
+    <button class="tab" role="tab" id="tab-net" aria-selected="false" data-view="net">Connections 3D</button>
+    <button class="tab" role="tab" id="tab-k12" aria-selected="false" data-view="k12">K-12 journey</button>
+    <button class="tab" role="tab" id="tab-lj" aria-selected="false" data-view="lj">Learner journey</button>
+    <button class="tab" role="tab" id="tab-reuse" aria-selected="false" data-view="reuse">Reuse</button>
+    <button class="tab" role="tab" id="tab-backlog" aria-selected="false" data-view="backlog">Backlog fit</button>
+  </nav>
+
+  <!-- MAP -->
+  <section class="view" id="view-map">
+    <div class="filters" id="filters">
+      <div class="fgroup" id="f-vertical"><span class="eyebrow">Vertical</span></div>
+      <div class="fgroup" id="f-lens"><span class="eyebrow">Lens</span></div>
+      <div class="fgroup" id="f-idea"><span class="eyebrow">Ideas</span></div>
+      <button class="clear" id="clear">Reset</button>
+    </div>
+    <div class="layout">
+      <div style="min-width:0">
+        <div class="section-head"><h2>Verticals · solutions</h2><p>Solutions tagged <span class="st st-idea">Idea</span> are new ideas from this brainstorm</p></div>
+        <div class="verticals" id="verticals"></div>
+        <div class="spine">every solution is composed from the same horizontals</div>
+        <div class="section-head"><h2>Horizontals · the kernel</h2><p>Number on each capability = solutions in view that use it</p></div>
+        <div class="layers" id="layers"></div>
+        <div class="legend">
+          <span><i class="mat mat-building"></i>Capability</span>
+          <span><i class="mat mat-gap"></i>Gap</span>
+          <span class="vdots" style="--vc:var(--k12)"><i class="on" style="--vc:var(--k12)"></i><i class="on" style="--vc:var(--he)"></i><i class="on" style="--vc:var(--wf)"></i></span><span>used in K-12 · HE · Workforce</span>
+          <span><i class="lens lens-cc"></i>Content &amp; Curriculum</span>
+          <span><i class="lens lens-lo"></i>Learner Ops</span>
+          <span><i class="lens lens-io"></i>Institution Ops</span>
+        </div>
+      </div>
+      <aside class="panel rest" id="panel" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <!-- CONNECTIONS 3D -->
+  <section class="view" id="view-net" hidden>
+    <div class="filters" style="margin-bottom:14px">
+      <div class="fgroup" id="nf-v"><span class="eyebrow">Vertical</span></div>
+      <div class="fgroup" id="nf-l"><span class="eyebrow">Lens</span></div>
+      <div class="fgroup" id="nf-i"><span class="eyebrow">Ideas</span></div>
+      <div class="fgroup"><select id="net-find" class="net-find" aria-label="Focus on a vertical, solution or capability"></select>
+        <button class="chip" id="net-rotate" aria-pressed="true">Auto-rotate</button><button class="chip" id="net-reset">Reset view</button></div>
+    </div>
+    <div class="net-stage" id="net-stage">
+      <div class="net-labels" id="net-labels" aria-hidden="true"></div>
+      <div class="net-tip" id="net-tip" hidden></div>
+      <aside class="net-card" id="net-card" aria-live="polite"></aside>
+      <div class="net-legend"><span><i class="ls ls-cube"></i>Content &amp; Curriculum</span><span><i class="ls ls-ball"></i>Learner Ops</span><span><i class="ls ls-tri"></i>Institution Ops</span><span><i class="ls ls-idea"></i>Idea</span><span><i class="ls ls-cap"></i>Capability, sized by reuse</span><span><i class="ls ls-gap"></i>Capability gap</span></div>
+    </div>
+  </section>
+
+  <!-- K-12 JOURNEY -->
+  <section class="view" id="view-k12" hidden>
+    <p class="lede">The K-12 course journey: the AI tools in use today across five workflows, from standards to classroom delivery. Below, every tool sits in its stage next to what a full K-12 course build still needs. Dashed cards are proposed additions. Select a capability ID to see it on the map.</p>
+    <div class="callouts" id="k12-callouts"></div>
+    <div class="filters" style="position:static;margin-bottom:16px">
+      <div class="fgroup" id="f-j"><span class="eyebrow">Show</span></div>
+    </div>
+    <div class="spinecard" id="j-spine"></div>
+    <div class="jstages" id="jstages"></div>
+    <div class="legend"><span><span class="st st-add">Idea</span>Proposed addition, missing from the journey today</span></div>
+  </section>
+
+  <!-- LEARNER JOURNEY (HE) -->
+  <section class="view" id="view-lj" hidden>
+    <p class="lede">The higher-ed learner journey, from building the program to alumni. It brings together the Dallas College Global 48-hour enrollment pilot, the Wayfinder simulation and HEOS. Every card names the solution on the map that covers it.</p>
+    <div class="callouts" id="lj-callouts"></div>
+    <div class="filters" style="position:static;margin-bottom:16px"><div class="fgroup" id="f-lj"><span class="eyebrow">Show</span></div></div>
+    <div class="spinecard" id="lj-spine"></div>
+    <div class="jstages" id="ljstages"></div>
+    <div class="legend"><span><span class="st st-built">Pilot</span>In the 48-hour enrollment pilot</span><span><span class="st st-pursuit">Wayfinder</span>Shown in the simulation</span><span><span class="st st-roadmap">HEOS</span>In the HEOS architecture</span><span><span class="st st-add">Idea</span>Not covered yet</span></div>
+  </section>
+
+  <!-- REUSE -->
+  <section class="view" id="view-reuse" hidden>
+    <p class="lede">A capability that every vertical uses belongs in the kernel and is funded once. A capability only one vertical uses is part of that vertical's pack. Counts follow the filters on the Map tab.</p>
+    <div class="callouts" id="reuse-callouts"></div>
+    <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+  </section>
+
+  <!-- BACKLOG -->
+  <section class="view" id="view-backlog" hidden>
+    <p class="lede">The current board, read against the stack. Most of the work so far has gone into one vertical solution. The OS needs the horizontals that make the next solution cheap.</p>
+    <div class="two">
+      <div class="panelbox">
+        <div class="section-head"><h2>Where the 105 epics land</h2></div>
+        <div class="bars" id="bars"></div>
+        <p class="note">Category counts from the backlog slides. The overview slide says 95 epics; the nine categories add up to 105.</p>
+      </div>
+      <div class="panelbox">
+        <div class="section-head"><h2>Roadmap workstreams on the stack</h2></div>
+        <div class="tw"><table class="plain" id="ws"></table></div>
+      </div>
+    </div>
+    <div class="panelbox" style="margin-top:24px">
+      <div class="section-head"><h2>What the OS needs that the board doesn't hold yet</h2><p>Capabilities marked as gaps, with their backlog coverage</p></div>
+      <ul class="gaplist" id="gaps"></ul>
+    </div>
+    <div style="margin-top:28px">
+      <div class="section-head"><h2>A proposed re-cut, for discussion</h2><p>Same quarters as the current roadmap</p></div>
+      <div class="horizons">
+        <div class="hz"><div class="when">Q4 26 – Q1 27</div><h3>Harden the kernel</h3><ul>
+          <li>Integration hub plus the first connectors: LTI 1.3, Common Cartridge and QTI into Canvas, D2L and Open edX; CASE for standards; O*NET and Lightcast for skills; OneRoster.</li>
+          <li>Knowledge graph as a product: one ontology across standards, outcomes and skills.</li>
+          <li>Workflow builder with risk-tiered gates; policy packs in the trust loop.</li>
+          <li>Proof in HE: Dallas College Global, first four courses on Open edX.</li></ul></div>
+        <div class="hz"><div class="when">Q2 27 – Q3 27</div><h3>Add the learner layer</h3><ul>
+          <li>Unified learner record with one learner ID and consent.</li>
+          <li>Learner experience delivered inside the LMS; Precision Learning pilots.</li>
+          <li>Events and nudges; advisor single view.</li>
+          <li>Vertical packs: K-12 standards and assessment; workforce skills and pathways.</li></ul></div>
+        <div class="hz"><div class="when">Q4 27 – Q1 28</div><h3>Close the loop</h3><ul>
+          <li>Metrics layer defined once; efficacy and content-health signals.</li>
+          <li>Early alert and portfolio intelligence feeding the design tools.</li>
+          <li>Custom agents and tools from partners and clients in the registry.</li>
+          <li>Continuous Publishing runs as one vertical pack on the shared kernel.</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const VERTICALS = {
+  k12:{name:"K-12", unit:"State standards · DOK · grade bands", color:"var(--k12)",
+    buyers:"Publishers, districts, state agencies, virtual and charter schools",
+    align:"State standards (CCSS, NGSS, TEKS, B.E.S.T.), DOK, learning progressions",
+    people:"Curriculum head, standards specialist, writer, reviewer, teacher, student",
+    rules:"District safety and sensitivity rules, readability by grade, state adoption requirements, COPPA and FERPA",
+    outputs:"Units and lessons, teacher guide, pacing guide, standards alignment, rubrics",
+    systems:"PowerSchool, Infinite Campus, Schoology, Canvas, Google Classroom; OneRoster, Ed-Fi, CASE"},
+  he:{name:"Higher Ed", unit:"ILO → PLO → CLO · competencies · accreditors", color:"var(--he)",
+    buyers:"Universities, community colleges, new online colleges, HE publishers",
+    align:"Institutional, program and course outcomes; competency models (1 credit = 1 competency in CBE); regional and programmatic accreditor criteria",
+    people:"Provost, program chair, faculty SME, instructional designer, advisor, student",
+    rules:"Accreditation, Title IV and aid realities, ADA and WCAG, academic integrity, faculty IP",
+    outputs:"Syllabus, instructor manual, outcomes and accreditation map, rubrics, LMS-ready course",
+    systems:"Workday Student, Banner, Colleague, Slate, Salesforce, Canvas, D2L, Open edX"},
+  wf:{name:"Workforce", unit:"Jobs → skills → proficiency", color:"var(--wf)",
+    buyers:"Enterprise L&D, workforce boards, continuing-ed providers, certification bodies",
+    align:"Occupations and role profiles, skills and proficiency levels (O*NET, Lightcast, ESCO, SFIA), certification blueprints",
+    people:"L&D lead, facilitator, manager, learner",
+    rules:"Company policy and compliance, legal-approved claims, brand, regional regulations",
+    outputs:"Facilitator guide, learner guide, job aid, competency map, practice scenarios",
+    systems:"Workday HCM, SuccessFactors, Cornerstone, Degreed, LinkedIn Learning; Open Badges 3.0, LER"}
+};
+const LENSES = {cc:"Content & Curriculum", lo:"Learner Ops", io:"Institution Ops"};
+
+
+const LAYERS = [
+  {id:"L6", n:"06", name:"Experience", sub:"Where people work"},
+  {id:"L5", n:"05", name:"Orchestration", sub:"How work runs"},
+  {id:"L4", n:"04", name:"Intelligence", sub:"What the AI does"},
+  {id:"L3", n:"03", name:"Knowledge & data", sub:"What the system knows"},
+  {id:"L2", n:"02", name:"Connectors", sub:"What it plugs into", conn:true},
+  {id:"L1", n:"01", name:"Foundation", sub:"What it guarantees"}
+];
+
+const CAPS = [
+ {id:"X1",l:"L6",name:"Role workspaces",m:"building",d:"Studios and hubs for each role: designer, faculty, advisor, admin. One sign-in, one approved knowledge base behind every hub.",
+  nu:{k12:"Curriculum head, writer and teacher views; unit and lesson vocabulary.",he:"Faculty, ID and chair studios; advisor single view with red, amber and green status.",wf:"L&D lead, facilitator and manager views; program and learner vocabulary."},
+  ep:["Core Workspace & Asset Management (11)","Homepage UIX and AI orchestration"]},
+ {id:"X2",l:"L6",name:"AI Buddy & Threads",m:"have",d:"A conversational copilot over projects, content and records, with long-term and personal memory and switchable models.",
+  nu:{k12:"Teacher and writer copilot.",he:"Lark, the 24/7 assistant, always says it is AI and offers a person. Advisor and faculty copilots draft, never decide.",wf:"Manager and coach copilot in the flow of work."},
+  ep:["AI & Smart Assistants (13)"]},
+ {id:"X3",l:"L6",name:"Learner experience",m:"building",d:"Check-in, path, lesson player, “Show me”, practice conversations and nudges, delivered inside the client's LMS.",
+  nu:{k12:"Grade-appropriate, with the teacher able to see why each lesson was written.",he:"Inside Open edX or Canvas, paced to 8-week terms.",wf:"Short, mobile, next to the job; job aids over lessons."},
+  ep:["None on the board yet (Precision Learning prototype only)"]},
+
+ {id:"O1",l:"L5",name:"Workflow builder & playbooks",m:"building",d:"Turn an SOP into a governed workflow: steps, roles, agents and gates. Templates make a proven process reusable.",
+  nu:{k12:"Standards → scope and sequence → units → district review board.",he:"Magic Toaster's 18 steps for courses; the journey orchestrator for 48-hour enrollment.",wf:"Job → skills → pathway → pilot cohort."},
+  ep:["Orchestration: course orchestration, workflow builder, templates (10)"]},
+ {id:"O2",l:"L5",name:"Agent & tool registry",m:"building",d:"Default, premium and custom tools; specialised agents with fixed guardrails; a shared prompt library. Where partners and clients add their own.",
+  nu:{k12:"The K-12 tools and the Gems Collator prompt library belong here.",he:"Program architect, skill mapper, assessment writer.",wf:"Role-profile mapper, scenario builder."},
+  ep:["Orchestration: default, premium and custom tool registry","AI: specialised agents","Connected Ecosystems: framework to deploy Kadal Solutions"]},
+ {id:"O3",l:"L5",name:"Review & approval gates",m:"have",d:"Risk decides who holds each step: low, AI acts with review; medium, a person approves; high, a person decides. Every sign-off is logged.",
+  nu:{k12:"District review board and adoption sign-off.",he:"Academic leader approves plan and course; faculty IP respected.",wf:"Legal and compliance owners sign off on claims."},
+  ep:["Continuous Publishing: direct edit and track changes, sign-off changes","Orchestration: roles and permissions"]},
+ {id:"O4",l:"L5",name:"Events & nudges",m:"gap",d:"Named events from every system, rules that turn signals into alerts, and notifications across channels.",
+  nu:{k12:"Teacher alerts on misconceptions; standards refresh notices.",he:"Enrollment events (CloudEvents) from one record; nudges by fixed policy and quiet hours, not AI.",wf:"Recertification due; policy changed → retrain."},
+  ep:["Connected Ecosystems: notification framework (1)"]},
+
+ {id:"I1",l:"L4",name:"Ingestion & extraction",m:"have",d:"PDF, DOCX, ePub, CenDoc XML, spreadsheets, audio and video, OCR and annotations. A finding is kept only if its quote is in the source.",
+  nu:{k12:"Legacy programs, state standards PDFs, pacing guides.",he:"Syllabi, catalog descriptions, outcomes, transcripts, OER.",wf:"Job descriptions, SOPs, policy handbooks, certification blueprints."},
+  ep:["Content Ingestion (13)"]},
+ {id:"I2",l:"L4",name:"Alignment & crosswalk engine",m:"building",d:"Map any asset to any framework, crosswalk one framework to another, and report coverage, gaps and orphans as things change.",
+  nu:{k12:"Standards by state, CCSS ↔ TEKS crosswalks, DOK balance.",he:"CLO → PLO → ILO with introduced, reinforced, mastered; accreditor criteria.",wf:"Tasks → skills → proficiency; O*NET and Lightcast; exam blueprints."},
+  ep:["Analytics: standard and object alignment report"]},
+ {id:"I3",l:"L4",name:"Program & course design",m:"building",d:"Goal → blueprint → manifest. Templates, sequencing by prerequisite, and a time-and-cost estimate before kickoff.",
+  nu:{k12:"Scope and sequence, pacing to instructional days.",he:"1 competency = 1 credit; 8-week terms; student-hour targets.",wf:"Role-gap pathways, microlearning, cohort schedules."},
+  ep:["Continuous Publishing: generate course from finalized chapters (faculty course builder)"]},
+ {id:"I4",l:"L4",name:"Generation engine",m:"have",d:"Lessons, assessments (seven item types, QTI), ancillaries, scripts, podcasts, images and sandboxed simulations.",
+  nu:{k12:"Teacher guides, differentiation, reading levels.",he:"Syllabus, instructor manual, discussion prompts, rubrics.",wf:"Facilitator guides, job aids, role-play scenarios."},
+  ep:["Continuous Publishing: ancillaries, video scripts, podcasts","AI: math and spreadsheet tools","New Content Types workstream"]},
+ {id:"I5",l:"L4",name:"Trust loop: quality & policy",m:"building",d:"Policy, correctness, teaching, coherence, copyedit and accessibility reviewers plus code rules. Up to three passes; a code finding always fails the block.",
+  nu:{k12:"Validator Agent is live for quality, inclusive language, style and copyedit. Still to add: district safety rules, readability, DOK and bias checks.",he:"Academic integrity, ADA and WCAG, faculty IP boundary.",wf:"Legal-approved claims, compliance rules, brand."},
+  ep:["Quality, Trust & Provenance workstream (policy packs, auto-remediation)","Continuous Publishing: a11y audit, QA Buddy, copyedit agent"]},
+ {id:"I6",l:"L4",name:"Learner model & precision",m:"building",d:"Mastery per concept with the evidence behind it, active misconceptions, confidence, and lessons rewritten for one learner.",
+  nu:{k12:"Grade-level profiles; teacher in the loop.",he:"Competency mastery for CBE; a tutor in every course.",wf:"Gap to the role profile's proficiency level."},
+  ep:["Precision Learning workstream (Q4 26 – Q1 28)"]},
+ {id:"I7",l:"L4",name:"Insight & decision intelligence",m:"gap",d:"Telemetry, content health, efficacy signals, early alert and predictive prioritization, turned into actions.",
+  nu:{k12:"Standards coverage and adoption readiness.",he:"Persistence, early alert, program performance.",wf:"Time to proficiency, skills-gap closure, training ROI."},
+  ep:["Content Intelligence workstream (from Q2 27)","Analytics & Reporting (4)"]},
+ {id:"I8",l:"L4",name:"Localization & adaptation",m:"building",d:"Language, market and edition adaptation, with changes propagated to every derivative.",
+  nu:{k12:"State editions, Spanish-language programs, and global editions with metric conversion and recomputed answer keys.",he:"Global campuses and international markets.",wf:"Multilingual workforces; regional regulations."},
+  ep:["Localization workstream"]},
+
+ {id:"K1",l:"L3",name:"Education knowledge graph",m:"building",d:"Standards, competencies, outcomes, skills, concepts, misconceptions and role profiles in one typed, versioned graph.",
+  nu:{k12:"Standards, learning progressions, and atomic objectives that link standards to content.",he:"Outcome hierarchy and competency models.",wf:"Occupations, roles, skills and proficiency."},
+  ep:["Core Workspace: taxonomy management, metadata presets for ontology"]},
+ {id:"K2",l:"L3",name:"Content lake & repository",m:"have",d:"Every asset versioned with metadata and revision history; a reviewed library that the next build reuses.",
+  nu:{k12:"Item banks and lesson libraries by standard.",he:"Course shells, OER and ancillaries by outcome.",wf:"Modules and job aids by skill."},
+  ep:["Core Workspace & Asset Management","Continuous Publishing: archival and revision history"]},
+ {id:"K3",l:"L3",name:"Unified learner record",m:"gap",d:"One learner ID from first contact on: evidence, mastery, interactions and consent, visible to every role that needs it.",
+  nu:{k12:"Student record with guardian consent.",he:"The Enrollment Core in the 48-hour pilot: one record, every change an event, one thread from inquiry to alum.",wf:"A skills passport the learner carries."},
+  ep:["None on the board"]},
+ {id:"K4",l:"L3",name:"Provenance & evidence ledger",m:"building",d:"Why each artifact exists, what it was made from, which checks it passed, who approved it and what it cost.",
+  nu:{k12:"Adoption correlation evidence.",he:"Accreditation-ready course evidence reports.",wf:"Compliance audit trail."},
+  ep:["Orchestration: audit trail and provenance","Analytics: provenance tracking","Access Control: audit dashboard"]},
+ {id:"K5",l:"L3",name:"Metrics & semantic layer",m:"gap",d:"Each metric defined once with an owner; landing → clean → core → golden; views that agents can read.",
+  nu:{k12:"State accountability measures.",he:"IPEDS and outcome measures.",wf:"Proficiency, completion, ROI."},
+  ep:["Analytics: reporting by role, ingestion dashboard (partial)"]},
+
+ {id:"C1",l:"L2",name:"LMS & delivery",m:"building",d:"Canvas, D2L, Moodle, Open edX, Schoology, Google Classroom, Blackboard, Learnosity. LTI 1.3, Common Cartridge, QTI; push drafts and read courses back.",
+  nu:{k12:"Schoology, Google Classroom, Canvas; Learnosity JSON for items.",he:"Canvas, D2L, Open edX.",wf:"LMS and LXP platforms; SCORM and xAPI packages."},
+  ep:["Continuous Publishing: QTI, pull and publish to LMS","Ingestion: Canvas gaps","Integration hub"]},
+ {id:"C2",l:"L2",name:"SIS, CRM & ERP",m:"gap",d:"Rosters, enrollments, records and relationships. OneRoster and Ed-Fi where they exist; APIs where they don't.",
+  nu:{k12:"PowerSchool, Infinite Campus, Skyward.",he:"Workday Student, Banner, Colleague, Slate, Salesforce, Element451.",wf:"Enrollment and registration systems of training providers."},
+  ep:["None on the board"]},
+ {id:"C3",l:"L2",name:"Standards & frameworks",m:"building",d:"CASE feeds, state standards, accreditor criteria, O*NET content model, Lightcast Open Skills, ESCO, CTDL.",
+  nu:{k12:"CASE and state standards sites.",he:"Accreditor criteria; credential registries.",wf:"O*NET, Lightcast, ESCO, SFIA."},
+  ep:["None explicit (StandardsIQ prototype)"]},
+ {id:"C4",l:"L2",name:"Content & publishing",m:"have",d:"Publisher XML (CenDoc), ePub, OpenStax and OER, DAMs, SharePoint and Drive, InDesign for print.",
+  nu:{k12:"Publisher programs, Mindsmith courses, print-ready workbooks.",he:"OpenStax, publisher XML, ancillaries.",wf:"Policy repositories and intranets."},
+  ep:["Continuous Publishing: CenDoc XML, ePub, X2I print"]},
+ {id:"C5",l:"L2",name:"Workforce, HR & labor market",m:"gap",d:"Job postings and demand data, HR systems and learning platforms used by employers.",
+  nu:{k12:"Career and technical education demand.",he:"Program demand for launch and sunset decisions.",wf:"Workday HCM, SuccessFactors, Cornerstone, Degreed, Lightcast postings."},
+  ep:["None on the board"]},
+ {id:"C6",l:"L2",name:"Credentials & records",m:"gap",d:"Open Badges 3.0, Comprehensive Learner Record, learning and employment records, transcripts.",
+  nu:{k12:"Diplomas and CTE credentials.",he:"Competency transcripts and CLR.",wf:"Badges and LER for hiring."},
+  ep:["None on the board"]},
+ {id:"C7",l:"L2",name:"Comms & productivity",m:"gap",d:"Email, SMS, voice and chat; Teams, Slack, Microsoft 365 and Google Workspace.",
+  nu:{k12:"Family communication in home languages.",he:"Speed-to-lead texting and calling.",wf:"Teams and Slack nudges."},
+  ep:["Connected Ecosystems: notification framework"]},
+ {id:"C8",l:"L2",name:"Data & analytics",m:"gap",d:"xAPI and Caliper event stores, warehouses and BI tools. Postgres at launch, lakehouse at scale.",
+  nu:{k12:"District data warehouses.",he:"Institutional research and IPEDS feeds.",wf:"People analytics."},
+  ep:["None on the board"]},
+
+ {id:"F1",l:"L1",name:"Tenancy, identity & roles",m:"building",d:"Multi-tenant, single sign-on, roles and groups, impersonation, superadmin.",
+  nu:{k12:"District and school hierarchy.",he:"College, school and program hierarchy.",wf:"Business unit and team hierarchy."},
+  ep:["Access Control & Governance (6)"]},
+ {id:"F2",l:"L1",name:"Model gateway",m:"building",d:"Provider-agnostic routing with tiers, fallbacks and cost logged on every call.",
+  nu:{k12:"Conservative models for student-facing text.",he:"AI gateway with PII redaction, a private model endpoint and every call logged.",wf:"Customer-mandated providers and regions."},
+  ep:["Continuous Publishing: model routing and fallback","Access Control: LLM-agnostic features","AI: orchestrator model switching"]},
+ {id:"F3",l:"L1",name:"Privacy, security & compliance",m:"building",d:"FERPA, COPPA, GDPR and SOC 2; no training on learner data; restricted zones for sensitive records.",
+  nu:{k12:"COPPA and state student-privacy laws.",he:"FERPA, HECVAT and WCAG 2.2 AA before the first student; GLBA when federal aid is added.",wf:"Employee data and regional rules."},
+  ep:["Access Control: capture violations"]},
+ {id:"F4",l:"L1",name:"Accessibility by default",m:"building",d:"WCAG 2.1 AA on every output and every screen, checked in the trust loop.",
+  nu:{k12:"Accessible student materials and alt text.",he:"ADA Title II and course accessibility review.",wf:"Accessible training for all employees."},
+  ep:["Continuous Publishing: apply a11y guidelines in audit"]},
+ {id:"F5",l:"L1",name:"Observability & deployment",m:"building",d:"Cost per artifact, run logs, health dashboards and one-click deployment.",
+  nu:{k12:"Usage Analytics: adoption, runs and chat Q&A over usage.",he:"Per-program cost to build.",wf:"Per-client usage."},
+  ep:["Infrastructure: one-click deployment (1)","Analytics: ingestion dashboard"]}
+];
+
+const SOL = [
+ // K-12
+ {id:"k1",v:"k12",lens:"cc",s:"built",name:"Standards Intelligence",src:"StandardsIQ · Standards Listing · Standards Crosswalk",d:"Pull the latest standards for any state, crosswalk states and frameworks, and audit a curriculum or item bank for gaps and over-coverage.",caps:["I1","I2","K1","K4","X1","C3","C4"]},
+ {id:"k2",v:"k12",lens:"cc",s:"built",name:"Course Curriculum Planner",src:"Course Curriculum Planner",d:"Turn state standards and assessment blueprints into curriculum maps, year-long course plans and a pacing overview.",caps:["I3","I2","K1","O1","C3","C2"]},
+ {id:"k11",v:"k12",lens:"cc",s:"built",name:"Content Reuse & Gap Finder",src:"Content Repo Mapping · Mindsmith Bulk Scraper",d:"Surface reusable content through crosswalks and semantic search, flag where new content is needed, and bring legacy Mindsmith courses in for reuse.",caps:["I2","K2","I1","K1","C4"]},
+ {id:"k3",v:"k12",lens:"cc",s:"built",name:"Unit & Lesson Builder",src:"Course Outline Generator · Lesson Plan Generator · CMX",d:"Outlines for Baseline, Medium-Touch, High-Touch, PBL and Spiral Review models, expanded into classroom-ready lesson plans aligned to standards.",caps:["I3","I4","I5","O1","O3","K2","X1","C1","C4"]},
+ {id:"k12v",v:"k12",lens:"cc",s:"built",name:"Kadalens Visuals",src:"Kadalens",d:"Diagrams, charts, maps and science illustrations from a plain-English description, in the house style, by subject and grade.",caps:["I4","I5","K2","C4"]},
+ {id:"k4",v:"k12",lens:"cc",s:"built",name:"Assessment Planner & Item Bank",src:"Exit Tickets · Assessment Planner · Assessment Generator",d:"BOY, MOY, EOY and unit-test blueprints to state requirements; item banks with stimuli, images and metadata; exit tickets; Learnosity-ready JSON.",caps:["I4","I2","I5","I3","K1","K2","C1","C3"]},
+ {id:"k13",v:"k12",lens:"cc",s:"built",name:"Workbooks & Teacher Resources",src:"Workbook Skill Gen · Student Workbook · Ancillary S&S · Teacher Deck · 3-Item TS",d:"200+ page student workbooks, pacing guides and calendars, teacher decks from Word, and I do / We do / You do exit-ticket slides.",caps:["I4","I3","K2","I5","O1","C4","C1"]},
+ {id:"k6",v:"k12",lens:"cc",s:"built",name:"Validator & Policy Review",src:"Validator Agent · policy packs on roadmap",d:"Quality, inclusive language, style guide and copyedit checks at every stage. Next: district safety rules, readability by grade, accessibility and auto-remediation.",caps:["I5","F4","K4","O3","C4"]},
+ {id:"k14",v:"k12",lens:"cc",s:"idea",name:"Differentiation & Multilingual Pack",src:"Gap in the K-12 journey",d:"Scaffolds, leveled texts, ELL supports, Spanish editions, multilingual glossaries and family letters, generated from the same lesson and checked like it.",caps:["I8","I4","I5","K1","K2","C4"]},
+ {id:"k15",v:"k12",lens:"cc",s:"idea",name:"Item Review & Form Assembly",src:"Gap in the K-12 journey",d:"Bias and sensitivity review, DOK and alignment checks, rubrics and scoring guides, accessibility tagging, and test forms assembled to the blueprint.",caps:["I5","I2","I4","K4","F4","C1"]},
+ {id:"k16",v:"k12",lens:"cc",s:"idea",name:"Vertical Coherence Map",src:"Gap in the K-12 journey",d:"Learning progressions across grades: where each concept is introduced and mastered, and which prerequisites the course assumes.",caps:["K1","I2","I3"]},
+ {id:"k17",v:"k12",lens:"cc",s:"idea",name:"Implementation & PD Kit",src:"Gap in the K-12 journey",d:"Teacher onboarding, program overview and short PD modules generated from the finished course, so districts can roll it out.",caps:["I4","I3","K2","C1"]},
+ {id:"k5",v:"k12",lens:"cc",s:"idea",name:"State Editions, Adoption & Refresh",src:"New idea",d:"Adapt a program into state editions, assemble correlation reports for adoption, and flag every asset affected when a state revises its standards.",caps:["I8","I2","K4","I4","O4","C3","C4"]},
+ {id:"k20",v:"k12",lens:"cc",s:"roadmap",name:"Global Editions: Localization & Metrication",src:"Localization workstream · market adaptation",d:"Take a US program to international markets: translation, US-to-UK spelling, customary-to-metric units with every answer and key recomputed, currency, date formats, culturally relevant names and contexts, swapped images, and a crosswalk to the target curriculum (Cambridge, IB, national frameworks).",caps:["I8","I5","I2","I4","K1","K2","K4","C3","C4"]},
+ {id:"k18",v:"k12",lens:"cc",s:"idea",name:"Rights & Permissions Log",src:"Gap in the K-12 journey",d:"Track the source, license and credit line for every passage and image, including AI-generated visuals, before anything ships.",caps:["K4","I5","K2","C4"]},
+ {id:"k7",v:"k12",lens:"lo",s:"built",name:"Precision Learning · K-12",src:"Precision Learning prototype (Grade 7 science)",d:"Re-explanations written for one student when they're unsure, held to district rules, with the teacher able to see why each lesson was written.",caps:["I6","I5","K1","K3","X3","O4","C1","C2"]},
+ {id:"k8",v:"k12",lens:"lo",s:"idea",name:"Teacher Copilot",src:"New idea",d:"Plan, differentiate and draft feedback inside the teacher's own classes, from the same approved lessons and standards map.",caps:["X2","I4","I6","K2","C1","C7"]},
+ {id:"k19",v:"k12",lens:"io",s:"idea",name:"Classroom Signals & Revision Loop",src:"Gap in the K-12 journey",d:"Results by standard and usage come back from the LMS and Learnosity; weak lessons and items are flagged and revised in the next cycle.",caps:["I7","K5","K4","O1","C1","C8"]},
+ {id:"k9",v:"k12",lens:"io",s:"idea",name:"Instructional Materials Review",src:"New idea",d:"Help districts choose materials: score candidates against adoption rubrics and the district's own standards and policies.",caps:["I2","I5","I7","K1","C3"]},
+ {id:"k10",v:"k12",lens:"io",s:"idea",name:"Virtual School Catalog Ops",src:"Straive's virtual and charter school base",d:"Stand up and maintain a full course catalog: state and SCED course codes, yearly standards refresh, LMS push and rostering.",caps:["O1","I3","K2","I7","C1","C2"]},
+ // Higher Ed
+ {id:"h1",v:"he",lens:"cc",s:"idea",name:"Accreditation Crosswalk & Evidence",src:"HEOS: prove it to accreditors",d:"Map regional and programmatic accreditor criteria to program outcomes and evidence; assemble self-study evidence from the provenance ledger.",caps:["I2","K1","K4","I1","K5","C3","C4","C8"]},
+ {id:"h2",v:"he",lens:"cc",s:"built",name:"Program Builder",src:"Precision Program Build · Dallas College Global AASM and BASM (Track 4)",d:"From a market signal to program outcomes mapped to accreditor standards, a competency model (1 credit = 1 competency), courses and an I/R/M curriculum map. Program architecture, competency framework and faculty enablement.",caps:["I3","K1","I2","O1","O3","I7","C3","C5"]},
+ {id:"h3",v:"he",lens:"cc",s:"built",name:"Course Builder · Magic Toaster",src:"Straive Course Builder · Dallas College Global first courses",d:"Five stages, 18 steps and 21 learning-design principles run as rules. Intake to an Open edX draft, built competency-based and ready for the AI tutor, with an evidence report for every course.",caps:["I3","I4","I5","O1","O3","K4","X1","C1","C7"]},
+ {id:"h4",v:"he",lens:"cc",s:"built",name:"Curriculum Health Check",src:"Course matrix and 12 checks in Magic Toaster",d:"Read an existing program, map CLO → PLO → ILO, and surface gaps, orphans and workload drift before any rewrite.",caps:["I1","I2","K1","I7","C1"]},
+ {id:"h5",v:"he",lens:"cc",s:"built",name:"Continuous Publishing & Ancillaries",src:"Kadal · Cengage (44 epics)",d:"Revise from any baseline: a chapter, a full-book PDF or CenDoc XML. Generate ancillaries, QTI and print paths; keep two live versions.",caps:["I1","I4","I5","K2","O1","O3","I8","C4","C1"]},
+ {id:"h6",v:"he",lens:"cc",s:"pursuit",name:"OER Course Redesign",src:"Dallas College: OpenStax grounding",d:"Rebuild courses on OpenStax and OER inside a constrained library: same outcomes, fresh content, no faculty or publisher IP.",caps:["I1","I4","I5","I2","K2","C4","C1"]},
+ {id:"h7",v:"he",lens:"cc",s:"roadmap",name:"Policy, Copyedit & Accessibility Review",src:"QA Buddy · copyedit agent · a11y audit epics",d:"House style, academic integrity, ADA and WCAG, and institutional policy checks on every asset, with every fix logged.",caps:["I5","F4","K4","O3","C1"]},
+ {id:"h8",v:"he",lens:"io",s:"pursuit",name:"Prior Learning & Transfer Mapping",src:"48-hour enrollment pilot · HEOS",d:"Rules first, then an AI transfer-credit agent proposes matches with a confidence and a reason. A faculty evaluator approves every award, within four hours. Certifications map to competencies.",caps:["I2","I1","K1","K3","O3","C2","C6"]},
+ {id:"h9",v:"he",lens:"lo",s:"pursuit",name:"Precision Learning · AI Tutor",src:"48-hour pilot (tutor from day one) · Wayfinder · Precision Learning",d:"A tutor in every course from day one, answering only from course materials, and re-explanations written for one learner when a misconception shows up. Faculty own grading and mastery.",caps:["I6","I5","K1","K3","X3","C1","C2"]},
+ {id:"h10",v:"he",lens:"lo",s:"pursuit",name:"Advisor Single View & Early Alert",src:"Dallas College workshop · HEOS · Wayfinder At-Risk Radar",d:"One continuous student file shared by faculty, advisors and agents, with red, amber and green status. Risk flagged with a reason; the advisor copilot drafts outreach for a person to approve.",caps:["K3","I7","X1","X2","O3","O4","C2","C1","C7"]},
+ {id:"h11",v:"he",lens:"lo",s:"pursuit",name:"Faculty Copilot",src:"Wayfinder faculty tools · HEOS Faculty Hub",d:"Class Pulse, At-Risk Radar and Engagement Map; drafts of quizzes, rubrics, lesson variants, discussion prompts and learner messages; an Alternative Path for a group stuck on the same prerequisite. Faculty approve every draft.",caps:["X2","I4","I6","I7","O3","K3","C1","C7"]},
+ {id:"h12",v:"he",lens:"io",s:"pursuit",name:"48-Hour Enrollment",src:"Dallas College Global enrollment pilot (Track 1) · proof of concept running",d:"Inquiry to enrolled in 48 hours: Lark answers 24/7 and hands off to a person, a document agent checks uploads, the advisor copilot drafts, payment takes one screen, and the first course opens at enrollment. People make every admission and credit decision.",caps:["O1","O3","I1","O4","K3","X2","F2","F3","C2","C7"]},
+ {id:"h13",v:"he",lens:"io",s:"pursuit",name:"Online College Launch Blueprint",src:"HEOS · Dallas College Global (Track 2) · new US online college",d:"Reference architecture and data model for a new online, competency-based college: a thin enrollment core, the CRM and SIS decision, and a warehouse sized for launch and for 5,000 learners.",caps:["K3","K5","F1","F3","C1","C2","C8","C7"]},
+ {id:"h14",v:"he",lens:"io",s:"idea",name:"Program Portfolio Intelligence",src:"Dallas College can't name its five best programs",d:"Which programs perform, and which to launch or sunset: enrollment, persistence and labor-market demand on one set of definitions.",caps:["I7","K5","C2","C5","C8"]},
+ {id:"h15",v:"he",lens:"io",s:"idea",name:"Accreditation & IPEDS Reporting",src:"HEOS: define metrics once",d:"Metrics aligned to IPEDS and outcome measures; reports and evidence assembled from the record instead of by hand.",caps:["K5","K4","I7","C2","C8"]},
+ {id:"h16",v:"he",lens:"lo",s:"pursuit",name:"Program Fit & Pathway Planner",src:"Wayfinder · 48-hour pilot personal plan",d:"Recommend programs with reasons from what the prospect already shared, then build a term-by-term pathway with transfer credits applied, time to degree and price, before they apply.",caps:["I7","I2","I3","K1","K3","X2","C2"]},
+ {id:"h17",v:"he",lens:"lo",s:"pursuit",name:"Onboarding & Readiness",src:"Wayfinder orientation",d:"An adaptive readiness diagnostic, bridge modules for gaps, a personal onboarding plan, a guided platform tour and tech check, and accessibility setup.",caps:["I6","I3","K3","X3","F4","C1"]},
+ {id:"h18",v:"he",lens:"lo",s:"pursuit",name:"Learner Study Tools",src:"Wayfinder: 13 learner AI tools",d:"Explain This, Ask the Content, concept maps, flashcards, Quiz Me, Prep Coach, an assignment reviewer that never grades, a research assistant, a seven-day learning path and deadline watch, all grounded in the course.",caps:["X3","I4","I6","I5","K2","C1"]},
+ {id:"h19",v:"he",lens:"io",s:"pursuit",name:"Student Help Desk Assistant",src:"Wayfinder Help Desk · HEOS Navigator",d:"Answers policy, deadline, billing and tech questions from approved content and the student's live record; an agent completes routine actions. Wellbeing concerns always go to people.",caps:["X2","O1","O3","K3","I5","C2","C7"]},
+ {id:"h20",v:"he",lens:"lo",s:"pursuit",name:"Persistence & Re-enrollment",src:"Wayfinder · Dallas: persistence through term 3",d:"Predict stop-outs before registration closes, explain holds in one click, offer payment plans, and bring back learners who left without making them start over.",caps:["I7","K3","O4","X2","O3","C2","C7"]},
+ {id:"h21",v:"he",lens:"lo",s:"pursuit",name:"Career Services AI",src:"Wayfinder Career Center",d:"Mastered skills mapped to roles, a resume builder, mock interviews and internship matching that a career advisor approves.",caps:["K1","I7","I4","K3","X2","O3","C5","C6"]},
+ {id:"h22",v:"he",lens:"io",s:"pursuit",name:"Degree Audit & Credentials",src:"Wayfinder · HEOS Certify",d:"Degree audit flags the registrar confirms, competency transcripts, and a digital credential wallet with Open Badges and a comprehensive learner record.",caps:["I2","K3","K4","O3","C2","C6"]},
+ {id:"h23",v:"he",lens:"io",s:"pursuit",name:"Alumni & Lifelong Learning",src:"Wayfinder Alumni Harbor",d:"Mentor matching with current learners, lifelong-learning recommendations, and outcome surveys that feed program review and accreditation.",caps:["I7","K3","K5","X2","C7","C8"]},
+ {id:"h24",v:"he",lens:"io",s:"pursuit",name:"Open edX Platform Build & Support",src:"Dallas College Global (Track 3)",d:"A branded production Open edX: single sign-on, theming, plugins and XBlocks, LTI tools, learning analytics, upgrades and ongoing support.",caps:["C1","F1","F5","X3","C8"]},
+ // Workforce
+ {id:"w1",v:"wf",lens:"cc",s:"idea",name:"Job-to-Skills Decomposition",src:"Role profiles in the knowledge graph",d:"Turn a job description or O*NET occupation into tasks, skills and proficiency levels: a role profile the rest of the system aligns to.",caps:["I1","I2","K1","C3","C5"]},
+ {id:"w2",v:"wf",lens:"cc",s:"built",name:"Skills-Based Program Builder",src:"Precision Program Build (workforce audience)",d:"From role profiles and a skills gap to a certificate program or pathway: modules sequenced by prerequisite, reviewed library modules reused, mapped to proficiency levels.",caps:["I3","K1","I6","I2","O1","O3","C5","C3"]},
+ {id:"w12",v:"wf",lens:"cc",s:"built",name:"Workforce Course & Materials Builder",src:"Program Builder workforce templates",d:"Scenario, role-play, case and project courses with facilitator guide, learner guide, job aids and a competency map, every module checked against company policy.",caps:["I3","I4","I5","O1","K2","K4","C1","C5"]},
+ {id:"w3",v:"wf",lens:"cc",s:"built",name:"Continuing-Ed Course Builder",src:"ed2go Course Builder (Phase 2)",d:"Projects, templates and agents for high-volume short courses, with team assignment, lifecycle management and status dashboards.",caps:["I3","I4","O1","O2","K2","X1","C1","C4"]},
+ {id:"w4",v:"wf",lens:"cc",s:"idea",name:"Certification Prep Alignment",src:"New idea",d:"Align courses and item banks to industry exam blueprints and keep them current when a blueprint changes.",caps:["I2","I4","K1","I5","C3","C1"]},
+ {id:"w5",v:"wf",lens:"cc",s:"built",name:"Compliance Training Factory",src:"Precision Learning foundation rules",d:"Policy documents become verified rules and training. When a policy changes, every lesson built on the old figure is flagged.",caps:["I1","I5","I4","K4","K2","C4","C5"]},
+ {id:"w6",v:"wf",lens:"cc",s:"built",name:"Simulations & Practice Conversations",src:"Precision Learning prototype",d:"Role-play personas, scenarios and sandboxed simulations, scored only on criteria backed by the learner's own words.",caps:["I4","I5","X3","C1"]},
+ {id:"w7",v:"wf",lens:"lo",s:"built",name:"Precision Learning · Workforce",src:"Precision Learning prototype",d:"Lessons rewritten for one learner and measured against the gap to their role profile's proficiency level.",caps:["I6","I5","K3","X3","K1","C5","C1"]},
+ {id:"w8",v:"wf",lens:"lo",s:"idea",name:"Skills Passport & Credentials",src:"HEOS: skills for résumés",d:"Verified skills and credentials a learner can carry: Open Badges 3.0, comprehensive learner records, skills for résumés.",caps:["K3","K4","K1","C6","C5"]},
+ {id:"w9",v:"wf",lens:"lo",s:"idea",name:"Career & Mobility Navigator",src:"New idea",d:"Recommend the next role and the shortest pathway to it, from verified skills, live postings and the company's role catalog.",caps:["I7","I6","K3","X2","C5","C7"]},
+ {id:"w10",v:"wf",lens:"io",s:"idea",name:"Employer-Aligned Program Design",src:"Workforce angle for Dallas College (Axim)",d:"For colleges and workforce boards: short programs built from regional demand and employer input, mapped to credit so they stack.",caps:["I3","I2","I7","K1","C5","C3","C2"]},
+ {id:"w11",v:"wf",lens:"io",s:"idea",name:"L&D Portfolio & Skills Analytics",src:"New idea",d:"An organization-wide skills inventory, training coverage and time to proficiency, so L&D funds what closes the gap.",caps:["I7","K5","K3","C5","C8"]}
+];
+
+const BACKLOG = [
+ {n:"Continuous Publishing",c:44,to:"Vertical pack · HE publishing",pack:true},
+ {n:"AI & Smart Assistants",c:13,to:"06 Experience · X2"},
+ {n:"Content Ingestion",c:13,to:"04 Intelligence · I1"},
+ {n:"Core Workspace & Asset Mgmt",c:11,to:"03 Knowledge · K2, K1"},
+ {n:"Orchestration",c:10,to:"05 Orchestration · O1–O3"},
+ {n:"Access Control & Governance",c:6,to:"01 Foundation · F1–F3"},
+ {n:"Analytics & Reporting",c:4,to:"03/04 · K5, I7, K4"},
+ {n:"Connected Ecosystems",c:3,to:"02 Connectors · O4"},
+ {n:"Infrastructure & Deployment",c:1,to:"01 Foundation · F5"}
+];
+const WORKSTREAMS = [
+ ["Continuous Publishing","Vertical pack (HE)","h5"],
+ ["Print / Omnichannel","Vertical pack + 02","C4"],
+ ["Orchestration & Agent Runtime","05 Orchestration","O1 O2 O3"],
+ ["Quality, Trust & Provenance","04 · 03","I5 K4"],
+ ["Content Intelligence","04 · 03","I7 K5"],
+ ["Localization","04 Intelligence","I8"],
+ ["New Content Types / Products","04 Intelligence","I4"],
+ ["Precision Learning","04 · 03 · 06","I6 K3 X3"]
+];
+
+/* ---------- K-12 journey (tools in use + additions) ---------- */
+const JSTAGES=[
+ {id:"j0",n:"00",name:"Intake & requirements",sub:"Not a workflow today",isNew:true},
+ {id:"j1",n:"01",name:"Curriculum planning",sub:"Map standards, build the year plan"},
+ {id:"j2",n:"02",name:"Lesson development",sub:"Draft lessons and visuals"},
+ {id:"j3",n:"03",name:"Assessments",sub:"Design and generate aligned items"},
+ {id:"j4",n:"04",name:"Ancillary",sub:"Workbooks, guides, teacher resources"},
+ {id:"j5",n:"05",name:"Quality & delivery",sub:"Validate and ship"},
+ {id:"j6",n:"06",name:"In the classroom",sub:"Not a workflow today",isNew:true}
+];
+const JN=[
+ {g:"j0",st:"add",name:"Program brief & adoption requirements",d:"State adoption criteria, district RFP requirements, IMET or EdReports-style rubrics, instructional model and course parameters, captured once for every later tool.",caps:["I1","I3","K1"]},
+ {g:"j0",st:"add",name:"Legacy content intake",d:"Widen the Mindsmith scraper into one intake for PDFs, Word, Common Cartridge, Google Drive and publisher files.",caps:["I1","K2","C4"]},
+ {g:"j1",st:"live",n:1,name:"Course Curriculum Planner",d:"Curriculum maps and year-long plans from standards and state blueprints.",caps:["I3","I2","K1"]},
+ {g:"j1",st:"live",n:2,name:"Content Repo Mapping Tool",d:"Reusable content through crosswalks and semantic search; gap report.",caps:["I2","K2"]},
+ {g:"j1",st:"live",n:3,name:"Standards Listing",d:"Latest standards for a state or framework.",caps:["C3","K1"]},
+ {g:"j1",st:"live",n:4,name:"Standards Crosswalk",d:"Cross-state and cross-framework alignment maps.",caps:["I2","K1"]},
+ {g:"j1",st:"wip",n:5,name:"Mindsmith Bulk Scraper",d:"Imports existing Mindsmith courses for reuse.",caps:["I1","C4"]},
+ {g:"j1",st:"add",name:"Vertical coherence & progressions",d:"Where each concept is introduced and mastered across grades, and which prerequisites the course assumes.",caps:["K1","I2"]},
+ {g:"j2",st:"live",n:6,name:"Course Outline Generator",d:"Baseline, Medium-Touch, High-Touch, PBL and Spiral Review outlines.",caps:["I3","I4"]},
+ {g:"j2",st:"wip",n:7,name:"Lesson Plan Generator",d:"Expands approved outlines into classroom-ready lesson plans.",caps:["I4","I3"]},
+ {g:"j2",st:"live",n:8,name:"Gems Collator",d:"SME-engineered Gemini prompts in one repository.",caps:["O2"]},
+ {g:"j2",st:"live",n:9,name:"Kadalens",d:"Diagrams, charts, maps and illustrations from plain text.",caps:["I4"]},
+ {g:"j2",st:"add",name:"Differentiation & multilingual",d:"Scaffolds, leveled texts, ELL supports, Spanish editions and glossaries for every lesson.",caps:["I8","I4","I5"]},
+ {g:"j2",st:"add",name:"Texts & passages",d:"Source and level reading passages; quantitative and qualitative text complexity by grade.",caps:["I4","I5","K2"]},
+ {g:"j2",st:"add",name:"Student-facing digital lessons",d:"Interactive lessons, video scripts and simulations for the student, not only teacher materials.",caps:["I4","X3","C1"]},
+ {g:"j3",st:"live",n:10,name:"Exit Ticket Generator",d:"Exit tickets plus teacher-slide versions.",caps:["I4","I2"]},
+ {g:"j3",st:"live",n:11,name:"Assessment Planner",d:"BOY, MOY, EOY and unit-test blueprints.",caps:["I3","I2"]},
+ {g:"j3",st:"live",n:12,name:"Assessment Generator",d:"Item banks with stimuli, images, metadata and delivery formats.",caps:["I4","K2"]},
+ {g:"j3",st:"add",name:"Rubrics & performance tasks",d:"Constructed-response and performance tasks with rubrics, exemplars and scoring guides.",caps:["I4","I3"]},
+ {g:"j3",st:"add",name:"Item review",d:"Bias and sensitivity, DOK and cognitive-complexity check, alignment validation and distractor rationales.",caps:["I5","I2","O3"]},
+ {g:"j3",st:"add",name:"Form assembly & accessible items",d:"Parallel forms built to the blueprint; alt text, read-aloud tags and math markup; QTI as well as Learnosity.",caps:["I3","F4","C1"]},
+ {g:"j4",st:"live",n:14,name:"Workbook Skill Generator",d:"Workbook skill set from standards and blueprints.",caps:["I3","I2"]},
+ {g:"j4",st:"live",n:15,name:"Student Workbook Generator",d:"200+ page workbooks with activities, assessments and visuals.",caps:["I4"]},
+ {g:"j4",st:"live",n:16,name:"Ancillary S&S Generator",d:"Pacing guides, calendars, lesson plans and teacher resources.",caps:["I3","I4"]},
+ {g:"j4",st:"live",n:17,name:"Teacher Deck Generator",d:"Word to PowerPoint, with ELA, math, science and social studies editions.",caps:["I4","C4"]},
+ {g:"j4",st:"live",n:18,name:"3-Items TS Exit Ticket Doc",d:"I do, We do, You do teacher slides from two exit tickets.",caps:["I4"]},
+ {g:"j4",st:"add",name:"Family & home connection",d:"Family letters and at-home practice in the family's language.",caps:["I4","I8"]},
+ {g:"j4",st:"add",name:"Implementation & PD kit",d:"Program overview, teacher onboarding and short PD modules from the finished course.",caps:["I4","I3"]},
+ {g:"j5",st:"live",n:19,name:"Validator Agent",d:"Quality, inclusive language, style guide and copyedit at every stage.",caps:["I5"]},
+ {g:"j5",st:"live",n:20,name:"Usage Analytics",d:"Adoption, run counts and chat Q&A over usage.",caps:["F5","I7"]},
+ {g:"j5",st:"add",name:"Accessibility, math & fact checks",d:"WCAG checks with alt text, MathML and LaTeX rendering, and correctness review of answers and visuals.",caps:["F4","I5"]},
+ {g:"j5",st:"add",name:"Sign-off & correlation report",d:"Who approved each asset, what was checked, and standards correlations ready for state and district adoption reviewers.",caps:["O3","K4"]},
+ {g:"j5",st:"add",name:"Global editions & metrication",d:"Localize for international markets: language, spelling, metric units with recomputed answers, currency, cultural context and target-curriculum crosswalk.",caps:["I8","I5","I2"]},
+ {g:"j5",st:"add",name:"Rights & permissions log",d:"Source, license and credit line for every passage and image, including AI-generated visuals.",caps:["K4","I5"]},
+ {g:"j5",st:"add",name:"Packaging & rostering",d:"Common Cartridge and LTI packages, OneRoster, and print-ready files for InDesign.",caps:["C1","C2","C4"]},
+ {g:"j6",st:"add",name:"Classroom signals & revision",d:"Results by standard return from the LMS and Learnosity; weak lessons and items are flagged and revised.",caps:["I7","K5","C8"]},
+ {g:"j6",st:"add",name:"Precision Learning for students",d:"Personalized re-explanations inside the delivered course, held to district rules.",caps:["I6","K3","X3"]},
+ {g:"j6",st:"add",name:"Standards refresh watch",d:"When a state revises its standards, list every asset affected.",caps:["C3","K1","O4"]}
+];
+const JDELIVER=["LMS delivery","Learnosity-ready JSON","Print resources","Digital resources"];
+const jstate={show:"all"};
+function renderJourney(){
+  const live=JN.filter(n=>n.st==="live").length, wip=JN.filter(n=>n.st==="wip").length, add=JN.filter(n=>n.st==="add").length;
+  $("#k12-callouts").innerHTML=`<div class="callout"><b>${live+wip}</b><p>tools in use today across five workflows.</p></div>
+    <div class="callout"><b>${add}</b><p>ideas to add, including two stages with no tools yet: intake before planning, and the classroom after delivery.</p></div>
+    <div class="callout"><b>1 spine</b><p>Today's tools hand off by file. A shared course manifest would carry standards, objectives and approvals through every step.</p></div>`;
+  $("#j-spine").innerHTML=`<div><div class="eyebrow" style="color:var(--accent)">Cross-cutting · add first</div><h3>One course manifest and workflow across every tool</h3>
+    <p>Each tool takes scope and sequence, standards and objectives as inputs. Keep them in one record per course so outlines, items, workbooks and decks share IDs, reuse the content lake, pass through review gates, and leave a provenance trail. This turns a toolkit into one system.</p></div>
+    <div class="jcaps">${["O1","O3","K1","K2","K4"].map(c=>`<button data-jcap="${c}">${c}</button>`).join("")}</div>`;
+  const fj=$("#f-j"); if(!fj.querySelector(".chip")){[["all","Everything"],["pf","Tools today"],["add","Ideas only"]].forEach(([k,n])=>{const b=document.createElement("button");b.className="chip";b.dataset.k=k;b.textContent=n;b.onclick=()=>{jstate.show=k;renderJourney();};fj.appendChild(b);});}
+  fj.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===jstate.show));
+  const ok=n=>jstate.show==="all"||(jstate.show==="add"?n.st==="add":n.st!=="add");
+  $("#jstages").innerHTML=JSTAGES.map(S=>{
+    const nodes=JN.filter(n=>n.g===S.id&&ok(n)); if(!nodes.length) return "";
+    return `<div class="jstage${S.isNew?" newstage":""}"><div class="lname"><span class="num">${S.n}</span><b>${esc(S.name)}</b><span>${esc(S.sub)}</span></div><div style="min-width:0"><div class="jnodes">${nodes.map(n=>`
+      <div class="jn${n.st==="add"?" add":""}"><div class="row"><span class="nm">${esc(n.name)}</span>${n.st==="add"?`<span class="st st-add">Idea</span>`:""}</div>
+      <p>${esc(n.d)}</p><div class="jcaps">${n.caps.map(c=>`<button data-jcap="${c}" title="${esc(capById[c].name)}">${c}</button>`).join("")}</div></div>`).join("")}</div>
+      ${S.id==="j5"&&jstate.show!=="add"?`<div class="jdeliver">${JDELIVER.map(x=>`<span>${x}</span>`).join("")}</div>`:""}</div></div>`;}).join("");
+  document.querySelectorAll("#view-k12 [data-jcap]").forEach(b=>b.onclick=()=>{showView("map");state.v="all";state.lens="all";select({t:"cap",id:b.dataset.jcap});window.scrollTo({top:0});});
+}
+
+/* ---------- HE learner journey ---------- */
+const LJS=[
+ {id:"l0",n:"00",name:"Build the program",sub:"Before the first inquiry"},
+ {id:"l1",n:"01",name:"Discover",sub:"Inquiry and fit"},
+ {id:"l2",n:"02",name:"Apply",sub:"Application and documents"},
+ {id:"l3",n:"03",name:"Enroll & pay",sub:"Credit, plan, payment"},
+ {id:"l4",n:"04",name:"Orient",sub:"Ready to learn"},
+ {id:"l5",n:"05",name:"Learn",sub:"In every course"},
+ {id:"l6",n:"06",name:"Persist",sub:"When life gets in the way"},
+ {id:"l7",n:"07",name:"Career",sub:"Skills to work"},
+ {id:"l8",n:"08",name:"Graduate",sub:"Certify and prove"},
+ {id:"l9",n:"09",name:"Alumni",sub:"Stay connected"},
+ {id:"l10",n:"·",name:"Run the college",sub:"Systems, data, reporting"}
+];
+const LJ=[
+ {g:"l0",src:["demo"],name:"Spot the demand",d:"Labor-market data, competitor programs and recommender searches in two days instead of a semester.",sol:"h14",caps:["I7","C5"]},
+ {g:"l0",src:["demo","pilot"],name:"Outcomes and accreditation",d:"AI drafts program outcomes and maps each to accreditor standards and institutional outcomes. Faculty edit and decide.",sol:"h2",caps:["I2","K1","C3"]},
+ {g:"l0",src:["demo","pilot"],name:"Design and build the courses",d:"Curriculum map, sequence, shells, assessments and rubrics drafted together; accessibility and licensing checked as each course is built.",sol:"h3",caps:["I3","I4","I5"]},
+ {g:"l0",src:["demo"],name:"Approve and launch",d:"The same human gates with a complete evidence pack. Launch in week 7 instead of month 14.",sol:"h3",caps:["O3","K4"]},
+ {g:"l1",src:["pilot","demo"],name:"Lark, 24/7 enquiry assistant",d:"Answers on the web, by text and on calls from approved content. Always says it is AI and offers a person.",sol:"h12",caps:["X2","I5"]},
+ {g:"l1",src:["demo"],name:"Program-fit recommender",d:"Suggests programs with reasons drawn from what the prospect already shared; the counselor adds or changes before it goes out.",sol:"h16",caps:["I7","K3"]},
+ {g:"l1",src:["pilot","demo"],name:"Pathway, finish date and price",d:"A term-by-term plan with transfer credits applied, time to degree and cost, before applying.",sol:"h16",caps:["I3","I2"]},
+ {g:"l1",src:["demo"],name:"Lead routing with a summary",d:"The inquiry reaches the right counselor with what the student already said.",sol:"h12",caps:["O1","K3"]},
+ {g:"l2",src:["demo"],name:"Form assist",d:"Pre-fills what the student already shared and explains hard questions in plain language.",sol:"h12",caps:["X2","K3"]},
+ {g:"l2",src:["pilot"],name:"Document agent",d:"Sorts uploads, checks the name matches and the prior college is accredited, extracts courses. Mismatches go to the advisor.",sol:"h12",caps:["I1","O3"]},
+ {g:"l2",src:["pilot"],name:"Identity check",d:"Verification by a provider; the college keeps only the result.",sol:"h12",caps:["F3"]},
+ {g:"l2",src:["pilot","demo"],name:"Nudges and status",d:"Reminders name the exact missing item, follow a fixed policy and quiet hours; the student can always see their status.",sol:"h12",caps:["O4","C7"]},
+ {g:"l2",src:["pilot"],name:"Admission decision by the advisor",d:"The advisor copilot drafts the letter; the advisor decides and sends it under their own name.",sol:"h12",caps:["O3","X2"]},
+ {g:"l3",src:["pilot","demo"],name:"Transfer-credit agent and evaluator",d:"Rules first, AI proposals with a reason, and a faculty evaluator approving every award within four hours.",sol:"h8",caps:["I2","O3"]},
+ {g:"l3",src:["pilot"],name:"Signed plan",d:"The student chooses AASM or BASM and e-signs a plan with a finish date and price.",sol:"h16",caps:["I3","K3"]},
+ {g:"l3",src:["pilot"],name:"Payment in one screen",d:"Pay in full, monthly, or billed to the employer.",sol:"h12",caps:["C2"]},
+ {g:"l3",src:["demo"],name:"Aid package explainer",d:"Aid explained in plain terms, verification checklist prefilled, deadline reminders.",sol:"h12",caps:["X2","O4"]},
+ {g:"l3",src:["add"],name:"Federal aid processing",d:"Out of the pilot by design. Needs an aid servicer and aid system connected to the enrollment record before the second program.",sol:"h13",caps:["C2","F3"]},
+ {g:"l4",src:["pilot"],name:"One sign-in to the first course",d:"Enrollment creates the account and opens the first Open edX course right away.",sol:"h24",caps:["F1","C1","O4"]},
+ {g:"l4",src:["demo"],name:"Readiness diagnostic and bridge modules",d:"An adaptive diagnostic finds gaps, such as algebra before statistics, and adds short bridge modules.",sol:"h17",caps:["I6","I3"]},
+ {g:"l4",src:["demo"],name:"Onboarding plan and accessibility setup",d:"A personal plan, guided tour, tech check and accessibility settings.",sol:"h17",caps:["X3","F4"]},
+ {g:"l5",src:["pilot","heos"],name:"AI tutor in every course",d:"Available 24/7 from day one, answering only from course materials.",sol:"h9",caps:["I6","I5"]},
+ {g:"l5",src:["demo"],name:"13 learner study tools",d:"Explain This, Quiz Me, Prep Coach, Assignment Reviewer, My Learning Path and more.",sol:"h18",caps:["X3","I4"]},
+ {g:"l5",src:["demo"],name:"Misconception caught and cleared",d:"A quiz spots it, the explanation is rewritten at the learner's level, practice clears it.",sol:"h9",caps:["I6","K1"]},
+ {g:"l5",src:["demo","heos"],name:"Faculty tools",d:"Class Pulse across the section, lesson variants, and an Alternative Path the instructor approves.",sol:"h11",caps:["I7","O3"]},
+ {g:"l5",src:["add"],name:"Academic integrity and proctoring",d:"Identity at assessment time and integrity checks for competency-based assessments.",sol:"h7",caps:["I5","C1"]},
+ {g:"l6",src:["demo","heos"],name:"At-Risk Radar with reasons",d:"Flags learners within a day, with the reason, and drafts outreach for a person to approve.",sol:"h10",caps:["I7","K3","O3"]},
+ {g:"l6",src:["heos"],name:"Advisor single view",d:"One student file every role sees, with red, amber and green status.",sol:"h10",caps:["X1","K3"]},
+ {g:"l6",src:["demo"],name:"Help desk assistant and agent",d:"Policy, deadline, billing and tech answers; routine actions done; wellbeing concerns go to people.",sol:"h19",caps:["X2","O1"]},
+ {g:"l6",src:["demo"],name:"Stop-out prediction and holds",d:"Flags likely stop-outs two weeks before registration closes and explains holds in one click.",sol:"h20",caps:["I7","O4"]},
+ {g:"l6",src:["add"],name:"Basic needs and wellbeing referrals",d:"Food, housing, childcare and counseling referrals for working adults, always handled by people.",sol:"h19",caps:["O1","C7"]},
+ {g:"l7",src:["demo"],name:"Skills to jobs",d:"Mastered skills mapped to roles, resume builder, mock interviews and internship matching.",sol:"h21",caps:["K1","C5"]},
+ {g:"l7",src:["add"],name:"Employer partnerships",d:"Employer billing exists in the pilot; add employer-sponsored cohorts and hiring pipelines.",sol:"w10",caps:["C5","C2"]},
+ {g:"l8",src:["demo"],name:"Degree audit flags",d:"The registrar confirms flags instead of auditing by hand.",sol:"h22",caps:["I2","O3"]},
+ {g:"l8",src:["demo","heos"],name:"Digital credential wallet",d:"Competency transcript and verifiable credentials.",sol:"h22",caps:["C6","K4"]},
+ {g:"l8",src:["demo"],name:"Results back to the program",d:"Cohort outcomes flow to the program director for review and accreditation evidence.",sol:"h1",caps:["K5","K4"]},
+ {g:"l9",src:["demo"],name:"Mentors and lifelong learning",d:"Alumni mentor current learners; recommendations for what to learn next; outcome surveys.",sol:"h23",caps:["I7","C7"]},
+ {g:"l10",src:["pilot"],name:"CRM and SIS decision",d:"Open-source and commercial options tested in sandboxes, with a three-year cost model.",sol:"h13",caps:["C2"]},
+ {g:"l10",src:["pilot"],name:"Open edX build and support",d:"Branded, extended and kept current.",sol:"h24",caps:["C1"]},
+ {g:"l10",src:["pilot","heos"],name:"Warehouse and metrics",d:"Landing, clean, core and golden layers on PostgreSQL; each metric defined once with an owner.",sol:"h15",caps:["K5","C8"]},
+ {g:"l10",src:["heos"],name:"IPEDS and accreditation reporting",d:"Reports assembled from the record instead of by hand.",sol:"h15",caps:["K5","K4"]}
+];
+const LJSRC={pilot:["st-built","Pilot"],demo:["st-pursuit","Wayfinder"],heos:["st-roadmap","HEOS"],add:["st-add","Idea"]};
+const ljstate={show:"all"};
+function renderLJ(){
+  const c=k=>LJ.filter(n=>n.src.includes(k)).length, gaps=c("add");
+  const unmapped=LJ.filter(n=>!solById[n.sol]).length;
+  $("#lj-callouts").innerHTML=`<div class="callout"><b>${LJ.length-gaps}</b><p>journey steps covered: ${c("pilot")} in the 48-hour pilot, ${c("demo")} shown in Wayfinder, ${c("heos")} in HEOS.</p></div>
+    <div class="callout"><b>${gaps}</b><p>steps neither covers yet: federal aid, academic integrity, basic needs referrals and employer partnerships.</p></div>
+    <div class="callout"><b>${unmapped?unmapped+" unmapped":"All mapped"}</b><p>Every step points to a solution on the map, so nothing in the journey sits outside the OS.</p></div>`;
+  $("#lj-spine").innerHTML=`<div><div class="eyebrow" style="color:var(--accent)">Cross-cutting · already in the pilot</div><h3>One learner record, one orchestrator, one event stream</h3>
+    <p>The Enrollment Core is the single record; every change becomes an event that identity, Open edX and the warehouse take. The journey orchestrator runs each step and handoff. Every message says whether it came from AI or a person, and every model call goes through one gateway that redacts personal data.</p></div>
+    <div class="jcaps">${["K3","O1","O4","O3","F2","F3"].map(c=>`<button data-jcap="${c}">${c}</button>`).join("")}</div>`;
+  const f=$("#f-lj"); if(!f.querySelector(".chip")){[["all","Everything"],["pilot","48-hour pilot"],["demo","Wayfinder"],["heos","HEOS"],["add","Ideas"]].forEach(([k,n])=>{const b=document.createElement("button");b.className="chip";b.dataset.k=k;b.textContent=n;b.onclick=()=>{ljstate.show=k;renderLJ();};f.appendChild(b);});}
+  f.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===ljstate.show));
+  const ok=n=>ljstate.show==="all"||n.src.includes(ljstate.show);
+  $("#ljstages").innerHTML=LJS.map(S=>{const nodes=LJ.filter(n=>n.g===S.id&&ok(n)); if(!nodes.length) return "";
+    return `<div class="jstage"><div class="lname"><span class="num" style="color:var(--he)">${S.n}</span><b>${esc(S.name)}</b><span>${esc(S.sub)}</span></div><div class="jnodes">${nodes.map(n=>{const s=solById[n.sol];
+      return `<div class="jn${n.src[0]==="add"?" add":""}"><div class="row"><span class="nm">${esc(n.name)}</span><span style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${n.src.map(k=>`<span class="st ${LJSRC[k][0]}">${LJSRC[k][1]}</span>`).join("")}</span></div>
+      <p>${esc(n.d)}</p>${s?`<button class="onmap" data-ljsol="${s.id}">On the map: ${esc(s.name)}</button>`:""}<div class="jcaps">${n.caps.map(c=>`<button data-jcap="${c}" title="${esc(capById[c].name)}">${c}</button>`).join("")}</div></div>`;}).join("")}</div></div>`;}).join("");
+  document.querySelectorAll("#view-lj [data-jcap]").forEach(b=>b.onclick=()=>{showView("map");state.v="all";state.lens="all";select({t:"cap",id:b.dataset.jcap});window.scrollTo({top:0});});
+  document.querySelectorAll("#view-lj [data-ljsol]").forEach(b=>b.onclick=()=>{showView("map");state.v="all";state.lens="all";state.idea="all";select({t:"sol",id:b.dataset.ljsol});const el=document.getElementById("sol-"+b.dataset.ljsol);if(el)el.scrollIntoView({block:"center"});});
+}
+
+/* ---------- derived ---------- */
+SOL.forEach(s=>{ if(s.caps.includes("O1")&&!s.caps.includes("O2")) s.caps.push("O2"); });
+/* Foundation (layer 01) underpins every solution */
+const uses=(s,id)=>id.startsWith("F")||s.caps.includes(id);
+/* ---------- state ---------- */
+const state = {v:"all", lens:"all", idea:"all", sel:null};
+const capById = Object.fromEntries(CAPS.map(c=>[c.id,c]));
+const solById = Object.fromEntries(SOL.map(s=>[s.id,s]));
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const visible = s => (state.v==="all"||s.v===state.v) && (state.lens==="all"||s.lens===state.lens) && (state.idea==="all"||(state.idea==="only"?s.s==="idea":s.s!=="idea"));
+const lensMark = l => `<i class="lens lens-${l}" aria-hidden="true"></i>`;
+const pill = s => s==="idea"?`<span class="st st-idea">Idea</span>`:"";
+const matLabel = {have:"",building:"",gap:"Gap"};
+const matCls = m => m==="gap"?"gap":"building";
+
+/* ---------- filters ---------- */
+function buildFilters(){
+  const fv=$("#f-vertical"), fl=$("#f-lens"), fs=$("#f-idea");
+  [["all","All"],...Object.entries(VERTICALS).map(([k,v])=>[k,v.name])].forEach(([k,n])=>{
+    const b=document.createElement("button"); b.className="chip"; b.id="fv-"+k; b.dataset.k=k;
+    b.innerHTML=(k!=="all"?`<i class="sw" style="background:${VERTICALS[k].color}"></i>`:"")+esc(n);
+    b.onclick=()=>{state.v=k; state.sel=null; render();}; fv.appendChild(b);});
+  [["all","All"],...Object.entries(LENSES)].forEach(([k,n])=>{
+    const b=document.createElement("button"); b.className="chip"; b.id="fl-"+k; b.dataset.k=k;
+    b.innerHTML=(k!=="all"?lensMark(k):"")+esc(n);
+    b.onclick=()=>{state.lens=k; state.sel=null; render();}; fl.appendChild(b);});
+  [["all","Include"],["hide","Hide"],["only","Only ideas"]].forEach(([k,n])=>{
+    const b=document.createElement("button"); b.className="chip"; b.id="fi-"+k; b.dataset.k=k; b.textContent=n;
+    b.onclick=()=>{ state.idea=k; state.sel=null; render();};
+    fs.appendChild(b);});
+  $("#clear").onclick=()=>{state.v="all";state.lens="all";state.idea="all";state.sel=null;render();};
+}
+function syncFilters(){
+  document.querySelectorAll("#f-vertical .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===state.v));
+  document.querySelectorAll("#f-lens .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===state.lens));
+  document.querySelectorAll("#f-idea .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===state.idea));
+}
+
+/* ---------- highlight logic ---------- */
+function hitSets(){
+  const sel=state.sel; let caps=null, sols=null;
+  if(sel?.t==="sol"){ caps=new Set(solById[sel.id].caps); }
+  if(sel?.t==="cap"){ sols=new Set(SOL.filter(s=>uses(s,sel.id)).map(s=>s.id)); }
+  if(sel?.t==="vert"){ sols=new Set(SOL.filter(s=>s.v===sel.id).map(s=>s.id)); caps=new Set(SOL.filter(s=>s.v===sel.id&&visible(s)).flatMap(s=>s.caps)); }
+  return {caps,sols};
+}
+
+/* ---------- render verticals ---------- */
+function renderVerticals(){
+  const {sols}=hitSets(); const host=$("#verticals"); host.innerHTML="";
+  Object.entries(VERTICALS).forEach(([vk,V])=>{
+    const col=document.createElement("div"); col.className="vcol"; col.style.setProperty("--vc",V.color);
+    const all=SOL.filter(s=>s.v===vk), vis=all.filter(visible);
+    if(state.v!=="all" && state.v!==vk) col.classList.add("is-dim");
+    col.innerHTML=`<button class="vhead" data-v="${vk}" aria-label="About ${esc(V.name)}"><h3>${esc(V.name)}<small>${vis.length}/${all.length}</small></h3><div class="unit">Aligns to <b>${esc(V.unit)}</b></div></button>`;
+    col.querySelector(".vhead").onclick=()=>select({t:"vert",id:vk});
+    Object.entries(LENSES).forEach(([lk,ln])=>{
+      const items=all.filter(s=>s.lens===lk); if(!items.length) return;
+      const g=document.createElement("div"); g.className="lgroup";
+      if(state.lens!=="all" && state.lens!==lk) g.classList.add("is-dim");
+      g.innerHTML=`<h4>${lensMark(lk)}${esc(ln)}</h4><div class="cards"></div>`;
+      const cards=g.querySelector(".cards");
+      items.forEach(s=>{
+        const b=document.createElement("button"); b.className="card"; b.id="sol-"+s.id;
+        b.innerHTML=`<div class="row"><span class="nm">${esc(s.name)}</span>${pill(s.s)}</div>${s.src===s.name||s.src==="New idea"?"":`<div class="src">${esc(s.src)}</div>`}`;
+        const isVis=visible(s);
+        if(!isVis) b.classList.add("is-dim");
+        if(state.sel?.t==="sol" && state.sel.id===s.id) b.classList.add("is-sel");
+        else if(sols && state.sel?.t==="cap"){ if(sols.has(s.id)&&isVis) b.classList.add("is-hit"); else b.classList.add("is-dim"); }
+        else if(state.sel?.t==="sol") b.classList.add("is-dim");
+        b.onclick=()=>select({t:"sol",id:s.id});
+        cards.appendChild(b);
+      });
+      col.appendChild(g);
+    });
+    host.appendChild(col);
+  });
+}
+
+/* ---------- render layers ---------- */
+function renderLayers(){
+  const {caps}=hitSets(); const vis=SOL.filter(visible); const host=$("#layers"); host.innerHTML="";
+  LAYERS.forEach(L=>{
+    const row=document.createElement("div"); row.className="layer"+(L.conn?" conn":"");
+    row.innerHTML=`<div class="lname"><span class="num">${L.n}</span><b>${esc(L.name)}</b><span>${esc(L.sub)}</span></div><div class="caps"></div>`;
+    const box=row.querySelector(".caps");
+    CAPS.filter(c=>c.l===L.id).forEach(c=>{
+      const users=vis.filter(s=>uses(s,c.id));
+      const vset=new Set(users.map(s=>s.v));
+      const b=document.createElement("button"); b.className="cap"; b.id="cap-"+c.id;
+      b.title=c.m==="gap"?`${c.name}: Gap`:c.name;
+      b.innerHTML=`<i class="mat mat-${matCls(c.m)}"${c.m==="gap"?' aria-label="Gap"':' aria-hidden="true"'}></i><span class="id">${c.id}</span><span class="cn">${esc(c.name)}</span>
+        <span class="vdots" aria-hidden="true">${["k12","he","wf"].map(v=>`<i class="${vset.has(v)?"on":""}" style="--vc:${VERTICALS[v].color}"></i>`).join("")}</span>
+        <span class="ct">${users.length}</span>`;
+      if(state.sel?.t==="cap" && state.sel.id===c.id) b.classList.add("is-sel");
+      else if(caps){ if(caps.has(c.id)) b.classList.add("is-hit"); else b.classList.add("is-dim"); }
+      else if(!users.length) b.classList.add("is-zero");
+      b.onclick=()=>select({t:"cap",id:c.id});
+      box.appendChild(b);
+    });
+    host.appendChild(row);
+  });
+}
+
+/* ---------- panel ---------- */
+function capList(ids){
+  return `<ul class="plist">${ids.map(id=>{const c=capById[id];return `<li><button data-cap="${id}"><span class="id">${id}</span><span class="t">${esc(c.name)}</span></button></li>`}).join("")}</ul>`;
+}
+function renderPanel(){
+  const p=$("#panel"); const sel=state.sel;
+  p.classList.toggle("rest",!sel);
+  if(!sel){
+    const all3=CAPS.filter(c=>["k12","he","wf"].every(v=>SOL.some(s=>s.v===v&&uses(s,c.id)))).length;
+    p.innerHTML=`<div class="eyebrow">How to read this</div><h3>One kernel, three vertical packs</h3>
+      <div class="howto"><ol>
+      <li>Columns on top are solutions, grouped by lens: content and curriculum, learner ops, institution ops.</li>
+      <li>Bands below are the horizontals every solution is built from, stacked from foundation (01) to experience (06).</li>
+      <li>Select a solution to see what it's built from. Select a capability to see who reuses it and how it changes by vertical.</li>
+      <li>Select a vertical's name for its profile: buyers, frameworks, rules and systems.</li></ol></div>
+      <p style="color:var(--muted);font-size:13.5px">${all3} of ${CAPS.length} horizontals are used by all three verticals. Those are the operating system; everything else is a vertical pack.</p>`;
+    return;
+  }
+  let h=`<button class="close" id="pclose">Close</button>`;
+  if(sel.t==="sol"){
+    const s=solById[sel.id], V=VERTICALS[s.v];
+    const capIds=s.caps.filter(id=>!id.startsWith("C")&&!id.startsWith("F")), conIds=s.caps.filter(id=>id.startsWith("C"));
+    const shared=s.caps.filter(id=>SOL.some(o=>o.v!==s.v&&o.caps.includes(id))).length;
+    h+=`<div class="eyebrow" style="color:${V.color}">${esc(V.name)} · ${esc(LENSES[s.lens])}</div><h3>${esc(s.name)}</h3>
+      <div class="meta">${pill(s.s)}<span class="mono" style="color:var(--muted)">${esc(s.src)}</span></div>
+      <p>${esc(s.d)}</p>
+      <p style="font-size:13px;color:var(--muted)">${shared} of its ${s.caps.length} building blocks are also used in another vertical.</p>
+      <h5>Built from</h5>${capList(capIds)}<h5>Connects to</h5>${capList(conIds)}<p style="font-size:13px;color:var(--muted);margin-top:12px">Runs on the shared foundation: tenancy and roles, model gateway, privacy, accessibility and observability (F1–F5).</p>`;
+  } else if(sel.t==="cap"){
+    const c=capById[sel.id], L=LAYERS.find(l=>l.id===c.l);
+    const users=SOL.filter(s=>uses(s,c.id));
+    const byV=["k12","he","wf"].map(v=>users.filter(s=>s.v===v).length);
+    h+=`<div class="eyebrow">${L.n} ${esc(L.name)} · ${c.id}</div><h3>${esc(c.name)}</h3>
+      <div class="meta"><i class="mat mat-${matCls(c.m)}"></i>${c.m==="gap"?'<span style="font-size:13px">Gap</span>':""}
+      <span class="mono" style="color:var(--muted)">· used by ${users.length} solutions (${byV.join(" / ")})</span></div>
+      <p>${esc(c.d)}</p>
+      <h5>Nuance by vertical</h5><div class="nuance">${["k12","he","wf"].map(v=>`<div style="--vc:${VERTICALS[v].color}"><b>${VERTICALS[v].name}</b>${esc(c.nu[v])}</div>`).join("")}</div>
+      <h5>On the current backlog</h5><ul class="epics">${c.ep.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>
+      <h5>Used by</h5><ul class="plist">${users.map(s=>`<li><button data-sol="${s.id}"><span class="id" style="color:${VERTICALS[s.v].color}">${VERTICALS[s.v].name.replace("Higher Ed","HE").replace("Workforce","WF")}</span><span class="t">${esc(s.name)}</span></button></li>`).join("")}</ul>`;
+  } else if(sel.t==="vert"){
+    const V=VERTICALS[sel.id]; const n=SOL.filter(s=>s.v===sel.id);
+    const cnt=k=>n.filter(s=>s.s===k).length;
+    h+=`<div class="eyebrow" style="color:${V.color}">Vertical profile</div><h3>${esc(V.name)}</h3>
+      <div class="meta"><span class="mono" style="color:var(--muted)">${n.length} solutions · ${cnt("idea")} new ideas</span></div>
+      <dl class="kv"><dt>Buyers</dt><dd>${esc(V.buyers)}</dd><dt>Aligns to</dt><dd>${esc(V.align)}</dd><dt>People</dt><dd>${esc(V.people)}</dd>
+      <dt>House rules</dt><dd>${esc(V.rules)}</dd><dt>Outputs</dt><dd>${esc(V.outputs)}</dd><dt>Systems</dt><dd>${esc(V.systems)}</dd></dl>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px">Highlighted below: every horizontal this vertical's solutions use.</p>`;
+  }
+  p.innerHTML=h;
+  $("#pclose").onclick=()=>select(null);
+  p.querySelectorAll("[data-cap]").forEach(b=>b.onclick=()=>select({t:"cap",id:b.dataset.cap}));
+  p.querySelectorAll("[data-sol]").forEach(b=>b.onclick=()=>select({t:"sol",id:b.dataset.sol}));
+  p.scrollTop=0;
+}
+
+/* ---------- reuse ---------- */
+function renderReuse(){
+  const vis=SOL.filter(visible);
+  const counts=CAPS.map(c=>({c,v:["k12","he","wf"].map(v=>vis.filter(s=>s.v===v&&uses(s,c.id)).length)}));
+  const max=Math.max(1,...counts.flatMap(x=>x.v));
+  const kernel=counts.filter(x=>x.v.every(n=>n>0)), gapsK=kernel.filter(x=>x.c.m==="gap");
+  const top=[...counts].filter(x=>x.c.l!=="L1").sort((a,b)=>b.v.reduce((p,q)=>p+q,0)-a.v.reduce((p,q)=>p+q,0))[0];
+  $("#reuse-callouts").innerHTML=`
+    <div class="callout"><b>${kernel.length} / ${CAPS.length}</b><p>horizontals used by all three verticals in this view. Build these once.</p></div>
+    <div class="callout"><b>${top.c.id} · ${esc(top.c.name)}</b><p>the most reused capability above the foundation: ${top.v.reduce((a,b)=>a+b,0)} of ${vis.length} solutions in view.</p></div>
+    <div class="callout"><b>${gapsK.length}</b><p>shared capabilities still marked as gaps${gapsK.length?": "+gapsK.map(x=>esc(x.c.name)).join(", "):""}.</p></div>`;
+  let h=`<thead><tr><th>Capability</th><th>Gap</th><th style="text-align:center;color:var(--k12)">K-12</th><th style="text-align:center;color:var(--he)">Higher Ed</th><th style="text-align:center;color:var(--wf)">Workforce</th><th>Reads as</th></tr></thead><tbody>`;
+  LAYERS.forEach(L=>{
+    h+=`<tr class="lrow"><th colspan="6">${L.n} · ${esc(L.name)}</th></tr>`;
+    counts.filter(x=>x.c.l===L.id).forEach(({c,v})=>{
+      const n=v.filter(x=>x>0).length;
+      const verdict=c.l==="L1"?"<b>Kernel</b> · under every solution":n===3?"<b>Kernel</b>":n===2?"Shared by two":n===1?"Vertical pack":"Not used in view";
+      h+=`<tr><td><span class="mono" style="color:var(--muted)">${c.id}</span> ${esc(c.name)}</td><td><span style="display:inline-flex;gap:6px;align-items:center;font-size:12.5px"><i class="mat mat-${matCls(c.m)}"></i>${matLabel[c.m]}</span></td>`+
+        v.map((x,i)=>{const pct=x?Math.round(12+60*x/max):0;const col=["var(--k12)","var(--he)","var(--wf)"][i];
+          return `<td class="n ${x?"":"h0"}" style="background:${x?`color-mix(in oklab, ${col} ${pct}%, var(--surface))`:"transparent"};color:${x&&pct>45?"var(--surface)":"inherit"}">${x||"·"}</td>`}).join("")+
+        `<td class="verdict">${verdict}</td></tr>`;
+    });
+  });
+  $("#heat").innerHTML=h+"</tbody>";
+}
+
+/* ---------- backlog ---------- */
+function renderBacklog(){
+  const max=Math.max(...BACKLOG.map(b=>b.c)), total=BACKLOG.reduce((a,b)=>a+b.c,0);
+  $("#bars").innerHTML=BACKLOG.map(b=>`<div class="bar"><div class="lbl">${esc(b.n)}<small>${esc(b.to)}</small></div>
+    <div class="track"><div class="fill" style="width:${(b.c/max*100).toFixed(1)}%;background:${b.pack?"var(--he)":"var(--accent)"}"></div></div>
+    <div class="v">${b.c}</div></div>`).join("")+
+    `<div class="legend" style="margin-top:6px"><span><i class="sw" style="width:10px;height:10px;border-radius:2px;background:var(--he);display:inline-block"></i>One vertical solution · ${Math.round(44/total*100)}%</span><span><i class="sw" style="width:10px;height:10px;border-radius:2px;background:var(--accent);display:inline-block"></i>Horizontal · ${100-Math.round(44/total*100)}%</span></div>`;
+  $("#ws").innerHTML=`<thead><tr><th>Workstream</th><th>Layer</th><th>Capabilities</th></tr></thead><tbody>`+
+    WORKSTREAMS.map(([w,l,c])=>`<tr><td>${esc(w)}</td><td>${esc(l)}</td><td class="mono">${esc(c)}</td></tr>`).join("")+`</tbody>`;
+  $("#gaps").innerHTML=CAPS.filter(c=>c.m==="gap").map(c=>{
+    const n=SOL.filter(s=>uses(s,c.id)).length;
+    return `<li><i class="mat mat-gap"></i><div><b>${c.id} · ${esc(c.name)}</b> <span class="mono" style="color:var(--muted)">needed by ${n} solutions</span><br><span style="color:var(--muted)">Backlog: ${esc(c.ep.join("; "))}</span></div></li>`}).join("");
+}
+
+/* ---------- stats ---------- */
+function renderStats(){
+  const all3=CAPS.filter(c=>["k12","he","wf"].every(v=>SOL.some(s=>s.v===v&&uses(s,c.id)))).length;
+  $("#stats").innerHTML=`<div class="stat"><b>${SOL.length}</b><span>solutions</span></div>
+    <div class="stat"><b>${CAPS.length}</b><span>horizontals</span></div>
+    <div class="stat"><b>${all3}</b><span>shared by all three</span></div>`;
+}
+
+function select(sel){ state.sel=sel; render(); }
+function render(){ syncFilters(); renderVerticals(); renderLayers(); renderPanel(); renderReuse(); }
+
+/* ---------- tabs ---------- */
+function showView(v){
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===v));
+  document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="view-"+v);
+  try{ if(location.hash!=="#"+v) history.replaceState(null,"","#"+v); }catch(e){}
+  document.dispatchEvent(new CustomEvent("viewchange",{detail:v}));
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>showView(t.dataset.view));
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && state.sel) select(null); });
+
+buildFilters(); renderStats(); renderBacklog(); render(); renderJourney(); renderLJ();
+const h=(location.hash||"").slice(1); if(["map","net","k12","lj","reuse","backlog"].includes(h)) showView(h);
+</script>
+<script>
+/* ---------- 3D connections view ---------- */
+(function(){
+const stage=document.getElementById("net-stage");
+const view=document.getElementById("view-net");
+if(!window.THREE){ stage.innerHTML='<p class="net-err">The 3D view could not load its engine. Check your connection and reload the page.</p>'; return; }
+const T=THREE;
+const nstate={v:"all",lens:"all",ideas:true,rotate:true};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#888888";
+const C=n=>new T.Color(css(n));
+const VX={k12:-72,he:0,wf:72};
+const LAYER_Y={L6:22,L5:11,L4:0,L3:-11,L2:-22,L1:-33};
+const SOL_Y=42, VERT_Y=60;
+let inited=false,running=false,renderer,scene,camera,controls,raycaster,pointer,edges=null,edgeData=[],plates=[];
+const nodes=[],byId={},pick=[];
+let hoverId=null,selId=null,downAt=null,resizeObs=null;
+
+/* ---------- layout ---------- */
+function layout(){
+  // verticals
+  Object.keys(VERTICALS).forEach(v=>addNode({id:"v:"+v,kind:"vert",ref:VERTICALS[v],key:v,pos:new T.Vector3(VX[v],VERT_Y,0)}));
+  // solutions: grid under each vertical, rows grouped by lens
+  Object.keys(VERTICALS).forEach(v=>{
+    const list=["cc","lo","io"].flatMap(l=>SOL.filter(s=>s.v===v&&s.lens===l));
+    const cols=4, rows=Math.ceil(list.length/cols);
+    list.forEach((s,i)=>{const c=i%cols,r=Math.floor(i/cols);
+      addNode({id:"s:"+s.id,kind:"sol",ref:s,pos:new T.Vector3(VX[v]+(c-(cols-1)/2)*10,SOL_Y,(r-(rows-1)/2)*9)});});
+  });
+  // capabilities: x pulled toward the verticals that use them
+  LAYERS.forEach(L=>{
+    const caps=CAPS.filter(c=>c.l===L.id).map(c=>{
+      const users=SOL.filter(s=>s.caps.includes(c.id));
+      const tx=c.l==="L1"||!users.length?0:users.reduce((a,s)=>a+VX[s.v],0)/users.length;
+      return {c,tx};
+    }).sort((a,b)=>a.tx-b.tx);
+    const gap=caps.length>6?17:22;
+    caps.forEach((o,i)=>{o.x=i?Math.max(o.tx,caps[i-1].x+gap):o.tx;});
+    const shift=(caps[0].x+caps[caps.length-1].x)/2-caps.reduce((a,o)=>a+o.tx,0)/caps.length;
+    caps.forEach((o,i)=>{const x=Math.max(-96,Math.min(96,o.x-shift));
+      addNode({id:"c:"+o.c.id,kind:"cap",ref:o.c,pos:new T.Vector3(x,LAYER_Y[L.id]+1.2,i%2?8:-8)});});
+  });
+}
+function addNode(n){nodes.push(n);byId[n.id]=n;}
+
+/* ---------- scene ---------- */
+function geomFor(n){
+  if(n.kind==="vert") return new T.BoxGeometry(7,7,7);
+  if(n.kind==="cap"){const k=n.ref.l==="L1"?SOL.length:SOL.filter(s=>s.caps.includes(n.ref.id)).length;const r=1.6+Math.sqrt(k)*0.55;n.r=r;return new T.CylinderGeometry(r,r,2.2,28);}
+  const l=n.ref.lens; n.r=2;
+  if(l==="cc") return new T.BoxGeometry(3.4,3.4,3.4);
+  if(l==="lo") return new T.SphereGeometry(2.1,20,14);
+  return new T.ConeGeometry(2.3,3.8,3);
+}
+function build(){
+  renderer=new T.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  stage.prepend(renderer.domElement); renderer.domElement.className="net-canvas";
+  renderer.domElement.setAttribute("aria-label","3D map of verticals, solutions and shared capabilities. Use the Focus menu for a keyboard way in.");
+  scene=new T.Scene();
+  camera=new T.PerspectiveCamera(38,1,1,2000);
+  controls=new T.OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.dampingFactor=.08;
+  controls.minDistance=60; controls.maxDistance=520; controls.autoRotateSpeed=.55;
+  controls.addEventListener("start",()=>{nstate.rotate=false;syncRotate();});
+  scene.add(new T.HemisphereLight(0xffffff,0x8a93a8,.95));
+  const d=new T.DirectionalLight(0xffffff,.55); d.position.set(80,160,120); scene.add(d);
+  // layer plates
+  LAYERS.forEach(L=>{
+    const g=new T.BoxGeometry(212,.6,52), m=new T.MeshBasicMaterial({transparent:true,opacity:.06,depthWrite:false});
+    const p=new T.Mesh(g,m); p.position.set(0,LAYER_Y[L.id],0); scene.add(p);
+    const e=new T.LineSegments(new T.EdgesGeometry(g),new T.LineBasicMaterial({transparent:true,opacity:.35}));
+    e.position.copy(p.position); scene.add(e); plates.push({L,p,e});
+  });
+  layout();
+  nodes.forEach(n=>{
+    const mat=new T.MeshStandardMaterial({roughness:.55,metalness:.05,transparent:true});
+    const mesh=new T.Mesh(geomFor(n),mat); mesh.position.copy(n.pos);
+    if(n.kind==="sol"&&n.ref.lens==="io") mesh.rotation.y=Math.PI/6;
+    if(n.kind==="vert") mesh.rotation.y=Math.PI/4;
+    mesh.userData.id=n.id; n.mesh=mesh; scene.add(mesh); pick.push(mesh);
+    if(n.kind==="sol"&&n.ref.s==="idea"){ // dashed-outline feel for ideas
+      const w=new T.LineSegments(new T.EdgesGeometry(mesh.geometry),new T.LineBasicMaterial({transparent:true}));
+      mesh.add(w); n.wire=w; }
+  });
+  raycaster=new T.Raycaster(); pointer=new T.Vector2();
+  const el=renderer.domElement;
+  el.addEventListener("pointermove",onMove);
+  el.addEventListener("pointerdown",e=>{downAt=[e.clientX,e.clientY];});
+  el.addEventListener("pointerup",onUp);
+  el.addEventListener("pointerleave",()=>{hoverId=null;tip.hidden=true;paint();});
+  resizeObs=new ResizeObserver(resize); resizeObs.observe(stage);
+  buildEdges(); recolor(); resize();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>setTimeout(()=>{recolor();paint();},30));
+  new MutationObserver(()=>{recolor();paint();}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+}
+
+/* ---------- filters ---------- */
+const nvis=s=>(nstate.v==="all"||s.v===nstate.v)&&(nstate.lens==="all"||s.lens===nstate.lens)&&(nstate.ideas||s.s!=="idea");
+function buildEdges(){
+  if(edges){scene.remove(edges);edges.geometry.dispose();}
+  edgeData=[];
+  SOL.filter(nvis).forEach(s=>{
+    edgeData.push({a:"v:"+s.v,b:"s:"+s.id,v:s.v});
+    s.caps.forEach(c=>{if(!c.startsWith("F")) edgeData.push({a:"s:"+s.id,b:"c:"+c,v:s.v});});
+  });
+  const pos=new Float32Array(edgeData.length*6);
+  edgeData.forEach((e,i)=>{const A=byId[e.a].pos,B=byId[e.b].pos;pos.set([A.x,A.y,A.z,B.x,B.y,B.z],i*6);});
+  const g=new T.BufferGeometry(); g.setAttribute("position",new T.BufferAttribute(pos,3)); g.setAttribute("color",new T.BufferAttribute(new Float32Array(pos.length),3));
+  edges=new T.LineSegments(g,new T.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.9,depthWrite:false}));
+  scene.add(edges);
+}
+
+/* ---------- colour ---------- */
+let PAL={};
+function recolor(){
+  PAL={bg:C("--surface"),ink:C("--ink"),muted:C("--muted"),accent:C("--accent"),night:C("--ink"),gap:C("--gap"),line:C("--line"),
+       k12:C("--k12"),he:C("--he"),wf:C("--wf")};
+  plates.forEach(({p,e})=>{p.material.color.copy(PAL.accent);e.material.color.copy(PAL.accent);});
+  nodes.forEach(n=>{
+    let c;
+    if(n.kind==="vert"||n.kind==="sol") c=PAL[n.kind==="vert"?n.key:n.ref.v];
+    else c=n.ref.m==="gap"?PAL.gap:n.ref.l==="L2"?PAL.ink:n.ref.l==="L1"?PAL.muted:PAL.accent;
+    n.color=c.clone(); n.mesh.material.color.copy(c);
+    if(n.wire){n.mesh.material.color.copy(PAL.bg); n.wire.material.color.copy(c);}
+  });
+}
+
+/* ---------- focus ---------- */
+function focusSet(id){
+  if(!id) return null;
+  const n=byId[id], S=new Set([id]);
+  if(n.kind==="sol"){ S.add("v:"+n.ref.v); n.ref.caps.forEach(c=>S.add("c:"+c)); }
+  if(n.kind==="cap"){ SOL.filter(s=>nvis(s)&&uses(s,n.ref.id)).forEach(s=>{S.add("s:"+s.id);S.add("v:"+s.v);}); }
+  if(n.kind==="vert"){ SOL.filter(s=>s.v===n.key&&nvis(s)).forEach(s=>{S.add("s:"+s.id);s.caps.forEach(c=>S.add("c:"+c));}); }
+  return S;
+}
+function edgeHot(e,id,F){
+  if(!id) return false; const n=byId[id];
+  if(n.kind==="sol") return e.a===id||e.b===id;
+  if(n.kind==="cap") return e.b===id||(e.a.startsWith("v:")&&F.has(e.b));
+  if(n.kind==="vert") return byId[e.a].kind==="vert"?e.a===id:byId[e.a].ref.v===n.key;
+  return false;
+}
+function paint(){
+  if(!inited) return;
+  const id=selId||hoverId, F=focusSet(id);
+  nodes.forEach(n=>{
+    const shown=n.kind!=="sol"||nvis(n.ref);
+    n.mesh.visible=shown;
+    let active=true;
+    if(n.kind==="cap"&&n.ref.l!=="L1") active=SOL.some(s=>nvis(s)&&s.caps.includes(n.ref.id));
+    const op=F?(F.has(n.id)?1:.1):(active?1:.25);
+    n.mesh.material.opacity=op; if(n.wire) n.wire.material.opacity=op;
+    n.mesh.scale.setScalar(n.id===selId?1.35:n.id===hoverId?1.2:1);
+  });
+  const col=edges.geometry.attributes.color, tmp=new T.Color();
+  const hotCache=id?new Set(edgeData.map((e,i)=>edgeHot(e,id,F)?i:-1).filter(i=>i>=0)):null;
+  edgeData.forEach((e,i)=>{
+    const base=PAL[e.v];
+    if(!F) tmp.copy(base).lerp(PAL.bg,.62);
+    else if(hotCache.has(i)) tmp.copy(base);
+    else tmp.copy(base).lerp(PAL.bg,.94);
+    col.setXYZ(i*2,tmp.r,tmp.g,tmp.b); col.setXYZ(i*2+1,tmp.r,tmp.g,tmp.b);
+  });
+  col.needsUpdate=true;
+  renderLabels(F); renderCard();
+}
+
+/* ---------- labels ---------- */
+const labelLayer=document.getElementById("net-labels"), tip=document.getElementById("net-tip");
+let labelEls=[];
+function nameOf(n){return n.kind==="vert"?n.ref.name:n.ref.name;}
+function renderLabels(F){
+  labelLayer.innerHTML=""; labelEls=[];
+  const add=(text,pos,cls,id)=>{const d=document.createElement("div");d.className="nl "+cls;d.textContent=text;labelLayer.appendChild(d);labelEls.push({d,pos,id});};
+  nodes.filter(n=>n.kind==="vert").forEach(n=>add(n.ref.name,n.pos.clone().add(new T.Vector3(0,7,0)),"nl-v",n.id));
+  plates.forEach(({L})=>add(L.n+" "+L.name,new T.Vector3(-106,LAYER_Y[L.id]+1,26),"nl-l"));
+  if(F){
+    const id=selId||hoverId; let list=[...F].filter(x=>x!==id&&!x.startsWith("v:")); if(list.length>14||!selId) list=[];
+    list.forEach(x=>{const n=byId[x]; if(n.mesh.visible) add(nameOf(n),n.pos.clone().add(new T.Vector3(0,(n.r||2)+2.4,0)),"nl-n",x);});
+    const n=byId[id]; if(n.kind!=="vert") add(nameOf(n),n.pos.clone().add(new T.Vector3(0,(n.r||2)+3,0)),"nl-n nl-sel",id);
+  }
+  placeLabels();
+}
+const _p=new T.Vector3();
+function placeLabels(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  labelEls.forEach(({d,pos})=>{_p.copy(pos).project(camera);
+    const off=_p.z>1; d.style.display=off?"none":"block";
+    d.style.transform=`translate(${(_p.x*.5+.5)*w}px,${(-_p.y*.5+.5)*h}px) translate(-50%,-100%)`;});
+}
+
+/* ---------- picking ---------- */
+function hit(e){
+  const r=renderer.domElement.getBoundingClientRect();
+  pointer.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  raycaster.setFromCamera(pointer,camera);
+  const hits=raycaster.intersectObjects(pick.filter(m=>m.visible),false);
+  return hits.length?hits[0].object.userData.id:null;
+}
+function onMove(e){
+  const id=hit(e);
+  renderer.domElement.style.cursor=id?"pointer":"grab";
+  if(id){const n=byId[id];tip.hidden=false;tip.textContent=nameOf(n)+(n.kind==="cap"?" · "+n.ref.id:"");
+    const r=stage.getBoundingClientRect();tip.style.transform=`translate(${e.clientX-r.left+14}px,${e.clientY-r.top+14}px)`;}
+  else tip.hidden=true;
+  if(id!==hoverId){hoverId=id; if(!selId) paint(); else {nodes.forEach(n=>n.mesh.scale.setScalar(n.id===selId?1.35:n.id===hoverId?1.2:1));}}
+}
+function onUp(e){
+  if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>5) return;
+  focus(hit(e));
+}
+function focus(id){
+  selId=id; if(id){nstate.rotate=false;syncRotate();}
+  const f=document.getElementById("net-find"); f.value=id||"";
+  paint();
+}
+
+/* ---------- info card ---------- */
+const card=document.getElementById("net-card");
+function renderCard(){
+  const id=selId;
+  if(!id){card.innerHTML=`<div class="eyebrow">How to read this</div><h3>Every solution, wired to what it is built from</h3>
+    <p>Verticals sit on top, their solutions below them, and the shared capabilities on six stacked layers underneath. A capability sits under the verticals that use it, so the ones in the middle are shared by all three.</p>
+    <p class="nc-hint">Drag to orbit, scroll to zoom, right-drag to pan. Select any shape to trace its connections.</p>`; card.classList.remove("on"); return;}
+  card.classList.add("on");
+  const n=byId[id]; let h=`<button class="close" id="nc-close">Close</button>`;
+  const link=(x)=>{const m=byId[x];return `<li><button data-nf="${x}"><span class="id">${m.kind==="cap"?m.ref.id:m.kind==="vert"?"":VERTICALS[m.ref.v].name.replace("Higher Ed","HE").replace("Workforce","WF")}</span><span class="t">${esc(nameOf(m))}</span></button></li>`;};
+  if(n.kind==="sol"){const s=n.ref;
+    h+=`<div class="eyebrow" style="color:var(--${s.v})">${esc(VERTICALS[s.v].name)} · ${esc(LENSES[s.lens])}</div><h3>${esc(s.name)}</h3>${s.s==="idea"?'<span class="st st-idea">Idea</span>':""}
+    <p>${esc(s.d)}</p><h5>Built from ${s.caps.length} capabilities</h5><ul class="plist">${s.caps.map(c=>link("c:"+c)).join("")}</ul>`;
+  } else if(n.kind==="cap"){const c=n.ref, L=LAYERS.find(l=>l.id===c.l), users=SOL.filter(s=>nvis(s)&&uses(s,c.id));
+    h+=`<div class="eyebrow">${L.n} ${esc(L.name)} · ${c.id}</div><h3>${esc(c.name)}</h3><p>${esc(c.d)}</p>
+    <h5>Used by ${users.length} solutions</h5><ul class="plist">${users.slice(0,40).map(s=>link("s:"+s.id)).join("")}</ul>`;
+  } else {const list=SOL.filter(s=>s.v===n.key&&nvis(s));
+    h+=`<div class="eyebrow" style="color:var(--${n.key})">Vertical</div><h3>${esc(n.ref.name)}</h3><p>Aligns to ${esc(n.ref.unit)}.</p>
+    <h5>${list.length} solutions</h5><ul class="plist">${list.map(s=>link("s:"+s.id)).join("")}</ul>`;}
+  h+=`<button class="nc-open" id="nc-open">Open on the map</button>`;
+  card.innerHTML=h;
+  card.querySelector("#nc-close").onclick=()=>focus(null);
+  card.querySelectorAll("[data-nf]").forEach(b=>b.onclick=()=>focus(b.dataset.nf));
+  card.querySelector("#nc-open").onclick=()=>{showView("map");state.v="all";state.lens="all";state.idea="all";
+    if(n.kind==="sol") select({t:"sol",id:n.ref.id}); else if(n.kind==="cap") select({t:"cap",id:n.ref.id}); else select({t:"vert",id:n.key});
+    window.scrollTo({top:0});};
+}
+
+/* ---------- toolbar ---------- */
+function chips(host,items,get,set){
+  host.querySelectorAll(".chip").forEach(c=>c.remove());
+  items.forEach(([k,label,sw])=>{const b=document.createElement("button");b.className="chip";b.dataset.k=k;b.innerHTML=(sw||"")+esc(label);
+    b.onclick=()=>{set(k);sync();refilter();};host.appendChild(b);});
+  const sync=()=>host.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(get()===c.dataset.k)));
+  sync(); return sync;
+}
+function refilter(){ if(selId&&selId.startsWith("s:")&&!nvis(byId[selId].ref)) selId=null; buildEdges(); paint(); }
+function syncRotate(){const b=document.getElementById("net-rotate"); if(b) b.setAttribute("aria-pressed",String(nstate.rotate));}
+function toolbar(){
+  chips(document.getElementById("nf-v"),[["all","All"],...Object.entries(VERTICALS).map(([k,v])=>[k,v.name,`<i class="sw" style="background:var(--${k})"></i>`])],()=>nstate.v,k=>nstate.v=k);
+  chips(document.getElementById("nf-l"),[["all","All"],...Object.entries(LENSES).map(([k,v])=>[k,v,`<i class="lens lens-${k}"></i>`])],()=>nstate.lens,k=>nstate.lens=k);
+  chips(document.getElementById("nf-i"),[["yes","Include"],["no","Hide"]],()=>nstate.ideas?"yes":"no",k=>nstate.ideas=k==="yes");
+  const f=document.getElementById("net-find");
+  f.innerHTML=`<option value="">Focus on…</option>`+
+    `<optgroup label="Verticals">${Object.entries(VERTICALS).map(([k,v])=>`<option value="v:${k}">${esc(v.name)}</option>`).join("")}</optgroup>`+
+    Object.entries(VERTICALS).map(([k,v])=>`<optgroup label="${esc(v.name)} solutions">${SOL.filter(s=>s.v===k).map(s=>`<option value="s:${s.id}">${esc(s.name)}</option>`).join("")}</optgroup>`).join("")+
+    LAYERS.map(L=>`<optgroup label="${L.n} ${esc(L.name)}">${CAPS.filter(c=>c.l===L.id).map(c=>`<option value="c:${c.id}">${c.id} ${esc(c.name)}</option>`).join("")}</optgroup>`).join("");
+  f.onchange=()=>focus(f.value||null);
+  document.getElementById("net-rotate").onclick=()=>{nstate.rotate=!nstate.rotate;syncRotate();};
+  document.getElementById("net-reset").onclick=()=>{frame();focus(null);};
+  syncRotate();
+}
+
+/* ---------- loop ---------- */
+function frame(){ const w=stage.clientWidth||1000,h=stage.clientHeight||600,a=w/h, wide=w>760;
+  const k=Math.max(1,1.35/a); controls.target.set(wide?30:0,6,0);
+  const dir=new T.Vector3(150,95,235).normalize(); camera.position.copy(controls.target).add(dir.multiplyScalar(300*k)); controls.update(); }
+function resize(){ if(!renderer) return; const w=stage.clientWidth,h=stage.clientHeight; if(!w||!h) return;
+  renderer.setSize(w,h,false); camera.aspect=w/h; camera.position.multiplyScalar(1); camera.updateProjectionMatrix(); }
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function loop(){ if(!running) return; requestAnimationFrame(loop);
+  controls.autoRotate=nstate.rotate&&!selId&&!REDUCED; controls.update();
+  renderer.render(scene,camera); placeLabels(); }
+function start(){ if(!inited){ try{ build(); toolbar(); inited=true; resize(); frame(); paint(); }catch(err){ stage.innerHTML='<p class="net-err">The 3D view could not start on this device ('+esc(err.message)+').</p>'; return; } }
+  resize(); if(!running){running=true;loop();} }
+function stop(){ running=false; }
+document.addEventListener("viewchange",e=>{ e.detail==="net"?start():stop(); });
+if(!view.hidden) start();
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&running&&selId) focus(null); });
+})();
+
+</script>
+
+</body></html>
