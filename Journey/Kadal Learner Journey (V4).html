@@ -1,0 +1,807 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kadal Learner Journey (V4)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky brand header; a three-stop snapped stage (statement, blue card, journey mosaic); each tile opens below the header into a full stage view. Isometric block art in every tile. Single light look by choice. */
+:root{
+  color-scheme:light;
+  --bg:#FFFFFF; --ink:#0A2540; --ink-2:#425466; --grey:#5E6B7A; --hair:#E3E8EE;
+  --kadal:#2F6FE0; --orange:#FF5A1F;
+  --f:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.65,0,.2,1); --spring:cubic-bezier(.2,.8,.2,1);
+  --hh:64px;
+  --card:0 0 0 1px rgba(10,37,64,.06),0 1px 2px rgba(10,37,64,.05),0 10px 24px -12px rgba(10,37,64,.22);
+}
+*{box-sizing:border-box}
+html.snap{scroll-snap-type:y mandatory}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:#fff}
+h1,h2,h3{font-weight:600;margin:0;letter-spacing:-.03em;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--kadal);outline-offset:3px}
+.btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;background:var(--orange);color:#1A0B04;text-decoration:none;font-weight:600;padding:12px 22px;font-size:15px;transition:transform .25s var(--spring),box-shadow .25s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px -12px rgba(255,90,31,.8)}
+svg.i{width:16px;height:16px;flex:none}
+
+/* sticky header */
+.hdr{position:fixed;z-index:60;top:env(safe-area-inset-top,0px);left:0;right:0;height:var(--hh);background:rgba(255,255,255,.92);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--hair)}
+.hdr .in{height:100%;max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}
+.brand img{height:19px;width:auto;display:block}
+.brand .kw{height:20px;width:auto;display:block}
+.brand .sep{width:1px;height:20px;background:var(--hair)}
+.brand .prod{font-size:14px;font-weight:500;color:var(--grey);padding-left:12px;border-left:1px solid var(--hair)}
+.hdr nav{display:flex;gap:26px;font-size:14px;font-weight:500}
+.hdr nav a{color:var(--ink-2);text-decoration:none}
+.hdr nav a:hover{color:var(--ink)}
+.hdr .btn{padding:9px 16px;font-size:14px}
+@media (max-width:980px){.hdr nav{display:none}}
+@media (max-width:560px){.brand .prod{display:none}.hdr .btn{padding:8px 13px;font-size:13px}}
+
+/* pinned, snapped stage */
+.pin{position:relative;height:300vh}
+.snapmark{position:absolute;left:0;width:1px;height:1px;scroll-snap-align:start;scroll-snap-stop:always}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.st1{position:absolute;left:50%;top:50%;width:min(1000px,calc(100% - 48px));transform:translate(-50%,-50%);text-align:center;will-change:transform,opacity}
+.st1 .eyebrow{font-size:14px;font-weight:600;color:var(--kadal)}
+.st1 h1{font-size:clamp(40px,5.6vw,84px);line-height:1.02;margin-top:18px}
+.st1 h1 span{color:var(--grey)}
+.st1 .hint{display:inline-flex;align-items:center;gap:8px;margin-top:34px;font-size:14px;font-weight:500;color:var(--grey)}
+.st1 .hint svg{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(4px)}}
+.card2{position:absolute;padding:clamp(20px,2vw,32px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border-radius:8px;will-change:left,top,width,height}
+.card2 h2{font-size:clamp(26px,2.7vw,42px);line-height:1.08}
+.card2 .kw{height:30px;width:auto;display:block}
+.card2 .sub{font-size:14px;opacity:.85;margin-top:8px}
+
+/* mosaic */
+.mosaic{position:absolute;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(var(--hh) + 12px);bottom:12px;display:grid;gap:10px;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(7,minmax(0,1fr));
+  grid-template-areas:"P P D D W W" "P P D D W W" "A A L L L C" "A A L L L C" "F F L L L K" "O O S S R R" "G G S S X X"}
+.tile{position:relative;border:0;border-radius:8px;text-align:left;padding:clamp(12px,1.2vw,20px);background:var(--c);color:var(--i);display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;transform-origin:0 0;will-change:transform;transition:box-shadow .3s}
+.tile .in{transition:opacity .35s;position:relative;z-index:1}
+.tile .lab{display:block;font-weight:600;font-size:clamp(17px,1.6vw,26px);line-height:1.05;letter-spacing:-.025em}
+.tile .meta{display:block;font-size:12.5px;font-weight:500;opacity:.78;margin-top:6px}
+.tile .art{position:absolute;right:clamp(6px,1vw,16px);bottom:clamp(4px,.8vw,12px);width:min(52%,240px);height:min(86%,190px);overflow:visible;transition:opacity .35s}
+.tile.hide .in,.tile.hide .art{opacity:0}
+.tile .tm{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.tile .tm i{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:color-mix(in srgb,var(--i) 14%,transparent);color:var(--i)}
+.tile .tm svg{width:14px;height:14px}
+.tile.big .art{width:min(48%,360px);height:min(66%,270px)}
+.tile:hover{box-shadow:inset 0 0 0 2px var(--i)}
+.tile.k{background:var(--kadal);color:#fff;justify-content:space-between;align-items:flex-start}
+.tile.k .kw{height:18px;width:auto;color:#fff}
+.tile.k small{font-size:11.5px;opacity:.92;line-height:1.5}
+.tile.k .key{display:inline-flex;align-items:center;gap:6px}
+.tile.k .key i{width:9px;height:9px;border-radius:2px;background:#FF5A1F}
+
+/* isometric blocks, coloured per tile */
+.bx polygon{stroke-width:.8;stroke-linejoin:round}
+.bx .t{fill:var(--p-t)}.bx .l{fill:var(--p-l)}.bx .r{fill:var(--p-r)}.bx polygon{stroke:var(--edge)}
+.bx.c .t{fill:var(--c-t)}.bx.c .l{fill:var(--c-l)}.bx.c .r{fill:var(--c-r)}
+.bx.k .t{fill:#FF9A70}.bx.k .l{fill:#FF5A1F}.bx.k .r{fill:#D9480F}.bx.k polygon{stroke:#C2410C}
+.bx.ghost polygon{fill:rgba(255,255,255,.25);stroke:#FF5A1F;stroke-dasharray:3 3}
+.wire{stroke:var(--i);stroke-width:1.2;stroke-dasharray:3 3;opacity:.55}
+.art .bx{transition:translate .6s var(--spring),opacity .4s}
+.mosaic:not(.built) .tile .art .bx[style*="--d"]{opacity:0;translate:0 -24px}
+.mosaic.built .tile .art .bx[style*="--d"]{transition-delay:calc(var(--d) * 70ms + var(--td) * 40ms)}
+.tile:hover .art .bx.k{translate:0 -8px}
+.tile:hover .art .lift{translate:0 -5px}
+.light{--c-t:#FFFFFF;--c-l:color-mix(in srgb,var(--i) 16%,#fff);--c-r:color-mix(in srgb,var(--i) 30%,#fff);--p-t:rgba(255,255,255,.4);--p-l:color-mix(in srgb,var(--i) 12%,var(--c));--p-r:color-mix(in srgb,var(--i) 22%,var(--c));--edge:color-mix(in srgb,var(--i) 30%,transparent)}
+.dark{--c-t:color-mix(in srgb,var(--i) 78%,var(--c));--c-l:color-mix(in srgb,var(--i) 44%,var(--c));--c-r:color-mix(in srgb,var(--i) 28%,var(--c));--p-t:color-mix(in srgb,var(--i) 14%,var(--c));--p-l:color-mix(in srgb,#000 18%,var(--c));--p-r:color-mix(in srgb,#000 30%,var(--c));--edge:color-mix(in srgb,var(--i) 28%,transparent)}
+
+@media (max-width:760px){
+  .pin{height:auto}.snapmark{display:none}
+  .stage{position:static;height:auto;overflow:visible;padding-top:calc(var(--hh) + 20px)}
+  .st1{position:relative;left:auto;top:auto;transform:none!important;opacity:1!important;width:auto;margin:0 16px 20px;text-align:left}
+  .st1 .hint{display:none}
+  .card2{position:relative;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:0 12px 10px;min-height:200px;background:var(--kadal)!important;color:#fff!important;opacity:1!important}
+  .card2 h2,.card2 .sub{opacity:1!important}
+  .mosaic{position:relative;inset:auto;margin:0 12px 12px;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:170px;grid-template-areas:none;grid-auto-flow:dense}
+  .tile{grid-area:auto!important;transform:none!important}
+  .tile.big{grid-area:span 1 / span 2!important}
+  .tile.hide .in,.tile.hide .art{opacity:1}
+}
+
+/* stage view: opens below the header */
+.detail{position:fixed;z-index:50;background:var(--c);color:var(--i);overflow:hidden;border-radius:8px;transition:left .6s var(--ease),top .6s var(--ease),width .6s var(--ease),height .6s var(--ease),border-radius .6s var(--ease),background-color .45s,color .45s}
+.detail[hidden]{display:none}
+.d-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;opacity:0;transition:opacity .3s}
+.detail.full .d-scroll{opacity:1;transition-delay:.28s}
+.d-in{max-width:1240px;margin:0 auto;padding-block:18px 64px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.d-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;font-weight:500}
+.d-bar .nav{display:flex;gap:8px}
+.d-bar button{width:42px;height:42px;border-radius:50%;border:0;background:#fff;color:var(--ink);display:grid;place-items:center;box-shadow:var(--card)}
+.d-bar svg{width:18px;height:18px}
+.d-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:18px}
+.d-title{font-size:clamp(44px,7vw,104px);line-height:.95;letter-spacing:-.045em}
+.d-media{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.d-media span{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:500;box-shadow:var(--card)}
+.d-media svg{color:var(--kadal)}
+.d-art{width:clamp(180px,22vw,300px);height:auto;overflow:visible}
+.d-art .bx.k{animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{translate:0 -6px}}
+.d-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:28px;margin-top:36px;align-items:start}
+.panel{background:#fff;color:var(--ink);border-radius:10px;box-shadow:var(--card);padding:22px}
+.vs{display:grid;gap:16px}
+.vs small,.blk small{display:block;font-size:12.5px;font-weight:600;color:var(--grey)}
+.vs p{font-size:clamp(19px,1.6vw,23px);font-weight:600;letter-spacing:-.02em;line-height:1.2;margin-top:4px}
+.vs .t p{color:var(--grey);font-weight:500;text-decoration:line-through;text-decoration-color:rgba(94,107,122,.5)}
+.vs .k small{color:var(--kadal)}
+.blk{margin-top:18px;padding-top:16px;border-top:1px solid var(--hair)}
+.blk p{font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.5}
+.blk.who p::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin-right:8px;vertical-align:1px}
+.uch{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.uch h3{font-size:22px}
+.filters{display:flex;gap:2px;padding:3px;border-radius:999px;background:#fff;box-shadow:var(--card)}
+.filters button{border:0;background:none;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;color:var(--ink-2)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.hdr .right{display:flex;align-items:center;gap:12px}
+.hdr .filters.seg{position:relative;display:inline-flex;gap:0;padding:3px;border-radius:999px;background:#E8E8ED;box-shadow:none}
+.hdr .seg button{position:relative;z-index:1;min-width:76px;padding:7px 16px;border-radius:999px;background:transparent!important;color:#1D1D1F!important;font-size:13px;font-weight:500;letter-spacing:-.01em;transition:color .25s}
+.hdr .seg button[aria-pressed="false"]{color:#6E6E73!important}
+.hdr .seg button[aria-pressed="false"]:hover{color:#1D1D1F!important}
+.hdr .seg-ind{position:absolute;z-index:0;top:3px;bottom:3px;left:0;width:0;border-radius:999px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.08),0 3px 8px rgba(0,0,0,.1);transition:transform .42s cubic-bezier(.3,.7,.2,1),width .42s cubic-bezier(.3,.7,.2,1)}
+.hdr .flab{font-size:12.5px;font-weight:500;color:var(--grey);white-space:nowrap}
+.uc-split{display:inline-flex;align-items:center;gap:12px;font-size:13.5px;font-weight:500}
+.more-btn{border:0;border-radius:999px;background:#fff;color:var(--ink);padding:6px 12px;font-size:12.5px;font-weight:500;box-shadow:var(--card)}
+.ucs:not(.more) .tags .ex{display:none}
+.ucs li.empty{grid-column:1/-1;display:block;font-size:15px;color:var(--ink-2)}
+@media (max-width:1180px){.hdr .flab{display:none}}
+@media (max-width:560px){.hdr .btn{display:none}.hdr .filters button{padding:5px 9px;font-size:12px}}
+.ucs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ucs li{background:#fff;color:var(--ink);border-radius:10px;box-shadow:var(--card);padding:12px 14px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;animation:up .45s var(--spring) both}
+.ucs .ico{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:#EEF3FC;color:var(--kadal)}
+.ucs li.f .ico{background:#F1F3F6;color:var(--ink)}
+.ucs b{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.ucs p{font-size:12.5px;color:var(--ink-2);margin-top:3px;line-height:1.45}
+.tags{display:block;margin-top:5px;font-size:11.5px;line-height:1.4;color:var(--grey)}
+.tags span+span::before{content:"\00B7";padding:0 5px}
+.tags span.H{color:#C2410C;font-weight:500}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:900px){.d-grid{grid-template-columns:minmax(0,1fr)}.ucs{grid-template-columns:minmax(0,1fr)}.d-head{grid-template-columns:minmax(0,1fr)}.d-art{display:none}}
+
+/* closing */
+.after{scroll-snap-align:start;min-height:100vh;display:grid;place-items:center;padding-block:calc(var(--hh) + 48px) 64px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));background:#F6F9FC}
+.after .in{max-width:1100px;width:100%}
+.after .eyebrow{font-size:14px;font-weight:600;color:var(--kadal)}
+.after h2{font-size:clamp(36px,5vw,68px);line-height:1;margin-top:14px}
+.after h2 span{color:var(--grey)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:40px}
+.stats div{background:#fff;border-radius:10px;box-shadow:var(--card);padding:20px}
+.stats s{font-size:14px;color:var(--grey)}
+.stats b{display:block;font-size:clamp(32px,3.6vw,48px);font-weight:600;letter-spacing:-.04em;line-height:1;margin-top:8px;white-space:nowrap;color:var(--kadal)}
+.stats small{display:block;font-size:14px;color:var(--ink-2);margin-top:8px}
+.after .row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-top:36px}
+.after .row p{color:var(--ink-2);max-width:48ch}
+.fine{font-size:12.5px;color:var(--grey);margin-top:18px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.after{min-height:0}}
+
+/* stage view as one continuous journey */
+.d-top{position:sticky;top:0;z-index:3;background:var(--c);transition:background-color .5s}
+.d-top .d-in{padding-block:14px 16px}
+.d-head{margin-top:8px!important}
+.d-title{font-size:clamp(36px,4.8vw,72px)!important}
+.d-art{width:clamp(120px,14vw,200px)!important;will-change:transform}
+.d-prog{height:3px;margin-top:14px;background:color-mix(in srgb,var(--i) 20%,transparent);border-radius:2px;overflow:hidden}
+.d-prog i{display:block;height:100%;width:0;background:var(--i);transition:width .2s linear}
+.d-grid{margin-top:22px!important}
+.panel{position:sticky;top:calc(var(--dtop,220px) + 18px)}
+.sw.swap{animation:swapIn .55s var(--spring) both}
+@keyframes swapIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.d-art.swap .bx{animation:drop .6s var(--spring) both;animation-delay:calc(var(--d,0) * 60ms)}
+@keyframes drop{from{opacity:0;translate:0 -22px}to{opacity:1;translate:0 0}}
+.stream{display:grid;gap:56px;padding-bottom:40vh}
+.stream .sec:last-child{min-height:calc(100vh - var(--dtop,220px) - 120px)}
+.sec{position:relative}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px;color:var(--i);position:relative;z-index:1}
+.sec-h h3{font-size:24px;letter-spacing:-.02em}
+.sec-h span{font-size:13px;font-weight:500;opacity:.85}
+.stream .ucs{position:relative;z-index:1}
+.sec-num{position:absolute;z-index:0;right:0;top:-34px;font-size:clamp(90px,12vw,170px);font-weight:700;letter-spacing:-.06em;line-height:1;color:var(--i);opacity:.12;pointer-events:none;will-change:transform}
+.stream .ucs li{animation:none;opacity:0;transform:translateY(22px);transition:opacity .5s var(--spring),transform .6s var(--spring)}
+.stream .ucs li.in{opacity:1;transform:none}
+.more-row{display:flex;justify-content:flex-end;margin-bottom:-36px}
+@media (max-width:900px){
+  .panel{position:static;padding:14px 16px}
+  .panel .blk{display:none}
+  .vs p{font-size:16px!important}
+  .d-title{font-size:32px!important}
+  .sec-num{display:none}
+}
+
+/* horizontal journey */
+.hz{position:relative}
+.hz .snapmark{position:absolute;left:0}
+.hz-stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.hz-track{position:absolute;top:0;left:0;height:100%;display:flex;will-change:transform}
+.hp{position:relative;flex:none;width:100vw;height:100%;background:var(--c);color:var(--i);overflow:hidden;padding-top:calc(var(--hh) + 28px);padding-bottom:72px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.hp-num{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:-4vh;font-size:clamp(160px,30vh,320px);font-weight:700;letter-spacing:-.07em;line-height:.8;opacity:.1;pointer-events:none;will-change:transform}
+.hp-in{position:relative;max-width:1400px;height:100%;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(28px,4vw,64px);row-gap:20px;align-content:center;grid-template-areas:"head art" "vs ucs" ". all"}
+.hp-head{grid-area:head;align-self:end}
+.hp-art{grid-area:art;justify-self:end;align-self:end}
+.hp-vsw{grid-area:vs;align-self:start;display:grid;gap:14px}
+.hp-ucs{grid-area:ucs;align-self:start}
+.hp-all{grid-area:all}
+.hp-in > *{min-width:0;will-change:transform,opacity}
+.hp-meta{font-size:14px;font-weight:500;opacity:.85}
+.hp h2{font-size:clamp(40px,5.2vw,84px);line-height:.95;letter-spacing:-.045em;margin-top:10px}
+.hp-media{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.hp-media span{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:#fff;color:var(--ink);font-size:13px;font-weight:500;box-shadow:var(--card)}
+.hp-media svg{color:var(--kadal)}
+.hp-vs{background:#fff;color:var(--ink);border-radius:10px;box-shadow:var(--card);padding:18px 20px;display:grid;gap:12px}
+.hp-vs small{display:block;font-size:12px;font-weight:600;color:var(--grey)}
+.hp-vs .k small{color:var(--kadal)}
+.hp-vs p{font-size:clamp(16px,1.3vw,19px);font-weight:600;letter-spacing:-.015em;line-height:1.25;margin-top:2px}
+.hp-vs .t p{color:var(--grey);font-weight:500;text-decoration:line-through;text-decoration-color:rgba(94,107,122,.5)}
+.hp-who{font-size:14px;line-height:1.45;opacity:.92}
+.hp-who::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin-right:8px;vertical-align:1px}
+.hp-art{width:min(100%,360px);height:clamp(130px,26vh,240px);overflow:visible}
+.hp-art.swap .bx{animation:drop .6s var(--spring) both;animation-delay:calc(var(--d,0) * 60ms)}
+.hp-ucs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hp-ucs li{background:#fff;color:var(--ink);border-radius:10px;box-shadow:var(--card);padding:12px 14px;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px}
+.hp-ucs .ico{margin-top:-3px;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:#EEF3FC;color:var(--kadal)}
+.hp-ucs li.f .ico{background:#F1F3F6;color:var(--ink)}
+.hp-ucs b{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.hp-ucs p{font-size:12.5px;color:var(--ink-2);margin-top:2px;line-height:1.4}
+.hp-ucs li.empty{display:block;grid-column:1/-1;font-size:14px;color:var(--ink-2)}
+.hp-all{justify-self:start;align-self:start;border:0;border-radius:999px;background:var(--i);color:var(--c);padding:11px 18px;font-size:14px;font-weight:600;display:inline-flex;gap:8px;align-items:center;transition:transform .25s var(--spring)}
+.hp-all:hover{transform:translateX(3px)}
+.hp-all svg{width:16px;height:16px}
+.hz-dots{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);display:flex;gap:4px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--card);z-index:2}
+.hz-dots button{border:0;background:none;width:22px;height:22px;display:grid;place-items:center;padding:0}
+.hz-dots i{width:7px;height:7px;border-radius:4px;background:rgba(10,37,64,.2);transition:width .3s var(--spring),background .3s}
+.hz-dots button[aria-current="step"] i{width:20px;background:var(--ink)}
+@media (max-width:900px){
+  .hz{height:auto!important}.hz .snapmark{display:none}
+  .hz-stage{position:relative;height:auto;overflow:visible}
+  .hz-track{position:relative;transform:none!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:0}
+  .hz-track::-webkit-scrollbar{display:none}
+  .hp{width:88vw;height:auto;scroll-snap-align:center;padding:28px 20px 36px;border-radius:0}
+  .hp-in{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "vs" "ucs" "all";height:auto}
+  .hp-art{display:none}
+  .hp-ucs{grid-template-columns:minmax(0,1fr)}
+  .hp-num{font-size:140px;bottom:-10px}
+  .hz-dots{display:none}
+  .hp-in > *{transform:none!important;opacity:1!important}
+}
+
+.sec-vs{display:none}
+@media (max-width:900px){
+  .panel{display:none}
+  .sec-vs{display:grid;gap:8px;background:#fff;color:var(--ink);border-radius:10px;box-shadow:var(--card);padding:14px 16px;margin-bottom:10px}
+  .sec-vs small{display:block;font-size:11.5px;font-weight:600;color:var(--grey)}
+  .sec-vs .t{color:var(--grey);font-size:14px;text-decoration:line-through;text-decoration-color:rgba(94,107,122,.5)}
+  .sec-vs .k{font-size:15px;font-weight:600}
+  .sec-vs .k small{color:var(--kadal)}
+  .sec-vs .w{font-size:13px;color:var(--ink-2)}
+  .sec-vs .w::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--orange);margin-right:7px;vertical-align:1px}
+  .d-media span{padding:5px 10px;font-size:12.5px}
+}
+@media (max-width:560px){
+  .hdr .in{padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));gap:10px}
+  .brand{gap:8px}.brand img{height:16px}.brand .kw{height:17px}
+  .hdr .seg button,.hdr .filters button{min-width:0;padding:6px 10px;font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html.snap{scroll-snap-type:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="m-W" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="m-T" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="m-L" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h5"/></symbol>
+  <symbol id="m-P" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h3M8 17h6"/></symbol>
+  <symbol id="m-E" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="m-A" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+  <symbol id="m-F" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+  <symbol id="m-S" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="x-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="x-prev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="x-next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="x-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 9 5 5 5-5"/></symbol>
+</defs></svg>
+
+<header class="hdr"><div class="in">
+  <a href="#" class="brand" id="home" aria-label="Kadal, from Straive. Back to start"><img src="data:image/png;base64,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" alt="Straive"><span class="sep" aria-hidden="true"></span><svg class="kw" xmlns="http://www.w3.org/2000/svg" viewBox="53.4 32.8 91.2 24.9" role="img" aria-label="Kadal"><g transform="translate(53.429 32.84)"> <path d="M107.336,81.543l-6.441-9.2-1.668,2.07v7.132H92.9V57.1h6.326V67.165L106.761,57.1h7.764l-9.432,11.445,10.007,13Z" transform="translate(-92.9 -57.1)" fill="currentColor"/> <path d="M143.318,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,140.787,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-109.385 -61.731)" fill="currentColor"/> <path d="M179.855,81.543v-2.07a6.778,6.778,0,0,1-5.234,2.473c-4.371,0-7.822-3.278-7.822-9.317,0-5.809,3.393-9.26,7.822-9.26a6.489,6.489,0,0,1,5.234,2.531V57.1h5.636V81.543Zm0-11.56a4.5,4.5,0,0,0-3.393-1.553c-2.243,0-3.911,1.668-3.911,4.313s1.668,4.313,3.911,4.313a4.462,4.462,0,0,0,3.393-1.61Z" transform="translate(-124.298 -57.1)" fill="currentColor"/> <path d="M216.118,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,213.587,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-140.316 -61.731)" fill="currentColor"/> <path d="M241.6,81.543V57.1h5.636V81.543Z" transform="translate(-156.079 -57.1)" fill="currentColor"/> </g></svg><span class="prod">Learner Journey</span></a>
+  <div class="right"><span class="flab" id="flab">Show use cases for</span><div class="filters seg" role="group" aria-labelledby="flab"><span class="seg-ind" aria-hidden="true"></span><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="s" aria-pressed="false">Students</button><button type="button" data-f="f" aria-pressed="false">Staff</button></div>
+  <a class="btn" href="https://www.straive.com" target="_blank" rel="noopener">Book a session</a></div>
+</div></header>
+
+<div class="pin" id="pin">
+  <span class="snapmark" style="top:0"></span><span class="snapmark" style="top:100vh"></span><span class="snapmark" style="top:200vh"></span>
+  <div class="stage" id="stage">
+    <section class="st1" id="st1">
+      <p class="eyebrow">For college and university leaders</p>
+      <h1>Every college has twelve doors. <span>At most of them, the student starts over.</span></h1>
+      <p class="hint"><svg class="i" aria-hidden="true"><use href="#x-down"/></svg>Scroll</p>
+    </section>
+    <section class="card2" id="card2"><h2>Kadal gives every door the same memory, and puts a person behind every decision.</h2><div><svg class="kw" xmlns="http://www.w3.org/2000/svg" viewBox="53.4 32.8 91.2 24.9" role="img" aria-label="Kadal"><g transform="translate(53.429 32.84)"> <path d="M107.336,81.543l-6.441-9.2-1.668,2.07v7.132H92.9V57.1h6.326V67.165L106.761,57.1h7.764l-9.432,11.445,10.007,13Z" transform="translate(-92.9 -57.1)" fill="currentColor"/> <path d="M143.318,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,140.787,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-109.385 -61.731)" fill="currentColor"/> <path d="M179.855,81.543v-2.07a6.778,6.778,0,0,1-5.234,2.473c-4.371,0-7.822-3.278-7.822-9.317,0-5.809,3.393-9.26,7.822-9.26a6.489,6.489,0,0,1,5.234,2.531V57.1h5.636V81.543Zm0-11.56a4.5,4.5,0,0,0-3.393-1.553c-2.243,0-3.911,1.668-3.911,4.313s1.668,4.313,3.911,4.313a4.462,4.462,0,0,0,3.393-1.61Z" transform="translate(-124.298 -57.1)" fill="currentColor"/> <path d="M216.118,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,213.587,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z" transform="translate(-140.316 -61.731)" fill="currentColor"/> <path d="M241.6,81.543V57.1h5.636V81.543Z" transform="translate(-156.079 -57.1)" fill="currentColor"/> </g></svg><p class="sub">Learner Journey, from Straive</p></div></section>
+    <div class="mosaic" id="mosaic"></div>
+  </div>
+</div>
+
+
+<section class="hz" id="hz" aria-label="The journey, stage by stage">
+  <div class="hz-stage">
+    <div class="hz-track" id="hzTrack"></div>
+    <nav class="hz-dots" id="hzDots" aria-label="Stages"></nav>
+  </div>
+</section>
+<section class="after" id="after" aria-labelledby="aH">
+  <div class="in">
+    <p class="eyebrow">In our model of one adult learner</p>
+    <h2 id="aH">Same student, same life. <span>One college remembers her.</span></h2>
+    <div class="stats">
+      <div><s>61 days</s><b>5 days</b><small>to get admitted</small></div>
+      <div><s>6 times</s><b>0</b><small>asked for the same thing</small></div>
+      <div><s>11 days</s><b>1 day</b><small>to help after her shifts changed</small></div>
+      <div><s>10 terms</s><b>8 terms</b><small>to her degree</small></div>
+    </div>
+    <div class="row"><p>124 use cases across 12 stages.</p><a class="btn" href="https://www.straive.com" target="_blank" rel="noopener">Book a working session</a></div>
+    <p class="fine">Figures come from a modeled journey, not a measured result. A pilot measures the same counters on your students.</p>
+  </div>
+</section>
+
+<div class="detail" id="detail" hidden role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="d-scroll" id="dScroll">
+    <div class="d-top" id="dTop"><div class="d-in">
+      <div class="d-bar"><span id="dMeta" class="sw"></span><div class="nav">
+        <button type="button" id="dPrev" aria-label="Previous stage"><svg aria-hidden="true"><use href="#x-prev"/></svg></button>
+        <button type="button" id="dNext" aria-label="Next stage"><svg aria-hidden="true"><use href="#x-next"/></svg></button>
+        <button type="button" id="dClose" aria-label="Close"><svg aria-hidden="true"><use href="#x-close"/></svg></button></div></div>
+      <div class="d-head"><div><h2 class="d-title sw" id="dTitle"></h2><div class="d-media sw" id="dMedia"></div></div><svg class="d-art" id="dArt" aria-hidden="true"></svg></div>
+    </div></div>
+    <div class="d-in">
+      <div class="d-grid">
+        <aside class="panel" id="dPanel" aria-live="polite"><div class="sw" id="dPanelIn">
+          <div class="vs"><div class="t"><small>Today</small><p id="dT"></p></div><div class="k"><small>With Kadal</small><p id="dK"></p></div></div>
+          <div class="blk"><small>Behind the scenes</small><p id="dBack"></p></div>
+          <div class="blk who"><small>Who decides</small><p id="dWho"></p></div>
+        </div></aside>
+        <div class="stream" id="stream"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const MEDIA = {W:'Website', T:'Text message', L:'LMS', P:'Student portal', E:'Email', A:'Assistant', F:'Web form', S:'Staff workspace'};
+const PHASES = {B:'Before the journey', D:'Discovery to admission', G:'Admission to graduation', X:'Across the journey'};
+const STAGES = [
+ {name:'Plan and build programs', ph:'B', media:['S'], who:'The curriculum committee and the provost approve. Accreditor reviews keep their own timeline.', tag:'Provost',
+  t:'Months to build a new program.', k:'Built in a few weeks, with the same approval gates.', back:'Program teams start from drafted outcomes, with standards mapped and gaps flagged. The committee gets a complete evidence pack.',
+  hold:.25, wait:0, ask:0, waitLabel:'in committee', uc:[
+  ['001','f','Demand signal analysis','Labor market data, competitor programs and recommender searches assembled in days.','Insight','L','S'],
+  ['002','f','Competitor program scan','Compares program length, price, outcomes and delivery models.','Insight','L','S'],
+  ['003','f','Outcomes drafting','Drafts program learning outcomes for faculty to edit.','Generate','L','S'],
+  ['004','f','Accreditation standards alignment','Maps every outcome to accreditor standards and flags gaps instantly.','Review','M','S'],
+  ['005','f','Curriculum map and sequencing','Courses, prerequisites and credit hours checked together.','Generate','L','S'],
+  ['006','f','Assessment and rubric drafting','Assessments and rubrics aligned to each outcome.','Generate','L','S'],
+  ['007','f','Accessibility and licensing checks','Missing captions, alt text and licensing problems caught while building.','Review','L','S'],
+  ['008','f','Course quality review','Scores each course against a quality rubric before launch.','Review','L','S'],
+  ['009','f','Content refresh and open resources','Finds outdated material and suggests open educational resources.','Recommend','L','S'],
+  ['010','f','Approval evidence pack','Assembles what the committee and provost need to decide.','Generate','M','S'],
+  ['011','f','Catalog and recommender update','Adds the new program to the catalog, recommender and pathway generator.','Assist','L','S']]},
+ {name:'Discover', ph:'D', media:['W','A','T'], who:'A counselor approves the follow-up before it goes out.', tag:'Counselor',
+  t:'A call back in 3 days, during her shift.', k:'Answered at 11 pm. Her counselor gets a brief.', back:'Leads arrive routed to the right counselor with a summary, and each call starts from a one-page brief.',
+  hold:.35, wait:5, ask:1, uc:[
+  ['012','s','Program-fit recommender','Ranks programs on goals, schedule and credits, and says why.','Recommend','M','W'],
+  ['013','s','24/7 enquiry assistant','Answers program and policy questions at any hour, then hands off to a counselor.','Assist','M','A'],
+  ['014','s','Multilingual enquiry support','The same help in the learner’s own language.','Assist','M','A'],
+  ['015','s','Credit for prior learning estimate','Estimates credit for work experience and certifications.','Predict','H','W'],
+  ['016','s','Net price and affordability check','Cost after likely aid, shown before applying.','Predict','M','W'],
+  ['017','s','Personalized program pages and events','Pages and webinars matched to the learner’s goals.','Recommend','M','W'],
+  ['018','f','Lead routing with context','Sends each lead to the right counselor with a summary.','Assist','L','S'],
+  ['019','f','Lead scoring and outreach timing','Which prospects to contact, and when.','Predict','H','S'],
+  ['020','f','Counselor call brief','A one-page brief before each call.','Generate','L','S'],
+  ['021','f','Campaign and content drafting','Drafts emails, pages and ads for marketing to review.','Generate','L','S'],
+  ['022','f','Employer and partner referral insights','Shows which partners send learners who persist.','Insight','L','S']]},
+ {name:'Pathway', ph:'D', media:['W'], who:'An advisor confirms course equivalencies.', tag:'Advisor',
+  t:'No plan until after she is admitted.', k:'Her plan, cost and time to degree, before she applies.', back:'Advisors confirm suggested equivalencies instead of building plans by hand. Transfer rules stay current.',
+  hold:.15, wait:2, ask:0, uc:[
+  ['023','s','Pathway generator','A term-by-term plan from catalog rules and transfer credits.','Generate','M','W'],
+  ['024','s','Cost and time to degree','Estimates cost after grants and time to finish at her pace.','Predict','M','W'],
+  ['025','s','Shift-friendly sequencing','Orders courses around work and family schedules.','Generate','M','W'],
+  ['026','s','What-if scenarios','Part-time against full-time, or a change of program.','Predict','M','W'],
+  ['027','f','Equivalency suggestions','Proposes course equivalencies for advisors to confirm.','Review','M','S'],
+  ['028','f','Transfer rule upkeep','Turns articulation agreements into transfer rules for review.','Generate','L','S']]},
+ {name:'Apply', ph:'D', media:['F','A','T'], who:'Admission decisions stay with people.', tag:'Admissions',
+  t:'She retypes everything. 40 minutes.', k:'Pre-filled with her consent. 12 minutes.', back:'Applications arrive complete, likely fraud is flagged, and reviewers get a summary of each file.',
+  hold:.25, wait:4, ask:1, uc:[
+  ['029','s','Form assist','Pre-fills fields from earlier answers, with consent.','Assist','M','F'],
+  ['030','s','Plain-language help','Explains confusing questions, like residency, in one line.','Assist','M','F'],
+  ['031','s','Application status assistant','Tells the applicant where things stand and what is next.','Assist','M','T'],
+  ['032','s','Personal statement coaching','Feedback on clarity and structure, never writing it for them.','Tutor','M','A'],
+  ['033','f','Identity verification and fraud detection','Flags likely fake applicants for staff to review.','Review','H','S'],
+  ['034','f','Reviewer decision support with bias checks','Summarizes each file for reviewers. Decisions stay with people.','Insight','H','S'],
+  ['035','f','Incomplete application follow-ups','Drafts reminders that name the exact missing item.','Generate','M','S']]},
+ {name:'Documents', ph:'D', media:['F','T'], who:'An admissions officer confirms the file is complete.', tag:'Admissions officer',
+  t:'A missing page is found on day 14.', k:'Flagged before she closes the tab.', back:'Every upload is pre-checked, so officers see only the files that need a person. Transcripts flow into the record.',
+  hold:.5, wait:15, ask:0, uc:[
+  ['036','s','Document reviewer','Checks every upload in seconds: pages, signatures, terms.','Review','M','F'],
+  ['037','s','Instant gap identification','Says exactly what is missing before the learner closes the tab.','Review','M','T'],
+  ['038','f','Pre-checked document queue','Officers see only the files that need a person.','Review','M','S'],
+  ['039','f','International credential evaluation','Drafts equivalencies for foreign transcripts.','Review','H','S'],
+  ['040','f','Transcript data extraction','Pulls courses and grades into the student record.','Assist','M','S']]},
+ {name:'Aid and credits', ph:'D', media:['P','E','A'], who:'The registrar approves the transfer map.', tag:'Registrar',
+  t:'Asked again for the same documents. 3 weeks.', k:'Aid explained. Transfer map approved in a day.', back:'The registrar approves a drafted transfer map, verification arrives pre-filled, and likely melt is flagged before term.',
+  hold:.6, wait:27, ask:1, uc:[
+  ['041','s','Aid package explainer','Grants and loans explained in plain terms.','Assist','M','P'],
+  ['042','s','Scholarship matching','Finds scholarships the learner qualifies for.','Recommend','M','P'],
+  ['043','s','Verification pre-fill','Completes checklists from documents already on file.','Assist','M','P'],
+  ['044','s','Billing and payment plan assistant','Explains balances and sets up payment plans.','Assist','M','A'],
+  ['045','s','Military and veteran benefits guidance','Walks veterans through using their education benefits.','Assist','M','A'],
+  ['046','f','Transfer credit map drafts','Drafts which credits apply, for the registrar to approve.','Generate','M','S'],
+  ['047','f','Verification document review','Pre-checks verification files for aid officers.','Review','M','S'],
+  ['048','f','Aid compliance checks','Flags academic progress and eligibility issues early.','Review','H','S'],
+  ['049','f','Yield and melt prediction','Which admitted students may not show up, and why.','Predict','H','S']]},
+ {name:'Orient', ph:'G', media:['L','P'], who:'An advisor approves the onboarding and bridge plan.', tag:'Advisor',
+  t:'Her algebra gap goes unnoticed.', k:'Gap found. Bridge modules before her first course.', back:'Advisors see what each new student needs at a glance, and accommodation requests are routed and tracked.',
+  hold:.15, wait:0, ask:1, waitLabel:'asked again', uc:[
+  ['050','s','Adaptive readiness diagnostic','Finds gaps, like algebra, before the first quiz.','Tutor','M','L'],
+  ['051','s','Personal onboarding plan','Bridge modules and orientation booked around work.','Generate','M','L'],
+  ['052','s','Accessibility setup','Captions, read-aloud and contrast on from the start.','Assist','M','L'],
+  ['053','s','Guided platform tour and tech check','Gets the learner set up before day one.','Assist','M','L'],
+  ['054','s','Schedule builder','Registers courses that fit around work.','Recommend','M','P'],
+  ['055','s','Cohort and peer matching','Connects learners with similar schedules and goals.','Recommend','M','P'],
+  ['056','f','Diagnostic summary for advisors','What each new learner needs, at a glance.','Insight','M','S'],
+  ['057','f','Accommodation request workflow','Routes and tracks accommodation requests for the accessibility office.','Assist','M','S']]},
+ {name:'Learn', ph:'G', media:['L','A'], who:'The instructor approves every variant, path and grade.', tag:'Instructor',
+  t:'Feedback on her quiz arrives a week later.', k:'Misconception caught the same day, for 14 classmates too.', back:'Instructors see class-wide patterns, approve lesson variants and start from drafted feedback.',
+  hold:.25, wait:0, ask:0, waitLabel:'waiting for feedback', uc:[
+  ['058','s','Ask the Content','Answers grounded in course materials, with citations.','Tutor','M','A'],
+  ['059','s','Explain This','Re-explains content at any depth.','Tutor','M','A'],
+  ['060','s','Quiz Me','Adaptive practice aligned to the module.','Tutor','M','L'],
+  ['061','s','Flashcard Forge','Flashcards generated from module content.','Generate','M','L'],
+  ['062','s','Key Concepts Map','A visual concept map of the module.','Generate','M','L'],
+  ['063','s','Infographics and slide decks','Visual summaries and slides from module content.','Generate','M','L'],
+  ['064','s','Prep Coach','Coaching through assignment preparation.','Tutor','M','A'],
+  ['065','s','Assignment Reviewer','Rubric-aligned feedback on a draft, never a grade.','Review','M','L'],
+  ['066','s','Writing feedback','Feedback on clarity, structure and citations.','Review','M','L'],
+  ['067','s','Research Assistant','Finds evidence and sources, cited.','Assist','M','A'],
+  ['068','s','My Learning Path','A seven-day plan that fits the learner’s schedule.','Recommend','M','L'],
+  ['069','s','Progress Pulse and Deadline Watch','Standing, deadlines and prerequisites at a glance.','Insight','M','L'],
+  ['070','s','Translation and accessibility conversion','Captions, transcripts, alt text and translation.','Assist','M','L'],
+  ['071','s','Simulations and practice labs','Hands-on practice with feedback.','Tutor','M','L'],
+  ['072','s','Study group matching','Groups learners stuck on the same topic.','Recommend','M','L'],
+  ['073','f','Class Pulse','Performance and engagement for the section.','Insight','L','S'],
+  ['074','f','Engagement Map','Engagement across the class, so a cohort problem reads as one.','Insight','L','S'],
+  ['075','f','Quiz and standards quiz builder','Aligned assessments, with flags on untaught material.','Generate','L','S'],
+  ['076','f','Rubric Builder','Scoring rubrics drafted for review.','Generate','L','S'],
+  ['077','f','Lesson Variants','Two or three versions for different learner profiles.','Generate','M','S'],
+  ['078','f','Discussion prompts and summaries','Prompts tiered by Bloom’s taxonomy, and thread summaries.','Generate','L','S'],
+  ['079','f','Grading assistance','Drafted feedback the instructor edits and signs off.','Review','H','S'],
+  ['080','f','Alternative Path','A bridge route for a group stuck on the same prerequisite.','Generate','M','S'],
+  ['081','f','Assessment redesign support','Ideas for assessments that hold up when learners use AI.','Generate','L','S']]},
+ {name:'Persist and support', ph:'G', media:['T','A','E'], who:'An advisor approves every message. Wellbeing concerns always go to people.', tag:'Advisor',
+  t:'Her shifts change. First alert on day 11.', k:'Her advisor writes the next day, with reasons.', back:'Advisors get a list of students at risk with the reasons and a drafted message. Holds and stop-outs surface two weeks early.',
+  hold:.6, wait:0, ask:2, waitLabel:'11 days unnoticed', uc:[
+  ['082','s','Help desk assistant','Policy, deadline, billing and tech questions answered at any hour.','Assist','M','A'],
+  ['083','s','AI agent for routine actions','Resets passwords, explains holds, drafts extension requests.','Assist','M','A'],
+  ['084','s','Opt-in reminders','Deadlines and registration reminders the learner chose.','Assist','M','T'],
+  ['085','s','Basic needs resources','Food, housing and childcare support nearby.','Recommend','M','A'],
+  ['086','s','Wellbeing check-in','Routes concerns straight to a human counselor.','Assist','H','T'],
+  ['087','f','At-Risk Radar with reasons','Flags risk within a day and says why.','Predict','H','S'],
+  ['088','f','Drafted outreach','A message that knows the learner’s situation, ready for the advisor.','Generate','M','S'],
+  ['089','f','Predicted stop-out list','Spots holds and registration gaps two weeks early.','Predict','H','S'],
+  ['090','f','Hold explanation drafts','Plain explanations of holds, with options.','Generate','M','S'],
+  ['091','f','Re-engagement outreach','Brings learners who stopped out back.','Generate','M','S'],
+  ['092','f','Help desk escalation summaries','Staff get the full context, not a cold ticket.','Insight','M','S'],
+  ['093','f','Crisis escalation routing','Urgent concerns reach a counselor at once.','Assist','H','S']]},
+ {name:'Career', ph:'G', media:['P','A'], who:'A career advisor approves each match.', tag:'Career advisor',
+  t:'One career fair a term, missed for shifts.', k:'Skills mapped to roles. An internship matched.', back:'Career advisors review matches instead of building them, and see which employers hire graduates.',
+  hold:.15, wait:0, ask:0, uc:[
+  ['094','s','Skill-to-job mapping','Matches mastered skills to real roles.','Recommend','M','P'],
+  ['095','s','Resume builder','Drafts a resume from coursework and experience.','Generate','M','P'],
+  ['096','s','Mock interviews','Practice on the learner’s own schedule.','Tutor','M','A'],
+  ['097','s','Internship matching','Placements that fit the learner’s background.','Recommend','M','P'],
+  ['098','s','Portfolio and skills transcript','Evidence of skills employers can read.','Generate','M','P'],
+  ['099','f','Internship match review','Career advisors approve each match.','Review','M','S'],
+  ['100','f','Employer partnership insights','Which employers hire graduates, and for what.','Insight','L','S'],
+  ['101','f','Labor-market alignment','Flags gaps between programs and job demand.','Insight','L','S']]},
+ {name:'Graduate and beyond', ph:'G', media:['E','P'], who:'The registrar confirms the degree audit.', tag:'Registrar',
+  t:'Graduates two terms late. A newsletter follows.', k:'Graduates on time, then mentors new students.', back:'Degree audits arrive flagged, and cohort results flow back to program review and accreditation.',
+  hold:0, wait:0, ask:0, uc:[
+  ['102','s','Credential wallet','Diploma and badges ready to share.','Assist','M','P'],
+  ['103','s','Mentor matching','Pairs alumni with new learners.','Recommend','M','E'],
+  ['104','s','Lifelong learning recommendations','Courses and certificates for what comes next.','Recommend','M','E'],
+  ['105','s','Stackable credential pathways','Shows how certificates build toward degrees.','Recommend','M','P'],
+  ['106','f','Degree audit flags','Checks requirements and flags exceptions.','Review','M','S'],
+  ['107','f','Alumni outcome tracking','Jobs, salaries and further study, from surveys and data.','Insight','M','S'],
+  ['108','f','Program review evidence','Cohort results flow back for accreditation.','Insight','L','S'],
+  ['109','f','Advancement and giving insights','Which alumni are likely to give or volunteer.','Insight','M','S']]},
+ {name:'Run the institution', ph:'X', media:['S'], who:'The office that owns each report, schedule or policy signs it off.', tag:'Office owner',
+  t:'Reports built by hand. No record of who approved what.', k:'One audit trail, bias checks and forecasts.', back:'Forecasts, schedules, compliance reports and accreditation evidence are drafted from work already logged.',
+  hold:0, wait:0, ask:0, uc:[
+  ['110','f','Enrollment forecasting','Projects enrollment by program and term.','Predict','L','S'],
+  ['111','f','Section planning and scheduling','Drafts course sections from the forecast.','Predict','L','S'],
+  ['112','f','Faculty workload balancing','Shows load across sections and terms.','Insight','L','S'],
+  ['113','f','Accreditation self-study and evidence','Drafts self-study sections from logged evidence.','Generate','M','S'],
+  ['114','f','Compliance reporting drafts','Assembles federal and state reports for review.','Generate','M','S'],
+  ['115','f','Help desk knowledge upkeep','Updates answers when policies change.','Generate','L','S'],
+  ['116','f','Call and chat quality review','Reviews every conversation, not a sample.','Review','L','S'],
+  ['117','f','Faculty onboarding and development','Training paced to each new instructor.','Tutor','L','S'],
+  ['118','f','Policy and contract review','Flags conflicts and missing clauses.','Review','L','S'],
+  ['119','f','Data quality checks','Finds duplicates and gaps in student records.','Review','L','S'],
+  ['120','f','Consent and privacy controls','Checks every AI use against consent and privacy rules.','Review','L','S'],
+  ['121','f','Bias monitoring','Watches AI outputs for unequal treatment across groups.','Insight','L','S'],
+  ['122','f','Approval audit trail','Logs who approved every AI draft, and when.','Insight','L','S'],
+  ['123','f','Model evaluation','Tests AI accuracy before and after each change.','Review','L','S'],
+  ['124','f','Risk score explanations','Every score shows its reasons, never a bare number.','Insight','L','S']]}
+];
+
+/* each stage's channels come from its own use cases, so the tile, the panel and the cards always agree */
+STAGES.forEach(st => { const n = {}; st.uc.forEach(u => n[u[6]] = (n[u[6]] || 0) + 1); const m = Object.keys(n).filter(k => k !== 'S').sort((a, b) => n[b] - n[a]); if (n.S) m.push('S'); st.media = m; });
+const SENS = {H:'High sensitivity', M:'Medium', L:'Low'};
+const LOOK = [
+ {area:'P', c:'#13294B', i:'#B9CCEB', dark:1, from:[-.24,.30,.2,.46], slug:'plan'},
+ {area:'D', c:'#8ECFF2', i:'#0B3A5C', from:[.06,-.32,.3,.24], slug:'discover'},
+ {area:'W', c:'#9ADDBE', i:'#0E4A33', from:[.7,-.3,.26,.3], slug:'pathway'},
+ {area:'A', c:'#F6D772', i:'#5A4100', from:[-.26,.82,.26,.3], slug:'apply'},
+ {area:'C', c:'#ECE5D7', i:'#3B3225', from:[1.03,.28,.1,.5], slug:'documents'},
+ {area:'F', c:'#86D7D0', i:'#0B4744', from:[.28,1.06,.3,.16], slug:'aid'},
+ {area:'O', c:'#CFBDF4', i:'#3A226F', from:[.9,1.02,.2,.2], slug:'orient'},
+ {area:'L', c:'#2F6FE0', i:'#E1EBFF', dark:1, big:1, from:[.42,1.12,.42,.42], slug:'learn'},
+ {area:'S', c:'#F4B5CA', i:'#5C1230', from:[1.06,.62,.2,.3], slug:'support'},
+ {area:'R', c:'#CBE57A', i:'#2E4106', from:[.58,-.36,.26,.2], slug:'career'},
+ {area:'G', c:'#6B2457', i:'#F6C7E5', dark:1, from:[-.3,.04,.26,.2], slug:'graduate'},
+ {area:'X', c:'#252A33', i:'#C9CED8', dark:1, from:[1.04,.06,.22,.5], slug:'governance'}
+];
+/* isometric block art (same drawing method as the Governed by design section) */
+const C30 = Math.cos(Math.PI / 6);
+const P = (x, y, z) => [(x - y) * C30, (x + y) / 2 - (z || 0)];
+const rr = n => Math.round(n * 10) / 10;
+const pts = a => a.map(q => { const p = P(q[0], q[1], q[2]); return rr(p[0]) + ',' + rr(p[1]); }).join(' ');
+const B = (x, y, z, w, d, h, cls, dd) => `<g class="bx ${cls || ''}"${dd != null ? ` style="--d:${dd}"` : ''}><polygon class="t" points="${pts([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]])}"/><polygon class="l" points="${pts([[x,y+d,z+h],[x+w,y+d,z+h],[x+w,y+d,z],[x,y+d,z]])}"/><polygon class="r" points="${pts([[x+w,y,z+h],[x+w,y+d,z+h],[x+w,y+d,z],[x+w,y,z]])}"/></g>`;
+const Ln = (a, b) => { const p = P(a[0], a[1], a[2]), q = P(b[0], b[1], b[2]); return `<line class="wire" x1="${rr(p[0])}" y1="${rr(p[1])}" x2="${rr(q[0])}" y2="${rr(q[1])}"/>`; };
+const plate = (s, z) => B(-s, -s, (z || 0) - 5, s * 2, s * 2, 5, 'plate');
+const VB = '-92 -76 184 136'; // one frame for every scene, so all twelve sit at the same scale
+const ART = [
+ // plan and build: tiers rising to an approved program
+ [VB, plate(50) + B(-40,-40,0,80,80,8,'c',0) + B(-28,-28,8,56,56,8,'c',1) + B(-16,-16,16,32,32,8,'c',2) + B(-8,-8,24,16,16,16,'k',3)],
+ // discover: three enquiries wired to one counselor
+ [VB, plate(50) + Ln([-30,-30,10],[0,0,22]) + Ln([30,-30,10],[0,0,22]) + Ln([-30,30,10],[0,0,22]) + B(-38,-38,0,16,16,12,'c',0) + B(22,-38,0,16,16,12,'c',1) + B(-38,22,0,16,16,12,'c',2) + B(-10,-10,0,20,20,26,'k',3)],
+ // pathway: steps climbing toward the degree
+ [VB, plate(50) + [0,1,2,3,4].map(k => B(-44 + k * 18, 22 - k * 16, 0, 16, 16, 8 + k * 9, k === 4 ? 'k' : 'c', k)).join('')],
+ // apply: a form with fields, one finished
+ [VB, plate(50) + B(-40,-34,0,80,68,6,'c',0) + B(-30,-26,6,60,10,4,'c lift',1) + B(-30,-8,6,60,10,4,'c lift',2) + B(-30,10,6,34,10,4,'c lift',3) + B(16,10,6,14,14,16,'k',4)],
+ // documents: a stack of pages, the missing one placed on top
+ [VB, plate(50) + B(-30,-22,0,56,46,6,'c',0) + B(-26,-26,8,56,46,6,'c',1) + B(-22,-30,16,56,46,6,'c',2) + B(-18,-34,24,56,46,6,'k',3)],
+ // aid and credits: credits stacking up, the transferred stack approved
+ [VB, plate(50) + [[-38,18],[-6,-4],[26,-26]].map((q, j) => [0,1,2,3,4,5,6].slice(0, [2,4,7][j]).map(n => B(q[0], q[1], n * 7, 22, 22, 6, (j === 2 && n === 6) ? 'k' : 'c', j * 2 + n * .5)).join('')).join('')],
+ // orient: a gap found and bridged before the first course
+ [VB, plate(50) + B(-46,-14,0,28,28,18,'c',0) + B(18,-14,0,28,28,18,'c',1) + B(-36,-6,18,12,12,12,'c',2) + B(-20,-8,12,40,16,6,'k',3)],
+ // learn: a class at similar levels, one lesson variant lifting the group
+ [VB, plate(50) + [[-40,-40,18],[-12,-40,22],[16,-40,16],[-40,-12,20],[-12,-12,24],[16,-12,18],[-40,16,16],[-12,16,22],[16,16,46]].map((b, k) => B(b[0], b[1], 0, 24, 24, b[2], k === 8 ? 'k' : 'c', k)).join('')],
+ // persist and support: the student held inside a ring of support
+ [VB, plate(50) + B(-44,-44,0,88,6,20,'c',0) + B(-44,-44,0,6,88,20,'c',1) + B(38,-44,0,6,88,20,'c',2) + B(-44,38,0,88,6,20,'c',3) + B(-12,-12,0,24,24,24,'k',4)],
+ // career: skills rising toward a role
+ [VB, plate(50) + B(-38,-12,0,22,26,18,'c',0) + B(-12,-12,0,22,26,32,'c',1) + B(14,-12,0,22,26,48,'k',2)],
+ // graduate: a podium, the graduate on top
+ [VB, plate(50) + B(-40,-13,0,26,26,16,'c',0) + B(-14,-13,0,26,26,30,'c',1) + B(12,-13,0,26,26,9,'c',2) + B(-7,-6,30,12,12,14,'k',3)],
+ // run the institution: every slot accounted for, one being filled
+ [VB, plate(50) + [[-38,-38],[-8,-38],[22,-38],[-38,-8],[-8,-8],[22,-8],[-38,22],[-8,22]].map((b, k) => B(b[0], b[1], 0, 18, 18, 14, 'c', k)).join('') + B(22,22,0,18,18,14,'ghost') + B(22,22,0,18,18,22,'k',8)]
+];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon = m => `<svg class="i" aria-hidden="true"><use href="#m-${m}"/></svg>`;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KW = "<svg class=\"kw\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"53.4 32.8 91.2 24.9\" role=\"img\" aria-label=\"Kadal\"><g transform=\"translate(53.429 32.84)\"> <path d=\"M107.336,81.543l-6.441-9.2-1.668,2.07v7.132H92.9V57.1h6.326V67.165L106.761,57.1h7.764l-9.432,11.445,10.007,13Z\" transform=\"translate(-92.9 -57.1)\" fill=\"currentColor\"/> <path d=\"M143.318,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,140.787,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z\" transform=\"translate(-109.385 -61.731)\" fill=\"currentColor\"/> <path d=\"M179.855,81.543v-2.07a6.778,6.778,0,0,1-5.234,2.473c-4.371,0-7.822-3.278-7.822-9.317,0-5.809,3.393-9.26,7.822-9.26a6.489,6.489,0,0,1,5.234,2.531V57.1h5.636V81.543Zm0-11.56a4.5,4.5,0,0,0-3.393-1.553c-2.243,0-3.911,1.668-3.911,4.313s1.668,4.313,3.911,4.313a4.462,4.462,0,0,0,3.393-1.61Z\" transform=\"translate(-124.298 -57.1)\" fill=\"currentColor\"/> <path d=\"M216.118,86.174V84.391a7.292,7.292,0,0,1-5.521,2.185,5.86,5.86,0,0,1-6.1-5.809c0-4.313,3.393-5.579,6.1-5.579a7.15,7.15,0,0,1,5.521,2.07V75.017c0-1.553-1.323-2.588-3.566-2.588a7.555,7.555,0,0,0-5,1.9l-2.013-3.566A12.453,12.453,0,0,1,213.587,68c4.256,0,8.224,1.553,8.224,7.074V86.116h-5.694Zm0-6.1a4.022,4.022,0,0,0-3.163-1.265c-1.5,0-2.818.633-2.818,2.07,0,1.38,1.323,2.07,2.818,2.07a4.022,4.022,0,0,0,3.163-1.265Z\" transform=\"translate(-140.316 -61.731)\" fill=\"currentColor\"/> <path d=\"M241.6,81.543V57.1h5.636V81.543Z\" transform=\"translate(-156.079 -57.1)\" fill=\"currentColor\"/> </g></svg>";
+
+const mosaic = $('mosaic');
+mosaic.innerHTML = STAGES.map((s, i) => { const L = LOOK[i];
+  return `<button type="button" class="tile ${L.dark ? 'dark' : 'light'}${L.big ? ' big' : ''}" data-i="${i}" style="grid-area:${L.area};--c:${L.c};--i:${L.i};--td:${i}" aria-label="${esc(s.name)}, ${s.uc.length} use cases. Open stage">
+    <span class="in"><span class="lab">${esc(s.name)}</span><span class="meta" data-m="${i}"></span></span>
+    <svg class="art" viewBox="${ART[i][0]}" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">${ART[i][1]}</svg></button>`; }).join('') +
+  `<div class="tile k" style="grid-area:K" aria-hidden="true"><span class="in">${KW}</span><small class="in" id="kSum"></small></div>`;
+const tiles = [...mosaic.querySelectorAll('.tile')];
+
+let W = 1, H = 1, finals = [], flat = false, shown = 0, target = 0;
+function measure(){
+  W = innerWidth; H = innerHeight; flat = W <= 760;
+  document.documentElement.classList.toggle('snap', !flat && !REDUCED);
+  tiles.forEach(t => t.style.transform = 'none');
+  const sr = $('stage').getBoundingClientRect();
+  finals = tiles.map(t => { const r = t.getBoundingClientRect(); return {x: r.left - sr.left, y: r.top - sr.top, w: r.width, h: r.height}; });
+  if (flat) mosaic.classList.add('built');
+  draw(true);
+}
+const st1 = $('st1'), card2 = $('card2');
+function place(el, x, y, w, h){ el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
+function readP(){ const pin = $('pin'), r = pin.getBoundingClientRect(), span = pin.offsetHeight - innerHeight; return span > 0 ? clamp(-r.top / span, 0, 1) : 1; }
+const mix = (a, b, t) => 'rgb(' + a.map((v, k) => Math.round(lerp(v, b[k], t))).join(',') + ')';
+let lastDrawn = -1;
+function draw(force){
+  if (flat) return;
+  const p = REDUCED ? 1 : shown; if (!force && Math.abs(p - lastDrawn) < .0004) return; lastDrawn = p;
+  // stop 1 to 2: the statement lifts away, the card rises and floods blue
+  const a = ease(clamp(p / .5, 0, 1));
+  st1.style.opacity = 1 - clamp(p / .22, 0, 1); st1.style.transform = `translate(-50%,calc(-50% - ${a * 120}px))`;
+  const rise = ease(clamp((p - .04) / .3, 0, 1)), fill = clamp((p - .26) / .22, 0, 1);
+  const shrink = ease(clamp((p - .6) / .32, 0, 1));
+  const K = finals[finals.length - 1] || {x: W * .8, y: H * .7, w: 120, h: 100};
+  const cw = Math.min(.36 * W, 560), ch = Math.min(.62 * (H - 64), 520), cx = (W - cw) / 2, cy = 64 + (H - 64 - ch) / 2;
+  place(card2, lerp(cx, K.x, shrink), lerp(lerp(H + 40, cy, rise), K.y, shrink), lerp(cw, K.w, shrink), lerp(ch, K.h, shrink));
+  card2.style.background = fill < .5 ? mix([243, 247, 255], [150, 185, 246], fill * 2) : mix([150, 185, 246], [47, 111, 224], (fill - .5) * 2);
+  card2.style.color = fill < .55 ? '#2F6FE0' : '#fff';
+  card2.style.boxShadow = fill < .1 ? '0 0 0 1px #DCE6F8' : 'none';
+  card2.style.opacity = shrink > .97 ? 0 : 1;
+  card2.querySelectorAll('h2,.sub,.kw').forEach(e => e.style.opacity = 1 - clamp(shrink * 2.4, 0, 1));
+  // stop 2 to 3: tiles fly in from the edges and lock into the mosaic
+  tiles.forEach((t, k) => {
+    const F = finals[k]; if (!F) return;
+    if (k >= LOOK.length) { const e = clamp((p - .9) / .08, 0, 1); t.style.opacity = e; t.classList.toggle('hide', e < .98); return; }
+    const fr = LOOK[k].from, e = ease(clamp((p - (.5 + k * .018)) / .3, 0, 1));
+    const x = lerp(fr[0] * W, F.x, e), y = lerp(fr[1] * H, F.y, e), w = lerp(fr[2] * W, F.w, e), h = lerp(fr[3] * H, F.h, e);
+    t.style.transform = e >= 1 ? 'none' : `translate(${x - F.x}px,${y - F.y}px) scale(${w / F.w},${h / F.h})`;
+    t.classList.toggle('hide', e < .97);
+  });
+  mosaic.classList.toggle('built', p > .985);
+}
+function loop(now){
+  target = readP();
+  shown = REDUCED ? target : lerp(shown, target, .14); if (Math.abs(shown - target) < .0005) shown = target;
+  draw(); requestAnimationFrame(loop);
+}
+addEventListener('resize', measure);
+measure(); shown = target = readP(); draw(true); requestAnimationFrame(loop);
+if (document.fonts) document.fonts.ready.then(measure);
+
+/* header links */
+function toStep(n){ const pin = $('pin'); const y = n === 3 ? $('after').offsetTop : pin.offsetTop + (n) * innerHeight; scrollTo({top: y, behavior: REDUCED ? 'auto' : 'smooth'}); }
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-step]'); if (s) { e.preventDefault(); if (!det.hidden) close(true); toStep(+s.dataset.step); }
+  const o = e.target.closest('[data-open]'); if (o) { e.preventDefault(); const i = +o.dataset.open; if (!det.hidden) { fill(i); return; } toStep(2); setTimeout(() => open(i), flat ? 50 : 700); }
+});
+$('home').addEventListener('click', e => { e.preventDefault(); if (!det.hidden) close(true); scrollTo({top: 0, behavior: REDUCED ? 'auto' : 'smooth'}); });
+
+/* stage view: one continuous scroll through all twelve stages */
+const det = $('detail'), dScroll = $('dScroll'), stream = $('stream'); let cur = -1, filter = 'all', secs = [];
+const WHO = {all: '', s: ' for students', f: ' for staff'};
+const pick = (uc, f) => uc.filter(u => f === 'all' || u[1] === f);
+function updateMeta(){
+  document.querySelectorAll('.tile .meta[data-m]').forEach(m => { const i = +m.dataset.m, n = pick(STAGES[i].uc, filter).length; m.textContent = String(i + 1).padStart(2, '0') + ' · ' + n + (filter === 'all' ? ' use cases' : WHO[filter]); });
+  const tot = STAGES.reduce((a, s) => a + pick(s.uc, filter).length, 0); $('kSum').innerHTML = '12 stages · ' + tot + (filter === 'all' ? ' use cases' : WHO[filter]) + '<br><span class="key"><i></i>A person approves</span>';
+}
+const card = u => `<li class="${u[1]}"><span class="ico">${icon(u[6])}</span><div><b>${esc(u[2])}</b><p>${esc(u[3])}</p><div class="tags"><span>${u[1] === 's' ? 'Student' : 'Staff'}</span><span class="ex">${MEDIA[u[6]]}</span><span class="ex">${u[4]}</span><span class="ex ${u[5]}">${SENS[u[5]]}</span><span class="ex">UC-${u[0]}</span></div></div></li>`;
+let io = null, more = false;
+function buildStream(){
+  stream.innerHTML = `<div class="more-row"><button type="button" class="more-btn" id="moreBtn" aria-pressed="${more}">${more ? 'Hide details' : 'Show details'}</button></div>` + STAGES.map((s, i) => { const list = pick(s.uc, filter), n = list.length;
+    return `<section class="sec" data-i="${i}"><span class="sec-num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><div class="sec-h"><h3>${esc(s.name)}</h3><span>${n}${filter === 'all' ? ' use cases' : WHO[filter]}</span></div>
+      <div class="sec-vs"><p class="t"><small>Today</small>${esc(s.t)}</p><p class="k"><small>With Kadal</small>${esc(s.k)}</p><p class="w">${esc(s.who)}</p></div>
+      <ul class="ucs${more ? ' more' : ''}">${n ? list.map(card).join('') : `<li class="empty">No ${filter === 's' ? 'student-facing' : 'staff'} use cases at this stage. It has ${s.uc.length} for ${filter === 's' ? 'staff' : 'students'}.</li>`}</ul></section>`; }).join('');
+  secs = [...stream.querySelectorAll('.sec')];
+  $('moreBtn').addEventListener('click', () => { more = !more; stream.querySelectorAll('.ucs').forEach(u => u.classList.toggle('more', more)); $('moreBtn').setAttribute('aria-pressed', more); $('moreBtn').textContent = more ? 'Hide details' : 'Show details'; });
+  if (io) io.disconnect();
+  const items = stream.querySelectorAll('.ucs li');
+  if (REDUCED || !('IntersectionObserver' in window)) { items.forEach(li => li.classList.add('in')); return; }
+  io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const li = e.target, k = [...li.parentNode.children].indexOf(li) % 2; li.style.transitionDelay = (k * 70) + 'ms'; li.classList.add('in'); io.unobserve(li); } }), {root: dScroll, rootMargin: '0px 0px -8% 0px'});
+  items.forEach(li => io.observe(li));
+}
+function swap(el){ el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); }
+function setStage(i, quiet){
+  if (i === cur) return; cur = i; const s = STAGES[i], L = LOOK[i];
+  det.style.setProperty('--c', L.c); det.style.setProperty('--i', L.i);
+  $('dMeta').textContent = PHASES[s.ph] + ' · Stage ' + (i + 1) + ' of ' + STAGES.length;
+  $('dTitle').textContent = s.name; $('dT').textContent = s.t; $('dK').textContent = s.k; $('dBack').textContent = s.back; $('dWho').textContent = s.who;
+  $('dMedia').innerHTML = s.media.map(m => `<span>${icon(m)}${MEDIA[m]}</span>`).join('');
+  const art = $('dArt'); art.setAttribute('viewBox', ART[i][0]); art.innerHTML = ART[i][1];
+  art.setAttribute('class', 'd-art ' + (L.dark ? 'dark' : 'light')); art.style.setProperty('--c', L.c); art.style.setProperty('--i', L.i);
+  if (!quiet && !REDUCED) { ['dMeta', 'dTitle', 'dMedia', 'dPanelIn'].forEach(id => swap($(id))); swap(art); }
+  try { history.replaceState(null, '', '#' + L.slug); } catch (e) {}
+}
+function dtop(){ return $('dTop').offsetHeight; }
+function onDetailScroll(){
+  if (det.hidden || !secs.length) return;
+  const st = dScroll.scrollTop, line = st + dtop() + 40;
+  let i = 0; secs.forEach((sec, k) => { if (sec.offsetTop <= line) i = k; });
+  setStage(i);
+  if (REDUCED) return;
+  // parallax: the big stage numbers drift slower than the cards; the art floats against the scroll
+  secs.forEach(sec => { const n = sec.firstElementChild, y = sec.offsetTop - st - dtop(); n.style.transform = `translateY(${clamp(y * -.12, -60, 60)}px)`; });
+  const within = st + dtop() - secs[i].offsetTop; $('dArt').style.transform = `translateY(${clamp(within * -.05, -14, 14)}px)`;
+}
+let ticking = false;
+dScroll.addEventListener('scroll', () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { ticking = false; onDetailScroll(); }); }, {passive: true});
+function goTo(i, instant){
+  const sec = secs[i]; if (!sec) return;
+  dScroll.style.setProperty('--dtop', dtop() + 'px');
+  dScroll.scrollTo({top: Math.max(0, sec.offsetTop - dtop() - 12), behavior: instant || REDUCED ? 'auto' : 'smooth'});
+}
+function setFilter(f){ filter = f; document.querySelectorAll('.filters button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === f)); moveInd(); updateMeta(); renderHz();
+  if (!det.hidden) { const keep = cur; buildStream(); cur = -1; setStage(keep, true); goTo(keep, true); } }
+document.querySelector('.hdr .filters').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setFilter(b.dataset.f); });
+function moveInd(instant){ const g = document.querySelector('.hdr .seg'), b = g.querySelector('button[aria-pressed="true"]'), ind = g.querySelector('.seg-ind'); if (!b) return;
+  if (instant) ind.style.transition = 'none'; ind.style.width = b.offsetWidth + 'px'; ind.style.transform = `translateX(${b.offsetLeft}px)`; if (instant) { void ind.offsetWidth; ind.style.transition = ''; } }
+moveInd(true); addEventListener('resize', () => moveInd(true)); if (document.fonts) document.fonts.ready.then(() => moveInd(true));
+updateMeta();
+const hh = () => document.querySelector('.hdr').getBoundingClientRect().bottom;
+let openedFrom = 0;
+let openedEl = null;
+function open(i, fromEl){
+  openedFrom = i; openedEl = fromEl || tiles[i]; buildStream(); cur = -1; setStage(i, true);
+  const r = openedEl.getBoundingClientRect(), top = hh();
+  det.hidden = false; det.classList.remove('full');
+  Object.assign(det.style, {transition: 'none', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: '8px'});
+  void det.offsetWidth; det.style.transition = '';
+  requestAnimationFrame(() => { Object.assign(det.style, {left: '0px', top: top + 'px', width: '100vw', height: `calc(100vh - ${top}px)`, borderRadius: '0px'}); det.classList.add('full');
+    dScroll.style.setProperty('--dtop', dtop() + 'px'); goTo(i, true); onDetailScroll(); });
+  setTimeout(() => { if (det.hidden) return; dScroll.style.setProperty('--dtop', dtop() + 'px'); goTo(i, true); cur = -1; onDetailScroll(); }, REDUCED ? 0 : 660);
+  document.body.style.overflow = 'hidden'; setTimeout(() => $('dClose').focus({preventScroll: true}), 400);
+}
+function close(instant){
+  const t = openedEl || tiles[openedFrom], r = t.getBoundingClientRect(); det.classList.remove('full');
+  if (instant) det.style.transition = 'none';
+  Object.assign(det.style, {left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: '8px'});
+  setTimeout(() => { det.hidden = true; det.style.transition = ''; }, instant || REDUCED ? 0 : 600);
+  document.body.style.overflow = ''; try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  if (!instant && t) t.focus({preventScroll: true});
+}
+function fill(i){ goTo(i); }
+addEventListener('resize', () => { if (!det.hidden) { dScroll.style.setProperty('--dtop', dtop() + 'px'); onDetailScroll(); } });
+mosaic.addEventListener('click', e => { const t = e.target.closest('button.tile'); if (t) open(+t.dataset.i); });
+$('dClose').addEventListener('click', () => close());
+$('dPrev').addEventListener('click', () => goTo(Math.max(0, cur - 1)));
+$('dNext').addEventListener('click', () => goTo(Math.min(STAGES.length - 1, cur + 1)));
+addEventListener('keydown', e => { if (det.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') $('dNext').click(); if (e.key === 'ArrowLeft') $('dPrev').click(); });
+
+/* horizontal journey: vertical scroll slides the stages sideways, one stage per snap */
+const hz = $('hz'), track = $('hzTrack'), hzDots = $('hzDots'), NS = STAGES.length;
+hz.style.height = NS * 100 + 'vh';
+hz.insertAdjacentHTML('afterbegin', STAGES.map((_, i) => `<span class="snapmark" style="top:${i * 100}vh"></span>`).join(''));
+hzDots.innerHTML = STAGES.map((s, i) => `<button type="button" data-hz="${i}" aria-label="Stage ${i + 1}: ${esc(s.name)}"><i></i></button>`).join('');
+function renderHz(){
+  track.innerHTML = STAGES.map((s, i) => { const L = LOOK[i], list = pick(s.uc, filter), top = list.slice(0, 4);
+    return `<article class="hp" data-i="${i}" style="--c:${L.c};--i:${L.i}">
+      <span class="hp-num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
+      <div class="hp-in">
+        <div class="hp-head">
+          <p class="hp-meta">${PHASES[s.ph]} · Stage ${i + 1} of ${NS}</p>
+          <h2>${esc(s.name)}</h2>
+          <div class="hp-media">${s.media.map(m => `<span>${icon(m)}${MEDIA[m]}</span>`).join('')}</div>
+        </div>
+          <div class="hp-vsw"><div class="hp-vs"><div class="t"><small>Today</small><p>${esc(s.t)}</p></div><div class="k"><small>With Kadal</small><p>${esc(s.k)}</p></div></div>
+          <p class="hp-who">${esc(s.who)}</p></div>
+          <svg class="hp-art ${L.dark ? 'dark' : 'light'}" style="--c:${L.c};--i:${L.i}" viewBox="${ART[i][0]}" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">${ART[i][1]}</svg>
+          <ul class="hp-ucs">${top.length ? top.map(u => `<li class="${u[1]}"><span class="ico">${icon(u[6])}</span><div><b>${esc(u[2])}</b><p>${esc(u[3])}</p></div></li>`).join('') : `<li class="empty">No ${filter === 's' ? 'student-facing' : 'staff'} use cases at this stage. It has ${s.uc.length} for ${filter === 's' ? 'staff' : 'students'}.</li>`}</ul>
+          <button type="button" class="hp-all" data-all="${i}">See all ${list.length || s.uc.length} use cases<svg aria-hidden="true"><use href="#x-next"/></svg></button>
+      </div></article>`; }).join('');
+  hzCur = -1; hzLast = -1;
+}
+let hzShown = 0, hzCur = -1, hzLast = -1;
+function hzTarget(){ const r = hz.getBoundingClientRect(); return clamp(-r.top / innerHeight, 0, NS - 1); }
+function hzDraw(){
+  if (innerWidth <= 900) return;
+  const q = REDUCED ? hzTarget() : (hzShown = lerp(hzShown, hzTarget(), .14));
+  if (Math.abs(q - hzLast) < .0004) return; hzLast = q;
+  track.style.transform = `translate3d(${-q * innerWidth}px,0,0)`;
+  const panels = track.children;
+  for (let i = 0; i < panels.length; i++) {
+    const d = i - q; if (Math.abs(d) > 1.2) continue;
+    const pl = panels[i], num = pl.firstElementChild;
+    num.style.transform = `translateX(${d * -22}vw)`;
+    pl.querySelectorAll('.hp-head,.hp-vsw').forEach(el => { el.style.transform = `translateX(${d * 8}vw)`; el.style.opacity = 1 - Math.min(1, Math.abs(d) * .9); });
+    pl.querySelectorAll('.hp-ucs,.hp-all').forEach(el => { el.style.transform = `translateX(${d * 16}vw)`; el.style.opacity = 1 - Math.min(1, Math.abs(d) * .7); });
+    pl.querySelector('.hp-art').style.transform = `translateX(${d * 10}vw)`;
+  }
+  const c = Math.round(q);
+  if (c !== hzCur) { hzCur = c; [...hzDots.children].forEach((b, k) => { if (k === c) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    const art = panels[c] && panels[c].querySelector('.hp-art'); if (art && !REDUCED) { art.classList.remove('swap'); void art.getBoundingClientRect(); art.classList.add('swap'); } }
+}
+(function hzLoop(){ hzDraw(); requestAnimationFrame(hzLoop); })();
+hzDots.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; scrollTo({top: hz.offsetTop + (+b.dataset.hz) * innerHeight, behavior: REDUCED ? 'auto' : 'smooth'}); });
+track.addEventListener('click', e => { const b = e.target.closest('[data-all]'); if (b) open(+b.dataset.all, b.closest('.hp')); });
+renderHz();
+const fromHash = LOOK.findIndex(l => '#' + l.slug === location.hash);
+if (fromHash >= 0) { const pin = $('pin'); scrollTo(0, pin.offsetTop + 2 * innerHeight); shown = target = 1; draw(true); setTimeout(() => open(fromHash), 80); }
+})();
+</script>
+
+</body></html>
